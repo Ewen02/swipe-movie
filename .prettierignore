@@ -1,0 +1,14 @@
+# Node
+node_modules
+package-lock.json
+
+# Build
+dist
+.next
+out
+
+# Logs
+*.log
+
+# Prisma
+prisma/migrations
