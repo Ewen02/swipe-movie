@@ -1,0 +1,70 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator dbseed {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id      String       @id @default(cuid())
+  email   String       @unique
+  name    String?
+  roles   String[]     @default([])
+  members RoomMember[]
+  swipes  Swipe[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model Room {
+  id        String       @id @default(cuid())
+  code      String       @unique
+  name      String?
+  capacity  Int          @default(2)
+  members   RoomMember[]
+  matches   Match[]
+  createdBy String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @default(now()) @updatedAt
+  deletedAt DateTime?
+}
+
+model RoomMember {
+  id     String @id @default(cuid())
+  roomId String
+  userId String
+  room   Room   @relation(fields: [roomId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([roomId, userId])
+}
+
+model Swipe {
+  id        String   @id @default(cuid())
+  roomId    String
+  userId    String
+  movieId   String
+  value     Boolean
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([roomId, movieId])
+  @@unique([roomId, userId, movieId], name: "userId_roomId_movieId")
+}
+
+model Match {
+  id        String   @id @default(cuid())
+  roomId    String
+  movieId   String
+  createdAt DateTime @default(now())
+  room      Room     @relation(fields: [roomId], references: [id])
+
+  @@unique([roomId, movieId])
+}
