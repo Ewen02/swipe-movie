@@ -35,6 +35,10 @@ module.exports = [
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
+      parserOptions: {
+        tsconfigRootDir: __dirname,
+        projectService: true,
+      },
       // Déclare explicitement les globals
       globals: {
         ...globals.browser,
@@ -68,6 +72,13 @@ module.exports = [
   // Web (Next)
   {
     files: ['apps/web/**/*.{ts,tsx,js,jsx}'],
-    languageOptions: { ecmaFeatures: { jsx: true } },
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+        tsconfigRootDir: path.join(__dirname, 'apps/web'),
+        projectService: true,
+        project: ['./tsconfig.json'],
+      },
+    },
   },
 ];

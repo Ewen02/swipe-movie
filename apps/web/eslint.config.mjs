@@ -19,6 +19,10 @@ const eslintConfig = [
       "build/**",
       "next-env.d.ts",
     ],
+    extends: ['../../.eslintrc.js'],
+    parserOptions: {
+      tsconfigRootDir: __dirname,
+    },
   },
 ];
 
