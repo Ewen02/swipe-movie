@@ -24,6 +24,7 @@ import {
   RoomCreateResponseDto,
   RoomMembersResponseDto,
   RoomWithMembersResponseDto,
+  MemberRoomsResponseDto,
 } from './dtos';
 
 import { ResponseSwipeDto } from '../swipes/dtos/response-swipe.dto';
@@ -67,15 +68,26 @@ export class RoomsController {
     return this.service.leave(userId, dto.roomId);
   }
 
-  @ApiOperation({ summary: 'Get room details' })
+  @ApiOperation({ summary: 'Get room details by id' })
   @ApiOkResponse({
     description: 'Room details',
     type: RoomWithMembersResponseDto,
   })
   @ApiNotFoundResponse({ description: 'Room not found' })
-  @Get(':id')
-  get(@Param('id') roomId: string) {
-    return this.service.get(roomId);
+  @Get('id/:id')
+  getById(@Param('id') roomId: string) {
+    return this.service.getById(roomId);
+  }
+
+  @ApiOperation({ summary: 'Get room details by code' })
+  @ApiOkResponse({
+    description: 'Room details',
+    type: RoomWithMembersResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Room not found' })
+  @Get('code/:code')
+  getByCode(@Param('code') roomCode: string) {
+    return this.service.getByCode(roomCode);
   }
 
   @ApiOperation({ summary: 'Get room members' })
@@ -93,5 +105,15 @@ export class RoomsController {
   @Get(':id/swipes')
   swipes(@Param('id') roomId: string) {
     return this.swipesService.findByRoom(roomId);
+  }
+
+  @ApiOperation({ summary: 'Get all rooms for user' })
+  @ApiOkResponse({
+    description: 'List of swipes',
+    type: [MemberRoomsResponseDto],
+  })
+  @Get('my')
+  userRooms(@UserId() userId: string) {
+    return this.service.getUserRooms(userId);
   }
 }

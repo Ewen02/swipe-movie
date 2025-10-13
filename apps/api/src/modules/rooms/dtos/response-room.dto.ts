@@ -36,3 +36,8 @@ export class RoomMembersResponseDto {
   @ApiProperty({ type: [UserResponseDto] })
   members: UserResponseDto[];
 }
+
+export class MemberRoomsResponseDto {
+  @ApiProperty({ type: [RoomBaseResponseDto] })
+  rooms: RoomBaseResponseDto[];
+}

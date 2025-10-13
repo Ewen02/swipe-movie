@@ -11,6 +11,7 @@ import {
   RoomCreateResponseDto,
   RoomMembersResponseDto,
   RoomWithMembersResponseDto,
+  MemberRoomsResponseDto,
 } from './dtos';
 
 function code6() {
@@ -114,7 +115,7 @@ export class RoomsService {
     } as RoomMembersResponseDto;
   }
 
-  async get(roomId: string): Promise<RoomWithMembersResponseDto> {
+  async getById(roomId: string): Promise<RoomWithMembersResponseDto> {
     const [room, roomMembers] = await this.prisma.$transaction([
       this.prisma.room.findUnique({
         where: { id: roomId },
@@ -146,6 +147,54 @@ export class RoomsService {
         id: rm.user.id,
         name: rm.user.name,
       })),
+    };
+  }
+
+  async getByCode(code: string): Promise<RoomWithMembersResponseDto> {
+    const room = await this.prisma.room.findUnique({
+      where: { code },
+      select: {
+        id: true,
+        name: true,
+        code: true,
+        createdBy: true,
+        createdAt: true,
+        members: { include: { user: true } },
+      },
+    });
+
+    if (!room) {
+      throw new NotFoundException('Room not found');
+    }
+
+    return {
+      id: room.id,
+      name: room.name!,
+      code: room.code,
+      createdBy: room.createdBy,
+      createdAt: room.createdAt,
+      members: room.members.map((rm) => ({
+        name: rm.user.name,
+      })),
+    };
+  }
+
+  async getUserRooms(userId: string): Promise<MemberRoomsResponseDto> {
+    const rooms = await this.prisma.roomMember.findMany({
+      where: { userId },
+      include: {
+        room: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+            createdAt: true,
+          },
+        },
+      },
+    });
+    return {
+      rooms: rooms.map((r) => r.room) as MemberRoomsResponseDto['rooms'],
     };
   }
 }

@@ -4,7 +4,7 @@ import { IsString, IsOptional } from 'class-validator';
 export class UserResponseDto {
   @ApiProperty({ example: 'user-123' })
   @IsString()
-  id: string;
+  id?: string;
 
   @ApiProperty({ example: 'John Doe', nullable: true })
   @IsString()
