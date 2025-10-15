@@ -4,6 +4,7 @@ import {
   HttpStatus,
   NotFoundException,
   ForbiddenException,
+  Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../../infra/prisma.service';
 import {
@@ -14,23 +15,20 @@ import {
   MemberRoomsResponseDto,
 } from './dtos';
 
-function code6() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  return Array.from(
-    { length: 6 },
-    () => chars[Math.floor(Math.random() * chars.length)],
-  ).join('');
-}
+import { generateRoomCode } from '../../common/utils/code';
 
 @Injectable()
 export class RoomsService {
+  private readonly logger = new Logger(RoomsService.name);
+
   constructor(private prisma: PrismaService) {}
 
   async create(userId: string, name?: string): Promise<RoomCreateResponseDto> {
+    this.logger.log(`Creating room for user ${userId}`);
     return this.prisma.$transaction(async (tx) => {
       const room = await tx.room.create({
         data: {
-          code: code6(),
+          code: generateRoomCode(),
           createdBy: userId,
           name,
         },
@@ -53,6 +51,7 @@ export class RoomsService {
   }
 
   async join(userId: string, code: string): Promise<RoomJoinResponseDto> {
+    this.logger.log(`User ${userId} joining room ${code}`);
     const room = await this.prisma.room.findUnique({
       where: { code },
       include: { members: true },
@@ -70,6 +69,8 @@ export class RoomsService {
       create: { roomId: room.id, userId },
     });
 
+    this.logger.log(`User ${userId} joined room ${room.id}`);
+
     const joinedRoom = await this.prisma.room.findUnique({
       where: { id: room.id },
       select: {
@@ -84,6 +85,7 @@ export class RoomsService {
   }
 
   async leave(userId: string, roomId: string) {
+    this.logger.log(`User ${userId} leaving room ${roomId}`);
     const room = await this.prisma.room.findUnique({
       where: { id: roomId },
     });
@@ -100,6 +102,7 @@ export class RoomsService {
         where: { id: roomId },
         data: { deletedAt: new Date() },
       });
+      this.logger.log(`Room ${roomId} deleted after last member left`);
     }
 
     return { ok: true };
@@ -174,27 +177,37 @@ export class RoomsService {
       createdBy: room.createdBy,
       createdAt: room.createdAt,
       members: room.members.map((rm) => ({
+        id: rm.user.id,
         name: rm.user.name,
       })),
     };
   }
 
   async getUserRooms(userId: string): Promise<MemberRoomsResponseDto> {
-    const rooms = await this.prisma.roomMember.findMany({
-      where: { userId },
-      include: {
-        room: {
-          select: {
-            id: true,
-            name: true,
-            code: true,
-            createdAt: true,
-          },
-        },
+    await this.expireOldRooms();
+
+    const rooms = await this.prisma.room.findMany({
+      where: { members: { some: { userId } } },
+      select: {
+        id: true,
+        name: true,
+        code: true,
+        createdAt: true,
+        createdBy: true,
       },
     });
-    return {
-      rooms: rooms.map((r) => r.room) as MemberRoomsResponseDto['rooms'],
-    };
+
+    return { rooms };
+  }
+
+  private async expireOldRooms() {
+    const expirationDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const result = await this.prisma.room.updateMany({
+      where: { deletedAt: null, createdAt: { lt: expirationDate } },
+      data: { deletedAt: new Date() },
+    });
+    if (result.count > 0) {
+      this.logger.log(`Expired ${result.count} old rooms`);
+    }
   }
 }
