@@ -1,3 +1,8 @@
+enum RoomType {
+  MOVIE
+  TV
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -25,14 +30,19 @@ model User {
 model Room {
   id        String       @id @default(cuid())
   code      String       @unique
-  name      String?
+  name      String       @default("Untitled Room")
   capacity  Int          @default(2)
+  type        RoomType   @default(MOVIE)
+  genreId     Int?
+  selectedTmdbId  Int?
   members   RoomMember[]
   matches   Match[]
   createdBy String
   createdAt DateTime     @default(now())
   updatedAt DateTime     @default(now()) @updatedAt
   deletedAt DateTime?
+
+  @@index([type, genreId])
 }
 
 model RoomMember {
