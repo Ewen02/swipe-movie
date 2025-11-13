@@ -4,25 +4,25 @@ import { IsString, IsDate, IsBoolean } from 'class-validator';
 export class SwipeBaseDto {
   @ApiProperty({ example: 'swipe-123' })
   @IsString()
-  id: string;
+  id!: string;
 
   @ApiProperty({ example: true })
   @IsBoolean()
-  value: boolean;
+  value!: boolean;
 
   @ApiProperty({ example: 'movie-1234567' })
   @IsString()
-  movieId: string;
+  movieId!: string;
 
   @ApiProperty({ example: 'room-123' })
   @IsString()
-  roomId: string;
+  roomId!: string;
 
   @ApiProperty({ example: 'user-123' })
   @IsString()
-  userId: string;
+  userId!: string;
 
   @ApiProperty({ example: '2025-09-04T10:15:30Z' })
   @IsDate()
-  createdAt: Date;
+  createdAt!: Date;
 }

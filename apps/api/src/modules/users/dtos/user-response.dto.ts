@@ -9,7 +9,7 @@ export class UserResponseDto {
   @ApiProperty({ example: 'John Doe', nullable: true })
   @IsString()
   @IsOptional()
-  name: string | null;
+  name!: string | null;
 
   @ApiProperty({ example: 'john@example.com' })
   @IsString()

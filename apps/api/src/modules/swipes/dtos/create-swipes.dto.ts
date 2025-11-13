@@ -7,19 +7,19 @@ export class CreateSwipeDto {
     description: 'Like or dislike movie',
   })
   @IsBoolean()
-  value: boolean;
+  value!: boolean;
 
   @ApiProperty({
     example: 'tt1234567',
     description: 'ID of the movie title',
   })
   @IsString()
-  movieId: string;
+  movieId!: string;
 
   @ApiProperty({
     example: 'room-123',
     description: 'ID of the room',
   })
   @IsString()
-  roomId: string;
+  roomId!: string;
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Get, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Get, UseGuards, Query } from '@nestjs/common';
 import { SwipesService } from './swipes.service';
 import {
   ApiBearerAuth,
@@ -6,6 +6,7 @@ import {
   ApiOperation,
   ApiOkResponse,
   ApiTags,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UserId } from '../../common/decorators';
@@ -35,8 +36,16 @@ export class SwipesController {
 
   @ApiOperation({ summary: 'Get my swipes' })
   @ApiOkResponse({ description: 'List of my swipes', type: [ResponseSwipeDto] })
+  @ApiQuery({
+    name: 'roomId',
+    required: false,
+    description: 'Filter swipes by room',
+  })
   @Get('me')
-  getMySwipes(@UserId() userId: string) {
+  getMySwipes(@UserId() userId: string, @Query('roomId') roomId?: string) {
+    if (roomId) {
+      return this.service.findByUserInRoom(userId, roomId);
+    }
     return this.service.findByUser(userId);
   }
 }

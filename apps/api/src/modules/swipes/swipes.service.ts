@@ -78,4 +78,25 @@ export class SwipesService {
       where: { userId },
     });
   }
+
+  async findByUserInRoom(
+    userId: string,
+    roomId: string,
+  ): Promise<ResponseSwipeDto[]> {
+    const room = await this.prisma.room.findUnique({
+      where: { id: roomId },
+      select: { id: true },
+    });
+
+    if (!room) {
+      throw new NotFoundException('Room not found');
+    }
+
+    return this.prisma.swipe.findMany({
+      where: {
+        userId,
+        roomId,
+      },
+    });
+  }
 }

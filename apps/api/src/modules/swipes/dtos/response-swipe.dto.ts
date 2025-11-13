@@ -10,5 +10,5 @@ export class ResponseCreateSwipeDto extends ResponseSwipeDto {
     description: 'Indicates if a match was created',
   })
   @IsBoolean()
-  matchCreated: boolean;
+  matchCreated!: boolean;
 }
