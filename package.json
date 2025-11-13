@@ -14,7 +14,8 @@
     "db:migrate": "npm --workspace apps/api run migrate",
     "db:studio": "npm --workspace apps/api run prisma:studio",
     "db:generate": "npm --workspace apps/api run prisma:generate",
-    "db:reset": "npm --workspace apps/api run prisma migrate reset --force --skip-generate"
+    "db:reset": "npm --workspace apps/api run prisma migrate reset --force --skip-generate",
+    "dev:clean": "lsof -ti:3001 | xargs kill -9 2>/dev/null || true && npm run dev"
   },
   "devDependencies": {
     "@eslint/js": "^9.34.0",
