@@ -10,6 +10,6 @@ export async function parseResponse<T>(
     throw new Error(message)
   }
   const json = await res.json()
-  console.log(schema.parse(json))
+  // console.log(schema.parse(json))
   return schema.parse(json)
 }

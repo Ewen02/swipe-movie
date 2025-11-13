@@ -8,6 +8,17 @@ export const API_ERRORS = {
     401: "Authentification requise",
     403: "Accès refusé",
   },
+  MOVIES: {
+    404: "Film introuvable",
+    502: "Erreur lors de la récupération des films",
+  },
+  SWIPES: {
+    400: "Swipe invalide",
+    404: "Room ou film introuvable",
+  },
+  MATCHES: {
+    404: "Aucun match trouvé",
+  },
   GENERIC: {
     400: "Requête invalide",
     401: "Authentification requise",
