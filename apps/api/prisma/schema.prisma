@@ -33,8 +33,19 @@ model Room {
   name      String       @default("Untitled Room")
   capacity  Int          @default(2)
   type        RoomType   @default(MOVIE)
-  genreId     Int?
+  genreId     Int        @default(0)
   selectedTmdbId  Int?
+
+  // Advanced filters
+  minRating           Float?   // Note minimum (ex: 7.0)
+  releaseYearMin      Int?     // Année de sortie min (ex: 2020)
+  releaseYearMax      Int?     // Année de sortie max (ex: 2024)
+  runtimeMin          Int?     // Durée minimum en minutes
+  runtimeMax          Int?     // Durée maximum en minutes
+  watchProviders      Int[]    @default([]) // IDs des plateformes (Netflix=8, Prime=119, etc.)
+  watchRegion         String?  @default("FR") // Région pour les watch providers
+  originalLanguage    String?  // Langue originale (ex: "en", "fr", "ja")
+
   members   RoomMember[]
   matches   Match[]
   createdBy String

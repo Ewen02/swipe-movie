@@ -5,46 +5,46 @@ import { ApiProperty } from '@nestjs/swagger';
  */
 export class MovieBasicDto {
   @ApiProperty({ example: 550 })
-  id: number;
+  id!: number;
 
   @ApiProperty({ example: false })
-  adult: boolean;
+  adult!: boolean;
 
   @ApiProperty({ example: 'Fight Club' })
-  title: string;
+  title!: string;
 
   @ApiProperty({ example: 'https://image.tmdb.org/t/p/w500/abc123.jpg' })
-  posterUrl: string;
+  posterUrl!: string;
 
   @ApiProperty({ example: 'https://image.tmdb.org/t/p/w780/xyz456.jpg' })
-  backdropUrl: string;
+  backdropUrl!: string;
 
   @ApiProperty({ example: [18, 53, 35] })
-  genreIds: number[];
+  genreIds!: number[];
 
   @ApiProperty({ example: 'en' })
-  originalLanguage: string;
+  originalLanguage!: string;
 
   @ApiProperty({ example: 'Fight Club' })
-  originalTitle: string;
+  originalTitle!: string;
 
   @ApiProperty({ example: 61.416 })
-  popularity: number;
+  popularity!: number;
 
   @ApiProperty({ example: '1999-10-15' })
-  releaseDate: string;
+  releaseDate!: string;
 
   @ApiProperty({ example: 'A ticking-time-bomb insomniac...' })
-  overview: string;
+  overview!: string;
 
   @ApiProperty({ example: false })
-  video: boolean;
+  video!: boolean;
 
   @ApiProperty({ example: 8.433 })
-  voteAverage: number;
+  voteAverage!: number;
 
   @ApiProperty({ example: 26280 })
-  voteCount: number;
+  voteCount!: number;
 }
 
 /**
@@ -52,10 +52,10 @@ export class MovieBasicDto {
  */
 export class MoviesGenresDto {
   @ApiProperty({ example: 18 })
-  id: number;
+  id!: number;
 
   @ApiProperty({ example: 'Drama' })
-  name: string;
+  name!: string;
 }
 
 /**
@@ -63,25 +63,25 @@ export class MoviesGenresDto {
  */
 export class MovieDetailsDto extends MovieBasicDto {
   @ApiProperty({ example: 63000000 })
-  budget: number;
+  budget!: number;
 
   @ApiProperty({ example: 100853753 })
-  revenue: number;
+  revenue!: number;
 
   @ApiProperty({ example: 139 })
-  runtime: number;
+  runtime!: number;
 
   @ApiProperty({ example: 'Released' })
-  status: string;
+  status!: string;
 
   @ApiProperty({ example: 'Mischief. Mayhem. Soap.' })
-  tagline: string;
+  tagline!: string;
 
   @ApiProperty({ example: 'http://www.foxmovies.com/movies/fight-club' })
-  homepage: string;
+  homepage!: string;
 
   @ApiProperty({ example: 'tt0137523' })
-  imdbId: string;
+  imdbId!: string;
 
   @ApiProperty({
     example: [
@@ -89,7 +89,7 @@ export class MovieDetailsDto extends MovieBasicDto {
       { id: 53, name: 'Thriller' },
     ],
   })
-  genres: MoviesGenresDto[];
+  genres!: MoviesGenresDto[];
 
   @ApiProperty({
     example: [
@@ -97,7 +97,7 @@ export class MovieDetailsDto extends MovieBasicDto {
       { id: 25, name: '20th Century Fox', origin_country: 'US' },
     ],
   })
-  productionCompanies: {
+  productionCompanies!: {
     id: number;
     name: string;
     origin_country: string;
@@ -106,7 +106,7 @@ export class MovieDetailsDto extends MovieBasicDto {
   @ApiProperty({
     example: [{ iso_3166_1: 'US', name: 'United States of America' }],
   })
-  productionCountries: {
+  productionCountries!: {
     iso_3166_1: string;
     name: string;
   }[];
@@ -114,7 +114,7 @@ export class MovieDetailsDto extends MovieBasicDto {
   @ApiProperty({
     example: [{ iso_639_1: 'en', english_name: 'English', name: 'English' }],
   })
-  spokenLanguages: {
+  spokenLanguages!: {
     iso_639_1: string;
     english_name: string;
     name: string;

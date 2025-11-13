@@ -7,5 +7,5 @@ export class LeaveRoomDto {
     example: '123456789',
   })
   @IsString()
-  roomId: string;
+  roomId!: string;
 }

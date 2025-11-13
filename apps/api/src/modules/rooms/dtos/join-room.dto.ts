@@ -7,5 +7,5 @@ export class JoinRoomDto {
     description: 'Code of the room to join',
   })
   @IsString()
-  code: string;
+  code!: string;
 }

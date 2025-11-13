@@ -46,7 +46,7 @@ export class RoomsController {
   })
   @Post()
   create(@UserId() userId: string, @Body() dto: CreateRoomDto) {
-    return this.service.create(userId, dto?.name);
+    return this.service.create(userId, dto);
   }
 
   @ApiOperation({ summary: 'Join a room' })
@@ -68,15 +68,14 @@ export class RoomsController {
     return this.service.leave(userId, dto.roomId);
   }
 
-  @ApiOperation({ summary: 'Get room details by id' })
+  @ApiOperation({ summary: 'Get all rooms for user' })
   @ApiOkResponse({
-    description: 'Room details',
-    type: RoomWithMembersResponseDto,
+    description: 'List of user rooms',
+    type: [MemberRoomsResponseDto],
   })
-  @ApiNotFoundResponse({ description: 'Room not found' })
-  @Get('id/:id')
-  getById(@Param('id') roomId: string) {
-    return this.service.getById(roomId);
+  @Get('my')
+  userRooms(@UserId() userId: string) {
+    return this.service.getUserRooms(userId);
   }
 
   @ApiOperation({ summary: 'Get room details by code' })
@@ -90,30 +89,31 @@ export class RoomsController {
     return this.service.getByCode(roomCode);
   }
 
+  @ApiOperation({ summary: 'Get room details by id' })
+  @ApiOkResponse({
+    description: 'Room details',
+    type: RoomWithMembersResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Room not found' })
+  @Get('id/:id')
+  getById(@Param('id') roomId: string) {
+    return this.service.getById(roomId);
+  }
+
   @ApiOperation({ summary: 'Get room members' })
   @ApiOkResponse({
     description: 'List of room members',
     type: RoomMembersResponseDto,
   })
-  @Get(':id/members')
+  @Get('id/:id/members')
   members(@Param('id') roomId: string) {
     return this.service.members(roomId);
   }
 
   @ApiOperation({ summary: 'Get all swipes in a room' })
   @ApiOkResponse({ description: 'List of swipes', type: [ResponseSwipeDto] })
-  @Get(':id/swipes')
+  @Get('id/:id/swipes')
   swipes(@Param('id') roomId: string) {
     return this.swipesService.findByRoom(roomId);
-  }
-
-  @ApiOperation({ summary: 'Get all rooms for user' })
-  @ApiOkResponse({
-    description: 'List of swipes',
-    type: [MemberRoomsResponseDto],
-  })
-  @Get('my')
-  userRooms(@UserId() userId: string) {
-    return this.service.getUserRooms(userId);
   }
 }

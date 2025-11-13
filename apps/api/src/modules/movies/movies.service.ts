@@ -13,6 +13,17 @@ import {
 import { TmdbService } from '../tmdb/tmdb.service';
 import { TMDB_IMAGE_BASE, TMDB_DEFAULT_LANG } from '../tmdb/tmdb.constants';
 
+export interface MovieFilters {
+  minRating?: number;
+  releaseYearMin?: number;
+  releaseYearMax?: number;
+  runtimeMin?: number;
+  runtimeMax?: number;
+  watchProviders?: number[];
+  watchRegion?: string;
+  originalLanguage?: string;
+}
+
 @Injectable()
 export class MoviesService {
   constructor(private readonly tmdb: TmdbService) {}
@@ -94,15 +105,68 @@ export class MoviesService {
     return this.mapToMovieDetails(json);
   }
 
-  async getPopularMovies(): Promise<MovieBasicDto[]> {
-    const url = `/movie/popular?language=${TMDB_DEFAULT_LANG}&page=1`;
+  async getPopularMovies(page = 1): Promise<MovieBasicDto[]> {
+    const url = `/movie/popular?language=${TMDB_DEFAULT_LANG}&page=${page}`;
     const json = await this.tmdb.fetchJson<TMDbPopularResponse>(url);
     return (json.results ?? []).map((movie) => this.mapToMovieSummary(movie));
   }
 
-  async getMoviesByGenre(genreId: number): Promise<MovieBasicDto[]> {
-    const url = `/discover/movie?language=${TMDB_DEFAULT_LANG}&page=1&with_genres=${genreId}`;
+  async getMoviesByGenre(
+    genreId: number,
+    type: 'movie' | 'tv' = 'movie',
+    page = 1,
+    filters?: MovieFilters,
+  ): Promise<MovieBasicDto[]> {
+    const mediaType = type === 'tv' ? 'tv' : 'movie';
+    const params = new URLSearchParams({
+      language: TMDB_DEFAULT_LANG,
+      page: page.toString(),
+      with_genres: genreId.toString(),
+    });
+
+    // Add filters
+    if (filters?.minRating) {
+      params.append('vote_average.gte', filters.minRating.toString());
+      // Aussi exiger un minimum de 100 votes pour éviter les films sans notes
+      params.append('vote_count.gte', '100');
+    }
+    if (filters?.releaseYearMin) {
+      const date = `${filters.releaseYearMin}-01-01`;
+      params.append(
+        type === 'tv' ? 'first_air_date.gte' : 'primary_release_date.gte',
+        date,
+      );
+    }
+    if (filters?.releaseYearMax) {
+      const date = `${filters.releaseYearMax}-12-31`;
+      params.append(
+        type === 'tv' ? 'first_air_date.lte' : 'primary_release_date.lte',
+        date,
+      );
+    }
+    if (filters?.runtimeMin) {
+      params.append('with_runtime.gte', filters.runtimeMin.toString());
+    }
+    if (filters?.runtimeMax) {
+      params.append('with_runtime.lte', filters.runtimeMax.toString());
+    }
+    if (filters?.watchProviders && filters.watchProviders.length > 0) {
+      params.append('with_watch_providers', filters.watchProviders.join('|'));
+      if (filters.watchRegion) {
+        params.append('watch_region', filters.watchRegion);
+      }
+    }
+    if (filters?.originalLanguage) {
+      params.append('with_original_language', filters.originalLanguage);
+    }
+
+    const url = `/discover/${mediaType}?${params.toString()}`;
+    console.log('[MoviesService] TMDb URL:', url);
+    console.log('[MoviesService] Filters applied:', JSON.stringify(filters, null, 2));
+
     const json = await this.tmdb.fetchJson<TMDbDiscoverResponse>(url);
+    console.log(`[MoviesService] TMDb returned ${json.results?.length || 0} movies`);
+
     return (json.results ?? []).map((movie) => this.mapToMovieSummary(movie));
   }
 
