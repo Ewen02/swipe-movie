@@ -33,7 +33,7 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    // Protéger toutes les routes sauf login, api, assets statiques et preview
-    "/((?!login|api|_next/static|_next/image|favicon.ico|preview).*)",
+    // Protéger toutes les routes sauf /, login, api, assets statiques et preview
+    "/((?!$|login|api|_next/static|_next/image|favicon.ico|preview|.*\\.png|.*\\.jpg|.*\\.svg|.*\\.ico).*)",
   ],
 }
