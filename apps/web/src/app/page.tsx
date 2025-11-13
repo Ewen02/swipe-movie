@@ -75,14 +75,14 @@ export default function LandingPage() {
             <div className="relative bg-card border-2 border-border rounded-2xl p-8 shadow-2xl">
               <div className="grid grid-cols-3 gap-4">
                 {/* Card animations demo */}
-                <div className="flex items-center justify-center h-32 bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-xl border border-green-500/30">
-                  <Heart className="h-12 w-12 text-green-500" />
+                <div className="flex items-center justify-center h-32 bg-gradient-to-br from-red-500/20 to-red-500/10 rounded-xl border border-red-500/30">
+                  <X className="h-12 w-12 text-red-500" />
                 </div>
                 <div className="flex items-center justify-center h-32 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl border border-primary/30">
                   <Film className="h-12 w-12 text-primary" />
                 </div>
-                <div className="flex items-center justify-center h-32 bg-gradient-to-br from-red-500/20 to-red-500/10 rounded-xl border border-red-500/30">
-                  <X className="h-12 w-12 text-red-500" />
+                <div className="flex items-center justify-center h-32 bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-xl border border-green-500/30">
+                  <Heart className="h-12 w-12 text-green-500" />
                 </div>
               </div>
               <p className="mt-4 text-sm text-muted-foreground">Swipez à droite pour aimer, à gauche pour passer</p>
