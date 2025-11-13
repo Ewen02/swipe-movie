@@ -8,5 +8,5 @@ export class OauthUpsertDto {
 
   @ApiProperty({ example: 'Richard', description: 'User name' })
   @IsString()
-  name: string;
+  name!: string;
 }

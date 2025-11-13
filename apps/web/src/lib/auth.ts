@@ -13,16 +13,25 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user }) {
       try {
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/oauth-upsert`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/oauth-upsert`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: user.email, name: user.name ?? undefined }),
         })
+
+        if (!response.ok) {
+          const text = await response.text()
+          console.error("oauth-upsert failed with status:", response.status, "body:", text)
+          // Bloquer l'authentification si l'upsert échoue
+          return false
+        }
+
+        return true
       } catch (e) {
         console.error("oauth-upsert failed", e)
+        // Bloquer l'authentification si l'upsert échoue
         return false
       }
-      return true
     },
     async jwt({ token, user }) {
       if (user?.email) {
@@ -32,9 +41,15 @@ export const authOptions: NextAuthOptions = {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: user.email }),
           })
+
           if (res.ok) {
             const data = await res.json()
-            if (data?.accessToken) token.accessToken = data.accessToken
+            if (data?.accessToken) {
+              token.accessToken = data.accessToken
+            }
+          } else {
+            const text = await res.text()
+            console.error("login-oauth failed with status:", res.status, "body:", text)
           }
         } catch (e) {
           console.error("login-oauth failed", e)
