@@ -1,103 +1,248 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import Image from "next/image"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { ArrowRight, Users, Film, Sparkles, Heart, X } from "lucide-react"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
+
+export default function LandingPage() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push("/rooms")
+    }
+  }, [status, router])
+
+  if (status === "loading") {
+    return null // or a loading spinner
+  }
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
+      {/* Header */}
+      <header className="container mx-auto px-4 py-6">
+        <nav className="flex items-center justify-between">
+          <Link href="/" className="hover:opacity-80 transition-opacity">
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+              src="/logo.png"
+              alt="Swipe Movie"
+              width={220}
+              height={48}
+              className="h-12 w-auto"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </Link>
+          <Link href="/login">
+            <Button size="lg">
+              Commencer
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+        </nav>
+      </header>
+
+      {/* Hero Section */}
+      <section className="container mx-auto px-4 py-20 md:py-32">
+        <div className="text-center max-w-4xl mx-auto">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-gradient">
+            Décidez en groupe quel film regarder 🎬
+          </h1>
+          <p className="text-xl md:text-2xl text-muted-foreground mb-8">
+            Fini les débats sans fin ! Swipez, matchez et regardez ensemble en quelques secondes.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/login">
+              <Button size="lg" className="text-lg px-8 py-6">
+                Commencer gratuitement
+                <Sparkles className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+            <Button size="lg" variant="outline" className="text-lg px-8 py-6">
+              Voir la démo
+              <Film className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+
+          {/* Visual Demo */}
+          <div className="mt-16 relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 blur-3xl" />
+            <div className="relative bg-card border-2 border-border rounded-2xl p-8 shadow-2xl">
+              <div className="grid grid-cols-3 gap-4">
+                {/* Card animations demo */}
+                <div className="flex items-center justify-center h-32 bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-xl border border-green-500/30">
+                  <Heart className="h-12 w-12 text-green-500" />
+                </div>
+                <div className="flex items-center justify-center h-32 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl border border-primary/30">
+                  <Film className="h-12 w-12 text-primary" />
+                </div>
+                <div className="flex items-center justify-center h-32 bg-gradient-to-br from-red-500/20 to-red-500/10 rounded-xl border border-red-500/30">
+                  <X className="h-12 w-12 text-red-500" />
+                </div>
+              </div>
+              <p className="mt-4 text-sm text-muted-foreground">Swipez à droite pour aimer, à gauche pour passer</p>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+      </section>
+
+      {/* How it works */}
+      <section className="container mx-auto px-4 py-20 bg-muted/30 rounded-3xl my-20">
+        <h2 className="text-4xl font-bold text-center mb-16">
+          Comment ça marche ? 🤔
+        </h2>
+        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <Card className="border-2 hover:border-primary/50 transition-colors">
+            <CardContent className="pt-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center mb-4 text-3xl">
+                1️⃣
+              </div>
+              <h3 className="text-2xl font-bold mb-2">Créez une room</h3>
+              <p className="text-muted-foreground">
+                Choisissez un nom, le genre de films, les plateformes de streaming et tous les filtres que vous voulez
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-2 hover:border-primary/50 transition-colors">
+            <CardContent className="pt-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center mb-4 text-3xl">
+                2️⃣
+              </div>
+              <h3 className="text-2xl font-bold mb-2">Invitez vos amis</h3>
+              <p className="text-muted-foreground">
+                Partagez le code de la room avec vos colocs, votre famille ou vos potes. Tout le monde peut rejoindre !
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-2 hover:border-primary/50 transition-colors">
+            <CardContent className="pt-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center mb-4 text-3xl">
+                3️⃣
+              </div>
+              <h3 className="text-2xl font-bold mb-2">Swipez et matchez</h3>
+              <p className="text-muted-foreground">
+                Chacun swipe de son côté. Dès que tout le monde aime le même film : c'est un match ! 🎉
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="container mx-auto px-4 py-20">
+        <h2 className="text-4xl font-bold text-center mb-16">
+          Pourquoi Swipe Movie ? ✨
+        </h2>
+        <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+              <Users className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold mb-2">Décision démocratique</h3>
+              <p className="text-muted-foreground">
+                Tout le monde a son mot à dire. Plus de "c'est toujours toi qui choisis !"
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+              <Sparkles className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold mb-2">Filtres puissants</h3>
+              <p className="text-muted-foreground">
+                Genre, note, année, durée, plateforme de streaming... Trouvez exactement ce que vous voulez
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+              <Film className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold mb-2">Catalogue immense</h3>
+              <p className="text-muted-foreground">
+                Des milliers de films et séries grâce à la base de données The Movie Database
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+              <Heart className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold mb-2">Interface fun</h3>
+              <p className="text-muted-foreground">
+                Swipez comme sur Tinder ! C'est rapide, intuitif et addictif
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Final */}
+      <section className="container mx-auto px-4 py-20">
+        <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-accent/5">
+          <CardContent className="text-center py-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Prêt à arrêter de chercher ? 🍿
+            </h2>
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Créez votre première room et découvrez à quel point c'est simple de décider en groupe
+            </p>
+            <Link href="/login">
+              <Button size="lg" className="text-lg px-12 py-6">
+                Commencer maintenant
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+            <p className="mt-4 text-sm text-muted-foreground">
+              Gratuit · Sans carte bancaire · Prêt en 30 secondes
+            </p>
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* Footer */}
+      <footer className="container mx-auto px-4 py-12 border-t">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+            src="/logo.png"
+            alt="Swipe Movie"
+            width={160}
+            height={36}
+            className="h-9 w-auto"
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+          <div className="flex gap-6 text-sm text-muted-foreground">
+            <Link href="/about" className="hover:text-foreground transition-colors">
+              À propos
+            </Link>
+            <Link href="/contact" className="hover:text-foreground transition-colors">
+              Contact
+            </Link>
+            <Link href="/privacy" className="hover:text-foreground transition-colors">
+              Confidentialité
+            </Link>
+            <Link href="/terms" className="hover:text-foreground transition-colors">
+              CGU
+            </Link>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            © 2025 Swipe Movie. Tous droits réservés.
+          </p>
+        </div>
       </footer>
     </div>
-  );
+  )
 }
