@@ -82,7 +82,6 @@ export async function getMoviesByGenre(
   }
 
   const url = `/movies/genre/${genreId}?${params.toString()}`
-  console.log("Fetching movies from API:", url, "Filters:", filters)
 
   return parseResponse(
     await GET(url),
@@ -100,4 +99,34 @@ export async function getMovieDetails(movieId: number): Promise<MovieDetails> {
     movieDetailsSchema,
     withErrors("MOVIES")
   )
+}
+
+/**
+ * Get detailed information about multiple movies in batch
+ */
+export async function getBatchMovieDetails(movieIds: number[]): Promise<MovieDetails[]> {
+  if (movieIds.length === 0) return []
+
+  const response = await GET(`/movies/batch/details?ids=${movieIds.join(',')}`)
+  if (!response.ok) {
+    throw new Error("Failed to fetch batch movie details")
+  }
+
+  const data = await response.json()
+  return Array.isArray(data) ? data : []
+}
+
+/**
+ * Get watch providers for a specific movie
+ */
+export async function getMovieWatchProviders(
+  movieId: number,
+  type: "movie" | "tv" = "movie"
+): Promise<number[]> {
+  const response = await GET(`/movies/${movieId}/providers?type=${type}`)
+  if (!response.ok) {
+    return []
+  }
+  const data = await response.json()
+  return Array.isArray(data) ? data : []
 }

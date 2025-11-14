@@ -76,6 +76,8 @@ model Swipe {
 
   user      User     @relation(fields: [userId], references: [id])
 
+  @@index([roomId])
+  @@index([userId])
   @@index([roomId, movieId])
   @@unique([roomId, userId, movieId], name: "userId_roomId_movieId")
 }
@@ -87,5 +89,7 @@ model Match {
   createdAt DateTime @default(now())
   room      Room     @relation(fields: [roomId], references: [id])
 
+  @@index([roomId])
+  @@index([createdAt])
   @@unique([roomId, movieId])
 }

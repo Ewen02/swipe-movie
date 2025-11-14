@@ -9,6 +9,7 @@ import {
   TMDbDiscoverResponse,
   TMDbGenresResponse,
   TMDbMovieDetailsResponse,
+  TMDbWatchProvidersResponse,
 } from '../tmdb/types/tmdb.types';
 import { TmdbService } from '../tmdb/tmdb.service';
 import { TMDB_IMAGE_BASE, TMDB_DEFAULT_LANG } from '../tmdb/tmdb.constants';
@@ -121,8 +122,12 @@ export class MoviesService {
     const params = new URLSearchParams({
       language: TMDB_DEFAULT_LANG,
       page: page.toString(),
-      with_genres: genreId.toString(),
     });
+
+    // Only add with_genres if genreId is not 0 (0 means "all genres")
+    if (genreId !== 0) {
+      params.append('with_genres', genreId.toString());
+    }
 
     // Add filters
     if (filters?.minRating) {
@@ -161,11 +166,8 @@ export class MoviesService {
     }
 
     const url = `/discover/${mediaType}?${params.toString()}`;
-    console.log('[MoviesService] TMDb URL:', url);
-    console.log('[MoviesService] Filters applied:', JSON.stringify(filters, null, 2));
 
     const json = await this.tmdb.fetchJson<TMDbDiscoverResponse>(url);
-    console.log(`[MoviesService] TMDb returned ${json.results?.length || 0} movies`);
 
     return (json.results ?? []).map((movie) => this.mapToMovieSummary(movie));
   }
@@ -174,5 +176,43 @@ export class MoviesService {
     const url = `/genre/movie/list?language=${TMDB_DEFAULT_LANG}`;
     const json = await this.tmdb.fetchJson<TMDbGenresResponse>(url);
     return (json.genres ?? []).map((genre) => this.mapToMovieGenre(genre));
+  }
+
+  async getWatchProviders(
+    movieId: number,
+    type: 'movie' | 'tv' = 'movie',
+  ): Promise<number[]> {
+    const mediaType = type === 'tv' ? 'tv' : 'movie';
+    const url = `/${mediaType}/${movieId}/watch/providers`;
+
+    try {
+      const json = await this.tmdb.fetchJson<TMDbWatchProvidersResponse>(url);
+
+      // Get providers for France (FR) - flatrate means streaming subscription
+      const frProviders = json.results?.['FR'];
+      if (!frProviders?.flatrate) {
+        return [];
+      }
+
+      // Return array of provider IDs
+      return frProviders.flatrate.map(p => p.provider_id);
+    } catch (error) {
+      console.error(`Failed to fetch watch providers for ${mediaType} ${movieId}:`, error);
+      return [];
+    }
+  }
+
+  async getBatchMovieDetails(movieIds: number[]): Promise<MovieDetailsDto[]> {
+    // Fetch all movie details in parallel
+    const results = await Promise.allSettled(
+      movieIds.map(id => this.getMovieDetails(id))
+    );
+
+    // Filter out failed requests and return successful ones
+    return results
+      .filter((result): result is PromiseFulfilledResult<MovieDetailsDto> =>
+        result.status === 'fulfilled'
+      )
+      .map(result => result.value);
   }
 }

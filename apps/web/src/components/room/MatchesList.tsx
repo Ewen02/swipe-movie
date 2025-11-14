@@ -3,17 +3,20 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Star, ExternalLink, Users } from "lucide-react"
+import { ExternalLink } from "lucide-react"
 import { Match } from "@/schemas/swipes"
 import { MovieBasic } from "@/schemas/movies"
+import { RoomWithMembersResponseDto } from "@/schemas/rooms"
 import { getMatchesByRoom } from "@/lib/api/swipes"
-import { getMovieDetails } from "@/lib/api/movies"
+import { getBatchMovieDetails } from "@/lib/api/movies"
+import { RatingBadge, VoteCountBadge, ProviderList } from "@/components/ui/movie"
 import { TopMatch } from "./TopMatch"
 
 interface MatchesListProps {
   roomId: string
   totalMembers?: number
   refreshTrigger?: number
+  roomFilters?: RoomWithMembersResponseDto
 }
 
 interface MatchWithMovie extends Match {
@@ -21,7 +24,7 @@ interface MatchWithMovie extends Match {
   rankingScore?: number
 }
 
-export function MatchesList({ roomId, totalMembers = 2, refreshTrigger }: MatchesListProps) {
+export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilters }: MatchesListProps) {
   const [matches, setMatches] = useState<MatchWithMovie[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -35,26 +38,30 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger }: Matche
       setLoading(true)
       const matchesData = await getMatchesByRoom(roomId)
 
-      // Load movie details for each match and calculate ranking score
-      const matchesWithMovies = await Promise.all(
-        matchesData.map(async (match) => {
-          try {
-            const movie = await getMovieDetails(parseInt(match.movieId))
+      // Batch load movie details for all matches
+      const movieIds = matchesData.map((match) => parseInt(match.movieId))
+      const movies = await getBatchMovieDetails(movieIds)
 
-            // Calculate ranking score:
-            // - 70% weight: vote count (agreement percentage)
-            // - 30% weight: TMDb rating
-            const agreementScore = (match.voteCount / totalMembers) * 70
-            const ratingScore = (movie.voteAverage / 10) * 30
-            const rankingScore = agreementScore + ratingScore
+      // Create a map of movieId -> movie for quick lookup
+      const movieMap = new Map(movies.map((movie) => [movie.id.toString(), movie]))
 
-            return { ...match, movie, rankingScore }
-          } catch (err) {
-            console.error(`Failed to load movie ${match.movieId}:`, err)
-            return { ...match, rankingScore: 0 }
-          }
-        })
-      )
+      // Calculate ranking score for each match
+      const matchesWithMovies = matchesData.map((match) => {
+        const movie = movieMap.get(match.movieId)
+
+        if (!movie) {
+          return { ...match, rankingScore: 0 }
+        }
+
+        // Calculate ranking score:
+        // - 70% weight: vote count (agreement percentage)
+        // - 30% weight: TMDb rating
+        const agreementScore = (match.voteCount / totalMembers) * 70
+        const ratingScore = (movie.voteAverage / 10) * 30
+        const rankingScore = agreementScore + ratingScore
+
+        return { ...match, movie, rankingScore }
+      })
 
       // Sort by ranking score (highest first)
       matchesWithMovies.sort((a, b) => (b.rankingScore || 0) - (a.rankingScore || 0))
@@ -119,7 +126,7 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger }: Matche
     <div className="space-y-6">
       {/* Top Match Section */}
       {topMatch && topMatch.movie && (
-        <TopMatch match={topMatch} movie={topMatch.movie} totalMembers={totalMembers} />
+        <TopMatch match={topMatch} movie={topMatch.movie} totalMembers={totalMembers} roomFilters={roomFilters} />
       )}
 
       {/* Other Matches Section */}
@@ -155,25 +162,30 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger }: Matche
                           </div>
                         </div>
                         {/* Vote count badge */}
-                        <div className="absolute top-2 left-2">
-                          <Badge className="bg-blue-500 text-white text-xs">
-                            <Users className="w-3 h-3 mr-1" />
-                            {match.voteCount}
-                          </Badge>
-                        </div>
+                        <VoteCountBadge voteCount={match.voteCount} variant="absolute" />
+
+                        {/* Watch Providers */}
+                        {roomFilters?.watchProviders && roomFilters.watchProviders.length > 0 && (
+                          <ProviderList
+                            providerIds={roomFilters.watchProviders}
+                            variant="match"
+                            maxVisible={2}
+                            showNames={false}
+                          />
+                        )}
                       </div>
                       <div className="p-3 space-y-1">
                         <h4 className="font-semibold text-sm line-clamp-2 text-gray-900 dark:text-white">
                           {match.movie.title}
                         </h4>
-                        <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
-                          <div className="flex items-center gap-1">
-                            <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                            <span>{match.movie.voteAverage.toFixed(1)}</span>
-                          </div>
-                          <span className="text-green-600 dark:text-green-400 font-medium">
-                            {Math.round((match.voteCount / totalMembers) * 100)}%
-                          </span>
+                        <div className="flex items-center justify-between text-xs">
+                          <RatingBadge rating={match.movie.voteAverage} variant="match" />
+                          <VoteCountBadge
+                            voteCount={match.voteCount}
+                            totalMembers={totalMembers}
+                            showPercentage={true}
+                            variant="inline"
+                          />
                         </div>
                       </div>
                     </>

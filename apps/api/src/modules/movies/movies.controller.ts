@@ -127,10 +127,39 @@ export class MoviesController {
     );
   }
 
+  @ApiOperation({ summary: 'Get multiple movie details in batch' })
+  @ApiOkResponse({ type: [MovieDetailsDto] })
+  @ApiQuery({
+    name: 'ids',
+    required: true,
+    description: 'Comma-separated list of movie IDs',
+  })
+  @Get('batch/details')
+  getBatchMovieDetails(@Query('ids') ids: string) {
+    const movieIds = ids.split(',').map((id) => parseInt(id.trim(), 10));
+    return this.moviesService.getBatchMovieDetails(movieIds);
+  }
+
   @ApiOperation({ summary: 'Get movie details' })
   @ApiOkResponse({ type: MovieDetailsDto })
   @Get(':movieId')
   getMovieDetails(@Param('movieId', ParseIntPipe) movieId: number) {
     return this.moviesService.getMovieDetails(movieId);
+  }
+
+  @ApiOperation({ summary: 'Get watch providers for a movie' })
+  @ApiOkResponse({ type: [Number], description: 'Array of provider IDs' })
+  @ApiQuery({
+    name: 'type',
+    required: false,
+    enum: ['movie', 'tv'],
+    description: 'Type of content (defaults to movie)',
+  })
+  @Get(':movieId/providers')
+  getWatchProviders(
+    @Param('movieId', ParseIntPipe) movieId: number,
+    @Query('type') type?: string,
+  ) {
+    return this.moviesService.getWatchProviders(movieId, type as 'movie' | 'tv');
   }
 }
