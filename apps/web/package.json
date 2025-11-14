@@ -2,7 +2,15 @@
   "name": "swipe-movie-web",
   "version": "1.0.0",
   "description": "Swipe Movie - Trouvez votre prochain film à regarder entre amis grâce à un système de match intelligent",
-  "keywords": ["swipe", "movie", "film", "match", "streaming", "friends", "tinder for movies"],
+  "keywords": [
+    "swipe",
+    "movie",
+    "film",
+    "match",
+    "streaming",
+    "friends",
+    "tinder for movies"
+  ],
   "author": "Swipe Movie Team",
   "homepage": "https://swipe-movie-web.vercel.app",
   "repository": {
@@ -26,6 +34,7 @@
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tabs": "^1.1.13",
+    "@vercel/analytics": "^1.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.24",
