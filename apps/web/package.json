@@ -1,6 +1,14 @@
 {
-  "name": "web",
-  "version": "0.1.0",
+  "name": "swipe-movie-web",
+  "version": "1.0.0",
+  "description": "Swipe Movie - Trouvez votre prochain film à regarder entre amis grâce à un système de match intelligent",
+  "keywords": ["swipe", "movie", "film", "match", "streaming", "friends", "tinder for movies"],
+  "author": "Swipe Movie Team",
+  "homepage": "https://swipe-movie-web.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ewen02/swipe-movie"
+  },
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",

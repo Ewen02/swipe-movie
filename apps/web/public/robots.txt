@@ -1,0 +1,9 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Allow: /login
+Disallow: /api/
+Disallow: /rooms/
+
+# Sitemap
+Sitemap: https://swipe-movie-web.vercel.app/sitemap.xml

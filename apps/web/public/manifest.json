@@ -1,0 +1,29 @@
+{
+  "name": "Swipe Movie - Trouvez votre prochain film entre amis",
+  "short_name": "Swipe Movie",
+  "description": "Découvrez votre prochain film à regarder en swipant avec vos amis",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#ec4899",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon_logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon_logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["entertainment", "lifestyle"],
+  "lang": "fr-FR",
+  "dir": "ltr",
+  "scope": "/",
+  "screenshots": []
+}
