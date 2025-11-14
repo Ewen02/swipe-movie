@@ -8,6 +8,7 @@ import { ArrowRight, Users, Film, Sparkles, Heart, X } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
+import { ThemeToggle } from "@/components/layout/ThemeToggle"
 
 export default function LandingPage() {
   const { data: session, status } = useSession()
@@ -38,12 +39,15 @@ export default function LandingPage() {
               className="h-12 w-auto"
             />
           </Link>
-          <Link href="/login">
-            <Button size="lg">
-              Commencer
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <Link href="/login">
+              <Button size="lg">
+                Commencer
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
         </nav>
       </header>
 

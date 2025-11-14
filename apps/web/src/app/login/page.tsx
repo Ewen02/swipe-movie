@@ -8,6 +8,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Film, Sparkles, Users } from "lucide-react"
+import { ThemeToggle } from "@/components/layout/ThemeToggle"
 
 export default function LoginPage() {
   const { data: session, status } = useSession()
@@ -49,15 +50,18 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex flex-col">
       {/* Header */}
       <header className="container mx-auto px-4 py-6">
-        <Link href="/" className="hover:opacity-80 transition-opacity">
-          <Image
-            src="/logo.png"
-            alt="Swipe Movie"
-            width={220}
-            height={48}
-            className="h-12 w-auto"
-          />
-        </Link>
+        <div className="flex items-center justify-between">
+          <Link href="/" className="hover:opacity-80 transition-opacity">
+            <Image
+              src="/logo.png"
+              alt="Swipe Movie"
+              width={220}
+              height={48}
+              className="h-12 w-auto"
+            />
+          </Link>
+          <ThemeToggle />
+        </div>
       </header>
 
       {/* Main Content */}
