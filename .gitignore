@@ -1,2 +1,39 @@
 node_modules
 .DS_Store
+
+# Environment variables - NEVER COMMIT
+*.env
+*.env.local
+*.env.*.local
+.env.production
+.env.development.local
+.env.test.local
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary
+.tmp/
+temp/

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../../infra/prisma.service';
 import { MatchesService } from '../matches/matches.service';
 
@@ -17,13 +17,13 @@ export class SwipesService {
     movieId: string,
     value: boolean,
   ): Promise<ResponseCreateSwipeDto> {
-    const room = await this.prisma.room.findUnique({
-      where: { id: roomId },
-      select: { id: true },
+    // Verify user is a member of the room
+    const member = await this.prisma.roomMember.findUnique({
+      where: { roomId_userId: { roomId, userId } },
     });
 
-    if (!room) {
-      throw new NotFoundException('Room not found');
+    if (!member) {
+      throw new ForbiddenException('You are not a member of this room');
     }
 
     const swipe = await this.prisma.swipe.upsert({
@@ -98,5 +98,65 @@ export class SwipesService {
         roomId,
       },
     });
+  }
+
+  async delete(
+    userId: string,
+    roomId: string,
+    movieId: string,
+  ): Promise<{ deleted: boolean }> {
+    const room = await this.prisma.room.findUnique({
+      where: { id: roomId },
+      select: { id: true },
+    });
+
+    if (!room) {
+      throw new NotFoundException('Room not found');
+    }
+
+    // Find the swipe to check if it was a like (value: true)
+    const swipe = await this.prisma.swipe.findUnique({
+      where: {
+        userId_roomId_movieId: {
+          userId,
+          roomId,
+          movieId,
+        },
+      },
+    });
+
+    if (!swipe) {
+      // Swipe doesn't exist, nothing to delete
+      return { deleted: false };
+    }
+
+    const wasLike = swipe.value;
+
+    // Delete the swipe
+    await this.prisma.swipe.delete({
+      where: {
+        userId_roomId_movieId: {
+          userId,
+          roomId,
+          movieId,
+        },
+      },
+    });
+
+    // If it was a like, check if we need to delete the match
+    if (wasLike) {
+      const remainingLikes = await this.prisma.swipe.count({
+        where: { roomId, movieId, value: true },
+      });
+
+      // If less than 2 likes remain, delete the match
+      if (remainingLikes < 2) {
+        await this.prisma.match.deleteMany({
+          where: { roomId, movieId },
+        });
+      }
+    }
+
+    return { deleted: true };
   }
 }

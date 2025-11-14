@@ -54,6 +54,7 @@ model Room {
   deletedAt DateTime?
 
   @@index([type, genreId])
+  @@index([deletedAt])
 }
 
 model RoomMember {
