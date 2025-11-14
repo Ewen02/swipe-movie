@@ -10,6 +10,7 @@ import {
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { ConfigService } from '@nestjs/config';
+import { MatchBaseDto } from './dtos/match.dto';
 
 @WebSocketGateway({
   cors: {
@@ -67,7 +68,7 @@ export class MatchesGateway
   }
 
   // Method called by the service when a match is created
-  emitMatchCreated(roomId: string, match: any, movie?: any) {
+  emitMatchCreated(roomId: string, match: MatchBaseDto, movie?: unknown) {
     this.logger.log(`Emitting match created for room: ${roomId}`);
     this.server.to(`room:${roomId}`).emit('matchCreated', {
       roomId,

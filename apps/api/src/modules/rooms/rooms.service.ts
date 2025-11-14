@@ -27,6 +27,56 @@ export class RoomsService {
 
   constructor(private prisma: PrismaService) {}
 
+  /**
+   * Maps a room object to a response DTO with optional fields
+   */
+  private mapToRoomResponse<T extends RoomJoinResponseDto | RoomWithMembersResponseDto>(
+    room: any,
+    members?: Array<{ user: { id: string; name: string | null } }>,
+  ): T {
+    const response: any = {
+      id: room.id,
+      name: room.name,
+      code: room.code,
+      genreId: room.genreId,
+      type: room.type as RoomType,
+      createdBy: room.createdBy,
+      createdAt: room.createdAt,
+      watchProviders: room.watchProviders,
+    };
+
+    if (members) {
+      response.members = members.map((rm) => ({
+        id: rm.user.id,
+        name: rm.user.name,
+      }));
+    }
+
+    if (room.minRating !== null) {
+      response.minRating = room.minRating;
+    }
+    if (room.releaseYearMin !== null) {
+      response.releaseYearMin = room.releaseYearMin;
+    }
+    if (room.releaseYearMax !== null) {
+      response.releaseYearMax = room.releaseYearMax;
+    }
+    if (room.runtimeMin !== null) {
+      response.runtimeMin = room.runtimeMin;
+    }
+    if (room.runtimeMax !== null) {
+      response.runtimeMax = room.runtimeMax;
+    }
+    if (room.watchRegion !== null) {
+      response.watchRegion = room.watchRegion;
+    }
+    if (room.originalLanguage !== null) {
+      response.originalLanguage = room.originalLanguage;
+    }
+
+    return response as T;
+  }
+
   async create(
     userId: string,
     dto: CreateRoomDto,
@@ -132,40 +182,7 @@ export class RoomsService {
 
     if (!joinedRoom) throw new NotFoundException('Room not found');
 
-    const response: RoomJoinResponseDto = {
-      id: joinedRoom.id,
-      name: joinedRoom.name,
-      code: joinedRoom.code,
-      genreId: joinedRoom.genreId,
-      type: joinedRoom.type as RoomType,
-      createdBy: joinedRoom.createdBy,
-      createdAt: joinedRoom.createdAt,
-      watchProviders: joinedRoom.watchProviders,
-    };
-
-    if (joinedRoom.minRating !== null) {
-      response.minRating = joinedRoom.minRating;
-    }
-    if (joinedRoom.releaseYearMin !== null) {
-      response.releaseYearMin = joinedRoom.releaseYearMin;
-    }
-    if (joinedRoom.releaseYearMax !== null) {
-      response.releaseYearMax = joinedRoom.releaseYearMax;
-    }
-    if (joinedRoom.runtimeMin !== null) {
-      response.runtimeMin = joinedRoom.runtimeMin;
-    }
-    if (joinedRoom.runtimeMax !== null) {
-      response.runtimeMax = joinedRoom.runtimeMax;
-    }
-    if (joinedRoom.watchRegion !== null) {
-      response.watchRegion = joinedRoom.watchRegion;
-    }
-    if (joinedRoom.originalLanguage !== null) {
-      response.originalLanguage = joinedRoom.originalLanguage;
-    }
-
-    return response;
+    return this.mapToRoomResponse<RoomJoinResponseDto>(joinedRoom);
   }
 
   async leave(userId: string, roomId: string) {
@@ -234,44 +251,7 @@ export class RoomsService {
       throw new NotFoundException('Room not found');
     }
 
-    const response: RoomWithMembersResponseDto = {
-      id: room.id,
-      name: room.name,
-      code: room.code,
-      genreId: room.genreId,
-      type: room.type as RoomType,
-      createdBy: room.createdBy,
-      createdAt: room.createdAt,
-      watchProviders: room.watchProviders,
-      members: roomMembers.map((rm) => ({
-        id: rm.user.id,
-        name: rm.user.name,
-      })),
-    };
-
-    if (room.minRating !== null) {
-      response.minRating = room.minRating;
-    }
-    if (room.releaseYearMin !== null) {
-      response.releaseYearMin = room.releaseYearMin;
-    }
-    if (room.releaseYearMax !== null) {
-      response.releaseYearMax = room.releaseYearMax;
-    }
-    if (room.runtimeMin !== null) {
-      response.runtimeMin = room.runtimeMin;
-    }
-    if (room.runtimeMax !== null) {
-      response.runtimeMax = room.runtimeMax;
-    }
-    if (room.watchRegion !== null) {
-      response.watchRegion = room.watchRegion;
-    }
-    if (room.originalLanguage !== null) {
-      response.originalLanguage = room.originalLanguage;
-    }
-
-    return response;
+    return this.mapToRoomResponse<RoomWithMembersResponseDto>(room, roomMembers);
   }
 
   async getByCode(code: string): Promise<RoomWithMembersResponseDto> {
@@ -301,44 +281,7 @@ export class RoomsService {
       throw new NotFoundException('Room not found');
     }
 
-    const response: RoomWithMembersResponseDto = {
-      id: room.id,
-      name: room.name,
-      code: room.code,
-      genreId: room.genreId,
-      type: room.type as RoomType,
-      createdBy: room.createdBy,
-      createdAt: room.createdAt,
-      watchProviders: room.watchProviders,
-      members: room.members.map((rm) => ({
-        id: rm.user.id,
-        name: rm.user.name,
-      })),
-    };
-
-    if (room.minRating !== null) {
-      response.minRating = room.minRating;
-    }
-    if (room.releaseYearMin !== null) {
-      response.releaseYearMin = room.releaseYearMin;
-    }
-    if (room.releaseYearMax !== null) {
-      response.releaseYearMax = room.releaseYearMax;
-    }
-    if (room.runtimeMin !== null) {
-      response.runtimeMin = room.runtimeMin;
-    }
-    if (room.runtimeMax !== null) {
-      response.runtimeMax = room.runtimeMax;
-    }
-    if (room.watchRegion !== null) {
-      response.watchRegion = room.watchRegion;
-    }
-    if (room.originalLanguage !== null) {
-      response.originalLanguage = room.originalLanguage;
-    }
-
-    return response;
+    return this.mapToRoomResponse<RoomWithMembersResponseDto>(room, room.members);
   }
 
   async getUserRooms(userId: string): Promise<MemberRoomsResponseDto> {
