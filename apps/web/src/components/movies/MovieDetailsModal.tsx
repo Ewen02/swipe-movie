@@ -84,21 +84,27 @@ export function MovieDetailsModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         {loading && (
-          <div className="space-y-4">
-            <Skeleton className="h-8 w-3/4" />
-            <Skeleton className="h-64 w-full" />
-            <Skeleton className="h-32 w-full" />
-          </div>
+          <>
+            <DialogTitle className="sr-only">Chargement des détails du film</DialogTitle>
+            <div className="space-y-4">
+              <Skeleton className="h-8 w-3/4" />
+              <Skeleton className="h-64 w-full" />
+              <Skeleton className="h-32 w-full" />
+            </div>
+          </>
         )}
 
         {error && (
-          <div className="text-center py-8">
-            <Film className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-            <p className="text-red-500">{error}</p>
-            <Button onClick={loadMovieDetails} variant="outline" className="mt-4">
-              Réessayer
-            </Button>
-          </div>
+          <>
+            <DialogTitle className="sr-only">Erreur de chargement</DialogTitle>
+            <div className="text-center py-8">
+              <Film className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+              <p className="text-red-500">{error}</p>
+              <Button onClick={loadMovieDetails} variant="outline" className="mt-4">
+                Réessayer
+              </Button>
+            </div>
+          </>
         )}
 
         {movie && !loading && (

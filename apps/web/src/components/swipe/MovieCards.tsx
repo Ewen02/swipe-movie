@@ -287,13 +287,13 @@ function MovieCard({
                   <Button
                     size="icon"
                     variant="secondary"
-                    className="shrink-0 bg-white/90 hover:bg-white"
+                    className="shrink-0 bg-white/95 hover:bg-white shadow-lg border border-white/20 backdrop-blur-sm"
                     onClick={(e) => {
                       e.stopPropagation()
                       onShowDetails(movie.id)
                     }}
                   >
-                    <Info className="w-4 h-4" />
+                    <Info className="w-4 h-4 text-primary" />
                   </Button>
                 )}
               </div>
