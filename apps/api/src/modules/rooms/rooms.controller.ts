@@ -85,17 +85,16 @@ export class RoomsController {
   @Get('my')
   userRooms(
     @UserId() userId: string,
-    @Query() pagination?: PaginationQueryDto,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
   ) {
-    // If no pagination params provided, pass undefined to get all rooms
-    const hasPage = pagination?.page !== undefined && pagination?.page !== null;
-    const hasLimit =
-      pagination?.limit !== undefined && pagination?.limit !== null;
+    // Build pagination object only if params are provided
+    const pagination =
+      page !== undefined || limit !== undefined
+        ? { page, limit }
+        : undefined;
 
-    return this.service.getUserRooms(
-      userId,
-      hasPage || hasLimit ? pagination : undefined,
-    );
+    return this.service.getUserRooms(userId, pagination);
   }
 
   @ApiOperation({ summary: 'Get room details by code' })
