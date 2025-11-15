@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://swipe-movie-web.vercel.app'),
+  metadataBase: new URL('https://swipe-movie.com'),
   title: {
     default: 'Swipe Movie - Trouvez votre prochain film entre amis',
     template: '%s | Swipe Movie'
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'fr_FR',
-    url: 'https://swipe-movie-web.vercel.app',
+    url: 'https://swipe-movie.com',
     siteName: 'Swipe Movie',
     title: 'Swipe Movie - Trouvez votre prochain film entre amis',
     description: 'Découvrez votre prochain film à regarder en swipant avec vos amis. Système de match intelligent pour trouver le film parfait.',
