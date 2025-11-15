@@ -87,11 +87,14 @@ export class RoomsController {
     @UserId() userId: string,
     @Query() pagination?: PaginationQueryDto,
   ) {
-    // If no pagination params, return all rooms
-    const hasPagination = pagination?.page !== undefined || pagination?.limit !== undefined;
+    // If no pagination params provided, pass undefined to get all rooms
+    const hasPage = pagination?.page !== undefined && pagination?.page !== null;
+    const hasLimit =
+      pagination?.limit !== undefined && pagination?.limit !== null;
+
     return this.service.getUserRooms(
       userId,
-      hasPagination ? pagination : undefined,
+      hasPage || hasLimit ? pagination : undefined,
     );
   }
 
