@@ -81,11 +81,12 @@ export function useMoviesData({ room, swipedMovieIds }: UseMoviesDataProps): Use
 
       // Load watch providers for the movies
       try {
-        const movieIds = shuffledMovies.map(m => m.id)
+        const validMovies = shuffledMovies.filter(Boolean)
+        const movieIds = validMovies.map(m => m.id)
         const providersMap = await getBatchWatchProviders(movieIds, type)
 
         // Add providers to movies
-        const moviesWithProviders = shuffledMovies.map(movie => ({
+        const moviesWithProviders = validMovies.map(movie => ({
           ...movie,
           watchProviders: providersMap[movie.id] || []
         }))
@@ -109,7 +110,7 @@ export function useMoviesData({ room, swipedMovieIds }: UseMoviesDataProps): Use
         const currentMovieCount = append ? movies.length + moviesWithProviders.length : moviesWithProviders.length
         if (currentMovieCount < 5 && moviesWithProviders.length > 0 && page < 5) {
           setMoviesLoading(false) // Temporarily set to false
-          await loadMovies(genreId, type, page + 1, true, roomData)
+          await loadMovies(genreId, type, page + 1, true, roomData, customSwipedIds || swipedMovieIds)
           return // Don't set loading to false again, the recursive call will handle it
         }
       } catch (providerErr) {
@@ -138,9 +139,9 @@ export function useMoviesData({ room, swipedMovieIds }: UseMoviesDataProps): Use
   const handleLoadMoreMovies = useCallback(() => {
     if (room?.genreId !== null && room?.genreId !== undefined && !moviesLoading) {
       const nextPage = currentPage + 1
-      loadMovies(room.genreId, room.type as 'movie' | 'tv', nextPage, true)
+      loadMovies(room.genreId, room.type as 'movie' | 'tv', nextPage, true, room, swipedMovieIds)
     }
-  }, [room, currentPage, moviesLoading, loadMovies])
+  }, [room, currentPage, moviesLoading, loadMovies, swipedMovieIds])
 
   return {
     movies,
