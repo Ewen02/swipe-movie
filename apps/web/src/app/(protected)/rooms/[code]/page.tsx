@@ -1,8 +1,10 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
 import { createSwipe, deleteSwipe, getMySwipesByRoom } from "@/lib/api/swipes"
+import { joinRoom } from "@/lib/api/rooms"
 import { useRoomData, useMoviesData, useMatchNotifications } from "@/hooks/room"
 import type { MovieBasic } from "@/schemas/movies"
 import { Card, CardContent } from "@/components/ui/card"
@@ -12,15 +14,18 @@ import { MovieCards } from "@/components/swipe/MovieCards"
 import { MatchesList } from "@/components/room/MatchesList"
 import { MatchAnimation } from "@/components/room/MatchAnimation"
 import { ShareRoomButton } from "@/components/room/ShareRoomButton"
-import { Users, Film } from "lucide-react"
+import { Users, Film, UserPlus } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Footer } from "@/components/layout/Footer"
 import { RoomErrorBoundary } from "@/components/error"
 
 function RoomPageContent() {
+  const router = useRouter()
   const { code } = useParams<{ code: string }>()
+  const { data: session } = useSession()
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [currentTab, setCurrentTab] = useState("swipe")
+  const [joiningRoom, setJoiningRoom] = useState(false)
 
   // Custom hooks for room data, movies, and match notifications
   const {
@@ -157,6 +162,71 @@ function RoomPageContent() {
     return (
       <div className="flex h-screen items-center justify-center">
         <p className="text-muted-foreground">Room introuvable</p>
+      </div>
+    )
+  }
+
+  // Check if current user is a member of the room
+  const userId = session?.user?.id
+  const isMember = userId && room.members.some(member => member.id === userId)
+
+  const handleJoinRoom = async () => {
+    try {
+      setJoiningRoom(true)
+      await joinRoom({ code })
+      // Reload the page to refresh room data with updated membership
+      router.refresh()
+      window.location.reload()
+    } catch (err) {
+      console.error("Failed to join room:", err)
+      alert("Impossible de rejoindre la room. Veuillez réessayer.")
+    } finally {
+      setJoiningRoom(false)
+    }
+  }
+
+  // If user is not a member, show join screen
+  if (!isMember) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex items-center justify-center">
+        <Card className="max-w-md w-full mx-4">
+          <CardContent className="p-8 text-center">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-6">
+              <UserPlus className="w-10 h-10 text-primary" />
+            </div>
+            <h1 className="text-2xl font-bold mb-2">{room.name || "Room sans nom"}</h1>
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <Badge variant="secondary" className="text-sm">
+                {room.type === 'movie' ? '🎬 Films' : '📺 Séries'}
+              </Badge>
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <Users className="w-4 h-4" />
+                <span>{room.members.length} membre{room.members.length > 1 ? 's' : ''}</span>
+              </div>
+            </div>
+            <p className="text-muted-foreground mb-6">
+              Rejoins cette room pour swiper et trouver des matches avec tes amis !
+            </p>
+            <Button
+              onClick={handleJoinRoom}
+              disabled={joiningRoom}
+              size="lg"
+              className="w-full"
+            >
+              {joiningRoom ? (
+                <>
+                  <Film className="w-4 h-4 mr-2 animate-pulse" />
+                  Connexion...
+                </>
+              ) : (
+                <>
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Rejoindre la room
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     )
   }
