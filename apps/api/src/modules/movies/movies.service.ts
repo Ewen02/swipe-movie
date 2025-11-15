@@ -1,4 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
+import * as crypto from 'crypto';
 import {
   MovieBasicDto,
   MoviesGenresDto,
@@ -25,9 +28,34 @@ export interface MovieFilters {
   originalLanguage?: string;
 }
 
+// Cache TTL constants (in milliseconds)
+const CACHE_TTL = {
+  MOVIE_DETAILS: 24 * 60 * 60 * 1000, // 24 hours
+  GENRES: 7 * 24 * 60 * 60 * 1000, // 7 days
+  DISCOVER: 60 * 60 * 1000, // 1 hour
+  WATCH_PROVIDERS: 24 * 60 * 60 * 1000, // 24 hours
+} as const;
+
 @Injectable()
 export class MoviesService {
-  constructor(private readonly tmdb: TmdbService) {}
+  constructor(
+    private readonly tmdb: TmdbService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+  ) {}
+
+  /**
+   * Generate a cache key hash from an object
+   */
+  private generateCacheKey(prefix: string, params?: unknown): string {
+    if (!params) {
+      return prefix;
+    }
+    const hash = crypto
+      .createHash('md5')
+      .update(JSON.stringify(params))
+      .digest('hex');
+    return `${prefix}:${hash}`;
+  }
 
   private mapToMovieSummary(
     movie: TMDbPopularResponse['results'][number],
@@ -101,9 +129,23 @@ export class MoviesService {
   }
 
   async getMovieDetails(movieId: number): Promise<MovieDetailsDto> {
+    const cacheKey = `tmdb:movie:${movieId}`;
+
+    // Try to get from cache
+    const cached = await this.cacheManager.get<MovieDetailsDto>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    // Fetch from TMDb API
     const url = `/movie/${movieId}?language=${TMDB_DEFAULT_LANG}`;
     const json = await this.tmdb.fetchJson<TMDbMovieDetailsResponse>(url);
-    return this.mapToMovieDetails(json);
+    const result = this.mapToMovieDetails(json);
+
+    // Store in cache
+    await this.cacheManager.set(cacheKey, result, CACHE_TTL.MOVIE_DETAILS);
+
+    return result;
   }
 
   async getPopularMovies(page = 1): Promise<MovieBasicDto[]> {
@@ -119,6 +161,22 @@ export class MoviesService {
     filters?: MovieFilters,
   ): Promise<MovieBasicDto[]> {
     const mediaType = type === 'tv' ? 'tv' : 'movie';
+
+    // Generate cache key based on all parameters
+    const cacheKey = this.generateCacheKey('tmdb:discover', {
+      genreId,
+      type,
+      page,
+      filters,
+    });
+
+    // Try to get from cache
+    const cached = await this.cacheManager.get<MovieBasicDto[]>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    // Build query parameters
     const params = new URLSearchParams({
       language: TMDB_DEFAULT_LANG,
       page: page.toString(),
@@ -167,15 +225,38 @@ export class MoviesService {
 
     const url = `/discover/${mediaType}?${params.toString()}`;
 
+    // Fetch from TMDb API
     const json = await this.tmdb.fetchJson<TMDbDiscoverResponse>(url);
+    const result = (json.results ?? []).map((movie) =>
+      this.mapToMovieSummary(movie),
+    );
 
-    return (json.results ?? []).map((movie) => this.mapToMovieSummary(movie));
+    // Store in cache
+    await this.cacheManager.set(cacheKey, result, CACHE_TTL.DISCOVER);
+
+    return result;
   }
 
   async getGenres(): Promise<MoviesGenresDto[]> {
+    const cacheKey = 'tmdb:genres:movie';
+
+    // Try to get from cache
+    const cached = await this.cacheManager.get<MoviesGenresDto[]>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    // Fetch from TMDb API
     const url = `/genre/movie/list?language=${TMDB_DEFAULT_LANG}`;
     const json = await this.tmdb.fetchJson<TMDbGenresResponse>(url);
-    return (json.genres ?? []).map((genre) => this.mapToMovieGenre(genre));
+    const result = (json.genres ?? []).map((genre) =>
+      this.mapToMovieGenre(genre),
+    );
+
+    // Store in cache
+    await this.cacheManager.set(cacheKey, result, CACHE_TTL.GENRES);
+
+    return result;
   }
 
   async getWatchProviders(
@@ -183,6 +264,14 @@ export class MoviesService {
     type: 'movie' | 'tv' = 'movie',
   ): Promise<number[]> {
     const mediaType = type === 'tv' ? 'tv' : 'movie';
+    const cacheKey = `tmdb:providers:${mediaType}:${movieId}`;
+
+    // Try to get from cache
+    const cached = await this.cacheManager.get<number[]>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     const url = `/${mediaType}/${movieId}/watch/providers`;
 
     try {
@@ -191,13 +280,23 @@ export class MoviesService {
       // Get providers for France (FR) - flatrate means streaming subscription
       const frProviders = json.results?.['FR'];
       if (!frProviders?.flatrate) {
+        // Cache empty result too to avoid repeated API calls
+        await this.cacheManager.set(cacheKey, [], CACHE_TTL.WATCH_PROVIDERS);
         return [];
       }
 
       // Return array of provider IDs
-      return frProviders.flatrate.map(p => p.provider_id);
+      const result = frProviders.flatrate.map((p) => p.provider_id);
+
+      // Store in cache
+      await this.cacheManager.set(cacheKey, result, CACHE_TTL.WATCH_PROVIDERS);
+
+      return result;
     } catch (error) {
-      console.error(`Failed to fetch watch providers for ${mediaType} ${movieId}:`, error);
+      console.error(
+        `Failed to fetch watch providers for ${mediaType} ${movieId}:`,
+        error,
+      );
       return [];
     }
   }
