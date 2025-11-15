@@ -66,7 +66,7 @@ export function RoomsList({ rooms }: RoomsListProps) {
                   roomCode={room.code}
                   roomName={room.name || "Room sans nom"}
                   variant="ghost"
-                  size="icon"
+                  size="sm"
                   className="shrink-0"
                 />
                 <Button
