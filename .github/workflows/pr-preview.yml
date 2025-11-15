@@ -1,0 +1,124 @@
+name: PR Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  preview:
+    name: Deploy Preview
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.full_name == github.repository
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Web
+        run: cd apps/web && npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:3001
+          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_SECRET: preview-secret
+
+      - name: Build API
+        run: cd apps/api && npm run build
+
+      - name: Comment PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const comment = `## 🚀 Preview Build
+
+            ✅ Build completed successfully!
+
+            **Build Artifacts:**
+            - Web: \`apps/web/.next\`
+            - API: \`apps/api/dist\`
+
+            **Next Steps:**
+            - Review the changes
+            - Test locally
+            - Merge when ready
+
+            ---
+            *Built from commit: ${context.sha.substring(0, 7)}*
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  size-check:
+    name: Bundle Size Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and analyze
+        run: cd apps/web && npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:3001
+          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_SECRET: preview-secret
+
+      - name: Check bundle size
+        run: |
+          echo "📦 Checking bundle sizes..."
+          cd apps/web
+
+          # Get build output size
+          if [ -d ".next" ]; then
+            echo "Build directory size:"
+            du -sh .next
+            echo ""
+            echo "Largest chunks:"
+            find .next -type f -name "*.js" -exec du -h {} + | sort -rh | head -10
+          fi
+
+      - name: Comment bundle size
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const comment = `## 📦 Bundle Size Report
+
+            Build completed. Check the workflow logs for detailed bundle analysis.
+
+            **Tips for optimization:**
+            - Use dynamic imports for large components
+            - Optimize images and assets
+            - Review third-party dependencies
+
+            ---
+            *Check workflow logs for detailed breakdown*
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
