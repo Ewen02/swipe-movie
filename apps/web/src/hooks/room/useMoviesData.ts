@@ -32,13 +32,13 @@ export function useMoviesData({ room, swipedMovieIds }: UseMoviesDataProps): Use
   const [moviesLoading, setMoviesLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
 
-  // Initial load when room is ready
+  // Initial load when room is ready or when user joins
   useEffect(() => {
     if (!room) return
     if (room.genreId !== null && room.genreId !== undefined) {
       loadMovies(room.genreId, room.type as 'movie' | 'tv', 1, false, room, swipedMovieIds)
     }
-  }, [room?.id])
+  }, [room?.id, room?.members?.length])
 
   const loadMovies = useCallback(async (
     genreId: number,

@@ -324,10 +324,14 @@ function RoomPageContent() {
                   <CardContent className="text-center py-20">
                     <div className="text-6xl mb-4">🎬</div>
                     <h3 className="text-xl font-semibold mb-2">
-                      Aucun film disponible
+                      {room?.genreId === null || room?.genreId === undefined
+                        ? "Configuration de la room incomplète"
+                        : "Aucun film disponible"}
                     </h3>
                     <p className="text-muted-foreground mb-4">
-                      Cette room n'a pas de genre configuré
+                      {room?.genreId === null || room?.genreId === undefined
+                        ? "Cette room n'a pas de genre configuré. Demande au créateur de configurer un genre pour commencer à swiper !"
+                        : "Tous les films ont déjà été vus. Essaie de modifier les filtres de la room."}
                     </p>
                   </CardContent>
                 </Card>
