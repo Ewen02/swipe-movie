@@ -141,4 +141,40 @@ export class MovieDetailsDto extends MovieBasicDto {
     type: string;
     official: boolean;
   }[];
+
+  @ApiProperty({
+    example: [
+      {
+        id: 819,
+        name: 'Edward Norton',
+        character: 'The Narrator',
+        profilePath: '/5XBzD5WuTyVQZeS4VI25z2moMeY.jpg',
+      },
+    ],
+    required: false,
+  })
+  cast?: {
+    id: number;
+    name: string;
+    character: string;
+    profilePath: string | null;
+  }[];
+
+  @ApiProperty({
+    example: [
+      {
+        id: 7467,
+        name: 'David Fincher',
+        job: 'Director',
+        department: 'Directing',
+      },
+    ],
+    required: false,
+  })
+  crew?: {
+    id: number;
+    name: string;
+    job: string;
+    department: string;
+  }[];
 }

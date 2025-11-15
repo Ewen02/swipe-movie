@@ -64,6 +64,22 @@ export type TMDbVideo = {
   published_at: string;
 };
 
+export type TMDbCastMember = {
+  id: number;
+  name: string;
+  character: string;
+  profile_path: string | null;
+  order: number;
+};
+
+export type TMDbCrewMember = {
+  id: number;
+  name: string;
+  job: string;
+  department: string;
+  profile_path: string | null;
+};
+
 export type TMDbMovieDetailsResponse = {
   adult: boolean;
   backdrop_path: string | null;
@@ -92,6 +108,10 @@ export type TMDbMovieDetailsResponse = {
   vote_count: number;
   videos?: {
     results: TMDbVideo[];
+  };
+  credits?: {
+    cast: TMDbCastMember[];
+    crew: TMDbCrewMember[];
   };
 };
 

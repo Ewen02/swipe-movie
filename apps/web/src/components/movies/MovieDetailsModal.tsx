@@ -211,6 +211,52 @@ export function MovieDetailsModal({
               ) : null;
             })()}
 
+            {/* Cast */}
+            {movie.cast && movie.cast.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Casting principal</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                  {movie.cast.map((actor) => (
+                    <div key={actor.id} className="text-center">
+                      <div className="relative w-full aspect-[2/3] mb-2 bg-muted rounded-lg overflow-hidden">
+                        {actor.profilePath ? (
+                          <Image
+                            src={actor.profilePath}
+                            alt={actor.name}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-muted">
+                            <span className="text-4xl text-muted-foreground">👤</span>
+                          </div>
+                        )}
+                      </div>
+                      <p className="font-medium text-sm truncate">{actor.name}</p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {actor.character}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Crew */}
+            {movie.crew && movie.crew.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Équipe technique</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                  {movie.crew.map((member) => (
+                    <div key={`${member.id}-${member.job}`} className="p-3 bg-muted/50 rounded-lg">
+                      <p className="font-medium text-sm">{member.name}</p>
+                      <p className="text-xs text-muted-foreground">{member.job}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Budget & Revenue */}
             {(movie.budget > 0 || movie.revenue > 0) && (
               <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">

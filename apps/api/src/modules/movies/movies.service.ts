@@ -134,6 +134,25 @@ export class MoviesService {
           type: v.type,
           official: v.official,
         })) ?? [],
+      cast:
+        movie.credits?.cast?.slice(0, 10).map((c) => ({
+          id: c.id,
+          name: c.name,
+          character: c.character,
+          profilePath: c.profile_path
+            ? `${TMDB_IMAGE_BASE.POSTER}${c.profile_path}`
+            : null,
+        })) ?? [],
+      crew:
+        movie.credits?.crew
+          ?.filter((c) => ['Director', 'Writer', 'Producer'].includes(c.job))
+          .slice(0, 5)
+          .map((c) => ({
+            id: c.id,
+            name: c.name,
+            job: c.job,
+            department: c.department,
+          })) ?? [],
     };
   }
 
@@ -146,8 +165,8 @@ export class MoviesService {
       return cached;
     }
 
-    // Fetch from TMDb API with videos
-    const url = `/movie/${movieId}?language=${TMDB_DEFAULT_LANG}&append_to_response=videos`;
+    // Fetch from TMDb API with videos and credits
+    const url = `/movie/${movieId}?language=${TMDB_DEFAULT_LANG}&append_to_response=videos,credits`;
     const json = await this.tmdb.fetchJson<TMDbMovieDetailsResponse>(url);
     const result = this.mapToMovieDetails(json);
 
