@@ -53,6 +53,17 @@ export type TMDbSpokenLanguage = {
   name: string;
 };
 
+export type TMDbVideo = {
+  id: string;
+  key: string;
+  name: string;
+  site: string;
+  size: number;
+  type: string;
+  official: boolean;
+  published_at: string;
+};
+
 export type TMDbMovieDetailsResponse = {
   adult: boolean;
   backdrop_path: string | null;
@@ -79,6 +90,9 @@ export type TMDbMovieDetailsResponse = {
   video: boolean;
   vote_average: number;
   vote_count: number;
+  videos?: {
+    results: TMDbVideo[];
+  };
 };
 
 export type TMDbWatchProvider = {

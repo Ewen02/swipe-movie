@@ -186,6 +186,31 @@ export function MovieDetailsModal({
               </div>
             )}
 
+            {/* Trailer */}
+            {movie.videos && movie.videos.length > 0 && (() => {
+              // Find the first official YouTube trailer
+              const trailer = movie.videos.find(
+                (v) => v.site === 'YouTube' && v.type === 'Trailer' && v.official
+              ) || movie.videos.find(
+                (v) => v.site === 'YouTube' && v.type === 'Trailer'
+              ) || movie.videos.find((v) => v.site === 'YouTube');
+
+              return trailer ? (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Bande-annonce</h3>
+                  <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                    <iframe
+                      className="absolute top-0 left-0 w-full h-full rounded-lg"
+                      src={`https://www.youtube.com/embed/${trailer.key}`}
+                      title={trailer.name}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                </div>
+              ) : null;
+            })()}
+
             {/* Budget & Revenue */}
             {(movie.budget > 0 || movie.revenue > 0) && (
               <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">

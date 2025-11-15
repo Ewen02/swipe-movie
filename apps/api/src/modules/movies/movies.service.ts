@@ -125,6 +125,15 @@ export class MoviesService {
           english_name: l.english_name,
           name: l.name,
         })) ?? [],
+      videos:
+        movie.videos?.results?.map((v) => ({
+          id: v.id,
+          key: v.key,
+          name: v.name,
+          site: v.site,
+          type: v.type,
+          official: v.official,
+        })) ?? [],
     };
   }
 
@@ -137,8 +146,8 @@ export class MoviesService {
       return cached;
     }
 
-    // Fetch from TMDb API
-    const url = `/movie/${movieId}?language=${TMDB_DEFAULT_LANG}`;
+    // Fetch from TMDb API with videos
+    const url = `/movie/${movieId}?language=${TMDB_DEFAULT_LANG}&append_to_response=videos`;
     const json = await this.tmdb.fetchJson<TMDbMovieDetailsResponse>(url);
     const result = this.mapToMovieDetails(json);
 

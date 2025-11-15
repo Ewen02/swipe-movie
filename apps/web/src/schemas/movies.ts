@@ -25,6 +25,16 @@ export const movieGenreSchema = z.object({
   name: z.string(),
 })
 
+// Schema for video
+export const movieVideoSchema = z.object({
+  id: z.string(),
+  key: z.string(),
+  name: z.string(),
+  site: z.string(),
+  type: z.string(),
+  official: z.boolean(),
+})
+
 // Schema for MovieDetailsDto
 export const movieDetailsSchema = movieBasicSchema.extend({
   budget: z.number(),
@@ -55,6 +65,7 @@ export const movieDetailsSchema = movieBasicSchema.extend({
       name: z.string(),
     })
   ),
+  videos: z.array(movieVideoSchema).optional(),
 })
 
 // Array schemas
@@ -64,6 +75,7 @@ export const genresListSchema = z.array(movieGenreSchema)
 // TypeScript types
 export type MovieBasic = z.infer<typeof movieBasicSchema>
 export type MovieGenre = z.infer<typeof movieGenreSchema>
+export type MovieVideo = z.infer<typeof movieVideoSchema>
 export type MovieDetails = z.infer<typeof movieDetailsSchema>
 export type MoviesList = z.infer<typeof moviesListSchema>
 export type GenresList = z.infer<typeof genresListSchema>

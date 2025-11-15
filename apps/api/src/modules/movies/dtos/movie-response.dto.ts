@@ -119,4 +119,26 @@ export class MovieDetailsDto extends MovieBasicDto {
     english_name: string;
     name: string;
   }[];
+
+  @ApiProperty({
+    example: [
+      {
+        id: '533ec654c3a36854480003eb',
+        key: 'SUXWAEX2jlg',
+        name: 'Official Trailer',
+        site: 'YouTube',
+        type: 'Trailer',
+        official: true,
+      },
+    ],
+    required: false,
+  })
+  videos?: {
+    id: string;
+    key: string;
+    name: string;
+    site: string;
+    type: string;
+    official: boolean;
+  }[];
 }
