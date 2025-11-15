@@ -7,7 +7,9 @@ import {
   IsArray,
   Min,
   Max,
+  MaxLength as ValidatorMaxLength,
 } from 'class-validator';
+import { Sanitize } from '../../../common/decorators/sanitize.decorator';
 
 export class CreateRoomDto {
   @ApiProperty({
@@ -36,6 +38,8 @@ export class CreateRoomDto {
   })
   @IsOptional()
   @IsString()
+  @ValidatorMaxLength(100, { message: 'Room name must not exceed 100 characters' })
+  @Sanitize() // Remove HTML tags and dangerous characters
   name?: string;
 
   // Advanced filters

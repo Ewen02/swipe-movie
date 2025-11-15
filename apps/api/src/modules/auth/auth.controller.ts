@@ -9,11 +9,13 @@ import {
 import { ApiTags, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../../infra/prisma.service';
+import { ThrottleStrict } from '../../common/decorators/throttle.decorator';
 
 import { OauthUpsertDto, LoginOauthDto } from './dtos';
 
 @ApiTags('Auth')
 @Controller('auth')
+@ThrottleStrict() // Apply strict rate limiting to all auth endpoints
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
