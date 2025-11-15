@@ -16,7 +16,6 @@ export const movieBasicSchema = z.object({
   video: z.boolean(),
   voteAverage: z.number(),
   voteCount: z.number(),
-  watchProviders: z.array(z.number()).optional(),
 })
 
 // Schema for MoviesGenresDto
@@ -49,6 +48,13 @@ export const movieCrewSchema = z.object({
   name: z.string(),
   job: z.string(),
   department: z.string(),
+})
+
+// Schema for watch provider
+export const movieWatchProviderSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  logoPath: z.string(),
 })
 
 // Schema for MovieDetailsDto
@@ -84,6 +90,7 @@ export const movieDetailsSchema = movieBasicSchema.extend({
   videos: z.array(movieVideoSchema).optional(),
   cast: z.array(movieCastSchema).optional(),
   crew: z.array(movieCrewSchema).optional(),
+  watchProviders: z.array(movieWatchProviderSchema).optional(),
 })
 
 // Array schemas
@@ -96,6 +103,7 @@ export type MovieGenre = z.infer<typeof movieGenreSchema>
 export type MovieVideo = z.infer<typeof movieVideoSchema>
 export type MovieCast = z.infer<typeof movieCastSchema>
 export type MovieCrew = z.infer<typeof movieCrewSchema>
+export type MovieWatchProvider = z.infer<typeof movieWatchProviderSchema>
 export type MovieDetails = z.infer<typeof movieDetailsSchema>
 export type MoviesList = z.infer<typeof moviesListSchema>
 export type GenresList = z.infer<typeof genresListSchema>

@@ -170,6 +170,10 @@ export class MoviesService {
     const json = await this.tmdb.fetchJson<TMDbMovieDetailsResponse>(url);
     const result = this.mapToMovieDetails(json);
 
+    // Fetch watch providers separately and add to result
+    const watchProviders = await this.getWatchProviders(movieId, 'movie');
+    result.watchProviders = watchProviders;
+
     // Store in cache
     await this.cacheManager.set(cacheKey, result, CACHE_TTL.MOVIE_DETAILS);
 
@@ -290,12 +294,14 @@ export class MoviesService {
   async getWatchProviders(
     movieId: number,
     type: 'movie' | 'tv' = 'movie',
-  ): Promise<number[]> {
+  ): Promise<{ id: number; name: string; logoPath: string }[]> {
     const mediaType = type === 'tv' ? 'tv' : 'movie';
     const cacheKey = `tmdb:providers:${mediaType}:${movieId}`;
 
     // Try to get from cache
-    const cached = await this.cacheManager.get<number[]>(cacheKey);
+    const cached = await this.cacheManager.get<
+      { id: number; name: string; logoPath: string }[]
+    >(cacheKey);
     if (cached) {
       return cached;
     }
@@ -313,8 +319,14 @@ export class MoviesService {
         return [];
       }
 
-      // Return array of provider IDs
-      const result = frProviders.flatrate.map((p) => p.provider_id);
+      // Return array of provider objects with name and logo
+      const result = frProviders.flatrate.map((p) => ({
+        id: p.provider_id,
+        name: p.provider_name,
+        logoPath: p.logo_path
+          ? `${TMDB_IMAGE_BASE.POSTER}${p.logo_path}`
+          : '',
+      }));
 
       // Store in cache
       await this.cacheManager.set(cacheKey, result, CACHE_TTL.WATCH_PROVIDERS);

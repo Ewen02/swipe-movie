@@ -257,6 +257,33 @@ export function MovieDetailsModal({
               </div>
             )}
 
+            {/* Watch Providers */}
+            {movie.watchProviders && movie.watchProviders.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Disponible sur</h3>
+                <div className="flex flex-wrap gap-3">
+                  {movie.watchProviders.map((provider) => (
+                    <div
+                      key={provider.id}
+                      className="flex items-center gap-2 p-2 bg-muted/50 rounded-lg"
+                    >
+                      {provider.logoPath && (
+                        <div className="relative w-10 h-10 rounded overflow-hidden">
+                          <Image
+                            src={provider.logoPath}
+                            alt={provider.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      )}
+                      <span className="text-sm font-medium">{provider.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Budget & Revenue */}
             {(movie.budget > 0 || movie.revenue > 0) && (
               <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
