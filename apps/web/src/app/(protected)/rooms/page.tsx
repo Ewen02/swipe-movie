@@ -32,8 +32,9 @@ import { useEffect, useState } from "react"
 import type { MovieGenre } from "@/schemas/movies"
 import { Plus, Users, Film, Sparkles } from "lucide-react"
 import { Footer } from "@/components/layout/Footer"
+import { RoomErrorBoundary } from "@/components/error"
 
-export default function RoomsPage() {
+function RoomsPageContent() {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -382,5 +383,13 @@ export default function RoomsPage() {
       {/* Footer */}
       <Footer />
     </div>
+  )
+}
+
+export default function RoomsPage() {
+  return (
+    <RoomErrorBoundary>
+      <RoomsPageContent />
+    </RoomErrorBoundary>
   )
 }

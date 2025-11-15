@@ -14,8 +14,9 @@ import { MatchAnimation } from "@/components/room/MatchAnimation"
 import { Users, Copy, CheckCircle2, Film } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Footer } from "@/components/layout/Footer"
+import { RoomErrorBoundary } from "@/components/error"
 
-export default function RoomPage() {
+function RoomPageContent() {
   const { code } = useParams<{ code: string }>()
   const [copied, setCopied] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
@@ -304,5 +305,15 @@ export default function RoomPage() {
         <Footer />
       </div>
     </>
+  )
+}
+
+export default function RoomPage() {
+  const { code } = useParams<{ code: string }>()
+
+  return (
+    <RoomErrorBoundary roomId={code}>
+      <RoomPageContent />
+    </RoomErrorBoundary>
   )
 }

@@ -4,6 +4,7 @@ import { ReactNode } from "react"
 import { SessionProvider } from "next-auth/react"
 import { ThemeProvider } from "next-themes"
 import { ToastProvider } from "@/components/providers/toast-provider"
+import { ErrorBoundary } from "@/components/error"
 import type { Session } from "next-auth"
 
 interface ProvidersProps {
@@ -13,17 +14,19 @@ interface ProvidersProps {
 
 export function Providers({ children, session }: ProvidersProps) {
   return (
-    <SessionProvider session={session}>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <ToastProvider>
-          {children}
-        </ToastProvider>
-      </ThemeProvider>
-    </SessionProvider>
+    <ErrorBoundary>
+      <SessionProvider session={session}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ToastProvider>
+            {children}
+          </ToastProvider>
+        </ThemeProvider>
+      </SessionProvider>
+    </ErrorBoundary>
   )
 }
