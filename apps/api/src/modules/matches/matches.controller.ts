@@ -37,16 +37,21 @@ export class MatchesController {
     return this.matchesService.createIfNeeded(dto.roomId, dto.movieId);
   }
 
-  @ApiOperation({ summary: 'Get matches of a room (paginated)' })
+  @ApiOperation({ summary: 'Get matches of a room (optionally paginated)' })
   @ApiOkResponse({
-    description: 'Paginated list of matches in the room',
+    description: 'List of matches in the room (paginated if query params provided)',
     type: [ResponseMatchDto],
   })
   @Get(':roomId')
   findByRoom(
     @Param('roomId') roomId: string,
-    @Query() pagination: PaginationQueryDto,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
   ) {
+    // Build pagination object only if params are provided
+    const pagination =
+      page !== undefined || limit !== undefined ? { page, limit } : undefined;
+
     return this.matchesService.findByRoom(roomId, pagination);
   }
 }
