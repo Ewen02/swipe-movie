@@ -355,4 +355,40 @@ export class MoviesService {
       )
       .map((result) => result.value);
   }
+
+  async getBatchWatchProviders(
+    movieIds: number[],
+    type: 'movie' | 'tv' = 'movie',
+  ): Promise<
+    Record<number, { id: number; name: string; logoPath: string }[]>
+  > {
+    // Fetch all watch providers in parallel
+    const results = await Promise.allSettled(
+      movieIds.map(async (id) => ({
+        movieId: id,
+        providers: await this.getWatchProviders(id, type),
+      })),
+    );
+
+    // Build a map of movieId -> providers
+    const providersMap: Record<
+      number,
+      { id: number; name: string; logoPath: string }[]
+    > = {};
+
+    results
+      .filter(
+        (
+          result,
+        ): result is PromiseFulfilledResult<{
+          movieId: number;
+          providers: { id: number; name: string; logoPath: string }[];
+        }> => result.status === 'fulfilled',
+      )
+      .forEach((result) => {
+        providersMap[result.value.movieId] = result.value.providers;
+      });
+
+    return providersMap;
+  }
 }

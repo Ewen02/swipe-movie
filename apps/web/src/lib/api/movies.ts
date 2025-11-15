@@ -4,6 +4,7 @@ import {
   MovieBasic,
   MovieDetails,
   MovieGenre,
+  MovieWatchProvider,
   moviesListSchema,
   genresListSchema,
   movieDetailsSchema,
@@ -122,11 +123,29 @@ export async function getBatchMovieDetails(movieIds: number[]): Promise<MovieDet
 export async function getMovieWatchProviders(
   movieId: number,
   type: "movie" | "tv" = "movie"
-): Promise<number[]> {
+): Promise<MovieWatchProvider[]> {
   const response = await GET(`/movies/${movieId}/providers?type=${type}`)
   if (!response.ok) {
     return []
   }
   const data = await response.json()
   return Array.isArray(data) ? data : []
+}
+
+/**
+ * Get watch providers for multiple movies in batch
+ */
+export async function getBatchWatchProviders(
+  movieIds: number[],
+  type: "movie" | "tv" = "movie"
+): Promise<Record<number, MovieWatchProvider[]>> {
+  if (movieIds.length === 0) return {}
+
+  const response = await GET(`/movies/batch/providers?ids=${movieIds.join(',')}&type=${type}`)
+  if (!response.ok) {
+    return {}
+  }
+
+  const data = await response.json()
+  return typeof data === 'object' && data !== null ? data : {}
 }

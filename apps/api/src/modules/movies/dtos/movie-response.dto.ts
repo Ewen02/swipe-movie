@@ -45,6 +45,22 @@ export class MovieBasicDto {
 
   @ApiProperty({ example: 26280 })
   voteCount!: number;
+
+  @ApiProperty({
+    example: [
+      {
+        id: 8,
+        name: 'Netflix',
+        logoPath: 'https://image.tmdb.org/t/p/w500/abc123.jpg',
+      },
+    ],
+    required: false,
+  })
+  watchProviders?: {
+    id: number;
+    name: string;
+    logoPath: string;
+  }[];
 }
 
 /**
@@ -176,21 +192,5 @@ export class MovieDetailsDto extends MovieBasicDto {
     name: string;
     job: string;
     department: string;
-  }[];
-
-  @ApiProperty({
-    example: [
-      {
-        id: 8,
-        name: 'Netflix',
-        logoPath: 'https://image.tmdb.org/t/p/w500/abc123.jpg',
-      },
-    ],
-    required: false,
-  })
-  watchProviders?: {
-    id: number;
-    name: string;
-    logoPath: string;
   }[];
 }

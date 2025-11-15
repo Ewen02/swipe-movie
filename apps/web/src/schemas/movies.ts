@@ -1,5 +1,12 @@
 import { z } from "zod"
 
+// Schema for watch provider
+export const movieWatchProviderSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  logoPath: z.string(),
+})
+
 // Schema for MovieBasicDto
 export const movieBasicSchema = z.object({
   id: z.number(),
@@ -16,6 +23,7 @@ export const movieBasicSchema = z.object({
   video: z.boolean(),
   voteAverage: z.number(),
   voteCount: z.number(),
+  watchProviders: z.array(movieWatchProviderSchema).optional(),
 })
 
 // Schema for MoviesGenresDto
@@ -48,13 +56,6 @@ export const movieCrewSchema = z.object({
   name: z.string(),
   job: z.string(),
   department: z.string(),
-})
-
-// Schema for watch provider
-export const movieWatchProviderSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  logoPath: z.string(),
 })
 
 // Schema for MovieDetailsDto
@@ -90,7 +91,6 @@ export const movieDetailsSchema = movieBasicSchema.extend({
   videos: z.array(movieVideoSchema).optional(),
   cast: z.array(movieCastSchema).optional(),
   crew: z.array(movieCrewSchema).optional(),
-  watchProviders: z.array(movieWatchProviderSchema).optional(),
 })
 
 // Array schemas

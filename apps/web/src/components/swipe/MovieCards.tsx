@@ -267,14 +267,29 @@ function MovieCard({
                   <ReleaseDateBadge releaseDate={movie.releaseDate} variant="card" />
                 )}
 
-                {/* Watch Providers */}
-                {roomFilters?.watchProviders && roomFilters.watchProviders.length > 0 && (
-                  <ProviderList
-                    providerIds={roomFilters.watchProviders}
-                    variant="card"
-                    maxVisible={2}
-                    showNames={true}
-                  />
+                {/* Watch Providers - Show movie's actual providers */}
+                {movie.watchProviders && movie.watchProviders.length > 0 && (
+                  <div className="flex gap-1.5">
+                    {movie.watchProviders.slice(0, 3).map((provider) => (
+                      <div
+                        key={provider.id}
+                        className="relative w-8 h-8 rounded-md overflow-hidden border border-white/30 shadow-lg"
+                        title={provider.name}
+                      >
+                        <Image
+                          src={provider.logoPath}
+                          alt={provider.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    ))}
+                    {movie.watchProviders.length > 3 && (
+                      <div className="w-8 h-8 rounded-md bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center text-white text-xs font-semibold shadow-lg">
+                        +{movie.watchProviders.length - 3}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
 

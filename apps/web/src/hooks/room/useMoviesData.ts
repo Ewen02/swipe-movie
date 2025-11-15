@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
-import { getMoviesByGenre, MovieFilters } from "@/lib/api/movies"
+import { getMoviesByGenre, getBatchWatchProviders, MovieFilters } from "@/lib/api/movies"
 import { shuffleWithSeed } from "@/lib/utils"
 import type { RoomWithMembersResponseDto } from "@/schemas/rooms"
 import type { MovieBasic } from "@/schemas/movies"
@@ -79,27 +79,54 @@ export function useMoviesData({ room, swipedMovieIds }: UseMoviesDataProps): Use
       const seed = `${session?.user?.email || 'anonymous'}-${currentRoom?.id || room?.id || 'room'}-${page}`
       const shuffledMovies = shuffleWithSeed(filteredMovies, seed)
 
-      if (append) {
-        setMovies(prev => {
-          // Filter out any undefined values and create a Set of existing movie IDs to avoid duplicates
-          const validPrev = prev.filter(Boolean)
-          const validShuffled = shuffledMovies.filter(Boolean)
-          const existingIds = new Set(validPrev.map(m => m.id))
-          const newMovies = validShuffled.filter(m => !existingIds.has(m.id))
-          return [...validPrev, ...newMovies]
-        })
-      } else {
-        setMovies(shuffledMovies.filter(Boolean))
-        setCurrentPage(page)
-      }
+      // Load watch providers for the movies
+      try {
+        const movieIds = shuffledMovies.map(m => m.id)
+        const providersMap = await getBatchWatchProviders(movieIds, type)
 
-      // If we got very few movies after filtering (less than 5) and we're not on a high page yet,
-      // automatically load more to ensure a good user experience
-      const currentMovieCount = append ? movies.length + shuffledMovies.length : shuffledMovies.length
-      if (currentMovieCount < 5 && shuffledMovies.length > 0 && page < 5) {
-        setMoviesLoading(false) // Temporarily set to false
-        await loadMovies(genreId, type, page + 1, true, roomData)
-        return // Don't set loading to false again, the recursive call will handle it
+        // Add providers to movies
+        const moviesWithProviders = shuffledMovies.map(movie => ({
+          ...movie,
+          watchProviders: providersMap[movie.id] || []
+        }))
+
+        if (append) {
+          setMovies(prev => {
+            // Filter out any undefined values and create a Set of existing movie IDs to avoid duplicates
+            const validPrev = prev.filter(Boolean)
+            const validWithProviders = moviesWithProviders.filter(Boolean)
+            const existingIds = new Set(validPrev.map(m => m.id))
+            const newMovies = validWithProviders.filter(m => !existingIds.has(m.id))
+            return [...validPrev, ...newMovies]
+          })
+        } else {
+          setMovies(moviesWithProviders.filter(Boolean))
+          setCurrentPage(page)
+        }
+
+        // If we got very few movies after filtering (less than 5) and we're not on a high page yet,
+        // automatically load more to ensure a good user experience
+        const currentMovieCount = append ? movies.length + moviesWithProviders.length : moviesWithProviders.length
+        if (currentMovieCount < 5 && moviesWithProviders.length > 0 && page < 5) {
+          setMoviesLoading(false) // Temporarily set to false
+          await loadMovies(genreId, type, page + 1, true, roomData)
+          return // Don't set loading to false again, the recursive call will handle it
+        }
+      } catch (providerErr) {
+        console.error("Failed to load watch providers:", providerErr)
+        // Still set movies without providers on error
+        if (append) {
+          setMovies(prev => {
+            const validPrev = prev.filter(Boolean)
+            const validShuffled = shuffledMovies.filter(Boolean)
+            const existingIds = new Set(validPrev.map(m => m.id))
+            const newMovies = validShuffled.filter(m => !existingIds.has(m.id))
+            return [...validPrev, ...newMovies]
+          })
+        } else {
+          setMovies(shuffledMovies.filter(Boolean))
+          setCurrentPage(page)
+        }
       }
     } catch (err) {
       console.error("Failed to load movies:", err)
