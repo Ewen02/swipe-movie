@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { Trophy, Sparkles, Heart } from "lucide-react"
 import { MovieBasic } from "@/schemas/movies"
@@ -93,12 +94,15 @@ export function MatchAnimation({ show, movie, onComplete }: MatchAnimationProps)
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.6 }}
-                    className="relative inline-block mb-4"
+                    className="relative inline-block mb-4 w-48 h-72"
                   >
-                    <img
+                    <Image
                       src={movie.posterUrl || movie.backdropUrl}
                       alt={movie.title}
-                      className="w-48 h-72 object-cover rounded-lg shadow-xl"
+                      width={192}
+                      height={288}
+                      className="object-cover rounded-lg shadow-xl"
+                      priority
                     />
                     <motion.div
                       animate={{

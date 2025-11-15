@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ExternalLink } from "lucide-react"
@@ -148,10 +149,12 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilt
                   {match.movie ? (
                     <>
                       <div className="relative aspect-[2/3]">
-                        <img
+                        <Image
                           src={match.movie.posterUrl || match.movie.backdropUrl}
                           alt={match.movie.title}
-                          className="w-full h-full object-cover"
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                           <div className="absolute bottom-2 right-2">

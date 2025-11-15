@@ -304,14 +304,15 @@ export class MoviesService {
   async getBatchMovieDetails(movieIds: number[]): Promise<MovieDetailsDto[]> {
     // Fetch all movie details in parallel
     const results = await Promise.allSettled(
-      movieIds.map(id => this.getMovieDetails(id))
+      movieIds.map((id) => this.getMovieDetails(id)),
     );
 
     // Filter out failed requests and return successful ones
     return results
-      .filter((result): result is PromiseFulfilledResult<MovieDetailsDto> =>
-        result.status === 'fulfilled'
+      .filter(
+        (result): result is PromiseFulfilledResult<MovieDetailsDto> =>
+          result.status === 'fulfilled',
       )
-      .map(result => result.value);
+      .map((result) => result.value);
   }
 }

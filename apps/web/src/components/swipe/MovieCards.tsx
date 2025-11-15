@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import Image from "next/image"
 import { motion, type PanInfo, useMotionValue, useTransform, animate } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -194,15 +195,18 @@ function MovieCard({
               </div>
             )}
 
-            <img
+            <Image
               src={movie.posterUrl || movie.backdropUrl || "/placeholder.svg"}
               alt={movie.title}
+              fill
               draggable={false}
               className={cn(
-                "w-full h-full object-cover select-none transition-opacity duration-300",
+                "object-cover select-none transition-opacity duration-300",
                 imageLoaded ? "opacity-100" : "opacity-0"
               )}
               onLoad={() => setImageLoaded(true)}
+              sizes="(max-width: 640px) 100vw, 448px"
+              priority={index === 0}
             />
 
             {isActive && (

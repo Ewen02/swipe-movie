@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Trophy } from "lucide-react"
@@ -32,10 +33,13 @@ export function TopMatch({ match, movie, totalMembers, roomFilters }: TopMatchPr
           <div className="grid md:grid-cols-2 gap-0">
             {/* Movie Poster */}
             <div className="relative aspect-[2/3] md:aspect-auto">
-              <img
+              <Image
                 src={movie.backdropUrl || movie.posterUrl}
                 alt={movie.title}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                priority
               />
               <div className="absolute top-4 right-4">
                 <Badge className="bg-yellow-500 text-white font-bold text-sm px-3 py-1">
