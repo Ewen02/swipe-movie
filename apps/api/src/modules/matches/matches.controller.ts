@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Get, Param, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Param,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { MatchesService } from './matches.service';
 import {
   ApiBearerAuth,
@@ -10,6 +18,7 @@ import {
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 import { CreateMatchDto, ResponseMatchDto } from './dtos';
+import { PaginationQueryDto } from '../../common/dtos';
 
 @ApiTags('Matches')
 @ApiBearerAuth()
@@ -28,13 +37,16 @@ export class MatchesController {
     return this.matchesService.createIfNeeded(dto.roomId, dto.movieId);
   }
 
-  @ApiOperation({ summary: 'Get matches of a room' })
+  @ApiOperation({ summary: 'Get matches of a room (paginated)' })
   @ApiOkResponse({
-    description: 'List of matches in the room',
+    description: 'Paginated list of matches in the room',
     type: [ResponseMatchDto],
   })
   @Get(':roomId')
-  findByRoom(@Param('roomId') roomId: string) {
-    return this.matchesService.findByRoom(roomId);
+  findByRoom(
+    @Param('roomId') roomId: string,
+    @Query() pagination: PaginationQueryDto,
+  ) {
+    return this.matchesService.findByRoom(roomId, pagination);
   }
 }

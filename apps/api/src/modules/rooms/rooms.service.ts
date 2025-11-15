@@ -9,6 +9,11 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../../infra/prisma.service';
 import {
+  PaginationQueryDto,
+  PaginatedResponseDto,
+  getPaginationParams,
+} from '../../common/dtos';
+import {
   CreateRoomDto,
   RoomJoinResponseDto,
   RoomCreateResponseDto,
@@ -284,11 +289,59 @@ export class RoomsService {
     return this.mapToRoomResponse<RoomWithMembersResponseDto>(room, room.members);
   }
 
-  async getUserRooms(userId: string): Promise<MemberRoomsResponseDto> {
+  async getUserRooms(
+    userId: string,
+    pagination?: PaginationQueryDto,
+  ): Promise<PaginatedResponseDto<MemberRoomsResponseDto['rooms'][0]> | MemberRoomsResponseDto> {
     await this.expireOldRooms();
 
+    const where = { members: { some: { userId } } };
+
+    // If pagination is provided, return paginated response
+    if (pagination) {
+      const { skip, take } = getPaginationParams(
+        pagination.page ?? 1,
+        pagination.limit ?? 20,
+      );
+
+      const [rooms, total] = await Promise.all([
+        this.prisma.room.findMany({
+          where,
+          select: {
+            id: true,
+            name: true,
+            code: true,
+            genreId: true,
+            type: true,
+            createdAt: true,
+            createdBy: true,
+            minRating: true,
+            releaseYearMin: true,
+            releaseYearMax: true,
+            runtimeMin: true,
+            runtimeMax: true,
+            watchProviders: true,
+            watchRegion: true,
+            originalLanguage: true,
+          },
+          skip,
+          take,
+          orderBy: { createdAt: 'desc' },
+        }),
+        this.prisma.room.count({ where }),
+      ]);
+
+      return new PaginatedResponseDto(
+        rooms,
+        pagination.page ?? 1,
+        pagination.limit ?? 20,
+        total,
+      );
+    }
+
+    // Otherwise, return all rooms (backward compatibility)
     const rooms = await this.prisma.room.findMany({
-      where: { members: { some: { userId } } },
+      where,
       select: {
         id: true,
         name: true,
@@ -306,6 +359,7 @@ export class RoomsService {
         watchRegion: true,
         originalLanguage: true,
       },
+      orderBy: { createdAt: 'desc' },
     });
 
     return { rooms };

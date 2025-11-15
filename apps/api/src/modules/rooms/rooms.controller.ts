@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Get, UseGuards, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  UseGuards,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { SwipesService } from '../swipes/swipes.service';
 import {
@@ -15,6 +23,7 @@ import {
   ApiJoinRoomErrors,
   ApiLeaveRoomErrors,
 } from '../../common/decorators';
+import { PaginationQueryDto } from '../../common/dtos';
 
 import {
   CreateRoomDto,
@@ -68,14 +77,17 @@ export class RoomsController {
     return this.service.leave(userId, dto.roomId);
   }
 
-  @ApiOperation({ summary: 'Get all rooms for user' })
+  @ApiOperation({ summary: 'Get all rooms for user (paginated)' })
   @ApiOkResponse({
-    description: 'List of user rooms',
-    type: [MemberRoomsResponseDto],
+    description: 'Paginated list of user rooms',
+    type: MemberRoomsResponseDto,
   })
   @Get('my')
-  userRooms(@UserId() userId: string) {
-    return this.service.getUserRooms(userId);
+  userRooms(
+    @UserId() userId: string,
+    @Query() pagination: PaginationQueryDto,
+  ) {
+    return this.service.getUserRooms(userId, pagination);
   }
 
   @ApiOperation({ summary: 'Get room details by code' })
