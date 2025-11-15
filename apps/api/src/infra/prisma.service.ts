@@ -16,11 +16,14 @@ export class PrismaService
 
   constructor(private configService: ConfigService) {
     const isProduction = configService.get('NODE_ENV') === 'production';
+    const debugQueries = configService.get('DEBUG_QUERIES') === 'true';
 
     super({
       log: isProduction
         ? ['error', 'warn']
-        : ['query', 'info', 'warn', 'error'],
+        : debugQueries
+          ? ['query', 'info', 'warn', 'error']
+          : ['warn', 'error'],
       errorFormat: isProduction ? 'minimal' : 'colorless',
       datasources: {
         db: {
