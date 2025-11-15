@@ -52,10 +52,17 @@ export class MatchesGateway
   afterInit(server: Server) {
     this.logger.log('WebSocket Gateway initialized');
 
-    // Monitor server metrics every 5 minutes
-    setInterval(() => {
-      this.logServerMetrics();
-    }, 5 * 60 * 1000);
+    // Ensure server is fully initialized before starting metrics
+    if (this.server && this.server.sockets) {
+      // Monitor server metrics every 5 minutes
+      setInterval(() => {
+        this.logServerMetrics();
+      }, 5 * 60 * 1000);
+
+      this.logger.log('Server metrics monitoring started');
+    } else {
+      this.logger.warn('Server not fully initialized, metrics monitoring disabled');
+    }
   }
 
   handleConnection(client: Socket) {
@@ -92,12 +99,18 @@ export class MatchesGateway
   }
 
   private logServerMetrics() {
-    const totalClients = this.connectedClients.size;
-    const totalRooms = this.server.sockets.adapter.rooms.size;
+    try {
+      const totalClients = this.connectedClients.size;
 
-    this.logger.log(
-      `WebSocket Metrics: ${totalClients} clients connected, ${totalRooms} rooms active`,
-    );
+      // Safely access adapter.rooms with null checks
+      const totalRooms = this.server?.sockets?.adapter?.rooms?.size ?? 0;
+
+      this.logger.log(
+        `WebSocket Metrics: ${totalClients} clients connected, ${totalRooms} rooms active`,
+      );
+    } catch (error) {
+      this.logger.warn('Failed to log server metrics:', error);
+    }
   }
 
   @SubscribeMessage('joinRoom')
