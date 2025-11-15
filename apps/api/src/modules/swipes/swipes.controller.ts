@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Get, UseGuards, Query } from '@nestjs/common';
+import { Body, Controller, Post, Get, Delete, UseGuards, Query } from '@nestjs/common';
 import { SwipesService } from './swipes.service';
 import {
   ApiBearerAuth,
@@ -47,5 +47,18 @@ export class SwipesController {
       return this.service.findByUserInRoom(userId, roomId);
     }
     return this.service.findByUser(userId);
+  }
+
+  @ApiOperation({ summary: 'Delete a swipe (for undo functionality)' })
+  @ApiOkResponse({ description: 'Swipe deleted successfully' })
+  @ApiQuery({ name: 'roomId', required: true, description: 'Room ID' })
+  @ApiQuery({ name: 'movieId', required: true, description: 'Movie ID' })
+  @Delete()
+  delete(
+    @UserId() userId: string,
+    @Query('roomId') roomId: string,
+    @Query('movieId') movieId: string,
+  ) {
+    return this.service.delete(userId, roomId, movieId);
   }
 }

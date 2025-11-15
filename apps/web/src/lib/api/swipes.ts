@@ -1,4 +1,4 @@
-import { GET, POST } from "@/lib/api"
+import { GET, POST, DELETE } from "@/lib/api"
 import { parseResponse, withErrors } from "@/lib/http"
 import {
   CreateSwipeInput,
@@ -25,6 +25,20 @@ export async function createSwipe(
     responseSwipeSchema,
     withErrors("SWIPES")
   )
+}
+
+/**
+ * Delete a swipe (for undo functionality)
+ */
+export async function deleteSwipe(
+  roomId: string,
+  movieId: string
+): Promise<{ deleted: boolean }> {
+  const response = await DELETE(`/swipes?roomId=${roomId}&movieId=${movieId}`)
+  if (!response.ok) {
+    throw new Error("Failed to delete swipe")
+  }
+  return response.json()
 }
 
 /**
