@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import type { UserRoomsResponseDto } from "@/schemas/rooms"
 import { Film, Tv, ArrowRight } from "lucide-react"
+import { ShareRoomButton } from "./ShareRoomButton"
 
 interface RoomsListProps {
   rooms: UserRoomsResponseDto
@@ -60,14 +61,27 @@ export function RoomsList({ rooms }: RoomsListProps) {
                 </div>
               </div>
 
-              <Button
-                size="sm"
-                variant="ghost"
-                className="shrink-0 group-hover:bg-primary/10 group-hover:text-primary"
-              >
-                Accéder
-                <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                <ShareRoomButton
+                  roomCode={room.code}
+                  roomName={room.name || "Room sans nom"}
+                  variant="ghost"
+                  size="icon"
+                  className="shrink-0"
+                />
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="shrink-0 group-hover:bg-primary/10 group-hover:text-primary"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    router.push(`/rooms/${room.code}`)
+                  }}
+                >
+                  Accéder
+                  <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

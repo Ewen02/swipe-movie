@@ -11,14 +11,14 @@ import { Button } from "@/components/ui/button"
 import { MovieCards } from "@/components/swipe/MovieCards"
 import { MatchesList } from "@/components/room/MatchesList"
 import { MatchAnimation } from "@/components/room/MatchAnimation"
-import { Users, Copy, CheckCircle2, Film } from "lucide-react"
+import { ShareRoomButton } from "@/components/room/ShareRoomButton"
+import { Users, Film } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Footer } from "@/components/layout/Footer"
 import { RoomErrorBoundary } from "@/components/error"
 
 function RoomPageContent() {
   const { code } = useParams<{ code: string }>()
-  const [copied, setCopied] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [currentTab, setCurrentTab] = useState("swipe")
 
@@ -104,13 +104,6 @@ function RoomPageContent() {
     }
   }, [room, setSwipedMovieIds, setRefreshMatches])
 
-  const handleCopyCode = useCallback(() => {
-    if (room?.code) {
-      navigator.clipboard.writeText(room.code)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    }
-  }, [room?.code])
 
   const handleTabChange = useCallback(async (value: string) => {
     setCurrentTab(value)
@@ -197,24 +190,12 @@ function RoomPageContent() {
                 </div>
               </div>
 
-              <Button
+              <ShareRoomButton
+                roomCode={room.code}
+                roomName={room.name || "Room sans nom"}
                 variant="outline"
                 size="sm"
-                onClick={handleCopyCode}
-                className="flex items-center gap-2 shrink-0 font-mono"
-              >
-                {copied ? (
-                  <>
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                    Copié !
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4" />
-                    {room.code}
-                  </>
-                )}
-              </Button>
+              />
             </div>
           </div>
 
