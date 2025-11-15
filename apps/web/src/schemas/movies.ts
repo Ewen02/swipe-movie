@@ -16,6 +16,7 @@ export const movieBasicSchema = z.object({
   video: z.boolean(),
   voteAverage: z.number(),
   voteCount: z.number(),
+  watchProviders: z.array(z.number()).optional(),
 })
 
 // Schema for MoviesGenresDto
