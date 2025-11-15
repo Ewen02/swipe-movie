@@ -1,15 +1,22 @@
+import '../instrument'; // Must be first import
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { SentryExceptionFilter } from './common/filters';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Apply global exception filter for secure error handling
-  app.useGlobalFilters(new HttpExceptionFilter());
+  // Apply global exception filters
+  // SentryExceptionFilter catches all exceptions and sends to Sentry
+  // HttpExceptionFilter provides secure error responses
+  app.useGlobalFilters(
+    new SentryExceptionFilter(),
+    new HttpExceptionFilter(),
+  );
 
   // Configure Helmet avec des options adaptées pour les APIs
   app.use(

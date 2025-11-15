@@ -1,6 +1,7 @@
 "use client"
 
 import React, { Component, ErrorInfo, ReactNode } from "react"
+import * as Sentry from "@sentry/nextjs"
 import { AlertTriangle, RefreshCw, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -39,8 +40,20 @@ export class RoomErrorBoundary extends Component<Props, State> {
       console.error("Error Info:", errorInfo)
     }
 
-    // TODO: Log to monitoring service with room context
-    // logErrorToService(error, { ...errorInfo, roomId: this.props.roomId })
+    // Send error to Sentry with room context
+    Sentry.captureException(error, {
+      contexts: {
+        react: {
+          componentStack: errorInfo.componentStack,
+        },
+        room: {
+          roomId: this.props.roomId,
+        },
+      },
+      tags: {
+        errorBoundary: "RoomErrorBoundary",
+      },
+    })
   }
 
   handleReset = (): void => {

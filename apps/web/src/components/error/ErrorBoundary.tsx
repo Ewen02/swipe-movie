@@ -1,6 +1,7 @@
 "use client"
 
 import React, { Component, ErrorInfo, ReactNode } from "react"
+import * as Sentry from "@sentry/nextjs"
 import { AlertTriangle, RefreshCw, Home } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -52,14 +53,20 @@ export class ErrorBoundary extends Component<Props, State> {
       console.error("Error Info:", errorInfo)
     }
 
+    // Send error to Sentry
+    Sentry.captureException(error, {
+      contexts: {
+        react: {
+          componentStack: errorInfo.componentStack,
+        },
+      },
+    })
+
     // Call custom error handler if provided
     this.props.onError?.(error, errorInfo)
 
     // Update state with error info
     this.setState({ errorInfo })
-
-    // TODO: Send error to monitoring service (Sentry, etc.)
-    // Example: logErrorToService(error, errorInfo)
   }
 
   handleReset = (): void => {
