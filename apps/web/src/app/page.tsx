@@ -1,55 +1,26 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowRight, Users, Film, Sparkles, Heart, X } from "lucide-react"
 import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
-import { ThemeToggle } from "@/components/layout/ThemeToggle"
+import { PublicHeader } from "@/components/layout/PublicHeader"
+import { Footer } from "@/components/layout/Footer"
 
 export default function LandingPage() {
   const { data: session, status } = useSession()
-  const router = useRouter()
-
-  // Redirect if already logged in
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.push("/rooms")
-    }
-  }, [status, router])
 
   if (status === "loading") {
     return null // or a loading spinner
   }
 
+  const isAuthenticated = status === "authenticated"
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
       {/* Header */}
-      <header className="container mx-auto px-4 py-6">
-        <nav className="flex items-center justify-between">
-          <Link href="/" className="hover:opacity-80 transition-opacity">
-            <Image
-              src="/logo.png"
-              alt="Swipe Movie"
-              width={220}
-              height={48}
-              className="h-12 w-auto"
-            />
-          </Link>
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            <Link href="/login">
-              <Button size="lg">
-                Commencer
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-        </nav>
-      </header>
+      <PublicHeader variant="landing" isAuthenticated={isAuthenticated} />
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 md:py-32">
@@ -61,9 +32,9 @@ export default function LandingPage() {
             Fini les débats sans fin ! Swipez, matchez et regardez ensemble en quelques secondes.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/login">
+            <Link href={isAuthenticated ? "/rooms" : "/login"}>
               <Button size="lg" className="text-lg px-8 py-6">
-                Commencer gratuitement
+                {isAuthenticated ? "Accéder à mes rooms" : "Commencer gratuitement"}
                 <Sparkles className="ml-2 h-5 w-5" />
               </Button>
             </Link>
@@ -203,11 +174,11 @@ export default function LandingPage() {
               Prêt à arrêter de chercher ? 🍿
             </h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Créez votre première room et découvrez à quel point c'est simple de décider en groupe
+              {isAuthenticated ? "Créez une nouvelle room et swipez avec vos amis" : "Créez votre première room et découvrez à quel point c'est simple de décider en groupe"}
             </p>
-            <Link href="/login">
+            <Link href={isAuthenticated ? "/rooms" : "/login"}>
               <Button size="lg" className="text-lg px-12 py-6">
-                Commencer maintenant
+                {isAuthenticated ? "Créer une room" : "Commencer maintenant"}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
@@ -219,34 +190,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="container mx-auto px-4 py-12 border-t">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <Image
-            src="/logo.png"
-            alt="Swipe Movie"
-            width={160}
-            height={36}
-            className="h-9 w-auto"
-          />
-          <div className="flex gap-6 text-sm text-muted-foreground">
-            <Link href="/about" className="hover:text-foreground transition-colors">
-              À propos
-            </Link>
-            <Link href="/contact" className="hover:text-foreground transition-colors">
-              Contact
-            </Link>
-            <Link href="/privacy" className="hover:text-foreground transition-colors">
-              Confidentialité
-            </Link>
-            <Link href="/terms" className="hover:text-foreground transition-colors">
-              CGU
-            </Link>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            © 2025 Swipe Movie. Tous droits réservés.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

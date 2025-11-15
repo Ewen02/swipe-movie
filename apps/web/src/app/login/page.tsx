@@ -3,12 +3,12 @@
 import { signIn, useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Film, Sparkles, Users } from "lucide-react"
-import { ThemeToggle } from "@/components/layout/ThemeToggle"
+import { PublicHeader } from "@/components/layout/PublicHeader"
+import { Footer } from "@/components/layout/Footer"
 
 export default function LoginPage() {
   const { data: session, status } = useSession()
@@ -49,20 +49,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex flex-col">
       {/* Header */}
-      <header className="container mx-auto px-4 py-6">
-        <div className="flex items-center justify-between">
-          <Link href="/" className="hover:opacity-80 transition-opacity">
-            <Image
-              src="/logo.png"
-              alt="Swipe Movie"
-              width={220}
-              height={48}
-              className="h-12 w-auto"
-            />
-          </Link>
-          <ThemeToggle />
-        </div>
-      </header>
+      <PublicHeader />
 
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center px-4 py-12">
@@ -194,14 +181,7 @@ export default function LoginPage() {
       </div>
 
       {/* Footer */}
-      <footer className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground border-t">
-        <p>
-          Vous avez des questions ?{" "}
-          <Link href="/contact" className="text-primary hover:underline">
-            Contactez-nous
-          </Link>
-        </p>
-      </footer>
+      <Footer />
     </div>
   )
 }

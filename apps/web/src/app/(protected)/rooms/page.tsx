@@ -12,12 +12,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
 import { Card, CardContent } from "@/components/ui/card"
 import { RoomsList } from "@/components/room/RoomsList"
 import { RoomFilters, RoomFilterValues } from "@/components/room/RoomFilters"
@@ -37,6 +31,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import type { MovieGenre } from "@/schemas/movies"
 import { Plus, Users, Film, Sparkles } from "lucide-react"
+import { Footer } from "@/components/layout/Footer"
 
 export default function RoomsPage() {
   const router = useRouter()
@@ -44,8 +39,10 @@ export default function RoomsPage() {
   const [loading, setLoading] = useState(false)
   const [rooms, setRooms] = useState<UserRoomsResponseDto | null>(null)
   const [genres, setGenres] = useState<MovieGenre[]>([])
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
   const [filters, setFilters] = useState<RoomFilterValues>({
     watchRegion: "FR",
+    minRating: 6.0, // Smart default: bons films
   })
 
   useEffect(() => {
@@ -145,22 +142,63 @@ export default function RoomsPage() {
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-primary" />
+                <DialogTitle className="flex items-center gap-2 text-2xl">
+                  <Sparkles className="w-6 h-6 text-primary" />
                   Créer une room
                 </DialogTitle>
                 <DialogDescription>
-                  Personnalisez votre expérience de sélection de films
+                  Configurez rapidement votre sélection de films
                 </DialogDescription>
               </DialogHeader>
               <Form {...createForm}>
-                <form onSubmit={createForm.handleSubmit(onCreate)} className="space-y-4">
+                <form onSubmit={createForm.handleSubmit(onCreate)} className="space-y-6">
+                  {/* Type de contenu - Boutons Toggle */}
+                  <FormField
+                    control={createForm.control}
+                    name="type"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-base font-semibold">Type de contenu *</FormLabel>
+                        <FormControl>
+                          <div className="grid grid-cols-2 gap-3">
+                            <button
+                              type="button"
+                              onClick={() => field.onChange("movie")}
+                              className={`p-4 rounded-lg border-2 transition-all ${
+                                field.value === "movie"
+                                  ? "border-primary bg-primary/10 shadow-md"
+                                  : "border-border hover:border-primary/50"
+                              }`}
+                            >
+                              <div className="text-3xl mb-2">🎬</div>
+                              <div className="font-semibold">Films</div>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => field.onChange("tv")}
+                              className={`p-4 rounded-lg border-2 transition-all ${
+                                field.value === "tv"
+                                  ? "border-primary bg-primary/10 shadow-md"
+                                  : "border-border hover:border-primary/50"
+                              }`}
+                            >
+                              <div className="text-3xl mb-2">📺</div>
+                              <div className="font-semibold">Séries</div>
+                            </button>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Nom de la room */}
                   <FormField
                     control={createForm.control}
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Nom de la room (optionnel)</FormLabel>
+                        <FormLabel>📝 Nom de la room</FormLabel>
                         <FormControl>
                           <Input placeholder="Soirée cinéma entre amis" {...field} />
                         </FormControl>
@@ -169,34 +207,13 @@ export default function RoomsPage() {
                     )}
                   />
 
-                  <FormField
-                    control={createForm.control}
-                    name="type"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Type de contenu *</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Sélectionnez un type" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="movie">🎬 Films</SelectItem>
-                            <SelectItem value="tv">📺 Séries TV</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
+                  {/* Genre */}
                   <FormField
                     control={createForm.control}
                     name="genreId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Genre (optionnel)</FormLabel>
+                        <FormLabel>🎭 Genre</FormLabel>
                         <Select
                           onValueChange={(value) => field.onChange(parseInt(value))}
                           value={field.value?.toString()}
@@ -206,7 +223,7 @@ export default function RoomsPage() {
                               <SelectValue placeholder="Tous les genres" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent>
+                          <SelectContent className="max-h-[300px]">
                             <SelectItem value="0">Tous les genres</SelectItem>
                             {genres.map((genre) => (
                               <SelectItem key={genre.id} value={genre.id.toString()}>
@@ -220,24 +237,74 @@ export default function RoomsPage() {
                     )}
                   />
 
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="filters" className="border-none">
-                      <AccordionTrigger className="hover:no-underline py-3 px-4 rounded-lg hover:bg-muted/50">
-                        <div className="flex items-center gap-2">
-                          <Sparkles className="w-4 h-4" />
-                          Filtres avancés (optionnels)
+                  {/* Critères intelligents - Résumé */}
+                  <Card className="border-primary/20 bg-primary/5">
+                    <CardContent className="pt-4">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h4 className="font-semibold mb-1 flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-primary" />
+                            Critères de sélection
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            Configurés pour une expérience optimale
+                          </p>
                         </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="pt-4">
+                      </div>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground">⭐ Note minimum :</span>
+                          <span className="font-medium">{filters.minRating || 6.0}/10 (Bons films)</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground">📅 Période :</span>
+                          <span className="font-medium">
+                            {filters.releaseYearMin && filters.releaseYearMax
+                              ? `${filters.releaseYearMin} - ${filters.releaseYearMax}`
+                              : "Toutes les années"}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground">⏱️ Durée :</span>
+                          <span className="font-medium">
+                            {filters.runtimeMin && filters.runtimeMax
+                              ? `${filters.runtimeMin}-${filters.runtimeMax} min`
+                              : "Toutes les durées"}
+                          </span>
+                        </div>
+                        {filters.watchProviders && filters.watchProviders.length > 0 && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground">📺 Plateformes :</span>
+                            <span className="font-medium">{filters.watchProviders.length} sélectionnée(s)</span>
+                          </div>
+                        )}
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="w-full mt-4"
+                        onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                      >
+                        {showAdvancedFilters ? "Masquer les options" : "Personnaliser les critères"}
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  {/* Filtres avancés (collapsible) */}
+                  {showAdvancedFilters && (
+                    <Card>
+                      <CardContent className="pt-6">
                         <RoomFilters filters={filters} onChange={setFilters} />
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
+                      </CardContent>
+                    </Card>
+                  )}
 
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                    size="lg"
+                    className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 text-lg py-6"
                   >
                     {loading ? "Création..." : "Créer la room"}
                   </Button>
@@ -311,6 +378,9 @@ export default function RoomsPage() {
           </div>
         )}
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }

@@ -62,14 +62,11 @@ export function RoomFilters({ filters, onChange }: RoomFiltersProps) {
     onChange({ ...filters, watchProviders: newProviders })
   }
 
+  // Limit to top streaming providers
+  const topProviders = WATCH_PROVIDERS.slice(0, 6)
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-semibold mb-4">Filtres avancés</h3>
-        <p className="text-sm text-muted-foreground mb-4">
-          Affinez votre sélection de films avec ces critères
-        </p>
-      </div>
+    <div className="space-y-4">
 
       {/* Note minimum */}
       <div className="space-y-2">
@@ -194,9 +191,9 @@ export function RoomFilters({ filters, onChange }: RoomFiltersProps) {
 
       {/* Plateformes de streaming */}
       <div className="space-y-2">
-        <Label>Disponible sur</Label>
-        <div className="flex flex-wrap gap-2 mb-2">
-          {WATCH_PROVIDERS.map((provider) => {
+        <Label>Disponible sur (optionnel)</Label>
+        <div className="flex flex-wrap gap-2">
+          {topProviders.map((provider) => {
             const isSelected = (filters.watchProviders || []).includes(
               provider.id
             )
@@ -204,7 +201,7 @@ export function RoomFilters({ filters, onChange }: RoomFiltersProps) {
               <Badge
                 key={provider.id}
                 variant={isSelected ? "default" : "outline"}
-                className="cursor-pointer"
+                className="cursor-pointer hover:opacity-80 transition-opacity"
                 onClick={() => toggleProvider(provider.id)}
               >
                 <span className="mr-1">{provider.logo}</span>
@@ -223,50 +220,8 @@ export function RoomFilters({ filters, onChange }: RoomFiltersProps) {
           })}
         </div>
         <p className="text-xs text-muted-foreground">
-          Région : France (FR) par défaut
+          Cliquez pour sélectionner vos plateformes favorites
         </p>
-      </div>
-
-      {/* Custom year range */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="yearMin">Année min</Label>
-          <Input
-            id="yearMin"
-            type="number"
-            placeholder="1990"
-            min={1900}
-            max={CURRENT_YEAR}
-            value={filters.releaseYearMin || ""}
-            onChange={(e) =>
-              onChange({
-                ...filters,
-                releaseYearMin: e.target.value
-                  ? parseInt(e.target.value, 10)
-                  : undefined,
-              })
-            }
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="yearMax">Année max</Label>
-          <Input
-            id="yearMax"
-            type="number"
-            placeholder={CURRENT_YEAR.toString()}
-            min={1900}
-            max={CURRENT_YEAR}
-            value={filters.releaseYearMax || ""}
-            onChange={(e) =>
-              onChange({
-                ...filters,
-                releaseYearMax: e.target.value
-                  ? parseInt(e.target.value, 10)
-                  : undefined,
-              })
-            }
-          />
-        </div>
       </div>
     </div>
   )
