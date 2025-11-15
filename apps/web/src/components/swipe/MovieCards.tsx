@@ -5,10 +5,11 @@ import { motion, type PanInfo, useMotionValue, useTransform, animate } from "fra
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Heart, X, Star, Undo2, Calendar, Sparkles } from "lucide-react"
+import { Heart, X, Undo2, Sparkles, Star, Calendar } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { MovieBasic } from "@/schemas/movies"
 import { RoomWithMembersResponseDto } from "@/schemas/rooms"
+import { RatingBadge, ReleaseDateBadge, ProviderList } from "@/components/ui/movie"
 import { getProvidersByIds } from "@/lib/constants/providers"
 
 interface Particle {
@@ -22,6 +23,7 @@ interface Particle {
 interface MovieCardsProps {
   movies: MovieBasic[]
   onSwipe: (movie: MovieBasic, direction: "left" | "right") => void
+  onUndo?: (movie: MovieBasic) => Promise<void>
   onEmpty?: () => void
   roomFilters?: RoomWithMembersResponseDto
 }
@@ -34,6 +36,7 @@ interface MovieCardProps {
   onSwipe: (movie: MovieBasic, direction: "left" | "right") => void
   onButtonSwipeRef?: (fn: (direction: "left" | "right") => void) => void
   onButtonHoverRef?: (hoverFn: (direction: "left" | "right") => void, hoverEndFn: () => void) => void
+  roomFilters?: RoomWithMembersResponseDto
 }
 
 function MovieCard({
@@ -44,6 +47,7 @@ function MovieCard({
   onSwipe,
   onButtonSwipeRef,
   onButtonHoverRef,
+  roomFilters,
 }: MovieCardProps) {
   const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null)
   const [imageLoaded, setImageLoaded] = useState(false)
@@ -249,17 +253,21 @@ function MovieCard({
             )}
 
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent p-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="flex items-center gap-1 bg-black/40 rounded-full px-3 py-1">
-                  <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                  <span className="text-white font-semibold text-sm">{movie.voteAverage.toFixed(1)}</span>
-                </div>
+              <div className="flex items-center gap-3 mb-2 flex-wrap">
+                <RatingBadge rating={movie.voteAverage} variant="card" />
 
                 {releaseYear && (
-                  <div className="flex items-center gap-1 bg-black/40 rounded-full px-3 py-1">
-                    <Calendar className="w-4 h-4 text-blue-400" />
-                    <span className="text-white font-semibold text-sm">{releaseYear}</span>
-                  </div>
+                  <ReleaseDateBadge releaseDate={movie.releaseDate} variant="card" />
+                )}
+
+                {/* Watch Providers */}
+                {roomFilters?.watchProviders && roomFilters.watchProviders.length > 0 && (
+                  <ProviderList
+                    providerIds={roomFilters.watchProviders}
+                    variant="card"
+                    maxVisible={2}
+                    showNames={true}
+                  />
                 )}
               </div>
 
@@ -276,7 +284,7 @@ function MovieCard({
   )
 }
 
-export function MovieCards({ movies, onSwipe, onEmpty, roomFilters }: MovieCardsProps) {
+export function MovieCards({ movies, onSwipe, onUndo, onEmpty, roomFilters }: MovieCardsProps) {
   const [currentCards, setCurrentCards] = useState(movies)
   const [lastSwipe, setLastSwipe] = useState<{ movie: MovieBasic; direction: "left" | "right" } | null>(null)
   const [swipeCount, setSwipeCount] = useState(0)
@@ -311,7 +319,7 @@ export function MovieCards({ movies, onSwipe, onEmpty, roomFilters }: MovieCards
     }, 500)
   }
 
-  const handleUndo = () => {
+  const handleUndo = async () => {
     if (!lastSwipe) return
 
     // Annuler le swipe précédent
@@ -326,8 +334,14 @@ export function MovieCards({ movies, onSwipe, onEmpty, roomFilters }: MovieCards
       setLikeCount((prev) => Math.max(0, prev - 1))
     }
 
-    // Notifier le parent de l'annulation (swipe dans la direction opposée)
-    onSwipe(movie, direction === "left" ? "right" : "left")
+    // Call the onUndo callback if provided (to delete the swipe from backend)
+    if (onUndo) {
+      try {
+        await onUndo(movie)
+      } catch (err) {
+        console.error("Failed to undo swipe:", err)
+      }
+    }
 
     // Réinitialiser l'historique
     setLastSwipe(null)
@@ -460,6 +474,7 @@ export function MovieCards({ movies, onSwipe, onEmpty, roomFilters }: MovieCards
             totalCards={2}
             isActive={index === 0}
             onSwipe={handleCardSwipe}
+            roomFilters={roomFilters}
             onButtonSwipeRef={
               index === 0
                 ? (fn) => {

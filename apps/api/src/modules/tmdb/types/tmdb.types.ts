@@ -80,3 +80,24 @@ export type TMDbMovieDetailsResponse = {
   vote_average: number;
   vote_count: number;
 };
+
+export type TMDbWatchProvider = {
+  logo_path: string;
+  provider_id: number;
+  provider_name: string;
+  display_priority: number;
+};
+
+export type TMDbWatchProvidersResult = {
+  link?: string;
+  flatrate?: TMDbWatchProvider[];
+  rent?: TMDbWatchProvider[];
+  buy?: TMDbWatchProvider[];
+};
+
+export type TMDbWatchProvidersResponse = {
+  id: number;
+  results: {
+    [countryCode: string]: TMDbWatchProvidersResult;
+  };
+};

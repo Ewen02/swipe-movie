@@ -2,17 +2,20 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Star, Trophy, Users } from "lucide-react"
+import { Trophy } from "lucide-react"
 import { Match } from "@/schemas/swipes"
 import { MovieBasic } from "@/schemas/movies"
+import { RoomWithMembersResponseDto } from "@/schemas/rooms"
+import { RatingBadge, VoteCountBadge, AgreementBadge, ReleaseDateBadge, ProviderList } from "@/components/ui/movie"
 
 interface TopMatchProps {
   match: Match
   movie: MovieBasic
   totalMembers: number
+  roomFilters?: RoomWithMembersResponseDto
 }
 
-export function TopMatch({ match, movie, totalMembers }: TopMatchProps) {
+export function TopMatch({ match, movie, totalMembers, roomFilters }: TopMatchProps) {
   const agreementPercentage = Math.round((match.voteCount / totalMembers) * 100)
 
   return (
@@ -49,38 +52,32 @@ export function TopMatch({ match, movie, totalMembers }: TopMatchProps) {
                   {movie.title}
                 </h4>
                 {movie.releaseDate && (
-                  <p className="text-gray-600 dark:text-gray-400">
-                    {new Date(movie.releaseDate).getFullYear()}
-                  </p>
+                  <ReleaseDateBadge releaseDate={movie.releaseDate} variant="info" />
                 )}
               </div>
 
               <div className="flex flex-wrap gap-3">
                 {/* Agreement Percentage */}
-                <Badge
-                  variant="outline"
-                  className="text-lg px-4 py-2 border-2 border-green-500 text-green-700 dark:text-green-400 font-bold"
-                >
-                  <Users className="w-5 h-5 mr-2" />
-                  {agreementPercentage}% d&apos;accord
-                </Badge>
+                <AgreementBadge
+                  voteCount={match.voteCount}
+                  totalMembers={totalMembers}
+                  variant="large"
+                />
 
                 {/* TMDb Rating */}
-                <Badge
-                  variant="outline"
-                  className="text-lg px-4 py-2 border-2 border-yellow-500 text-yellow-700 dark:text-yellow-400 font-bold"
-                >
-                  <Star className="w-5 h-5 mr-2 fill-yellow-500" />
-                  {movie.voteAverage.toFixed(1)}/10
-                </Badge>
+                <RatingBadge rating={movie.voteAverage} variant="topMatch" />
 
                 {/* Vote Count */}
-                <Badge
-                  variant="outline"
-                  className="text-lg px-4 py-2 border-2 border-blue-500 text-blue-700 dark:text-blue-400"
-                >
-                  {match.voteCount} vote{match.voteCount > 1 ? "s" : ""}
-                </Badge>
+                <VoteCountBadge voteCount={match.voteCount} variant="large" />
+
+                {/* Watch Providers */}
+                {roomFilters?.watchProviders && roomFilters.watchProviders.length > 0 && (
+                  <ProviderList
+                    providerIds={roomFilters.watchProviders}
+                    variant="topMatch"
+                    showNames={true}
+                  />
+                )}
               </div>
 
               {movie.overview && (
