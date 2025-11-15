@@ -6,7 +6,15 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.use(helmet());
+
+  // Configure Helmet avec des options adaptées pour les APIs
+  app.use(
+    helmet({
+      contentSecurityPolicy: false, // Désactivé car c'est une API, pas un site web
+      crossOriginEmbedderPolicy: false,
+    }),
+  );
+
   app.enableCors({ origin: process.env.WEB_ORIGIN, credentials: true });
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
