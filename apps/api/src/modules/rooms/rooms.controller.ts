@@ -77,17 +77,22 @@ export class RoomsController {
     return this.service.leave(userId, dto.roomId);
   }
 
-  @ApiOperation({ summary: 'Get all rooms for user (paginated)' })
+  @ApiOperation({ summary: 'Get all rooms for user (optionally paginated)' })
   @ApiOkResponse({
-    description: 'Paginated list of user rooms',
+    description: 'List of user rooms (paginated if query params provided)',
     type: MemberRoomsResponseDto,
   })
   @Get('my')
   userRooms(
     @UserId() userId: string,
-    @Query() pagination: PaginationQueryDto,
+    @Query() pagination?: PaginationQueryDto,
   ) {
-    return this.service.getUserRooms(userId, pagination);
+    // If no pagination params, return all rooms
+    const hasPagination = pagination?.page !== undefined || pagination?.limit !== undefined;
+    return this.service.getUserRooms(
+      userId,
+      hasPagination ? pagination : undefined,
+    );
   }
 
   @ApiOperation({ summary: 'Get room details by code' })
