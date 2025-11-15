@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
@@ -8,6 +8,7 @@ import { SwipesModule } from './modules/swipes/swipes.module';
 import { MatchesModule } from './modules/matches/matches.module';
 import { MoviesModule } from './modules/movies/movies.module';
 import { CacheConfigModule } from './modules/cache/cache.module';
+import { HttpsRedirectMiddleware } from './common/middleware/https-redirect.middleware';
 
 @Module({
   imports: [
@@ -44,4 +45,8 @@ import { CacheConfigModule } from './modules/cache/cache.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(HttpsRedirectMiddleware).forRoutes('*');
+  }
+}

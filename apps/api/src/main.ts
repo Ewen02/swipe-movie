@@ -3,15 +3,27 @@ import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Apply global exception filter for secure error handling
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   // Configure Helmet avec des options adaptées pour les APIs
   app.use(
     helmet({
       contentSecurityPolicy: false, // Désactivé car c'est une API, pas un site web
       crossOriginEmbedderPolicy: false,
+      hsts: {
+        maxAge: 31536000, // 1 year in seconds
+        includeSubDomains: true,
+        preload: true,
+      },
+      frameguard: { action: 'deny' }, // Prevent clickjacking
+      noSniff: true, // Prevent MIME type sniffing
+      xssFilter: true, // Enable XSS filter
     }),
   );
 
