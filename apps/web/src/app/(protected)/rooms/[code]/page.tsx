@@ -38,6 +38,7 @@ function RoomPageContent() {
     swipedMovieIds,
     setSwipedMovieIds,
     reloadSwipes,
+    reloadRoom,
   } = useRoomData({ code })
 
   const {
@@ -182,9 +183,8 @@ function RoomPageContent() {
     try {
       setJoiningRoom(true)
       await joinRoom({ code })
-      // Reload the page to refresh room data with updated membership
-      router.refresh()
-      window.location.reload()
+      // Reload room data to refresh membership
+      await reloadRoom()
     } catch (err) {
       console.error("Failed to join room:", err)
       alert("Impossible de rejoindre la room. Veuillez réessayer.")

@@ -14,6 +14,7 @@ interface UseRoomDataReturn {
   swipedMovieIds: Set<string>
   setSwipedMovieIds: React.Dispatch<React.SetStateAction<Set<string>>>
   reloadSwipes: () => Promise<void>
+  reloadRoom: () => Promise<void>
 }
 
 export function useRoomData({ code }: UseRoomDataProps): UseRoomDataReturn {
@@ -57,6 +58,10 @@ export function useRoomData({ code }: UseRoomDataProps): UseRoomDataReturn {
     await loadSwipes(room.id)
   }
 
+  const reloadRoom = async () => {
+    await loadRoom()
+  }
+
   return {
     room,
     loading,
@@ -64,5 +69,6 @@ export function useRoomData({ code }: UseRoomDataProps): UseRoomDataReturn {
     swipedMovieIds,
     setSwipedMovieIds,
     reloadSwipes,
+    reloadRoom,
   }
 }
