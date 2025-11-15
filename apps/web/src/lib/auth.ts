@@ -67,6 +67,19 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (typeof token.accessToken === "string") {
         session.accessToken = token.accessToken
+
+        // Decode JWT to get user ID
+        try {
+          const base64Url = token.accessToken.split('.')[1]
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+          const payload = JSON.parse(Buffer.from(base64, 'base64').toString())
+
+          if (session.user && payload.sub) {
+            session.user.id = payload.sub
+          }
+        } catch (e) {
+          console.error("Failed to decode JWT token", e)
+        }
       } else {
         session.accessToken = undefined
       }
