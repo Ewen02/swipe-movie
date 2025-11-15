@@ -1,0 +1,1 @@
+export { MovieDetailsModal } from "./MovieDetailsModal"

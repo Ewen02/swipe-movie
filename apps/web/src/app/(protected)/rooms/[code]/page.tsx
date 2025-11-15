@@ -14,6 +14,7 @@ import { MovieCards } from "@/components/swipe/MovieCards"
 import { MatchesList } from "@/components/room/MatchesList"
 import { MatchAnimation } from "@/components/room/MatchAnimation"
 import { ShareRoomButton } from "@/components/room/ShareRoomButton"
+import { MovieDetailsModal } from "@/components/movies/MovieDetailsModal"
 import { Users, Film, UserPlus } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Footer } from "@/components/layout/Footer"
@@ -26,6 +27,8 @@ function RoomPageContent() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [currentTab, setCurrentTab] = useState("swipe")
   const [joiningRoom, setJoiningRoom] = useState(false)
+  const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null)
+  const [showMovieDetails, setShowMovieDetails] = useState(false)
 
   // Custom hooks for room data, movies, and match notifications
   const {
@@ -109,6 +112,11 @@ function RoomPageContent() {
     }
   }, [room, setSwipedMovieIds, setRefreshMatches])
 
+
+  const handleShowDetails = useCallback((movieId: number) => {
+    setSelectedMovieId(movieId)
+    setShowMovieDetails(true)
+  }, [])
 
   const handleTabChange = useCallback(async (value: string) => {
     setCurrentTab(value)
@@ -240,6 +248,13 @@ function RoomPageContent() {
         onComplete={handleMatchAnimationComplete}
       />
 
+      {/* Movie Details Modal */}
+      <MovieDetailsModal
+        movieId={selectedMovieId}
+        open={showMovieDetails}
+        onOpenChange={setShowMovieDetails}
+      />
+
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex flex-col">
         <div className="container mx-auto px-4 py-8 max-w-6xl flex-1">
           {/* Header */}
@@ -301,6 +316,7 @@ function RoomPageContent() {
                   onSwipe={handleSwipe}
                   onUndo={handleUndo}
                   onEmpty={handleLoadMoreMovies}
+                  onShowDetails={handleShowDetails}
                   roomFilters={room}
                 />
               ) : (

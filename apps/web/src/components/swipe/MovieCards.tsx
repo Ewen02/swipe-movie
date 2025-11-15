@@ -6,7 +6,7 @@ import { motion, type PanInfo, useMotionValue, useTransform, animate } from "fra
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Heart, X, Undo2, Sparkles, Star, Calendar } from "lucide-react"
+import { Heart, X, Undo2, Sparkles, Star, Calendar, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { MovieBasic } from "@/schemas/movies"
 import { RoomWithMembersResponseDto } from "@/schemas/rooms"
@@ -26,6 +26,7 @@ interface MovieCardsProps {
   onSwipe: (movie: MovieBasic, direction: "left" | "right") => void
   onUndo?: (movie: MovieBasic) => Promise<void>
   onEmpty?: () => void
+  onShowDetails?: (movieId: number) => void
   roomFilters?: RoomWithMembersResponseDto
 }
 
@@ -35,6 +36,7 @@ interface MovieCardProps {
   totalCards: number
   isActive: boolean
   onSwipe: (movie: MovieBasic, direction: "left" | "right") => void
+  onShowDetails?: (movieId: number) => void
   onButtonSwipeRef?: (fn: (direction: "left" | "right") => void) => void
   onButtonHoverRef?: (hoverFn: (direction: "left" | "right") => void, hoverEndFn: () => void) => void
   roomFilters?: RoomWithMembersResponseDto
@@ -46,6 +48,7 @@ function MovieCard({
   totalCards,
   isActive,
   onSwipe,
+  onShowDetails,
   onButtonSwipeRef,
   onButtonHoverRef,
   roomFilters,
@@ -275,9 +278,25 @@ function MovieCard({
                 )}
               </div>
 
-              <h3 className="text-white text-2xl font-bold mb-1">
-                {movie.title}
-              </h3>
+              <div className="flex items-start justify-between gap-3 mb-2">
+                <h3 className="text-white text-2xl font-bold flex-1">
+                  {movie.title}
+                </h3>
+
+                {onShowDetails && (
+                  <Button
+                    size="icon"
+                    variant="secondary"
+                    className="shrink-0 bg-white/90 hover:bg-white"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onShowDetails(movie.id)
+                    }}
+                  >
+                    <Info className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
 
               <p className="text-white/90 text-sm mt-2 line-clamp-3">{movie.overview}</p>
             </div>
@@ -288,7 +307,7 @@ function MovieCard({
   )
 }
 
-export function MovieCards({ movies, onSwipe, onUndo, onEmpty, roomFilters }: MovieCardsProps) {
+export function MovieCards({ movies, onSwipe, onUndo, onEmpty, onShowDetails, roomFilters }: MovieCardsProps) {
   const [currentCards, setCurrentCards] = useState(movies)
   const [lastSwipe, setLastSwipe] = useState<{ movie: MovieBasic; direction: "left" | "right" } | null>(null)
   const [swipeCount, setSwipeCount] = useState(0)
@@ -478,6 +497,7 @@ export function MovieCards({ movies, onSwipe, onUndo, onEmpty, roomFilters }: Mo
             totalCards={2}
             isActive={index === 0}
             onSwipe={handleCardSwipe}
+            onShowDetails={onShowDetails}
             roomFilters={roomFilters}
             onButtonSwipeRef={
               index === 0
