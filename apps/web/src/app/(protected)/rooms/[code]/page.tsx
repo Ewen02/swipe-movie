@@ -187,7 +187,14 @@ function RoomPageContent() {
       await reloadRoom()
     } catch (err) {
       console.error("Failed to join room:", err)
-      alert("Impossible de rejoindre la room. Veuillez réessayer.")
+      const errorMessage = err instanceof Error ? err.message : String(err)
+
+      // Check if it's a "room is full" error
+      if (errorMessage.toLowerCase().includes('full') || errorMessage.toLowerCase().includes('pleine')) {
+        alert(`❌ Cette room est complète (${room?.members.length || 0}/10 membres). Demande au créateur de la room d'augmenter la capacité ou crée ta propre room !`)
+      } else {
+        alert("Impossible de rejoindre la room. Veuillez réessayer.")
+      }
     } finally {
       setJoiningRoom(false)
     }
@@ -209,7 +216,7 @@ function RoomPageContent() {
               </Badge>
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                 <Users className="w-4 h-4" />
-                <span>{room.members.length} membre{room.members.length > 1 ? 's' : ''}</span>
+                <span>{room.members.length}/10 membres</span>
               </div>
             </div>
             <p className="text-muted-foreground mb-6">
@@ -270,7 +277,7 @@ function RoomPageContent() {
                   </Badge>
                   <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                     <Users className="w-4 h-4" />
-                    <span>{room.members.length} membre{room.members.length > 1 ? 's' : ''}</span>
+                    <span>{room.members.length}/10 membres</span>
                   </div>
                 </div>
               </div>

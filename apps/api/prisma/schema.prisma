@@ -31,7 +31,7 @@ model Room {
   id        String       @id @default(cuid())
   code      String       @unique
   name      String       @default("Untitled Room")
-  capacity  Int          @default(2)
+  capacity  Int          @default(10)
   type        RoomType   @default(MOVIE)
   genreId     Int        @default(0)
   selectedTmdbId  Int?
