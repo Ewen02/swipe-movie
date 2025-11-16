@@ -12,6 +12,7 @@ interface UseRoomDataReturn {
   loading: boolean
   error: string | null
   swipedMovieIds: Set<string>
+  swipesLoaded: boolean
   setSwipedMovieIds: React.Dispatch<React.SetStateAction<Set<string>>>
   reloadSwipes: () => Promise<void>
   reloadRoom: () => Promise<void>
@@ -22,6 +23,7 @@ export function useRoomData({ code }: UseRoomDataProps): UseRoomDataReturn {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [swipedMovieIds, setSwipedMovieIds] = useState<Set<string>>(new Set())
+  const [swipesLoaded, setSwipesLoaded] = useState(false)
 
   useEffect(() => {
     if (!code) return
@@ -48,8 +50,10 @@ export function useRoomData({ code }: UseRoomDataProps): UseRoomDataReturn {
       const swipes = await getMySwipesByRoom(roomId)
       const swipedIds = new Set(swipes.map(swipe => swipe.movieId))
       setSwipedMovieIds(swipedIds)
+      setSwipesLoaded(true)
     } catch (err) {
       console.error("Failed to load swipes:", err)
+      setSwipesLoaded(true) // Set to true even on error so we don't block loading
     }
   }
 
@@ -67,6 +71,7 @@ export function useRoomData({ code }: UseRoomDataProps): UseRoomDataReturn {
     loading,
     error,
     swipedMovieIds,
+    swipesLoaded,
     setSwipedMovieIds,
     reloadSwipes,
     reloadRoom,

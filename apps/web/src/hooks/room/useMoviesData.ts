@@ -8,6 +8,7 @@ import type { MovieBasic } from "@/schemas/movies"
 interface UseMoviesDataProps {
   room: RoomWithMembersResponseDto | null
   swipedMovieIds: Set<string>
+  swipesLoaded: boolean
 }
 
 interface UseMoviesDataReturn {
@@ -26,19 +27,20 @@ interface UseMoviesDataReturn {
   handleLoadMoreMovies: () => void
 }
 
-export function useMoviesData({ room, swipedMovieIds }: UseMoviesDataProps): UseMoviesDataReturn {
+export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesDataProps): UseMoviesDataReturn {
   const { data: session } = useSession()
   const [movies, setMovies] = useState<MovieBasic[]>([])
   const [moviesLoading, setMoviesLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
 
-  // Initial load when room is ready or when user joins
+  // Initial load when room is ready AND swipes are loaded
   useEffect(() => {
     if (!room) return
+    if (!swipesLoaded) return // Wait for swipes to be loaded first
     if (room.genreId !== null && room.genreId !== undefined) {
       loadMovies(room.genreId, room.type as 'movie' | 'tv', 1, false, room, swipedMovieIds)
     }
-  }, [room?.id, room?.members?.length])
+  }, [room?.id, room?.members?.length, swipesLoaded])
 
   const loadMovies = useCallback(async (
     genreId: number,

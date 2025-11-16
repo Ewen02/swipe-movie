@@ -36,6 +36,7 @@ function RoomPageContent() {
     loading,
     error,
     swipedMovieIds,
+    swipesLoaded,
     setSwipedMovieIds,
     reloadSwipes,
     reloadRoom,
@@ -48,7 +49,7 @@ function RoomPageContent() {
     currentPage,
     loadMovies,
     handleLoadMoreMovies,
-  } = useMoviesData({ room, swipedMovieIds })
+  } = useMoviesData({ room, swipedMovieIds, swipesLoaded })
 
   const {
     matchedMovie,
