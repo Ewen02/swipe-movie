@@ -1,8 +1,8 @@
 "use client"
 
 import { signIn, useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState, Suspense } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,21 +10,25 @@ import { Film, Sparkles, Users } from "lucide-react"
 import { PublicHeader } from "@/components/layout/PublicHeader"
 import { Footer } from "@/components/layout/Footer"
 
-export default function LoginPage() {
+function LoginPageContent() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
+
+  // Get callbackUrl from query params, default to /rooms
+  const callbackUrl = searchParams.get("callbackUrl") || "/rooms"
 
   useEffect(() => {
     if (status === "authenticated") {
-      router.push("/rooms")
+      router.push(callbackUrl)
     }
-  }, [status, router])
+  }, [status, router, callbackUrl])
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true)
     try {
-      await signIn("google", { callbackUrl: "/rooms" })
+      await signIn("google", { callbackUrl })
     } catch (error) {
       console.error("Sign in error:", error)
       setIsLoading(false)
@@ -183,5 +187,20 @@ export default function LoginPage() {
       {/* Footer */}
       <Footer />
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-background via-background to-accent/5">
+        <div className="text-center">
+          <Film className="w-12 h-12 mx-auto mb-4 animate-pulse text-primary" />
+          <p className="text-muted-foreground">Chargement...</p>
+        </div>
+      </div>
+    }>
+      <LoginPageContent />
+    </Suspense>
   )
 }
