@@ -407,4 +407,52 @@ export class MoviesService {
 
     return providersMap;
   }
+
+  async getAllWatchProviders(
+    region: string = 'FR',
+  ): Promise<{ id: number; name: string; logoPath: string }[]> {
+    const cacheKey = `tmdb:providers:${region}`;
+
+    // Try to get from cache
+    const cached = await this.cacheManager.get<
+      { id: number; name: string; logoPath: string }[]
+    >(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    const url = `/watch/providers/movie?language=${TMDB_DEFAULT_LANG}&watch_region=${region}`;
+
+    try {
+      const json = await this.tmdb.fetchJson<{
+        results: {
+          provider_id: number;
+          provider_name: string;
+          logo_path: string;
+          display_priority: number;
+        }[];
+      }>(url);
+
+      // Map and sort by display priority
+      const providers = json.results
+        .map((p) => ({
+          id: p.provider_id,
+          name: p.provider_name,
+          logoPath: p.logo_path
+            ? `${TMDB_IMAGE_BASE.POSTER}${p.logo_path}`
+            : '',
+          displayPriority: p.display_priority,
+        }))
+        .sort((a, b) => a.displayPriority - b.displayPriority)
+        .map(({ id, name, logoPath }) => ({ id, name, logoPath }));
+
+      // Store in cache (7 days)
+      await this.cacheManager.set(cacheKey, providers, CACHE_TTL.GENRES);
+
+      return providers;
+    } catch (error) {
+      console.error(`Failed to fetch watch providers for ${region}:`, error);
+      return [];
+    }
+  }
 }

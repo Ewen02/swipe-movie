@@ -152,3 +152,17 @@ export async function getBatchWatchProviders(
   const data = await response.json()
   return typeof data === 'object' && data !== null ? data : {}
 }
+
+/**
+ * Get all available watch providers for a region
+ */
+export async function getAllWatchProviders(
+  region: string = "FR"
+): Promise<MovieWatchProvider[]> {
+  const response = await GET(`/movies/providers/all?region=${region}`)
+  if (!response.ok) {
+    return []
+  }
+  const data = await response.json()
+  return Array.isArray(data) ? data : []
+}

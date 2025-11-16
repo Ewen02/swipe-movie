@@ -180,6 +180,30 @@ export class MoviesController {
     );
   }
 
+  @ApiOperation({ summary: 'Get all available watch providers for a region' })
+  @ApiOkResponse({
+    schema: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: { type: 'number' },
+          name: { type: 'string' },
+          logoPath: { type: 'string' },
+        },
+      },
+    },
+  })
+  @ApiQuery({
+    name: 'region',
+    required: false,
+    description: 'Region code (defaults to FR)',
+  })
+  @Get('providers/all')
+  getAllWatchProviders(@Query('region') region?: string) {
+    return this.moviesService.getAllWatchProviders(region);
+  }
+
   @ApiOperation({ summary: 'Get movie or TV show details' })
   @ApiOkResponse({ type: MovieDetailsDto })
   @ApiQuery({

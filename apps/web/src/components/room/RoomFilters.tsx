@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import {
@@ -10,8 +11,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { X } from "lucide-react"
-import { WATCH_PROVIDERS } from "@/lib/constants/providers"
+import { X, Loader2 } from "lucide-react"
+import { getAllWatchProviders } from "@/lib/api/movies"
+import type { MovieWatchProvider } from "@/schemas/movies"
+import Image from "next/image"
 
 export interface RoomFilterValues {
   minRating?: number
@@ -47,6 +50,26 @@ const DECADES = [
 ]
 
 export function RoomFilters({ filters, onChange }: RoomFiltersProps) {
+  const [providers, setProviders] = useState<MovieWatchProvider[]>([])
+  const [loadingProviders, setLoadingProviders] = useState(true)
+
+  // Load available providers from API
+  useEffect(() => {
+    async function loadProviders() {
+      try {
+        setLoadingProviders(true)
+        const data = await getAllWatchProviders("FR")
+        setProviders(data)
+      } catch (error) {
+        console.error("Failed to load watch providers:", error)
+        setProviders([])
+      } finally {
+        setLoadingProviders(false)
+      }
+    }
+    loadProviders()
+  }, [])
+
   const toggleProvider = (providerId: number) => {
     const current = filters.watchProviders || []
     const newProviders = current.includes(providerId)
@@ -61,9 +84,6 @@ export function RoomFilters({ filters, onChange }: RoomFiltersProps) {
     )
     onChange({ ...filters, watchProviders: newProviders })
   }
-
-  // Limit to top streaming providers
-  const topProviders = WATCH_PROVIDERS.slice(0, 6)
 
   return (
     <div className="space-y-4">
@@ -192,33 +212,49 @@ export function RoomFilters({ filters, onChange }: RoomFiltersProps) {
       {/* Plateformes de streaming */}
       <div className="space-y-2">
         <Label>Disponible sur (optionnel)</Label>
-        <div className="flex flex-wrap gap-2">
-          {topProviders.map((provider) => {
-            const isSelected = (filters.watchProviders || []).includes(
-              provider.id
-            )
-            return (
-              <Badge
-                key={provider.id}
-                variant={isSelected ? "default" : "outline"}
-                className="cursor-pointer hover:opacity-80 transition-opacity"
-                onClick={() => toggleProvider(provider.id)}
-              >
-                <span className="mr-1">{provider.logo}</span>
-                {provider.name}
-                {isSelected && (
-                  <X
-                    className="ml-1 h-3 w-3"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      removeProvider(provider.id)
-                    }}
-                  />
-                )}
-              </Badge>
-            )
-          })}
-        </div>
+        {loadingProviders ? (
+          <div className="flex items-center justify-center py-8 text-muted-foreground">
+            <Loader2 className="w-5 h-5 animate-spin mr-2" />
+            Chargement des plateformes...
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {providers.map((provider) => {
+              const isSelected = (filters.watchProviders || []).includes(
+                provider.id
+              )
+              return (
+                <Badge
+                  key={provider.id}
+                  variant={isSelected ? "default" : "outline"}
+                  className="cursor-pointer hover:opacity-80 transition-opacity pl-1 pr-2 py-1.5 flex items-center gap-2"
+                  onClick={() => toggleProvider(provider.id)}
+                >
+                  {provider.logoPath && (
+                    <div className="relative w-6 h-6 rounded overflow-hidden flex-shrink-0">
+                      <Image
+                        src={provider.logoPath}
+                        alt={provider.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  )}
+                  <span className="text-sm">{provider.name}</span>
+                  {isSelected && (
+                    <X
+                      className="ml-1 h-3 w-3"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        removeProvider(provider.id)
+                      }}
+                    />
+                  )}
+                </Badge>
+              )
+            })}
+          </div>
+        )}
         <p className="text-xs text-muted-foreground">
           Cliquez pour sélectionner vos plateformes favorites
         </p>
