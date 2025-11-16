@@ -47,6 +47,7 @@ function RoomPageContent() {
     setMovies,
     moviesLoading,
     currentPage,
+    hasMoreMovies,
     loadMovies,
     handleLoadMoreMovies,
   } = useMoviesData({ room, swipedMovieIds, swipesLoaded })
@@ -349,11 +350,15 @@ function RoomPageContent() {
                     <h3 className="text-xl font-semibold mb-2">
                       {room?.genreId === null || room?.genreId === undefined
                         ? "Configuration de la room incomplète"
+                        : !hasMoreMovies
+                        ? "Plus de films disponibles !"
                         : "Aucun film disponible"}
                     </h3>
                     <p className="text-muted-foreground mb-4">
                       {room?.genreId === null || room?.genreId === undefined
                         ? "Cette room n'a pas de genre configuré. Demande au créateur de configurer un genre pour commencer à swiper !"
+                        : !hasMoreMovies
+                        ? "Vous avez swipé tous les films disponibles avec ces filtres ! Essayez d'élargir vos critères (genre, note, année, plateforme) pour découvrir plus de contenus."
                         : "Tous les films ont déjà été vus. Essaie de modifier les filtres de la room."}
                     </p>
                   </CardContent>

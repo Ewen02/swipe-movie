@@ -16,6 +16,7 @@ interface UseMoviesDataReturn {
   setMovies: React.Dispatch<React.SetStateAction<MovieBasic[]>>
   moviesLoading: boolean
   currentPage: number
+  hasMoreMovies: boolean
   loadMovies: (
     genreId: number,
     type: 'movie' | 'tv',
@@ -32,6 +33,7 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
   const [movies, setMovies] = useState<MovieBasic[]>([])
   const [moviesLoading, setMoviesLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
+  const [hasMoreMovies, setHasMoreMovies] = useState(true)
 
   // Initial load when room is ready AND swipes are loaded
   useEffect(() => {
@@ -123,6 +125,12 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
           setCurrentPage(page)
         }
 
+        // Check if we have no more movies to load (API returned empty or all were filtered)
+        if (moviesWithProviders.length === 0) {
+          console.log(`[useMoviesData] No more movies available on page ${page}`)
+          setHasMoreMovies(false)
+        }
+
         // If we got very few movies after filtering (less than 5) and we're not on a high page yet,
         // automatically load more to ensure a good user experience
         const currentMovieCount = append ? movies.length + moviesWithProviders.length : moviesWithProviders.length
@@ -158,17 +166,18 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
   }, [room, swipedMovieIds, session?.user?.email, movies.length])
 
   const handleLoadMoreMovies = useCallback(() => {
-    if (room?.genreId !== null && room?.genreId !== undefined && !moviesLoading) {
+    if (room?.genreId !== null && room?.genreId !== undefined && !moviesLoading && hasMoreMovies) {
       const nextPage = currentPage + 1
       loadMovies(room.genreId, room.type as 'movie' | 'tv', nextPage, true, room, swipedMovieIds)
     }
-  }, [room, currentPage, moviesLoading, loadMovies, swipedMovieIds])
+  }, [room, currentPage, moviesLoading, hasMoreMovies, loadMovies, swipedMovieIds])
 
   return {
     movies,
     setMovies,
     moviesLoading,
     currentPage,
+    hasMoreMovies,
     loadMovies,
     handleLoadMoreMovies,
   }
