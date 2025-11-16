@@ -326,14 +326,23 @@ export class MoviesService {
         return [];
       }
 
-      // Return array of provider objects with name and logo
-      const result = frProviders.flatrate.map((p) => ({
-        id: p.provider_id,
-        name: p.provider_name,
-        logoPath: p.logo_path
-          ? `${TMDB_IMAGE_BASE.POSTER}${p.logo_path}`
-          : '',
-      }));
+      // Deduplicate providers by provider_id (TMDB sometimes returns duplicates)
+      const uniqueProvidersMap = new Map<number, { id: number; name: string; logoPath: string }>();
+
+      frProviders.flatrate.forEach((p) => {
+        if (!uniqueProvidersMap.has(p.provider_id)) {
+          uniqueProvidersMap.set(p.provider_id, {
+            id: p.provider_id,
+            name: p.provider_name,
+            logoPath: p.logo_path
+              ? `${TMDB_IMAGE_BASE.POSTER}${p.logo_path}`
+              : '',
+          });
+        }
+      });
+
+      // Return array of unique provider objects
+      const result = Array.from(uniqueProvidersMap.values());
 
       // Store in cache
       await this.cacheManager.set(cacheKey, result, CACHE_TTL.WATCH_PROVIDERS);
