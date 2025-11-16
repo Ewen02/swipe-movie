@@ -254,9 +254,9 @@ export class MoviesService {
     }
     if (filters?.watchProviders && filters.watchProviders.length > 0) {
       params.append('with_watch_providers', filters.watchProviders.join('|'));
-      if (filters.watchRegion) {
-        params.append('watch_region', filters.watchRegion);
-      }
+      // TMDB requires watch_region when filtering by providers
+      // Default to FR if not specified
+      params.append('watch_region', filters.watchRegion || 'FR');
     }
     if (filters?.originalLanguage) {
       params.append('with_original_language', filters.originalLanguage);

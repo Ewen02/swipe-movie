@@ -63,8 +63,9 @@ export function useMoviesData({ room, swipedMovieIds }: UseMoviesDataProps): Use
       if (currentRoom?.runtimeMax) filters.runtimeMax = currentRoom.runtimeMax
       if (currentRoom?.watchProviders && currentRoom.watchProviders.length > 0) {
         filters.watchProviders = currentRoom.watchProviders
+        // Always set watch region when filtering by providers (defaults to FR)
+        filters.watchRegion = currentRoom.watchRegion || "FR"
       }
-      if (currentRoom?.watchRegion) filters.watchRegion = currentRoom.watchRegion
       if (currentRoom?.originalLanguage) filters.originalLanguage = currentRoom.originalLanguage
 
       const moviesData = await getMoviesByGenre(genreId, type, page, filters)
