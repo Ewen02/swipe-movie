@@ -52,6 +52,7 @@ const DECADES = [
 export function RoomFilters({ filters, onChange }: RoomFiltersProps) {
   const [providers, setProviders] = useState<MovieWatchProvider[]>([])
   const [loadingProviders, setLoadingProviders] = useState(true)
+  const [showAllProviders, setShowAllProviders] = useState(false)
 
   // Load available providers from API
   useEffect(() => {
@@ -69,6 +70,9 @@ export function RoomFilters({ filters, onChange }: RoomFiltersProps) {
     }
     loadProviders()
   }, [])
+
+  // Show top 10 providers by default
+  const displayedProviders = showAllProviders ? providers : providers.slice(0, 10)
 
   const toggleProvider = (providerId: number) => {
     const current = filters.watchProviders || []
@@ -218,42 +222,56 @@ export function RoomFilters({ filters, onChange }: RoomFiltersProps) {
             Chargement des plateformes...
           </div>
         ) : (
-          <div className="flex flex-wrap gap-2">
-            {providers.map((provider) => {
-              const isSelected = (filters.watchProviders || []).includes(
-                provider.id
-              )
-              return (
-                <Badge
-                  key={provider.id}
-                  variant={isSelected ? "default" : "outline"}
-                  className="cursor-pointer hover:opacity-80 transition-opacity pl-1 pr-2 py-1.5 flex items-center gap-2"
-                  onClick={() => toggleProvider(provider.id)}
-                >
-                  {provider.logoPath && (
-                    <div className="relative w-6 h-6 rounded overflow-hidden flex-shrink-0">
-                      <Image
-                        src={provider.logoPath}
-                        alt={provider.name}
-                        fill
-                        className="object-cover"
+          <>
+            <div className="flex flex-wrap gap-2">
+              {displayedProviders.map((provider) => {
+                const isSelected = (filters.watchProviders || []).includes(
+                  provider.id
+                )
+                return (
+                  <Badge
+                    key={provider.id}
+                    variant={isSelected ? "default" : "outline"}
+                    className="cursor-pointer hover:opacity-80 transition-opacity pl-1 pr-2 py-1.5 flex items-center gap-2"
+                    onClick={() => toggleProvider(provider.id)}
+                  >
+                    {provider.logoPath && (
+                      <div className="relative w-6 h-6 rounded overflow-hidden flex-shrink-0">
+                        <Image
+                          src={provider.logoPath}
+                          alt={provider.name}
+                          fill
+                          sizes="24px"
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+                    <span className="text-sm">{provider.name}</span>
+                    {isSelected && (
+                      <X
+                        className="ml-1 h-3 w-3"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          removeProvider(provider.id)
+                        }}
                       />
-                    </div>
-                  )}
-                  <span className="text-sm">{provider.name}</span>
-                  {isSelected && (
-                    <X
-                      className="ml-1 h-3 w-3"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        removeProvider(provider.id)
-                      }}
-                    />
-                  )}
-                </Badge>
-              )
-            })}
-          </div>
+                    )}
+                  </Badge>
+                )
+              })}
+            </div>
+            {providers.length > 10 && (
+              <button
+                type="button"
+                onClick={() => setShowAllProviders(!showAllProviders)}
+                className="text-sm text-primary hover:underline"
+              >
+                {showAllProviders
+                  ? "Afficher moins"
+                  : `Afficher ${providers.length - 10} plateformes supplémentaires`}
+              </button>
+            )}
+          </>
         )}
         <p className="text-xs text-muted-foreground">
           Cliquez pour sélectionner vos plateformes favorites
