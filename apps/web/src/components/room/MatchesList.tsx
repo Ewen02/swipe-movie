@@ -12,6 +12,7 @@ import { getMatchesByRoom } from "@/lib/api/swipes"
 import { getBatchMovieDetails } from "@/lib/api/movies"
 import { RatingBadge, VoteCountBadge, ProviderList } from "@/components/ui/movie"
 import { TopMatch } from "./TopMatch"
+import { MovieDetailsModal } from "@/components/movies/MovieDetailsModal"
 
 interface MatchesListProps {
   roomId: string
@@ -29,6 +30,8 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilt
   const [matches, setMatches] = useState<MatchWithMovie[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null)
+  const [showMovieDetails, setShowMovieDetails] = useState(false)
 
   useEffect(() => {
     loadMatches()
@@ -73,6 +76,11 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilt
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleShowDetails = (movieId: number) => {
+    setSelectedMovieId(movieId)
+    setShowMovieDetails(true)
   }
 
   if (loading) {
@@ -124,13 +132,28 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilt
   const otherMatches = matches.slice(1)
 
   return (
-    <div className="space-y-6">
-      {/* Top Match Section */}
-      {topMatch && topMatch.movie && (
-        <TopMatch match={topMatch} movie={topMatch.movie} totalMembers={totalMembers} roomFilters={roomFilters} />
-      )}
+    <>
+      {/* Movie Details Modal */}
+      <MovieDetailsModal
+        movieId={selectedMovieId}
+        mediaType={roomFilters?.type as "movie" | "tv" | undefined}
+        open={showMovieDetails}
+        onOpenChange={setShowMovieDetails}
+      />
 
-      {/* Other Matches Section */}
+      <div className="space-y-6">
+        {/* Top Match Section */}
+        {topMatch && topMatch.movie && (
+          <TopMatch
+            match={topMatch}
+            movie={topMatch.movie}
+            totalMembers={totalMembers}
+            roomFilters={roomFilters}
+            onShowDetails={() => handleShowDetails(topMatch.movie!.id)}
+          />
+        )}
+
+        {/* Other Matches Section */}
       {otherMatches.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -144,6 +167,7 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilt
               <Card
                 key={match.id}
                 className="group hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
+                onClick={() => match.movie && handleShowDetails(match.movie.id)}
               >
                 <CardContent className="p-0">
                   {match.movie ? (
@@ -205,6 +229,7 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilt
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </>
   )
 }

@@ -14,9 +14,10 @@ interface TopMatchProps {
   movie: MovieBasic
   totalMembers: number
   roomFilters?: RoomWithMembersResponseDto
+  onShowDetails?: () => void
 }
 
-export function TopMatch({ match, movie, totalMembers, roomFilters }: TopMatchProps) {
+export function TopMatch({ match, movie, totalMembers, roomFilters, onShowDetails }: TopMatchProps) {
   const agreementPercentage = Math.round((match.voteCount / totalMembers) * 100)
 
   return (
@@ -28,7 +29,10 @@ export function TopMatch({ match, movie, totalMembers, roomFilters }: TopMatchPr
         </h3>
       </div>
 
-      <Card className="border-2 border-yellow-500 shadow-xl overflow-hidden bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20">
+      <Card
+        className="border-2 border-yellow-500 shadow-xl overflow-hidden bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 cursor-pointer hover:shadow-2xl transition-shadow"
+        onClick={onShowDetails}
+      >
         <CardContent className="p-0">
           <div className="grid md:grid-cols-2 gap-0">
             {/* Movie Poster */}

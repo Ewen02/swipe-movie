@@ -82,6 +82,31 @@ export function MovieDetailsModal({
     }
   }
 
+  // Get provider URL or search page
+  const getProviderUrl = (providerId: number, providerName: string) => {
+    // Map of common provider IDs to their search/browse URLs
+    const providerUrls: Record<number, string> = {
+      8: "https://www.netflix.com/search?q=" + encodeURIComponent(movie?.title || ""), // Netflix
+      119: "https://www.primevideo.com/search/ref=atv_nb_sug?phrase=" + encodeURIComponent(movie?.title || ""), // Amazon Prime
+      337: "https://www.disneyplus.com/search?q=" + encodeURIComponent(movie?.title || ""), // Disney+
+      531: "https://www.paramountplus.com/search/?query=" + encodeURIComponent(movie?.title || ""), // Paramount+
+      350: "https://tv.apple.com/search?q=" + encodeURIComponent(movie?.title || ""), // Apple TV+
+      1899: "https://www.max.com/search?q=" + encodeURIComponent(movie?.title || ""), // Max
+      283: "https://www.crunchyroll.com/search?q=" + encodeURIComponent(movie?.title || ""), // Crunchyroll
+      2: "https://tv.apple.com/search?q=" + encodeURIComponent(movie?.title || ""), // Apple TV
+    }
+
+    // If we have a specific URL for this provider, use it
+    if (providerUrls[providerId]) {
+      return providerUrls[providerId]
+    }
+
+    // Otherwise, link to JustWatch for this specific movie/show
+    const type = mediaType === "tv" ? "tv-show" : "movie"
+    const slug = movie?.title?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || ""
+    return `https://www.justwatch.com/fr/${type}/${slug}`
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" aria-describedby="movie-details-description">
@@ -265,22 +290,32 @@ export function MovieDetailsModal({
                 <h3 className="text-lg font-semibold mb-3">Disponible sur</h3>
                 <div className="flex flex-wrap gap-3">
                   {movie.watchProviders.map((provider) => (
-                    <div
+                    <Button
                       key={provider.id}
-                      className="flex items-center gap-2 p-2 bg-muted/50 rounded-lg"
+                      asChild
+                      variant="outline"
+                      className="h-auto p-3 hover:bg-primary/10 hover:border-primary transition-colors"
                     >
-                      {provider.logoPath && (
-                        <div className="relative w-10 h-10 rounded overflow-hidden">
-                          <Image
-                            src={provider.logoPath}
-                            alt={provider.name}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                      )}
-                      <span className="text-sm font-medium">{provider.name}</span>
-                    </div>
+                      <a
+                        href={getProviderUrl(provider.id, provider.name)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2"
+                      >
+                        {provider.logoPath && (
+                          <div className="relative w-10 h-10 rounded overflow-hidden flex-shrink-0">
+                            <Image
+                              src={provider.logoPath}
+                              alt={provider.name}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
+                        <span className="text-sm font-medium">{provider.name}</span>
+                        <ExternalLink className="w-4 h-4 ml-1 opacity-60" />
+                      </a>
+                    </Button>
                   ))}
                 </div>
               </div>
