@@ -455,4 +455,11 @@ export class MoviesService {
       return [];
     }
   }
+
+  /**
+   * Clear all movie cache (useful for development)
+   */
+  async clearCache(): Promise<void> {
+    await this.cacheManager.clear();
+  }
 }

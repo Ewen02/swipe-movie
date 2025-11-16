@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Delete,
   Param,
   ParseIntPipe,
   Query,
@@ -234,5 +235,24 @@ export class MoviesController {
     @Query('type') type?: string,
   ) {
     return this.moviesService.getWatchProviders(movieId, type as 'movie' | 'tv');
+  }
+
+  @ApiOperation({ summary: 'Clear all movie cache (development only)' })
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string' },
+        cleared: { type: 'boolean' },
+      },
+    },
+  })
+  @Delete('cache')
+  async clearCache() {
+    await this.moviesService.clearCache();
+    return {
+      message: 'Cache cleared successfully',
+      cleared: true,
+    };
   }
 }
