@@ -326,7 +326,8 @@ function RoomPageContent() {
 
             {/* Swipe Tab */}
             <TabsContent value="swipe" className="space-y-6">
-              {moviesLoading ? (
+              {/* Only show loading screen if we have NO movies yet (initial load) */}
+              {moviesLoading && movies.length === 0 ? (
                 <div className="text-center py-20">
                   <Film className="w-12 h-12 mx-auto mb-4 animate-pulse text-primary" />
                   <p className="text-muted-foreground">Chargement des films...</p>
