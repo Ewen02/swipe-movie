@@ -330,6 +330,7 @@ export function MovieCards({ movies, onSwipe, onUndo, onEmpty, onShowDetails, ro
   const activeCardButtonSwipeRef = useRef<((direction: "left" | "right") => void) | null>(null)
   const activeCardHoverRef = useRef<((direction: "left" | "right") => void) | null>(null)
   const activeCardHoverEndRef = useRef<(() => void) | null>(null)
+  const loadingMoreRef = useRef(false)
 
   // Sync currentCards with movies prop when it changes (e.g., loading more movies)
   useEffect(() => {
@@ -338,6 +339,10 @@ export function MovieCards({ movies, onSwipe, onUndo, onEmpty, onShowDetails, ro
     console.log(`[MovieCards] Received ${validMovies.length} movies`)
     console.log(`[MovieCards] Movie IDs:`, validMovies.map(m => m.id))
     setCurrentCards(validMovies)
+    // Reset the loading flag when we receive new movies
+    if (validMovies.length > 3) {
+      loadingMoreRef.current = false
+    }
   }, [movies])
 
   const handleCardSwipe = (movie: MovieBasic, direction: "left" | "right") => {
@@ -353,9 +358,12 @@ export function MovieCards({ movies, onSwipe, onUndo, onEmpty, onShowDetails, ro
       setCurrentCards((prev: MovieBasic[]) => {
         const newCards = prev.filter((m) => m && m.id !== movie.id)
         console.log(`[MovieCards] After swipe: ${newCards.length} cards remaining`)
-        // Check if we need to load more movies, but call it outside setState
-        if (newCards.length === 0 && onEmpty) {
-          console.log(`[MovieCards] No cards left, calling onEmpty to load more`)
+        // Load more movies proactively when we have 3 or fewer cards left
+        // This ensures smooth infinite scrolling without seeing empty state
+        // Use a ref to prevent multiple simultaneous calls
+        if (newCards.length <= 3 && onEmpty && !loadingMoreRef.current) {
+          console.log(`[MovieCards] Only ${newCards.length} cards left, loading more proactively`)
+          loadingMoreRef.current = true
           setTimeout(() => onEmpty(), 0)
         }
         return newCards
