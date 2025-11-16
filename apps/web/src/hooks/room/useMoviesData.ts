@@ -72,8 +72,17 @@ export function useMoviesData({ room, swipedMovieIds }: UseMoviesDataProps): Use
       // Use custom swiped IDs if provided (avoids closure issues)
       const swipedIds = customSwipedIds || swipedMovieIds
 
-      // Filter out already swiped movies
+      // Log for debugging
+      console.log(`[useMoviesData] Page ${page}, Type: ${append ? 'append' : 'replace'}`)
+      console.log(`[useMoviesData] Fetched ${moviesData.length} movies from API`)
+      console.log(`[useMoviesData] Already swiped: ${swipedIds.size} movies`, Array.from(swipedIds))
+      console.log(`[useMoviesData] Fetched movie IDs:`, moviesData.map(m => m.id))
+
+      // Filter out already swiped movies (both likes and dislikes)
       const filteredMovies = moviesData.filter(movie => !swipedIds.has(movie.id.toString()))
+
+      console.log(`[useMoviesData] After filtering swiped: ${filteredMovies.length} movies`)
+      console.log(`[useMoviesData] Filtered movie IDs:`, filteredMovies.map(m => m.id))
 
       // Shuffle movies with user email + room ID as seed for consistent but unique ordering per user
       const seed = `${session?.user?.email || 'anonymous'}-${currentRoom?.id || room?.id || 'room'}-${page}`
@@ -98,9 +107,15 @@ export function useMoviesData({ room, swipedMovieIds }: UseMoviesDataProps): Use
             const validWithProviders = moviesWithProviders.filter(Boolean)
             const existingIds = new Set(validPrev.map(m => m.id))
             const newMovies = validWithProviders.filter(m => !existingIds.has(m.id))
+
+            console.log(`[useMoviesData] Appending: ${newMovies.length} new movies to ${validPrev.length} existing`)
+            console.log(`[useMoviesData] New movie IDs:`, newMovies.map(m => m.id))
+            console.log(`[useMoviesData] Total after append: ${validPrev.length + newMovies.length}`)
+
             return [...validPrev, ...newMovies]
           })
         } else {
+          console.log(`[useMoviesData] Replacing with ${moviesWithProviders.length} movies`)
           setMovies(moviesWithProviders.filter(Boolean))
           setCurrentPage(page)
         }
@@ -108,7 +123,10 @@ export function useMoviesData({ room, swipedMovieIds }: UseMoviesDataProps): Use
         // If we got very few movies after filtering (less than 5) and we're not on a high page yet,
         // automatically load more to ensure a good user experience
         const currentMovieCount = append ? movies.length + moviesWithProviders.length : moviesWithProviders.length
+        console.log(`[useMoviesData] Current movie count: ${currentMovieCount}, Page: ${page}`)
+
         if (currentMovieCount < 5 && moviesWithProviders.length > 0 && page < 5) {
+          console.log(`[useMoviesData] Too few movies (${currentMovieCount}), loading page ${page + 1}`)
           setMoviesLoading(false) // Temporarily set to false
           await loadMovies(genreId, type, page + 1, true, roomData, customSwipedIds || swipedMovieIds)
           return // Don't set loading to false again, the recursive call will handle it

@@ -334,10 +334,14 @@ export function MovieCards({ movies, onSwipe, onUndo, onEmpty, onShowDetails, ro
   // Sync currentCards with movies prop when it changes (e.g., loading more movies)
   useEffect(() => {
     // Filter out any undefined/null values to prevent errors
-    setCurrentCards(movies.filter(Boolean))
+    const validMovies = movies.filter(Boolean)
+    console.log(`[MovieCards] Received ${validMovies.length} movies`)
+    console.log(`[MovieCards] Movie IDs:`, validMovies.map(m => m.id))
+    setCurrentCards(validMovies)
   }, [movies])
 
   const handleCardSwipe = (movie: MovieBasic, direction: "left" | "right") => {
+    console.log(`[MovieCards] Swiped movie ${movie.id} (${movie.title}) ${direction}`)
     setLastSwipe({ movie, direction })
     setSwipeCount((prev) => prev + 1)
     if (direction === "right") {
@@ -348,8 +352,10 @@ export function MovieCards({ movies, onSwipe, onUndo, onEmpty, onShowDetails, ro
     setTimeout(() => {
       setCurrentCards((prev: MovieBasic[]) => {
         const newCards = prev.filter((m) => m && m.id !== movie.id)
+        console.log(`[MovieCards] After swipe: ${newCards.length} cards remaining`)
         // Check if we need to load more movies, but call it outside setState
         if (newCards.length === 0 && onEmpty) {
+          console.log(`[MovieCards] No cards left, calling onEmpty to load more`)
           setTimeout(() => onEmpty(), 0)
         }
         return newCards
