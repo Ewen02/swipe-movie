@@ -8,6 +8,7 @@ import { Match } from "@/schemas/swipes"
 import { MovieBasic } from "@/schemas/movies"
 import { RoomWithMembersResponseDto } from "@/schemas/rooms"
 import { RatingBadge, VoteCountBadge, AgreementBadge, ReleaseDateBadge, ProviderList } from "@/components/ui/movie"
+import { ShareMatchButton } from "./ShareMatchButton"
 
 interface TopMatchProps {
   match: Match
@@ -22,11 +23,19 @@ export function TopMatch({ match, movie, totalMembers, roomFilters, onShowDetail
 
   return (
     <div className="mb-8">
-      <div className="flex items-center gap-2 mb-4">
-        <Trophy className="w-6 h-6 text-yellow-500" />
-        <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-          TOP MATCH
-        </h3>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Trophy className="w-6 h-6 text-yellow-500" />
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+            TOP MATCH
+          </h3>
+        </div>
+        <ShareMatchButton
+          movie={movie}
+          roomName={roomFilters?.name || "notre groupe"}
+          totalMembers={totalMembers}
+          agreementPercentage={agreementPercentage}
+        />
       </div>
 
       <Card
