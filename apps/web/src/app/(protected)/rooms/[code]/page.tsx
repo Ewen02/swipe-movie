@@ -72,6 +72,9 @@ function RoomPageContent() {
       return newSet
     })
 
+    // Remove the swiped movie from the movies list immediately
+    setMovies(prev => prev.filter(m => m.id.toString() !== movieIdStr))
+
     try {
       const result = await createSwipe(room.id, movieIdStr, value)
 
@@ -81,14 +84,16 @@ function RoomPageContent() {
       }
     } catch (err) {
       console.error("Failed to save swipe:", err)
-      // On error, remove the movie from the swiped set
+      // On error, remove the movie from the swiped set and re-add it to movies
       setSwipedMovieIds(prev => {
         const newSet = new Set(prev)
         newSet.delete(movieIdStr)
         return newSet
       })
+      // Re-add the movie back to the list on error
+      setMovies(prev => [movie, ...prev])
     }
-  }, [room, setSwipedMovieIds, triggerMatchAnimation])
+  }, [room, setSwipedMovieIds, setMovies, triggerMatchAnimation])
 
   const handleUndo = useCallback(async (movie: MovieBasic) => {
     if (!room) return
@@ -106,12 +111,20 @@ function RoomPageContent() {
         return newSet
       })
 
+      // Re-add the movie to the front of the list so user can swipe it again
+      setMovies(prev => {
+        // Check if movie is not already in the list to avoid duplicates
+        const exists = prev.some(m => m.id.toString() === movieIdStr)
+        if (exists) return prev
+        return [movie, ...prev]
+      })
+
       // Refresh matches in case a match was deleted
       setRefreshMatches(prev => prev + 1)
     } catch (err) {
       console.error("Failed to undo swipe:", err)
     }
-  }, [room, setSwipedMovieIds, setRefreshMatches])
+  }, [room, setSwipedMovieIds, setMovies, setRefreshMatches])
 
 
   const handleShowDetails = useCallback((movieId: number) => {
