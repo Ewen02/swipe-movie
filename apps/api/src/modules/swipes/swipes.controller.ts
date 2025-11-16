@@ -61,4 +61,15 @@ export class SwipesController {
   ) {
     return this.service.delete(userId, roomId, movieId);
   }
+
+  @ApiOperation({ summary: 'Get room analytics and statistics' })
+  @ApiOkResponse({ description: 'Room statistics' })
+  @ApiQuery({ name: 'roomId', required: true, description: 'Room ID' })
+  @Get('analytics')
+  getRoomAnalytics(
+    @UserId() userId: string,
+    @Query('roomId') roomId: string,
+  ) {
+    return this.service.getRoomAnalytics(roomId, userId);
+  }
 }

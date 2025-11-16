@@ -62,3 +62,14 @@ export async function getMySwipesByRoom(roomId: string): Promise<Swipe[]> {
     withErrors("SWIPES")
   )
 }
+
+/**
+ * Get room analytics and statistics
+ */
+export async function getRoomAnalytics(roomId: string) {
+  const response = await GET(`/swipes/analytics?roomId=${roomId}`)
+  if (!response.ok) {
+    throw new Error("Failed to get room analytics")
+  }
+  return response.json()
+}

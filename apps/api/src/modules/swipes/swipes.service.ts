@@ -159,4 +159,159 @@ export class SwipesService {
 
     return { deleted: true };
   }
+
+  async getRoomAnalytics(roomId: string, userId: string) {
+    // Verify room exists and user is a member
+    const room = await this.prisma.room.findUnique({
+      where: { id: roomId },
+      include: {
+        members: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!room) {
+      throw new NotFoundException('Room not found');
+    }
+
+    const isMember = room.members.some((m) => m.id === userId);
+    if (!isMember) {
+      throw new ForbiddenException('You are not a member of this room');
+    }
+
+    // Get all swipes for this room
+    const swipes = await this.prisma.swipe.findMany({
+      where: { roomId },
+      select: {
+        id: true,
+        userId: true,
+        movieId: true,
+        value: true,
+        createdAt: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    // Get all matches for this room
+    const matches = await this.prisma.match.findMany({
+      where: { roomId },
+      select: {
+        id: true,
+        movieId: true,
+        voteCount: true,
+        createdAt: true,
+      },
+    });
+
+    // Calculate statistics
+    const totalSwipes = swipes.length;
+    const totalLikes = swipes.filter((s) => s.value === true).length;
+    const totalDislikes = swipes.filter((s) => s.value === false).length;
+    const totalMatches = matches.length;
+
+    // Member activity
+    const memberActivity = room.members.map((member) => {
+      const memberSwipes = swipes.filter((s) => s.userId === member.id);
+      const memberLikes = memberSwipes.filter((s) => s.value === true).length;
+      const memberDislikes = memberSwipes.filter(
+        (s) => s.value === false,
+      ).length;
+
+      return {
+        userId: member.id,
+        userName: member.name,
+        totalSwipes: memberSwipes.length,
+        likes: memberLikes,
+        dislikes: memberDislikes,
+        likePercentage:
+          memberSwipes.length > 0
+            ? Math.round((memberLikes / memberSwipes.length) * 100)
+            : 0,
+      };
+    });
+
+    // Most liked/disliked movies (top 5)
+    const movieStats = swipes.reduce(
+      (acc, swipe) => {
+        if (!acc[swipe.movieId]) {
+          acc[swipe.movieId] = { likes: 0, dislikes: 0, movieId: swipe.movieId };
+        }
+        if (swipe.value) {
+          acc[swipe.movieId].likes++;
+        } else {
+          acc[swipe.movieId].dislikes++;
+        }
+        return acc;
+      },
+      {} as Record<string, { likes: number; dislikes: number; movieId: string }>,
+    );
+
+    const mostLiked = Object.values(movieStats)
+      .sort((a, b) => b.likes - a.likes)
+      .slice(0, 5)
+      .map((m) => ({ movieId: m.movieId, likes: m.likes }));
+
+    const mostDisliked = Object.values(movieStats)
+      .sort((a, b) => b.dislikes - a.dislikes)
+      .slice(0, 5)
+      .map((m) => ({ movieId: m.movieId, dislikes: m.dislikes }));
+
+    // Activity over time (last 7 days)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const recentSwipes = swipes.filter(
+      (s) => s.createdAt >= sevenDaysAgo,
+    );
+
+    const dailyActivity = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - (6 - i));
+      date.setHours(0, 0, 0, 0);
+
+      const nextDate = new Date(date);
+      nextDate.setDate(nextDate.getDate() + 1);
+
+      const daySwipes = recentSwipes.filter(
+        (s) => s.createdAt >= date && s.createdAt < nextDate,
+      );
+
+      return {
+        date: date.toISOString().split('T')[0],
+        swipes: daySwipes.length,
+        likes: daySwipes.filter((s) => s.value === true).length,
+        dislikes: daySwipes.filter((s) => s.value === false).length,
+      };
+    });
+
+    // Match rate (percentage of likes that resulted in a match)
+    const matchRate =
+      totalLikes > 0 ? Math.round((totalMatches / totalLikes) * 100) : 0;
+
+    return {
+      overview: {
+        totalSwipes,
+        totalLikes,
+        totalDislikes,
+        totalMatches,
+        likePercentage:
+          totalSwipes > 0 ? Math.round((totalLikes / totalSwipes) * 100) : 0,
+        matchRate,
+      },
+      memberActivity: memberActivity.sort((a, b) => b.totalSwipes - a.totalSwipes),
+      mostLiked,
+      mostDisliked,
+      dailyActivity,
+    };
+  }
 }

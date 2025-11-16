@@ -15,6 +15,7 @@ import { MatchesList } from "@/components/room/MatchesList"
 import { MatchAnimation } from "@/components/room/MatchAnimation"
 import { ShareRoomButton } from "@/components/room/ShareRoomButton"
 import { MovieDetailsModal } from "@/components/movies/MovieDetailsModal"
+import { Analytics } from "@/components/room/Analytics"
 import { Users, Film, UserPlus } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Footer } from "@/components/layout/Footer"
@@ -320,9 +321,10 @@ function RoomPageContent() {
 
           {/* Main Content - Tabs */}
           <Tabs value={currentTab} onValueChange={handleTabChange} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3 h-12">
+            <TabsList className="grid w-full grid-cols-4 h-12">
               <TabsTrigger value="swipe" className="text-base">🎬 Swiper</TabsTrigger>
               <TabsTrigger value="matches" className="text-base">✨ Matches</TabsTrigger>
+              <TabsTrigger value="stats" className="text-base">📊 Stats</TabsTrigger>
               <TabsTrigger value="members" className="text-base">👥 Membres</TabsTrigger>
             </TabsList>
 
@@ -369,6 +371,11 @@ function RoomPageContent() {
             {/* Matches Tab */}
             <TabsContent value="matches">
               <MatchesList roomId={room.id} totalMembers={room.members.length} refreshTrigger={refreshMatches} roomFilters={room} />
+            </TabsContent>
+
+            {/* Stats Tab */}
+            <TabsContent value="stats">
+              <Analytics roomId={room.id} mediaType={room?.type as "movie" | "tv"} />
             </TabsContent>
 
             {/* Members Tab */}
