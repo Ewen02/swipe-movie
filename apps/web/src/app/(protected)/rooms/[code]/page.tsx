@@ -16,6 +16,7 @@ import { MatchAnimation } from "@/components/room/MatchAnimation"
 import { ShareRoomButton } from "@/components/room/ShareRoomButton"
 import { MovieDetailsModal } from "@/components/movies/MovieDetailsModal"
 import { Analytics } from "@/components/room/Analytics"
+import { SwipeHistory } from "@/components/room/SwipeHistory"
 import { Users, Film, UserPlus } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Footer } from "@/components/layout/Footer"
@@ -321,9 +322,10 @@ function RoomPageContent() {
 
           {/* Main Content - Tabs */}
           <Tabs value={currentTab} onValueChange={handleTabChange} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4 h-12">
+            <TabsList className="grid w-full grid-cols-5 h-12">
               <TabsTrigger value="swipe" className="text-base">🎬 Swiper</TabsTrigger>
               <TabsTrigger value="matches" className="text-base">✨ Matches</TabsTrigger>
+              <TabsTrigger value="history" className="text-base">📜 Historique</TabsTrigger>
               <TabsTrigger value="stats" className="text-base">📊 Stats</TabsTrigger>
               <TabsTrigger value="members" className="text-base">👥 Membres</TabsTrigger>
             </TabsList>
@@ -371,6 +373,28 @@ function RoomPageContent() {
             {/* Matches Tab */}
             <TabsContent value="matches">
               <MatchesList roomId={room.id} totalMembers={room.members.length} refreshTrigger={refreshMatches} roomFilters={room} />
+            </TabsContent>
+
+            {/* History Tab */}
+            <TabsContent value="history">
+              <SwipeHistory
+                roomId={room.id}
+                onUndo={async (movieId: string) => {
+                  // Delete the swipe from backend
+                  await deleteSwipe(room.id, movieId)
+                  // Remove from swiped set
+                  setSwipedMovieIds(prev => {
+                    const newSet = new Set(prev)
+                    newSet.delete(movieId)
+                    return newSet
+                  })
+                  // Refresh matches
+                  setRefreshMatches(prev => prev + 1)
+                  // Switch to swipe tab to see the movie again
+                  setCurrentTab("swipe")
+                }}
+                mediaType={room?.type as "movie" | "tv"}
+              />
             </TabsContent>
 
             {/* Stats Tab */}
