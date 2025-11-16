@@ -58,27 +58,30 @@ export class MoviesService {
   }
 
   private mapToMovieSummary(
-    movie: TMDbPopularResponse['results'][number],
+    media: TMDbDiscoverResponse['results'][number],
   ): MovieBasicDto {
+    // Check if it's a TV show (has 'name' instead of 'title')
+    const isTVShow = 'name' in media;
+
     return {
-      id: movie.id,
-      adult: movie.adult ?? false,
-      title: movie.title,
-      backdropUrl: movie.backdrop_path
-        ? `${TMDB_IMAGE_BASE.BACKDROP}${movie.backdrop_path}`
+      id: media.id,
+      adult: media.adult ?? false,
+      title: isTVShow ? (media as any).name : (media as any).title,
+      backdropUrl: media.backdrop_path
+        ? `${TMDB_IMAGE_BASE.BACKDROP}${media.backdrop_path}`
         : '',
-      posterUrl: movie.poster_path
-        ? `${TMDB_IMAGE_BASE.POSTER}${movie.poster_path}`
+      posterUrl: media.poster_path
+        ? `${TMDB_IMAGE_BASE.POSTER}${media.poster_path}`
         : TMDB_IMAGE_BASE.NO_POSTER,
-      genreIds: movie.genre_ids ?? [],
-      originalLanguage: movie.original_language ?? '',
-      originalTitle: movie.original_title ?? '',
-      popularity: movie.popularity ?? 0,
-      releaseDate: movie.release_date ?? '',
-      overview: movie.overview ?? '',
-      video: movie.video ?? false,
-      voteAverage: movie.vote_average ?? 0,
-      voteCount: movie.vote_count ?? 0,
+      genreIds: media.genre_ids ?? [],
+      originalLanguage: media.original_language ?? '',
+      originalTitle: isTVShow ? (media as any).original_name : (media as any).original_title,
+      popularity: media.popularity ?? 0,
+      releaseDate: isTVShow ? ((media as any).first_air_date ?? '') : ((media as any).release_date ?? ''),
+      overview: media.overview ?? '',
+      video: isTVShow ? false : ((media as any).video ?? false),
+      voteAverage: media.vote_average ?? 0,
+      voteCount: media.vote_count ?? 0,
     };
   }
 

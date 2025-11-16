@@ -15,6 +15,24 @@ export type TMDbMovie = {
   vote_count: number;
 };
 
+export type TMDbTVShow = {
+  id: number;
+  adult: boolean;
+  name: string; // TV shows use 'name' instead of 'title'
+  backdrop_path: string | null;
+  poster_path: string | null;
+  genre_ids: number[];
+  original_language: string;
+  original_name: string; // TV shows use 'original_name' instead of 'original_title'
+  popularity: number;
+  first_air_date: string | null; // TV shows use 'first_air_date' instead of 'release_date'
+  overview: string | null;
+  vote_average: number;
+  vote_count: number;
+};
+
+export type TMDbMedia = TMDbMovie | TMDbTVShow;
+
 export type TMDbPopularResponse = {
   results: TMDbMovie[];
 };
@@ -30,7 +48,7 @@ export type TMDbGenresResponse = {
 
 export type TMDbDiscoverResponse = {
   page: number;
-  results: TMDbMovie[];
+  results: TMDbMedia[]; // Can be movies or TV shows
   total_pages: number;
   total_results: number;
 };
