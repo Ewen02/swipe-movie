@@ -159,8 +159,12 @@ export class MoviesService {
     };
   }
 
-  async getMovieDetails(movieId: number): Promise<MovieDetailsDto> {
-    const cacheKey = `tmdb:movie:${movieId}`;
+  async getMovieDetails(
+    movieId: number,
+    type: 'movie' | 'tv' = 'movie',
+  ): Promise<MovieDetailsDto> {
+    const mediaType = type === 'tv' ? 'tv' : 'movie';
+    const cacheKey = `tmdb:${mediaType}:${movieId}`;
 
     // Try to get from cache
     const cached = await this.cacheManager.get<MovieDetailsDto>(cacheKey);
@@ -169,12 +173,12 @@ export class MoviesService {
     }
 
     // Fetch from TMDb API with videos and credits
-    const url = `/movie/${movieId}?language=${TMDB_DEFAULT_LANG}&append_to_response=videos,credits`;
+    const url = `/${mediaType}/${movieId}?language=${TMDB_DEFAULT_LANG}&append_to_response=videos,credits`;
     const json = await this.tmdb.fetchJson<TMDbMovieDetailsResponse>(url);
     const result = this.mapToMovieDetails(json);
 
     // Fetch watch providers separately and add to result
-    const watchProviders = await this.getWatchProviders(movieId, 'movie');
+    const watchProviders = await this.getWatchProviders(movieId, type);
     result.watchProviders = watchProviders;
 
     // Store in cache

@@ -17,12 +17,14 @@ import Image from "next/image"
 
 interface MovieDetailsModalProps {
   movieId: number | null
+  mediaType?: "movie" | "tv"
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
 export function MovieDetailsModal({
   movieId,
+  mediaType = "movie",
   open,
   onOpenChange,
 }: MovieDetailsModalProps) {
@@ -34,7 +36,7 @@ export function MovieDetailsModal({
     if (movieId && open) {
       loadMovieDetails()
     }
-  }, [movieId, open])
+  }, [movieId, open, mediaType])
 
   const loadMovieDetails = async () => {
     if (!movieId) return
@@ -42,7 +44,7 @@ export function MovieDetailsModal({
     try {
       setLoading(true)
       setError(null)
-      const data = await getMovieDetails(movieId)
+      const data = await getMovieDetails(movieId, mediaType)
       setMovie(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Échec du chargement")

@@ -180,11 +180,20 @@ export class MoviesController {
     );
   }
 
-  @ApiOperation({ summary: 'Get movie details' })
+  @ApiOperation({ summary: 'Get movie or TV show details' })
   @ApiOkResponse({ type: MovieDetailsDto })
+  @ApiQuery({
+    name: 'type',
+    required: false,
+    enum: ['movie', 'tv'],
+    description: 'Type of content (defaults to movie)',
+  })
   @Get(':movieId')
-  getMovieDetails(@Param('movieId', ParseIntPipe) movieId: number) {
-    return this.moviesService.getMovieDetails(movieId);
+  getMovieDetails(
+    @Param('movieId', ParseIntPipe) movieId: number,
+    @Query('type') type?: string,
+  ) {
+    return this.moviesService.getMovieDetails(movieId, type as 'movie' | 'tv');
   }
 
   @ApiOperation({ summary: 'Get watch providers for a movie' })

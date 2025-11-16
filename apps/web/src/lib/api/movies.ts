@@ -92,11 +92,14 @@ export async function getMoviesByGenre(
 }
 
 /**
- * Get detailed information about a specific movie
+ * Get detailed information about a specific movie or TV show
  */
-export async function getMovieDetails(movieId: number): Promise<MovieDetails> {
+export async function getMovieDetails(
+  movieId: number,
+  type: "movie" | "tv" = "movie"
+): Promise<MovieDetails> {
   return parseResponse(
-    await GET(`/movies/${movieId}`),
+    await GET(`/movies/${movieId}?type=${type}`),
     movieDetailsSchema,
     withErrors("MOVIES")
   )

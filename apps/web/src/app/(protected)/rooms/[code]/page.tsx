@@ -258,6 +258,7 @@ function RoomPageContent() {
       {/* Movie Details Modal */}
       <MovieDetailsModal
         movieId={selectedMovieId}
+        mediaType={room?.type as "movie" | "tv" | undefined}
         open={showMovieDetails}
         onOpenChange={setShowMovieDetails}
       />
