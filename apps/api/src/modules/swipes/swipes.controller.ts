@@ -10,6 +10,7 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UserId } from '../../common/decorators';
+import { ThrottleSwipe } from '../../common/decorators/throttle.decorator';
 
 import {
   CreateSwipeDto,
@@ -29,6 +30,7 @@ export class SwipesController {
     description: 'Swipe created',
     type: ResponseCreateSwipeDto,
   })
+  @ThrottleSwipe() // Allow fast swiping: 50 req/s, 500 req/min
   @Post()
   create(@UserId() userId: string, @Body() dto: CreateSwipeDto) {
     return this.service.create(userId, dto.roomId, dto.movieId, dto.value);
