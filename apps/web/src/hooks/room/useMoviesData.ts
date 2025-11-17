@@ -34,12 +34,16 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
   const [moviesLoading, setMoviesLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [hasMoreMovies, setHasMoreMovies] = useState(true)
+  const [consecutiveEmptyPages, setConsecutiveEmptyPages] = useState(0)
 
   // Initial load when room is ready AND swipes are loaded
   useEffect(() => {
     if (!room) return
     if (!swipesLoaded) return // Wait for swipes to be loaded first
     if (room.genreId !== null && room.genreId !== undefined) {
+      // Reset pagination state when room changes
+      setConsecutiveEmptyPages(0)
+      setHasMoreMovies(true)
       loadMovies(room.genreId, room.type as 'movie' | 'tv', 1, false, room, swipedMovieIds)
     }
   }, [room?.id, room?.members?.length, swipesLoaded])
@@ -126,20 +130,35 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
         }
 
         // Check if we have no more movies to load
-        // Only stop if we've fetched no raw data from API (not just after filtering)
-        if (moviesData.length === 0 || page >= 500) {
-          // TMDB has max 500 pages
-          console.log(`[useMoviesData] No more movies available on page ${page}`)
+        // Track consecutive empty pages after filtering to avoid infinite loading
+        if (moviesWithProviders.length === 0) {
+          setConsecutiveEmptyPages(prev => {
+            const newCount = prev + 1
+            // Stop if we get 5 consecutive empty pages OR reached TMDB limit
+            if (newCount >= 5 || page >= 500) {
+              console.log(`[useMoviesData] Stopping: ${newCount} consecutive empty pages or page limit`)
+              setHasMoreMovies(false)
+            }
+            return newCount
+          })
+        } else {
+          // Reset counter when we get movies
+          setConsecutiveEmptyPages(0)
+        }
+
+        // Stop if API returns no raw data
+        if (moviesData.length === 0) {
+          console.log(`[useMoviesData] No more movies from TMDB on page ${page}`)
           setHasMoreMovies(false)
         }
 
-        // If we got very few movies after filtering (less than 5) and we're not on a very high page yet,
+        // If we got very few movies after filtering and we're not on a very high page yet,
         // automatically load more to ensure a good user experience
         const currentMovieCount = append ? movies.length + moviesWithProviders.length : moviesWithProviders.length
         console.log(`[useMoviesData] Current movie count: ${currentMovieCount}, Page: ${page}`)
 
-        if (currentMovieCount < 5 && moviesWithProviders.length >= 0 && page < 20) {
-          // Increased from page < 5 to page < 20 to fetch more movies before stopping
+        if (currentMovieCount < 10 && page < 50 && hasMoreMovies) {
+          // Increased threshold to 10 movies and 50 pages for better infinite scroll
           console.log(`[useMoviesData] Too few movies (${currentMovieCount}), loading page ${page + 1}`)
           setMoviesLoading(false) // Temporarily set to false
           await loadMovies(genreId, type, page + 1, true, roomData, customSwipedIds || swipedMovieIds)
