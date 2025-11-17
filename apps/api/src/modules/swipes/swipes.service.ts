@@ -166,9 +166,13 @@ export class SwipesService {
       where: { id: roomId },
       include: {
         members: {
-          select: {
-            id: true,
-            name: true,
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
           },
         },
       },
@@ -178,7 +182,7 @@ export class SwipesService {
       throw new NotFoundException('Room not found');
     }
 
-    const isMember = room.members.some((m) => m.id === userId);
+    const isMember = room.members.some((m) => m.user.id === userId);
     if (!isMember) {
       throw new ForbiddenException('You are not a member of this room');
     }
@@ -208,7 +212,6 @@ export class SwipesService {
       select: {
         id: true,
         movieId: true,
-        voteCount: true,
         createdAt: true,
       },
     });
@@ -221,15 +224,15 @@ export class SwipesService {
 
     // Member activity
     const memberActivity = room.members.map((member) => {
-      const memberSwipes = swipes.filter((s) => s.userId === member.id);
+      const memberSwipes = swipes.filter((s) => s.userId === member.user.id);
       const memberLikes = memberSwipes.filter((s) => s.value === true).length;
       const memberDislikes = memberSwipes.filter(
         (s) => s.value === false,
       ).length;
 
       return {
-        userId: member.id,
-        userName: member.name,
+        userId: member.user.id,
+        userName: member.user.name,
         totalSwipes: memberSwipes.length,
         likes: memberLikes,
         dislikes: memberDislikes,
