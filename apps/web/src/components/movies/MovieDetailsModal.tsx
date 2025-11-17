@@ -146,6 +146,7 @@ export function MovieDetailsModal({
                     fill
                     className="object-cover"
                     priority
+                    sizes="(max-width: 768px) 100vw, 896px"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
                 </div>
@@ -252,6 +253,7 @@ export function MovieDetailsModal({
                             alt={actor.name}
                             fill
                             className="object-cover"
+                            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 20vw"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-muted">

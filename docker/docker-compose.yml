@@ -11,5 +11,9 @@ services:
   redis:
     image: redis:7
     ports: ["6379:6379"]
+    command: redis-server --appendonly yes --save 60 1000 --save 300 100 --save 900 1
+    volumes:
+      - redisdata:/data
 volumes:
   dbdata:
+  redisdata:

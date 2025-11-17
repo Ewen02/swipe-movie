@@ -103,6 +103,7 @@ export function MatchAnimation({ show, movie, onComplete }: MatchAnimationProps)
                       height={288}
                       className="object-cover rounded-lg shadow-xl"
                       priority
+                      sizes="192px"
                     />
                     <motion.div
                       animate={{
