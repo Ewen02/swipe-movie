@@ -188,11 +188,26 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
   }, [room, swipedMovieIds, session?.user?.email, movies.length])
 
   const handleLoadMoreMovies = useCallback(() => {
-    if (room?.genreId !== null && room?.genreId !== undefined && !moviesLoading && hasMoreMovies) {
-      const nextPage = currentPage + 1
-      loadMovies(room.genreId, room.type as 'movie' | 'tv', nextPage, true, room, swipedMovieIds)
+    console.log(`[useMoviesData] handleLoadMoreMovies called - hasMore: ${hasMoreMovies}, loading: ${moviesLoading}, page: ${currentPage}, movies: ${movies.length}`)
+
+    if (room?.genreId !== null && room?.genreId !== undefined && !moviesLoading) {
+      // Always try to load more if we have no movies, even if hasMoreMovies is false
+      // This handles edge cases where all movies were filtered out
+      if (movies.length === 0 && currentPage < 100) {
+        console.log(`[useMoviesData] No movies available, forcing load of page ${currentPage + 1}`)
+        setHasMoreMovies(true)
+        setConsecutiveEmptyPages(0)
+      }
+
+      if (hasMoreMovies) {
+        const nextPage = currentPage + 1
+        console.log(`[useMoviesData] Loading more movies, page ${nextPage}`)
+        loadMovies(room.genreId, room.type as 'movie' | 'tv', nextPage, true, room, swipedMovieIds)
+      } else {
+        console.log(`[useMoviesData] No more movies to load (hasMoreMovies=false)`)
+      }
     }
-  }, [room, currentPage, moviesLoading, hasMoreMovies, loadMovies, swipedMovieIds])
+  }, [room, currentPage, moviesLoading, hasMoreMovies, loadMovies, swipedMovieIds, movies.length])
 
   return {
     movies,
