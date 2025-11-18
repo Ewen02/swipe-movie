@@ -13,6 +13,7 @@ import { getBatchMovieDetails } from "@/lib/api/movies"
 import { RatingBadge, VoteCountBadge, ProviderList } from "@/components/ui/movie"
 import { TopMatch } from "./TopMatch"
 import { MovieDetailsModal } from "@/components/movies/MovieDetailsModal"
+import { MatchesListSkeleton } from "./MatchesListSkeleton"
 
 interface MatchesListProps {
   roomId: string
@@ -84,26 +85,7 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilt
   }
 
   if (loading) {
-    return (
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Matches 🎉
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <Card key={i} className="animate-pulse">
-              <CardContent className="p-0">
-                <div className="aspect-[2/3] bg-gray-300 dark:bg-gray-700 rounded-t-lg" />
-                <div className="p-3 space-y-2">
-                  <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4" />
-                  <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-1/2" />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-    )
+    return <MatchesListSkeleton />
   }
 
   if (error) {

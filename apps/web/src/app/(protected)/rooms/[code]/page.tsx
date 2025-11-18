@@ -21,6 +21,7 @@ import { Users, Film, UserPlus } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Footer } from "@/components/layout/Footer"
 import { RoomErrorBoundary } from "@/components/error"
+import { RoomPageSkeleton } from "@/components/room/RoomPageSkeleton"
 
 function RoomPageContent() {
   const router = useRouter()
@@ -163,14 +164,7 @@ function RoomPageContent() {
   }, [room, movies, setMovies, setSwipedMovieIds, loadMovies, currentPage])
 
   if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-center">
-          <Film className="w-12 h-12 mx-auto mb-4 animate-pulse text-primary" />
-          <p className="text-muted-foreground">Chargement de la room...</p>
-        </div>
-      </div>
-    )
+    return <RoomPageSkeleton />
   }
 
   if (error) {

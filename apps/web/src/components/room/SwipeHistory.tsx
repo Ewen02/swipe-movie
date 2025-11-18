@@ -11,6 +11,7 @@ import { ThumbsUp, ThumbsDown, Film, Undo2 } from "lucide-react"
 import Image from "next/image"
 import type { Swipe } from "@/schemas/swipes"
 import type { MovieDetails } from "@/schemas/movies"
+import { SwipeHistorySkeleton } from "./SwipeHistorySkeleton"
 
 interface SwipeHistoryProps {
   roomId: string
@@ -61,12 +62,7 @@ export function SwipeHistory({ roomId, onUndo, mediaType = "movie" }: SwipeHisto
   }
 
   if (loading) {
-    return (
-      <div className="text-center py-20">
-        <Film className="w-12 h-12 mx-auto mb-4 animate-pulse text-primary" />
-        <p className="text-muted-foreground">Chargement de l'historique...</p>
-      </div>
-    )
+    return <SwipeHistorySkeleton />
   }
 
   if (error) {

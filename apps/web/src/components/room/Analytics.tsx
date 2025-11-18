@@ -9,6 +9,7 @@ import { getBatchMovieDetails } from "@/lib/api/movies"
 import { TrendingUp, ThumbsUp, ThumbsDown, Trophy, Activity, Users, Film } from "lucide-react"
 import Image from "next/image"
 import type { MovieBasic } from "@/schemas/movies"
+import { AnalyticsSkeleton } from "./AnalyticsSkeleton"
 
 interface AnalyticsProps {
   roomId: string
@@ -80,12 +81,7 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
   }
 
   if (loading) {
-    return (
-      <div className="text-center py-20">
-        <Activity className="w-12 h-12 mx-auto mb-4 animate-pulse text-primary" />
-        <p className="text-muted-foreground">Chargement des statistiques...</p>
-      </div>
-    )
+    return <AnalyticsSkeleton />
   }
 
   if (error || !analytics) {
