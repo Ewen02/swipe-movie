@@ -43,6 +43,7 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
     if (!swipesLoaded) return // Wait for swipes to be loaded first
     if (room.genreId !== null && room.genreId !== undefined) {
       // Reset pagination state when room changes
+      setMovies([]) // Clear movies to show skeleton during reload
       setEmptyPagesCount(0)
       setHasMoreMovies(true)
       setLastLoadedPage(0)
