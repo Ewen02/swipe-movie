@@ -10,8 +10,9 @@ import { Heart, X, Undo2, Sparkles, Star, Calendar, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { MovieBasic } from "@/schemas/movies"
 import { RoomWithMembersResponseDto } from "@/schemas/rooms"
-import { RatingBadge, ReleaseDateBadge, ProviderList } from "@/components/ui/movie"
+import { RatingBadge, ReleaseDateBadge } from "@/components/ui/movie"
 import { getProvidersByIds } from "@/lib/constants/providers"
+import { MovieCardSkeleton } from "./MovieCardSkeleton"
 
 interface Particle {
   id: number
@@ -28,6 +29,7 @@ interface MovieCardsProps {
   onEmpty?: () => void
   onShowDetails?: (movieId: number) => void
   roomFilters?: RoomWithMembersResponseDto
+  isLoading?: boolean
 }
 
 interface MovieCardProps {
@@ -322,7 +324,7 @@ function MovieCard({
   )
 }
 
-export function MovieCards({ movies, onSwipe, onUndo, onEmpty, onShowDetails, roomFilters }: MovieCardsProps) {
+export function MovieCards({ movies, onSwipe, onUndo, onEmpty, onShowDetails, roomFilters, isLoading = false }: MovieCardsProps) {
   const [currentCards, setCurrentCards] = useState(movies)
   const [lastSwipe, setLastSwipe] = useState<{ movie: MovieBasic; direction: "left" | "right" } | null>(null)
   const [swipeCount, setSwipeCount] = useState(0)
@@ -518,33 +520,39 @@ export function MovieCards({ movies, onSwipe, onUndo, onEmpty, onShowDetails, ro
       )}
 
       <div className="relative h-[600px] w-full max-w-sm mx-auto">
-        {currentCards.filter(Boolean).slice(0, 2).map((movie, index) => (
-          <MovieCard
-            key={movie.id}
-            movie={movie}
-            index={index}
-            totalCards={2}
-            isActive={index === 0}
-            onSwipe={handleCardSwipe}
-            onShowDetails={onShowDetails}
-            roomFilters={roomFilters}
-            onButtonSwipeRef={
-              index === 0
-                ? (fn) => {
-                    activeCardButtonSwipeRef.current = fn
-                  }
-                : undefined
-            }
-            onButtonHoverRef={
-              index === 0
-                ? (hoverFn, hoverEndFn) => {
-                    activeCardHoverRef.current = hoverFn
-                    activeCardHoverEndRef.current = hoverEndFn
-                  }
-                : undefined
-            }
-          />
-        ))}
+        {isLoading ? (
+          <div className="absolute inset-0">
+            <MovieCardSkeleton />
+          </div>
+        ) : (
+          currentCards.filter(Boolean).slice(0, 2).map((movie, index) => (
+            <MovieCard
+              key={movie.id}
+              movie={movie}
+              index={index}
+              totalCards={2}
+              isActive={index === 0}
+              onSwipe={handleCardSwipe}
+              onShowDetails={onShowDetails}
+              roomFilters={roomFilters}
+              onButtonSwipeRef={
+                index === 0
+                  ? (fn) => {
+                      activeCardButtonSwipeRef.current = fn
+                    }
+                  : undefined
+              }
+              onButtonHoverRef={
+                index === 0
+                  ? (hoverFn, hoverEndFn) => {
+                      activeCardHoverRef.current = hoverFn
+                      activeCardHoverEndRef.current = hoverEndFn
+                    }
+                  : undefined
+              }
+            />
+          ))
+        )}
       </div>
 
       <div className="flex justify-center gap-6 mt-8">
@@ -556,7 +564,7 @@ export function MovieCards({ movies, onSwipe, onUndo, onEmpty, onShowDetails, ro
             onClick={() => handleButtonSwipe("left")}
             onMouseEnter={() => handleButtonHover("left")}
             onMouseLeave={handleButtonHoverEnd}
-            disabled={currentCards.length === 0}
+            disabled={isLoading || currentCards.length === 0}
           >
             <X className="w-7 h-7 text-red-500 group-hover:text-red-600 transition-colors" />
           </Button>
@@ -568,7 +576,7 @@ export function MovieCards({ movies, onSwipe, onUndo, onEmpty, onShowDetails, ro
             variant="outline"
             className="rounded-full w-14 h-14 p-0 border-2 border-gray-200 hover:border-gray-400 hover:bg-gray-50 dark:border-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-800 bg-white dark:bg-gray-900 shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
             onClick={handleUndo}
-            disabled={!lastSwipe}
+            disabled={isLoading || !lastSwipe}
             title="Annuler (Ctrl+Z)"
           >
             <Undo2 className="w-5 h-5 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 transition-colors" />
@@ -583,7 +591,7 @@ export function MovieCards({ movies, onSwipe, onUndo, onEmpty, onShowDetails, ro
             onClick={() => handleButtonSwipe("right")}
             onMouseEnter={() => handleButtonHover("right")}
             onMouseLeave={handleButtonHoverEnd}
-            disabled={currentCards.length === 0}
+            disabled={isLoading || currentCards.length === 0}
           >
             <Heart className="w-7 h-7 text-green-500 group-hover:text-green-600 transition-colors relative z-10 group-hover:fill-green-500" />
           </Button>

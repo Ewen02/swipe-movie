@@ -346,6 +346,7 @@ function RoomPageContent() {
                   onEmpty={handleLoadMoreMovies}
                   onShowDetails={handleShowDetails}
                   roomFilters={room}
+                  isLoading={moviesLoading}
                 />
               ) : (
                 <Card className="border-dashed">
