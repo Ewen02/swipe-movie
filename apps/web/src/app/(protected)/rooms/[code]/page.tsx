@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { MovieCards } from "@/components/swipe/MovieCards"
+import { MovieCardSkeleton } from "@/components/swipe/MovieCardSkeleton"
 import { MatchesList } from "@/components/room/MatchesList"
 import { MatchAnimation } from "@/components/room/MatchAnimation"
 import { ShareRoomButton } from "@/components/room/ShareRoomButton"
@@ -328,9 +329,15 @@ function RoomPageContent() {
             <TabsContent value="swipe" className="space-y-6">
               {/* Only show loading screen if we have NO movies yet (initial load) */}
               {moviesLoading && movies.length === 0 ? (
-                <div className="text-center py-20">
-                  <Film className="w-12 h-12 mx-auto mb-4 animate-pulse text-primary" />
-                  <p className="text-muted-foreground">Chargement des films...</p>
+                <div className="space-y-6">
+                  <div className="relative h-[600px] w-full max-w-sm mx-auto">
+                    <MovieCardSkeleton />
+                  </div>
+                  <div className="flex justify-center gap-6 mt-8">
+                    <div className="rounded-full w-16 h-16 bg-gray-200 dark:bg-gray-700 animate-pulse" />
+                    <div className="rounded-full w-14 h-14 bg-gray-200 dark:bg-gray-700 animate-pulse" />
+                    <div className="rounded-full w-16 h-16 bg-gray-200 dark:bg-gray-700 animate-pulse" />
+                  </div>
                 </div>
               ) : movies.length > 0 ? (
                 <MovieCards
