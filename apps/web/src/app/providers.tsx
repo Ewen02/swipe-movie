@@ -17,7 +17,7 @@ export function Providers({ children, session }: ProvidersProps) {
     <ErrorBoundary>
       <SessionProvider
         session={session}
-        refetchInterval={5 * 60} // Refetch session every 5 minutes
+        refetchInterval={0} // Disable automatic refetch
         refetchOnWindowFocus={false} // Disable refetch on window focus to reduce API calls
       >
         <ThemeProvider

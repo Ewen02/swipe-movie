@@ -1,6 +1,8 @@
 "use client"
 
+import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { RoomsList } from "@/components/room/RoomsList"
 import { RoomStatsHeader } from "@/components/room/RoomStatsHeader"
 import { CreateRoomDialog } from "@/components/room/CreateRoomDialog"
@@ -21,6 +23,7 @@ import { Footer } from "@/components/layout/Footer"
 import { RoomErrorBoundary } from "@/components/error"
 import { RoomsPageSkeleton } from "./RoomsPageSkeleton"
 import { useUserStats } from "@/hooks/useUserStats"
+import { fadeInUp, staggerContainer } from "@/lib/animations"
 
 function RoomsPageContent() {
   const router = useRouter()
@@ -117,13 +120,23 @@ function RoomsPageContent() {
 
         {/* My Rooms Section */}
         {rooms && (
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
+          <motion.div
+            className="max-w-6xl mx-auto"
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+          >
+            <motion.h2
+              className="text-2xl font-semibold mb-6 flex items-center gap-2"
+              variants={fadeInUp}
+            >
               <Film className="w-6 h-6 text-primary" />
               Mes rooms actives
-            </h2>
-            <RoomsList rooms={rooms} />
-          </div>
+            </motion.h2>
+            <motion.div variants={fadeInUp}>
+              <RoomsList rooms={rooms} />
+            </motion.div>
+          </motion.div>
         )}
 
         {/* Dialogs */}

@@ -210,13 +210,13 @@ function RoomPageContent() {
       // Check if it's a "room is full" error
       if (errorMessage.toLowerCase().includes('full') || errorMessage.toLowerCase().includes('pleine')) {
         toast({
-          variant: "destructive",
+          type: "error",
           title: "Room complète",
           description: `Cette room est complète (${room?.members.length || 0}/10 membres). Demande au créateur de la room d'augmenter la capacité ou crée ta propre room !`,
         })
       } else {
         toast({
-          variant: "destructive",
+          type: "error",
           title: "Erreur",
           description: "Impossible de rejoindre la room. Veuillez réessayer.",
         })

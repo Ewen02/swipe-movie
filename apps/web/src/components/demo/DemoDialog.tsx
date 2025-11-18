@@ -1,18 +1,19 @@
 "use client"
 
 import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Heart, X, Star, Users, Sparkles } from "lucide-react"
+import { Heart, X, Star, Film, RotateCcw, Sparkles } from "lucide-react"
 import Image from "next/image"
+import { fadeInUp, staggerContainer } from "@/lib/animations"
 
 interface DemoDialogProps {
   open: boolean
@@ -26,15 +27,15 @@ const DEMO_MOVIES = [
     year: "2010",
     genre: "Science-Fiction",
     rating: 8.8,
-    poster: "https://image.tmdb.org/t/p/w500/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg",
+    poster: "https://image.tmdb.org/t/p/w500/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg",
   },
   {
     id: 2,
-    title: "The Grand Budapest Hotel",
-    year: "2014",
-    genre: "Comédie",
-    rating: 8.1,
-    poster: "https://image.tmdb.org/t/p/w500/nX5XotM9yprCKarRH4fzOq1VM1J.jpg",
+    title: "Parasite",
+    year: "2019",
+    genre: "Thriller",
+    rating: 8.5,
+    poster: "https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
   },
   {
     id: 3,
@@ -94,127 +95,182 @@ export function DemoDialog({ open, onOpenChange }: DemoDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle className="text-2xl flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-primary" />
-            Démo Interactive
-          </DialogTitle>
-          <DialogDescription>
-            Découvrez comment Swipe Movie fonctionne ! Swipez à droite pour aimer, à gauche pour passer.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-6 mt-4">
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-4">
-            <Card>
-              <CardContent className="p-4 text-center">
-                <Users className="w-6 h-6 mx-auto mb-2 text-primary" />
-                <p className="text-2xl font-bold">3</p>
-                <p className="text-xs text-muted-foreground">Membres</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <Heart className="w-6 h-6 mx-auto mb-2 text-green-500" />
-                <p className="text-2xl font-bold">{swipedRight}</p>
-                <p className="text-xs text-muted-foreground">J'aime</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <X className="w-6 h-6 mx-auto mb-2 text-red-500" />
-                <p className="text-2xl font-bold">{swipedLeft}</p>
-                <p className="text-xs text-muted-foreground">Pas intéressé</p>
-              </CardContent>
-            </Card>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        {/* Hero Header */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-accent/5 to-background border-2 border-primary/20 -mx-6 -mt-6 mb-8">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5" />
+          <div className="relative p-8 md:p-10 text-center">
+            <div className="inline-flex p-3 bg-gradient-to-br from-primary to-accent rounded-xl mb-4 shadow-lg">
+              <Film className="w-8 h-8 text-white" />
+            </div>
+            <DialogHeader className="text-center sm:text-center">
+              <DialogTitle className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-3">
+                Démo Interactive
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">
+              Découvrez comment fonctionne Swipe Movie ! Swipez à droite pour aimer, à gauche pour passer
+            </p>
           </div>
+        </div>
+
+        <motion.div
+          className="space-y-8 px-2 pb-4"
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+        >
+          {/* Stats Cards */}
+          <motion.div className="grid grid-cols-3 gap-4 md:gap-6" variants={fadeInUp}>
+            <Card className="border-2 hover:border-primary/50 transition-all hover:shadow-md group">
+              <CardContent className="p-6 text-center">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 mb-3 group-hover:scale-110 transition-transform">
+                  <Film className="w-7 h-7 text-primary" />
+                </div>
+                <p className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-1">
+                  {swipedRight + swipedLeft}
+                </p>
+                <p className="text-xs md:text-sm text-muted-foreground font-medium">Films vus</p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 hover:border-green-500/50 transition-all hover:shadow-md group">
+              <CardContent className="p-6 text-center">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-green-500/20 to-green-600/20 mb-3 group-hover:scale-110 transition-transform">
+                  <Heart className="w-7 h-7 text-green-500" />
+                </div>
+                <p className="text-3xl md:text-4xl font-bold text-green-500 mb-1">
+                  {swipedRight}
+                </p>
+                <p className="text-xs md:text-sm text-muted-foreground font-medium">J'aime</p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 hover:border-red-500/50 transition-all hover:shadow-md group">
+              <CardContent className="p-6 text-center">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-red-500/20 to-red-600/20 mb-3 group-hover:scale-110 transition-transform">
+                  <X className="w-7 h-7 text-red-500" />
+                </div>
+                <p className="text-3xl md:text-4xl font-bold text-red-500 mb-1">
+                  {swipedLeft}
+                </p>
+                <p className="text-xs md:text-sm text-muted-foreground font-medium">Pas intéressé</p>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Movie Card */}
-          <div className="relative">
+          <motion.div className="relative" variants={fadeInUp}>
             {showMatch && (
-              <div className="absolute inset-0 z-50 bg-black/80 rounded-2xl flex flex-col items-center justify-center">
-                <div className="text-6xl mb-4">🎉</div>
-                <h3 className="text-3xl font-bold text-white mb-2">C'est un Match !</h3>
-                <p className="text-white/80">Tout le monde aime ce film</p>
+              <div className="absolute inset-0 z-50 bg-gradient-to-br from-green-500/95 via-primary/95 to-accent/95 rounded-2xl flex flex-col items-center justify-center backdrop-blur-md shadow-2xl">
+                <div className="text-7xl md:text-8xl mb-6 animate-bounce">🎉</div>
+                <h3 className="text-3xl md:text-5xl font-bold text-white mb-3">C'est un Match !</h3>
+                <p className="text-white/90 text-base md:text-xl">Tout le monde aime ce film</p>
               </div>
             )}
 
             <Card
-              className={`overflow-hidden transition-all duration-300 ${
-                direction === "left" ? "-translate-x-[120%] opacity-0" :
-                direction === "right" ? "translate-x-[120%] opacity-0" :
-                "translate-x-0 opacity-100"
+              className={`overflow-hidden border-2 transition-all duration-300 ${
+                direction === "left"
+                  ? "-translate-x-[120%] opacity-0 rotate-[-15deg]"
+                  : direction === "right"
+                  ? "translate-x-[120%] opacity-0 rotate-[15deg]"
+                  : "translate-x-0 opacity-100 rotate-0"
               }`}
             >
               <CardContent className="p-0">
-                <div className="relative aspect-[2/3] max-w-sm mx-auto">
+                <div className="relative aspect-[2/3] max-w-md mx-auto">
                   <Image
                     src={currentMovie.poster}
                     alt={currentMovie.title}
                     fill
-                    className="object-cover rounded-t-lg"
-                    sizes="400px"
+                    className="object-cover"
+                    sizes="500px"
+                    priority
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent">
                     <div className="absolute top-4 right-4">
-                      <Badge className="bg-primary">
-                        <Star className="w-3 h-3 mr-1" />
+                      <Badge className="bg-primary/90 backdrop-blur-sm border-primary/20 border-2 text-lg px-3 py-1">
+                        <Star className="w-4 h-4 mr-1.5 fill-yellow-400 text-yellow-400" />
                         {currentMovie.rating}
                       </Badge>
                     </div>
-                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                      <h3 className="text-2xl font-bold mb-1">{currentMovie.title}</h3>
-                      <div className="flex gap-2 text-sm">
-                        <Badge variant="secondary">{currentMovie.year}</Badge>
-                        <Badge variant="secondary">{currentMovie.genre}</Badge>
+                    <div className="absolute bottom-0 left-0 right-0 p-6 space-y-3">
+                      <h3 className="text-3xl font-bold text-white">{currentMovie.title}</h3>
+                      <div className="flex gap-2">
+                        <Badge variant="secondary" className="text-sm">
+                          {currentMovie.year}
+                        </Badge>
+                        <Badge variant="secondary" className="text-sm">
+                          {currentMovie.genre}
+                        </Badge>
                       </div>
                     </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </motion.div>
 
           {/* Action Buttons */}
-          <div className="flex justify-center gap-6">
+          <motion.div className="flex justify-center items-center gap-6 md:gap-10" variants={fadeInUp}>
             <Button
               size="lg"
               variant="outline"
-              className="w-16 h-16 rounded-full border-2 border-red-500 hover:bg-red-500 hover:text-white"
+              className="w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-600 hover:scale-110 transition-all shadow-md hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               onClick={() => handleSwipe(false)}
               disabled={!!direction}
+              aria-label="Passer ce film"
             >
-              <X className="w-8 h-8" />
+              <X className="w-8 h-8 md:w-10 md:h-10" />
             </Button>
+
             <Button
               size="lg"
               variant="outline"
-              className="w-16 h-16 rounded-full border-2 border-green-500 hover:bg-green-500 hover:text-white"
+              className="w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-green-500 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-600 hover:scale-110 transition-all shadow-md hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               onClick={() => handleSwipe(true)}
               disabled={!!direction}
+              aria-label="Aimer ce film"
             >
-              <Heart className="w-8 h-8" />
+              <Heart className="w-8 h-8 md:w-10 md:h-10" />
             </Button>
-          </div>
+          </motion.div>
 
-          {/* Reset Button */}
-          <div className="text-center">
-            <Button variant="ghost" size="sm" onClick={handleReset}>
-              Recommencer la démo
-            </Button>
-          </div>
-
-          {/* Instructions */}
-          <Card className="bg-muted/50">
-            <CardContent className="p-4">
-              <p className="text-sm text-muted-foreground text-center">
-                💡 <strong>Astuce</strong> : Swipez à droite 2 fois pour voir une animation de match !
-              </p>
+          {/* Info Card */}
+          <motion.div variants={fadeInUp}>
+            <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-dashed border-primary/30">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-accent/20">
+                  <Sparkles className="w-6 h-6 text-primary" />
+                </div>
+                <div className="space-y-2 flex-1">
+                  <p className="text-sm md:text-base font-bold text-foreground">
+                    Astuce : Swipez à droite 2 fois pour voir une animation de match !
+                  </p>
+                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">
+                    Quand plusieurs personnes aiment le même film, c'est un match et vous pouvez le regarder ensemble.
+                  </p>
+                </div>
+              </div>
             </CardContent>
           </Card>
-        </div>
+          </motion.div>
+
+          {/* Reset Button */}
+          <motion.div className="flex justify-center" variants={fadeInUp}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleReset}
+              className="gap-2 border-2 hover:border-primary/50 transition-colors"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Recommencer la démo
+            </Button>
+          </motion.div>
+        </motion.div>
       </DialogContent>
     </Dialog>
   )
