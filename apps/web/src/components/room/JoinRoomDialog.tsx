@@ -51,7 +51,7 @@ export function JoinRoomDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-4" aria-label="Formulaire pour rejoindre une room">
             <FormField
               control={form.control}
               name="code"

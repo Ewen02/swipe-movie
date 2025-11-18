@@ -5,9 +5,19 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { getMySwipesByRoom } from "@/lib/api/swipes"
 import { getBatchMovieDetails } from "@/lib/api/movies"
-import { ThumbsUp, ThumbsDown, Film, Undo2, RefreshCw } from "lucide-react"
+import { ThumbsUp, ThumbsDown, Film, Undo2, RefreshCw, Loader2 } from "lucide-react"
 import Image from "next/image"
 import type { Swipe } from "@/schemas/swipes"
 import type { MovieDetails } from "@/schemas/movies"
@@ -25,10 +35,31 @@ export function SwipeHistory({ roomId, onUndo, mediaType = "movie" }: SwipeHisto
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [filterType, setFilterType] = useState<"all" | "likes" | "dislikes">("all")
+  const [showUndoDialog, setShowUndoDialog] = useState(false)
+  const [selectedMovie, setSelectedMovie] = useState<{ id: string; title: string } | null>(null)
+  const [undoingMovieId, setUndoingMovieId] = useState<string | null>(null)
 
   useEffect(() => {
     loadHistory()
   }, [roomId])
+
+  const handleUndoClick = (movieId: string, movieTitle: string) => {
+    setSelectedMovie({ id: movieId, title: movieTitle })
+    setShowUndoDialog(true)
+  }
+
+  const handleConfirmUndo = async () => {
+    if (selectedMovie && onUndo) {
+      setUndoingMovieId(selectedMovie.id)
+      try {
+        await onUndo(selectedMovie.id)
+      } finally {
+        setUndoingMovieId(null)
+      }
+    }
+    setShowUndoDialog(false)
+    setSelectedMovie(null)
+  }
 
   const loadHistory = async () => {
     try {
@@ -147,10 +178,10 @@ export function SwipeHistory({ roomId, onUndo, mediaType = "movie" }: SwipeHisto
 
       {/* Filter Tabs */}
       <Tabs value={filterType} onValueChange={(value) => setFilterType(value as typeof filterType)} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="all">Tous ({swipes.length})</TabsTrigger>
-          <TabsTrigger value="likes">J'aime ({totalLikes})</TabsTrigger>
-          <TabsTrigger value="dislikes">Pas intéressé ({totalDislikes})</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3" aria-label="Filtrer l'historique des swipes">
+          <TabsTrigger value="all" aria-label="Afficher tous les swipes">Tous ({swipes.length})</TabsTrigger>
+          <TabsTrigger value="likes" aria-label="Afficher seulement les films aimés">J'aime ({totalLikes})</TabsTrigger>
+          <TabsTrigger value="dislikes" aria-label="Afficher seulement les films pas intéressés">Pas intéressé ({totalDislikes})</TabsTrigger>
         </TabsList>
 
         <TabsContent value={filterType} className="space-y-4">
@@ -192,11 +223,22 @@ export function SwipeHistory({ roomId, onUndo, mediaType = "movie" }: SwipeHisto
                               <Button
                                 size="sm"
                                 variant="secondary"
-                                onClick={() => onUndo(swipe.movieId)}
+                                onClick={() => handleUndoClick(swipe.movieId, movie.title)}
                                 className="gap-1"
+                                aria-label={`Annuler le swipe pour ${movie.title}`}
+                                disabled={undoingMovieId === swipe.movieId}
                               >
-                                <Undo2 className="w-3 h-3" />
-                                Annuler
+                                {undoingMovieId === swipe.movieId ? (
+                                  <>
+                                    <Loader2 className="w-3 h-3 animate-spin" />
+                                    Annulation...
+                                  </>
+                                ) : (
+                                  <>
+                                    <Undo2 className="w-3 h-3" />
+                                    Annuler
+                                  </>
+                                )}
                               </Button>
                             </div>
                           )}
@@ -220,6 +262,32 @@ export function SwipeHistory({ roomId, onUndo, mediaType = "movie" }: SwipeHisto
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Undo Confirmation Dialog */}
+      <AlertDialog open={showUndoDialog} onOpenChange={setShowUndoDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Annuler ce swipe ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir annuler votre swipe pour "{selectedMovie?.title}" ?
+              Le film réapparaîtra dans votre pile de swipe.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={undoingMovieId !== null}>Non, conserver</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmUndo} disabled={undoingMovieId !== null}>
+              {undoingMovieId !== null ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Annulation...
+                </>
+              ) : (
+                "Oui, annuler"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

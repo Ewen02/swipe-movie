@@ -75,7 +75,7 @@ export function CreateRoomDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 mt-4">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 mt-4" aria-label="Formulaire de création de room">
             {/* Type de contenu - Boutons Toggle */}
             <FormField
               control={form.control}

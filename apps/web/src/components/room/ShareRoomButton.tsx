@@ -83,7 +83,7 @@ export function ShareRoomButton({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={variant} size={size} className={className}>
+        <Button variant={variant} size={size} className={className} aria-label="Inviter des amis à rejoindre la room">
           <Share2 className="w-4 h-4 mr-2" />
           Inviter
         </Button>
@@ -128,6 +128,7 @@ export function ShareRoomButton({
                 variant="outline"
                 size="icon"
                 className="shrink-0"
+                aria-label={copiedLink ? "Lien copié" : "Copier le lien de la room"}
               >
                 {copiedLink ? (
                   <CheckCircle2 className="w-4 h-4 text-green-500" />
@@ -156,6 +157,7 @@ export function ShareRoomButton({
                 variant="outline"
                 size="icon"
                 className="shrink-0"
+                aria-label={copiedCode ? "Code copié" : "Copier le code de la room"}
               >
                 {copiedCode ? (
                   <CheckCircle2 className="w-4 h-4 text-green-500" />

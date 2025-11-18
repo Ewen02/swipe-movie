@@ -331,12 +331,12 @@ function RoomPageContent() {
 
           {/* Main Content - Tabs */}
           <Tabs value={currentTab} onValueChange={handleTabChange} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5 h-12">
-              <TabsTrigger value="swipe" className="text-base">🎬 Swiper</TabsTrigger>
-              <TabsTrigger value="matches" className="text-base">✨ Matches</TabsTrigger>
-              <TabsTrigger value="history" className="text-base">📜 Historique</TabsTrigger>
-              <TabsTrigger value="stats" className="text-base">📊 Stats</TabsTrigger>
-              <TabsTrigger value="members" className="text-base">👥 Membres</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-5 h-12" aria-label="Navigation de la room">
+              <TabsTrigger value="swipe" className="text-base" aria-label="Swiper sur des films">🎬 Swiper</TabsTrigger>
+              <TabsTrigger value="matches" className="text-base" aria-label="Voir les matches">✨ Matches</TabsTrigger>
+              <TabsTrigger value="history" className="text-base" aria-label="Voir l'historique des swipes">📜 Historique</TabsTrigger>
+              <TabsTrigger value="stats" className="text-base" aria-label="Voir les statistiques">📊 Stats</TabsTrigger>
+              <TabsTrigger value="members" className="text-base" aria-label="Voir les membres de la room">👥 Membres</TabsTrigger>
             </TabsList>
 
             {/* Swipe Tab */}

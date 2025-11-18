@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -7,9 +8,11 @@ import { ArrowRight, Users, Film, Sparkles, Heart, X } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { PublicHeader } from "@/components/layout/PublicHeader"
 import { Footer } from "@/components/layout/Footer"
+import { DemoDialog } from "@/components/demo/DemoDialog"
 
 export default function LandingPage() {
   const { data: session, status } = useSession()
+  const [showDemo, setShowDemo] = useState(false)
 
   if (status === "loading") {
     return null // or a loading spinner
@@ -38,7 +41,12 @@ export default function LandingPage() {
                 <Sparkles className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-6">
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 py-6"
+              onClick={() => setShowDemo(true)}
+            >
               Voir la démo
               <Film className="ml-2 h-5 w-5" />
             </Button>
@@ -191,6 +199,9 @@ export default function LandingPage() {
 
       {/* Footer */}
       <Footer />
+
+      {/* Demo Dialog */}
+      <DemoDialog open={showDemo} onOpenChange={setShowDemo} />
     </div>
   )
 }
