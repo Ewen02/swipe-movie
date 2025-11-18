@@ -20,6 +20,7 @@ import { Film } from "lucide-react"
 import { Footer } from "@/components/layout/Footer"
 import { RoomErrorBoundary } from "@/components/error"
 import { RoomsPageSkeleton } from "./RoomsPageSkeleton"
+import { useUserStats } from "@/hooks/useUserStats"
 
 function RoomsPageContent() {
   const router = useRouter()
@@ -29,6 +30,9 @@ function RoomsPageContent() {
   const [genres, setGenres] = useState<MovieGenre[]>([])
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [showJoinDialog, setShowJoinDialog] = useState(false)
+
+  // Load user statistics
+  const userStats = useUserStats(rooms)
 
   useEffect(() => {
     setLoading(true)
@@ -79,8 +83,8 @@ function RoomsPageContent() {
         {/* Hero Header with Stats */}
         <RoomStatsHeader
           totalRooms={rooms?.rooms.length || 0}
-          totalMatches={0}
-          totalSwipesToday={0}
+          totalMatches={userStats.totalMatches}
+          totalSwipesToday={userStats.totalSwipesToday}
           onCreateRoom={() => setShowCreateDialog(true)}
           onJoinRoom={() => setShowJoinDialog(true)}
         />
