@@ -113,10 +113,52 @@ export function MovieDetailsModal({
         {loading && (
           <>
             <DialogTitle className="sr-only">Chargement des détails du film</DialogTitle>
-            <div id="movie-details-description" className="space-y-4">
-              <Skeleton className="h-8 w-3/4" />
-              <Skeleton className="h-64 w-full" />
-              <Skeleton className="h-32 w-full" />
+            <div id="movie-details-description" className="space-y-6">
+              {/* Backdrop skeleton */}
+              <div className="relative -mx-6 -mt-6 h-64 overflow-hidden rounded-t-lg">
+                <Skeleton className="h-full w-full" />
+              </div>
+
+              {/* Title and basic info */}
+              <div className="space-y-3">
+                <Skeleton className="h-10 w-3/4" />
+                <div className="flex gap-3 flex-wrap">
+                  <Skeleton className="h-6 w-20 rounded-full" />
+                  <Skeleton className="h-6 w-16 rounded-full" />
+                  <Skeleton className="h-6 w-24 rounded-full" />
+                </div>
+              </div>
+
+              {/* Overview */}
+              <div className="space-y-2">
+                <Skeleton className="h-6 w-32" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-4/5" />
+              </div>
+
+              {/* Cast */}
+              <div className="space-y-3">
+                <Skeleton className="h-6 w-24" />
+                <div className="flex gap-4 overflow-x-auto">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div key={i} className="flex-shrink-0 space-y-2">
+                      <Skeleton className="h-24 w-20 rounded-lg" />
+                      <Skeleton className="h-3 w-20" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Providers */}
+              <div className="space-y-3">
+                <Skeleton className="h-6 w-48" />
+                <div className="flex gap-3">
+                  {[1, 2, 3].map((i) => (
+                    <Skeleton key={i} className="h-12 w-12 rounded-lg" />
+                  ))}
+                </div>
+              </div>
             </div>
           </>
         )}

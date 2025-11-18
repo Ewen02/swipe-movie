@@ -52,6 +52,7 @@ const DECADES = [
 export function RoomFilters({ filters, onChange }: RoomFiltersProps) {
   const [providers, setProviders] = useState<MovieWatchProvider[]>([])
   const [loadingProviders, setLoadingProviders] = useState(true)
+  const [providersError, setProvidersError] = useState<string | null>(null)
   const [showAllProviders, setShowAllProviders] = useState(false)
 
   // Load available providers from API
@@ -59,10 +60,12 @@ export function RoomFilters({ filters, onChange }: RoomFiltersProps) {
     async function loadProviders() {
       try {
         setLoadingProviders(true)
+        setProvidersError(null)
         const data = await getAllWatchProviders("FR")
         setProviders(data)
       } catch (error) {
         console.error("Failed to load watch providers:", error)
+        setProvidersError("Impossible de charger les plateformes")
         setProviders([])
       } finally {
         setLoadingProviders(false)
@@ -220,6 +223,11 @@ export function RoomFilters({ filters, onChange }: RoomFiltersProps) {
           <div className="flex items-center justify-center py-8 text-muted-foreground">
             <Loader2 className="w-5 h-5 animate-spin mr-2" />
             Chargement des plateformes...
+          </div>
+        ) : providersError ? (
+          <div className="flex flex-col items-center justify-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
+            <p className="text-sm text-red-500 mb-2">{providersError}</p>
+            <p className="text-xs">Vous pouvez continuer sans filtrer par plateforme</p>
           </div>
         ) : (
           <>

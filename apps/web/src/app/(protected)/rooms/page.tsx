@@ -30,9 +30,10 @@ import { getGenres } from "@/lib/api/movies"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import type { MovieGenre } from "@/schemas/movies"
-import { Plus, Users, Film, Sparkles } from "lucide-react"
+import { Plus, Users, Film, Sparkles, Loader2 } from "lucide-react"
 import { Footer } from "@/components/layout/Footer"
 import { RoomErrorBoundary } from "@/components/error"
+import { RoomsPageSkeleton } from "./RoomsPageSkeleton"
 
 function RoomsPageContent() {
   const router = useRouter()
@@ -99,6 +100,10 @@ function RoomsPageContent() {
     } finally {
       setLoading(false)
     }
+  }
+
+  if (loading) {
+    return <RoomsPageSkeleton />
   }
 
   return (
@@ -307,7 +312,14 @@ function RoomsPageContent() {
                     size="lg"
                     className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 text-lg py-6"
                   >
-                    {loading ? "Création..." : "Créer la room"}
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Création...
+                      </>
+                    ) : (
+                      "Créer la room"
+                    )}
                   </Button>
                 </form>
               </Form>
@@ -360,7 +372,14 @@ function RoomsPageContent() {
                     disabled={loading}
                     className="w-full bg-gradient-to-r from-accent to-primary hover:opacity-90"
                   >
-                    {loading ? "Connexion..." : "Rejoindre"}
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Connexion...
+                      </>
+                    ) : (
+                      "Rejoindre"
+                    )}
                   </Button>
                 </form>
               </Form>
