@@ -34,7 +34,8 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
   const [moviesLoading, setMoviesLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [hasMoreMovies, setHasMoreMovies] = useState(true)
-  const [consecutiveEmptyPages, setConsecutiveEmptyPages] = useState(0)
+  const [emptyPagesCount, setEmptyPagesCount] = useState(0)
+  const [lastLoadedPage, setLastLoadedPage] = useState(0)
 
   // Initial load when room is ready AND swipes are loaded
   useEffect(() => {
@@ -42,8 +43,10 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
     if (!swipesLoaded) return // Wait for swipes to be loaded first
     if (room.genreId !== null && room.genreId !== undefined) {
       // Reset pagination state when room changes
-      setConsecutiveEmptyPages(0)
+      setEmptyPagesCount(0)
       setHasMoreMovies(true)
+      setLastLoadedPage(0)
+      setCurrentPage(1)
       loadMovies(room.genreId, room.type as 'movie' | 'tv', 1, false, room, swipedMovieIds)
     }
   }, [room?.id, room?.members?.length, swipesLoaded])
@@ -129,40 +132,49 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
           setCurrentPage(page)
         }
 
-        // Check if we have no more movies to load
-        // Track consecutive empty pages after filtering to avoid infinite loading
+        // Update page tracking
+        setLastLoadedPage(page)
+        if (!append) {
+          setCurrentPage(page)
+        }
+
+        // Track empty pages after filtering
         if (moviesWithProviders.length === 0) {
-          setConsecutiveEmptyPages(prev => {
+          setEmptyPagesCount(prev => {
             const newCount = prev + 1
-            // Stop if we get 5 consecutive empty pages OR reached TMDB limit
-            if (newCount >= 5 || page >= 500) {
-              console.log(`[useMoviesData] Stopping: ${newCount} consecutive empty pages or page limit`)
+            console.log(`[useMoviesData] Empty page ${page}, count: ${newCount}`)
+            // Stop after 10 consecutive empty pages OR TMDB limit
+            if (newCount >= 10 || page >= 500) {
+              console.log(`[useMoviesData] Stopping after ${newCount} empty pages or page limit`)
               setHasMoreMovies(false)
             }
             return newCount
           })
         } else {
-          // Reset counter when we get movies
-          setConsecutiveEmptyPages(0)
+          // Reset counter when we successfully get movies
+          console.log(`[useMoviesData] Got ${moviesWithProviders.length} movies on page ${page}, resetting empty count`)
+          setEmptyPagesCount(0)
         }
 
-        // Stop if API returns no raw data
+        // Stop if TMDB API returns no data (end of catalog)
         if (moviesData.length === 0) {
-          console.log(`[useMoviesData] No more movies from TMDB on page ${page}`)
+          console.log(`[useMoviesData] TMDB returned no data on page ${page} - end of catalog`)
           setHasMoreMovies(false)
+          return
         }
 
-        // If we got very few movies after filtering and we're not on a very high page yet,
-        // automatically load more to ensure a good user experience
+        // Auto-load more pages if we don't have enough movies yet
         const currentMovieCount = append ? movies.length + moviesWithProviders.length : moviesWithProviders.length
-        console.log(`[useMoviesData] Current movie count: ${currentMovieCount}, Page: ${page}`)
+        const needsMore = currentMovieCount < 20 // Keep at least 20 movies buffered
+        const canLoadMore = page < 100 && moviesData.length > 0
 
-        if (currentMovieCount < 10 && page < 50 && hasMoreMovies) {
-          // Increased threshold to 10 movies and 50 pages for better infinite scroll
-          console.log(`[useMoviesData] Too few movies (${currentMovieCount}), loading page ${page + 1}`)
-          setMoviesLoading(false) // Temporarily set to false
+        console.log(`[useMoviesData] Count: ${currentMovieCount}, Page: ${page}, NeedsMore: ${needsMore}, CanLoad: ${canLoadMore}`)
+
+        if (needsMore && canLoadMore) {
+          console.log(`[useMoviesData] Auto-loading page ${page + 1} to maintain buffer`)
+          setMoviesLoading(false) // Reset flag for next load
           await loadMovies(genreId, type, page + 1, true, roomData, customSwipedIds || swipedMovieIds)
-          return // Don't set loading to false again, the recursive call will handle it
+          return // Recursive call handles completion
         }
       } catch (providerErr) {
         console.error("Failed to load watch providers:", providerErr)
@@ -188,26 +200,32 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
   }, [room, swipedMovieIds, session?.user?.email, movies.length])
 
   const handleLoadMoreMovies = useCallback(() => {
-    console.log(`[useMoviesData] handleLoadMoreMovies called - hasMore: ${hasMoreMovies}, loading: ${moviesLoading}, page: ${currentPage}, movies: ${movies.length}`)
+    const nextPage = lastLoadedPage + 1
 
-    if (room?.genreId !== null && room?.genreId !== undefined && !moviesLoading) {
-      // Always try to load more if we have no movies, even if hasMoreMovies is false
-      // This handles edge cases where all movies were filtered out
-      if (movies.length === 0 && currentPage < 100) {
-        console.log(`[useMoviesData] No movies available, forcing load of page ${currentPage + 1}`)
-        setHasMoreMovies(true)
-        setConsecutiveEmptyPages(0)
-      }
+    console.log(`[useMoviesData] handleLoadMoreMovies - hasMore: ${hasMoreMovies}, loading: ${moviesLoading}, lastPage: ${lastLoadedPage}, nextPage: ${nextPage}, movies: ${movies.length}`)
 
-      if (hasMoreMovies) {
-        const nextPage = currentPage + 1
-        console.log(`[useMoviesData] Loading more movies, page ${nextPage}`)
-        loadMovies(room.genreId, room.type as 'movie' | 'tv', nextPage, true, room, swipedMovieIds)
-      } else {
-        console.log(`[useMoviesData] No more movies to load (hasMoreMovies=false)`)
-      }
+    if (room?.genreId === null || room?.genreId === undefined || moviesLoading) {
+      console.log(`[useMoviesData] Skipping load - invalid room or already loading`)
+      return
     }
-  }, [room, currentPage, moviesLoading, hasMoreMovies, loadMovies, swipedMovieIds, movies.length])
+
+    // Force load if we have no movies and haven't tried too many pages yet
+    if (movies.length === 0 && nextPage <= 100) {
+      console.log(`[useMoviesData] FORCE LOAD - no movies available, trying page ${nextPage}`)
+      setHasMoreMovies(true)
+      setEmptyPagesCount(0)
+      loadMovies(room.genreId, room.type as 'movie' | 'tv', nextPage, true, room, swipedMovieIds)
+      return
+    }
+
+    // Normal load if more content available
+    if (hasMoreMovies && nextPage <= 500) {
+      console.log(`[useMoviesData] Loading page ${nextPage}`)
+      loadMovies(room.genreId, room.type as 'movie' | 'tv', nextPage, true, room, swipedMovieIds)
+    } else {
+      console.log(`[useMoviesData] Cannot load more - hasMore: ${hasMoreMovies}, nextPage: ${nextPage}`)
+    }
+  }, [room, lastLoadedPage, moviesLoading, hasMoreMovies, loadMovies, swipedMovieIds, movies.length])
 
   return {
     movies,
