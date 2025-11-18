@@ -163,18 +163,20 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
           return
         }
 
-        // Auto-load more pages if we don't have enough movies yet
+        // Only auto-load more if this is the initial load (page 1) and we have very few movies
+        // For subsequent loads, let the user trigger via handleLoadMoreMovies
         const currentMovieCount = append ? movies.length + moviesWithProviders.length : moviesWithProviders.length
-        const needsMore = currentMovieCount < 20 // Keep at least 20 movies buffered
-        const canLoadMore = page < 100 && moviesData.length > 0
+        const isInitialLoad = page === 1 && !append
+        const needsMore = currentMovieCount < 5 // Only auto-load if we have less than 5 movies
+        const canLoadMore = page < 20 && moviesData.length > 0
 
-        console.log(`[useMoviesData] Count: ${currentMovieCount}, Page: ${page}, NeedsMore: ${needsMore}, CanLoad: ${canLoadMore}`)
+        console.log(`[useMoviesData] Count: ${currentMovieCount}, Page: ${page}, Initial: ${isInitialLoad}, NeedsMore: ${needsMore}`)
 
-        if (needsMore && canLoadMore) {
-          console.log(`[useMoviesData] Auto-loading page ${page + 1} to maintain buffer`)
-          setMoviesLoading(false) // Reset flag for next load
+        if (isInitialLoad && needsMore && canLoadMore) {
+          console.log(`[useMoviesData] Initial load - auto-loading page ${page + 1}`)
+          setMoviesLoading(false)
           await loadMovies(genreId, type, page + 1, true, roomData, customSwipedIds || swipedMovieIds)
-          return // Recursive call handles completion
+          return
         }
       } catch (providerErr) {
         console.error("Failed to load watch providers:", providerErr)
