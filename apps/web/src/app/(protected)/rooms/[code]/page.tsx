@@ -10,6 +10,7 @@ import type { MovieBasic } from "@/schemas/movies"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/hooks/use-toast"
 import { MovieCards } from "@/components/swipe/MovieCards"
 import { MovieCardSkeleton } from "@/components/swipe/MovieCardSkeleton"
 import { MatchesList } from "@/components/room/MatchesList"
@@ -28,6 +29,7 @@ function RoomPageContent() {
   const router = useRouter()
   const { code } = useParams<{ code: string }>()
   const { data: session } = useSession()
+  const { toast } = useToast()
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [currentTab, setCurrentTab] = useState("swipe")
   const [joiningRoom, setJoiningRoom] = useState(false)
@@ -197,15 +199,27 @@ function RoomPageContent() {
       await joinRoom({ code })
       // Reload room data to refresh membership
       await reloadRoom()
+      toast({
+        title: "Bienvenue !",
+        description: "Vous avez rejoint la room avec succès.",
+      })
     } catch (err) {
       console.error("Failed to join room:", err)
       const errorMessage = err instanceof Error ? err.message : String(err)
 
       // Check if it's a "room is full" error
       if (errorMessage.toLowerCase().includes('full') || errorMessage.toLowerCase().includes('pleine')) {
-        alert(`❌ Cette room est complète (${room?.members.length || 0}/10 membres). Demande au créateur de la room d'augmenter la capacité ou crée ta propre room !`)
+        toast({
+          variant: "destructive",
+          title: "Room complète",
+          description: `Cette room est complète (${room?.members.length || 0}/10 membres). Demande au créateur de la room d'augmenter la capacité ou crée ta propre room !`,
+        })
       } else {
-        alert("Impossible de rejoindre la room. Veuillez réessayer.")
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Impossible de rejoindre la room. Veuillez réessayer.",
+        })
       }
     } finally {
       setJoiningRoom(false)

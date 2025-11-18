@@ -16,7 +16,7 @@ import { getGenres } from "@/lib/api/movies"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import type { MovieGenre } from "@/schemas/movies"
-import { Film } from "lucide-react"
+import { Film, RefreshCw } from "lucide-react"
 import { Footer } from "@/components/layout/Footer"
 import { RoomErrorBoundary } from "@/components/error"
 import { RoomsPageSkeleton } from "./RoomsPageSkeleton"
@@ -34,8 +34,9 @@ function RoomsPageContent() {
   // Load user statistics
   const userStats = useUserStats(rooms)
 
-  useEffect(() => {
+  const loadData = () => {
     setLoading(true)
+    setError(null)
     Promise.all([getMyRoom(), getGenres()])
       .then(([roomsData, genresData]) => {
         setRooms(roomsData)
@@ -43,6 +44,10 @@ function RoomsPageContent() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadData()
   }, [])
 
   const onCreate = async (values: CreateRoomValues) => {
@@ -92,8 +97,19 @@ function RoomsPageContent() {
         {error && (
           <div className="max-w-4xl mx-auto mb-6">
             <Card className="border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-900/20">
-              <CardContent className="py-4">
+              <CardContent className="py-6 space-y-4">
                 <p className="text-red-600 dark:text-red-400 text-sm text-center">{error}</p>
+                <div className="flex justify-center">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={loadData}
+                    className="gap-2"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Réessayer
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>

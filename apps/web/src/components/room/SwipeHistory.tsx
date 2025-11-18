@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getMySwipesByRoom } from "@/lib/api/swipes"
 import { getBatchMovieDetails } from "@/lib/api/movies"
-import { ThumbsUp, ThumbsDown, Film, Undo2 } from "lucide-react"
+import { ThumbsUp, ThumbsDown, Film, Undo2, RefreshCw } from "lucide-react"
 import Image from "next/image"
 import type { Swipe } from "@/schemas/swipes"
 import type { MovieDetails } from "@/schemas/movies"
@@ -69,7 +69,16 @@ export function SwipeHistory({ roomId, onUndo, mediaType = "movie" }: SwipeHisto
     return (
       <div className="text-center py-20">
         <Film className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-        <p className="text-red-500">{error}</p>
+        <p className="text-red-500 mb-4">{error}</p>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={loadHistory}
+          className="gap-2"
+        >
+          <RefreshCw className="w-4 h-4" />
+          Réessayer
+        </Button>
       </div>
     )
   }

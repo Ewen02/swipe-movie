@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { getRoomAnalytics } from "@/lib/api/swipes"
 import { getBatchMovieDetails } from "@/lib/api/movies"
-import { TrendingUp, ThumbsUp, ThumbsDown, Trophy, Activity, Users, Film } from "lucide-react"
+import { TrendingUp, ThumbsUp, ThumbsDown, Trophy, Activity, Users, Film, RefreshCw } from "lucide-react"
 import Image from "next/image"
 import type { MovieBasic } from "@/schemas/movies"
 import { AnalyticsSkeleton } from "./AnalyticsSkeleton"
@@ -88,7 +89,16 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
     return (
       <div className="text-center py-20">
         <Film className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-        <p className="text-red-500">{error || "Impossible de charger les statistiques"}</p>
+        <p className="text-red-500 mb-4">{error || "Impossible de charger les statistiques"}</p>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={loadAnalytics}
+          className="gap-2"
+        >
+          <RefreshCw className="w-4 h-4" />
+          Réessayer
+        </Button>
       </div>
     )
   }

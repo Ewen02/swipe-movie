@@ -4,7 +4,8 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ExternalLink } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { ExternalLink, RefreshCw } from "lucide-react"
 import { Match } from "@/schemas/swipes"
 import { MovieBasic } from "@/schemas/movies"
 import { RoomWithMembersResponseDto } from "@/schemas/rooms"
@@ -90,8 +91,17 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilt
 
   if (error) {
     return (
-      <div className="text-center py-8">
-        <p className="text-red-500">{error}</p>
+      <div className="text-center py-12">
+        <p className="text-red-500 mb-4">{error}</p>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={loadMatches}
+          className="gap-2"
+        >
+          <RefreshCw className="w-4 h-4" />
+          Réessayer
+        </Button>
       </div>
     )
   }
