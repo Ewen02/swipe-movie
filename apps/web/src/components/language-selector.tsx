@@ -18,12 +18,27 @@ export function LanguageSelector() {
   const router = useRouter()
 
   const handleLocaleChange = (newLocale: string) => {
-    // Remove current locale from pathname
-    const pathWithoutLocale = pathname.replace(`/${locale}`, '') || '/'
+    // Remove current locale from pathname if it exists
+    // Handle both /en/path and /path (for French)
+    let pathWithoutLocale = pathname
+
+    // If pathname starts with a locale, remove it
+    if (pathname.startsWith('/en/') || pathname.startsWith('/fr/')) {
+      pathWithoutLocale = pathname.substring(3) // Remove '/en' or '/fr'
+    } else if (pathname === '/en' || pathname === '/fr') {
+      pathWithoutLocale = '/'
+    }
+
+    // Ensure path starts with /
+    if (!pathWithoutLocale.startsWith('/')) {
+      pathWithoutLocale = '/' + pathWithoutLocale
+    }
 
     // Add new locale to pathname
+    // For French (default), don't add locale prefix
+    // For other locales, add the prefix
     const newPath = newLocale === 'fr'
-      ? pathWithoutLocale // Don't show /fr in URL for default locale
+      ? pathWithoutLocale
       : `/${newLocale}${pathWithoutLocale}`
 
     router.push(newPath)
