@@ -1,7 +1,7 @@
 'use client'
 
 import { useLocale } from 'next-intl'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname as useNextPathname } from 'next/navigation'
 import { locales, localeNames, type Locale } from '@/i18n'
 import {
   Select,
@@ -11,37 +11,24 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Globe } from 'lucide-react'
+import { useTransition } from 'react'
+import { setUserLocale } from '@/actions/locale'
 
 export function LanguageSelector() {
   const locale = useLocale()
-  const pathname = usePathname()
-  const router = useRouter()
+  const [, startTransition] = useTransition()
+  const pathname = useNextPathname()
 
   const handleLocaleChange = (newLocale: string) => {
-    // Remove current locale from pathname if it exists
-    // Handle both /en/path and /path (for French)
-    let pathWithoutLocale = pathname
+    if (newLocale === locale) return
 
-    // If pathname starts with a locale, remove it
-    if (pathname.startsWith('/en/') || pathname.startsWith('/fr/')) {
-      pathWithoutLocale = pathname.substring(3) // Remove '/en' or '/fr'
-    } else if (pathname === '/en' || pathname === '/fr') {
-      pathWithoutLocale = '/'
-    }
+    // Remove locale prefix from pathname to get the base path
+    const basePath = pathname.replace(/^\/(fr|en)/, '') || '/'
 
-    // Ensure path starts with /
-    if (!pathWithoutLocale.startsWith('/')) {
-      pathWithoutLocale = '/' + pathWithoutLocale
-    }
-
-    // Add new locale to pathname
-    // For French (default), don't add locale prefix
-    // For other locales, add the prefix
-    const newPath = newLocale === 'fr'
-      ? pathWithoutLocale
-      : `/${newLocale}${pathWithoutLocale}`
-
-    router.push(newPath)
+    // Use transition for smooth navigation
+    startTransition(async () => {
+      await setUserLocale(newLocale, basePath)
+    })
   }
 
   return (

@@ -5,11 +5,13 @@ import { locales, defaultLocale } from './i18n'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
 
-// Create i18n middleware
+// Create i18n middleware with locale detection enabled
+// This will automatically read the NEXT_LOCALE cookie set by our server action
 const intlMiddleware = createMiddleware({
   locales,
   defaultLocale,
   localePrefix: 'as-needed', // Don't show /fr in URL for default locale
+  localeDetection: true, // Enable automatic locale detection from cookie
 })
 
 // Public paths that don't require authentication
@@ -26,6 +28,9 @@ export default withAuth(
   function middleware(req) {
     if (isDevelopment) {
       console.log('[middleware] request', req.nextUrl.pathname)
+      // Log cookie for debugging
+      const locale = req.cookies.get('NEXT_LOCALE')
+      console.log('[middleware] NEXT_LOCALE cookie:', locale?.value || 'not set')
     }
 
     // Apply i18n middleware for all requests
