@@ -1,8 +1,9 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Film, Users, Heart, TrendingUp, Plus, ArrowRight } from "lucide-react"
+import { Film, Users, Heart, TrendingUp, Plus } from "lucide-react"
 
 interface RoomStatsHeaderProps {
   totalRooms: number
@@ -19,6 +20,8 @@ export function RoomStatsHeader({
   onCreateRoom,
   onJoinRoom,
 }: RoomStatsHeaderProps) {
+  const t = useTranslations('rooms')
+
   return (
     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-accent/5 to-background border-2 border-primary/20 mb-12">
       {/* Background decoration */}
@@ -28,10 +31,10 @@ export function RoomStatsHeader({
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-3">
-            Mes Rooms 🎬
+            {t('title')} 🎬
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl">
-            Créez une nouvelle room ou rejoignez vos amis pour décider ensemble du prochain film ou série à regarder
+            {t('emptyDescription')}
           </p>
         </div>
 
@@ -41,7 +44,7 @@ export function RoomStatsHeader({
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Rooms actives</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('stats.total')}</p>
                   <p className="text-3xl font-bold text-primary">{totalRooms}</p>
                 </div>
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -55,7 +58,7 @@ export function RoomStatsHeader({
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Matches trouvés</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('stats.matches')}</p>
                   <p className="text-3xl font-bold text-accent">{totalMatches}</p>
                 </div>
                 <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
@@ -69,7 +72,7 @@ export function RoomStatsHeader({
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Swipes aujourd'hui</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('stats.swipesToday')}</p>
                   <p className="text-3xl font-bold text-green-500">{totalSwipesToday}</p>
                 </div>
                 <div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center">
@@ -88,7 +91,7 @@ export function RoomStatsHeader({
             onClick={onCreateRoom}
           >
             <Plus className="w-5 h-5 mr-2" />
-            Créer une room
+            {t('create')}
           </Button>
           <Button
             size="lg"
@@ -97,7 +100,7 @@ export function RoomStatsHeader({
             onClick={onJoinRoom}
           >
             <Users className="w-5 h-5 mr-2" />
-            Rejoindre une room
+            {t('join')}
           </Button>
         </div>
       </div>

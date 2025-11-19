@@ -4,6 +4,7 @@ import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useSession, signOut } from "next-auth/react"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -30,6 +31,7 @@ import { User, LogOut, Film } from "lucide-react"
 export function Header() {
   const { data: session } = useSession()
   const [showSignOutDialog, setShowSignOutDialog] = useState(false)
+  const t = useTranslations()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -71,7 +73,7 @@ export function Header() {
                   <DropdownMenuItem asChild>
                     <Link href="/rooms" className="cursor-pointer">
                       <Film className="mr-2 h-4 w-4" />
-                      Mes Rooms
+                      {t('nav.rooms')}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -80,7 +82,7 @@ export function Header() {
                     onClick={() => setShowSignOutDialog(true)}
                   >
                     <LogOut className="mr-2 h-4 w-4" />
-                    Se déconnecter
+                    {t('auth.signOut')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -93,18 +95,18 @@ export function Header() {
       <AlertDialog open={showSignOutDialog} onOpenChange={setShowSignOutDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Se déconnecter ?</AlertDialogTitle>
+            <AlertDialogTitle>{t('auth.signOutConfirm')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à vos rooms.
+              {t('auth.signOutDescription')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => signOut({ callbackUrl: "/login" })}
               className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
             >
-              Se déconnecter
+              {t('auth.signOut')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

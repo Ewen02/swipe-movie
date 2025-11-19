@@ -1,5 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { ThemeToggle } from "@/components/layout/ThemeToggle"
@@ -8,7 +9,7 @@ import { LanguageSelector } from "@/components/language-selector"
 interface PublicHeaderProps {
   /**
    * Type of header to display
-   * - "landing": Landing page with conditional CTA (Commencer or Mes Rooms)
+   * - "landing": Landing page with conditional CTA (Get started or My Rooms)
    * - "back": Simple header with back button
    */
   variant?: "landing" | "back"
@@ -19,6 +20,8 @@ interface PublicHeaderProps {
 }
 
 export function PublicHeader({ variant = "back", isAuthenticated = false }: PublicHeaderProps) {
+  const t = useTranslations()
+
   return (
     <header className="container mx-auto px-4 py-6">
       <nav className="flex items-center justify-between">
@@ -37,7 +40,7 @@ export function PublicHeader({ variant = "back", isAuthenticated = false }: Publ
           {variant === "landing" ? (
             <Link href={isAuthenticated ? "/rooms" : "/login"}>
               <Button size="lg">
-                {isAuthenticated ? "Mes Rooms" : "Commencer"}
+                {isAuthenticated ? t('landing.hero.ctaAuth') : t('landing.hero.cta')}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -45,7 +48,7 @@ export function PublicHeader({ variant = "back", isAuthenticated = false }: Publ
             <Link href="/">
               <Button variant="outline" size="lg">
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Retour
+                {t('common.back')}
               </Button>
             </Link>
           )}
