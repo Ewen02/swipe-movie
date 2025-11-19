@@ -3,6 +3,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { ThemeToggle } from "@/components/layout/ThemeToggle"
+import { LanguageSelector } from "@/components/language-selector"
 
 interface PublicHeaderProps {
   /**
@@ -31,6 +32,7 @@ export function PublicHeader({ variant = "back", isAuthenticated = false }: Publ
           />
         </Link>
         <div className="flex items-center gap-3">
+          <LanguageSelector />
           <ThemeToggle />
           {variant === "landing" ? (
             <Link href={isAuthenticated ? "/rooms" : "/login"}>

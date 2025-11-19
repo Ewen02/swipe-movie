@@ -1,0 +1,164 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "viewMore": "View more",
+    "viewLess": "View less"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "signInWith": "Sign in with {provider}",
+    "signOutConfirm": "Sign out?",
+    "signOutDescription": "Are you sure you want to sign out? You will need to sign in again to access your rooms.",
+    "welcome": "Welcome",
+    "welcomeBack": "Welcome back"
+  },
+  "nav": {
+    "home": "Home",
+    "rooms": "My Rooms",
+    "profile": "Profile",
+    "settings": "Settings",
+    "about": "About",
+    "contact": "Contact",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+  "landing": {
+    "title": "Swipe Movie",
+    "subtitle": "Find your next movie to watch with friends",
+    "description": "Create a room, invite your friends and swipe together to find the perfect movie!",
+    "cta": "Get started now",
+    "ctaSecondary": "Learn more",
+    "howItWorks": "How does it work?",
+    "features": {
+      "title": "Features",
+      "swipe": {
+        "title": "Swipe like Tinder",
+        "description": "Swipe right to like, left to pass"
+      },
+      "match": {
+        "title": "Automatic matches",
+        "description": "Instantly discover movies everyone loves"
+      },
+      "filters": {
+        "title": "Advanced filters",
+        "description": "Genre, rating, year, streaming platform and more"
+      }
+    }
+  },
+  "rooms": {
+    "title": "My Rooms",
+    "create": "Create a room",
+    "join": "Join a room",
+    "empty": "No active rooms",
+    "emptyDescription": "Create your first room to start swiping movies with your friends!",
+    "active": "Active rooms",
+    "members": "{count} members",
+    "membersCount": "{count}/{max} members",
+    "new": "New",
+    "access": "Access",
+    "share": "Share",
+    "code": "Code",
+    "type": {
+      "movie": "Movies",
+      "tv": "TV Shows"
+    },
+    "stats": {
+      "total": "Total rooms",
+      "matches": "Matches found",
+      "swipesToday": "Swipes today"
+    }
+  },
+  "room": {
+    "name": "Room name",
+    "namePlaceholder": "My movie room",
+    "code": "Room code",
+    "codePlaceholder": "ABC123",
+    "selectType": "Select type",
+    "movies": "Movies",
+    "tvShows": "TV Shows",
+    "genre": "Genre",
+    "genrePlaceholder": "Choose a genre",
+    "rating": "Minimum rating",
+    "year": "Year",
+    "yearMin": "Min year",
+    "yearMax": "Max year",
+    "runtime": "Runtime",
+    "runtimeMin": "Min",
+    "runtimeMax": "Max",
+    "providers": "Platforms",
+    "language": "Language",
+    "advancedFilters": "Advanced filters",
+    "creating": "Creating...",
+    "joining": "Connecting...",
+    "full": "Room full",
+    "fullDescription": "This room is full ({current}/{max} members). Ask the room creator to increase the capacity or create your own room!",
+    "notFound": "Room not found",
+    "error": "Error",
+    "errorLoading": "Unable to load room",
+    "tabs": {
+      "swipe": "Swipe",
+      "matches": "Matches",
+      "history": "History",
+      "stats": "Stats",
+      "members": "Members"
+    }
+  },
+  "swipe": {
+    "like": "Like",
+    "dislike": "Pass",
+    "undo": "Undo",
+    "details": "Details",
+    "noMovies": "No movies available",
+    "noMoviesDescription": "All movies have already been viewed. Try changing the room filters.",
+    "noGenre": "Incomplete room configuration",
+    "noGenreDescription": "This room has no configured genre. Ask the creator to configure a genre to start swiping!",
+    "allSwiped": "No more movies available!",
+    "allSwipedDescription": "You've swiped all available movies with these filters! Try broadening your criteria.",
+    "loading": "Loading movies...",
+    "rating": "Rating",
+    "votes": "{count} votes",
+    "releaseDate": "Release"
+  },
+  "match": {
+    "title": "It's a match!",
+    "newMatch": "New Match!",
+    "description": "A movie has been matched by the group!",
+    "noMatches": "No matches yet",
+    "noMatchesDescription": "Keep swiping to find a movie everyone loves!",
+    "topMatch": "Top Match",
+    "otherMatches": "Other Matches ({count})",
+    "agreement": "{percent}% agreement",
+    "watchOn": "Watch on",
+    "tmdb": "View on TMDb",
+    "share": "Share"
+  },
+  "error": {
+    "title": "An error occurred",
+    "description": "We're sorry, something went wrong",
+    "retry": "Retry",
+    "home": "Home",
+    "details": "Error details",
+    "notFound": "Page not found",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Access forbidden"
+  },
+  "footer": {
+    "madeWith": "Made with",
+    "by": "by",
+    "rights": "All rights reserved"
+  }
+}

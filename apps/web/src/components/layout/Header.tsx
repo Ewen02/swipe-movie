@@ -24,6 +24,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { ThemeToggle } from "@/components/layout/ThemeToggle"
+import { LanguageSelector } from "@/components/language-selector"
 import { User, LogOut, Film } from "lucide-react"
 
 export function Header() {
@@ -47,6 +48,7 @@ export function Header() {
 
           {/* Right side - User menu and theme toggle */}
           <div className="flex items-center gap-3">
+            <LanguageSelector />
             <ThemeToggle />
 
             {session?.user && (

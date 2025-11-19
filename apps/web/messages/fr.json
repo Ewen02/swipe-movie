@@ -1,0 +1,164 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "viewMore": "Voir plus",
+    "viewLess": "Voir moins"
+  },
+  "auth": {
+    "signIn": "Se connecter",
+    "signOut": "Se déconnecter",
+    "signInWith": "Se connecter avec {provider}",
+    "signOutConfirm": "Se déconnecter ?",
+    "signOutDescription": "Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à vos rooms.",
+    "welcome": "Bienvenue",
+    "welcomeBack": "Bon retour"
+  },
+  "nav": {
+    "home": "Accueil",
+    "rooms": "Mes Rooms",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "about": "À propos",
+    "contact": "Contact",
+    "privacy": "Confidentialité",
+    "terms": "Conditions"
+  },
+  "landing": {
+    "title": "Swipe Movie",
+    "subtitle": "Trouvez votre prochain film à regarder entre amis",
+    "description": "Créez une room, invitez vos amis et swipez ensemble pour trouver le film parfait !",
+    "cta": "Commencer maintenant",
+    "ctaSecondary": "En savoir plus",
+    "howItWorks": "Comment ça marche ?",
+    "features": {
+      "title": "Fonctionnalités",
+      "swipe": {
+        "title": "Swipe comme Tinder",
+        "description": "Swipez droite pour aimer, gauche pour passer"
+      },
+      "match": {
+        "title": "Matchs automatiques",
+        "description": "Découvrez instantanément les films que tout le monde aime"
+      },
+      "filters": {
+        "title": "Filtres avancés",
+        "description": "Genre, note, année, plateforme de streaming et plus"
+      }
+    }
+  },
+  "rooms": {
+    "title": "Mes Rooms",
+    "create": "Créer une room",
+    "join": "Rejoindre une room",
+    "empty": "Aucune room active",
+    "emptyDescription": "Créez votre première room pour commencer à swiper des films avec vos amis !",
+    "active": "Rooms actives",
+    "members": "{count} membres",
+    "membersCount": "{count}/{max} membres",
+    "new": "Nouveau",
+    "access": "Accéder",
+    "share": "Partager",
+    "code": "Code",
+    "type": {
+      "movie": "Films",
+      "tv": "Séries"
+    },
+    "stats": {
+      "total": "Total de rooms",
+      "matches": "Matches trouvés",
+      "swipesToday": "Swipes aujourd'hui"
+    }
+  },
+  "room": {
+    "name": "Nom de la room",
+    "namePlaceholder": "Ma room de films",
+    "code": "Code de la room",
+    "codePlaceholder": "ABC123",
+    "selectType": "Choisissez le type",
+    "movies": "Films",
+    "tvShows": "Séries",
+    "genre": "Genre",
+    "genrePlaceholder": "Choisissez un genre",
+    "rating": "Note minimale",
+    "year": "Année",
+    "yearMin": "Année min",
+    "yearMax": "Année max",
+    "runtime": "Durée",
+    "runtimeMin": "Min",
+    "runtimeMax": "Max",
+    "providers": "Plateformes",
+    "language": "Langue",
+    "advancedFilters": "Filtres avancés",
+    "creating": "Création...",
+    "joining": "Connexion...",
+    "full": "Room complète",
+    "fullDescription": "Cette room est complète ({current}/{max} membres). Demande au créateur de la room d'augmenter la capacité ou crée ta propre room !",
+    "notFound": "Room introuvable",
+    "error": "Erreur",
+    "errorLoading": "Impossible de charger la room",
+    "tabs": {
+      "swipe": "Swiper",
+      "matches": "Matches",
+      "history": "Historique",
+      "stats": "Stats",
+      "members": "Membres"
+    }
+  },
+  "swipe": {
+    "like": "J'aime",
+    "dislike": "Passer",
+    "undo": "Annuler",
+    "details": "Détails",
+    "noMovies": "Aucun film disponible",
+    "noMoviesDescription": "Tous les films ont déjà été vus. Essaie de modifier les filtres de la room.",
+    "noGenre": "Configuration de la room incomplète",
+    "noGenreDescription": "Cette room n'a pas de genre configuré. Demande au créateur de configurer un genre pour commencer à swiper !",
+    "allSwiped": "Plus de films disponibles !",
+    "allSwipedDescription": "Vous avez swipé tous les films disponibles avec ces filtres ! Essayez d'élargir vos critères.",
+    "loading": "Chargement des films...",
+    "rating": "Note",
+    "votes": "{count} votes",
+    "releaseDate": "Sortie"
+  },
+  "match": {
+    "title": "C'est un match !",
+    "newMatch": "Nouveau Match !",
+    "description": "Un film a été matché par le groupe !",
+    "noMatches": "Aucun match pour le moment",
+    "noMatchesDescription": "Continuez à swiper pour trouver un film que tout le monde aime !",
+    "topMatch": "Top Match",
+    "otherMatches": "Autres Matches ({count})",
+    "agreement": "{percent}% d'accord",
+    "watchOn": "Regarder sur",
+    "tmdb": "Voir sur TMDb",
+    "share": "Partager"
+  },
+  "error": {
+    "title": "Une erreur est survenue",
+    "description": "Nous sommes désolés, quelque chose s'est mal passé",
+    "retry": "Réessayer",
+    "home": "Accueil",
+    "details": "Détails de l'erreur",
+    "notFound": "Page non trouvée",
+    "unauthorized": "Non autorisé",
+    "forbidden": "Accès interdit"
+  },
+  "footer": {
+    "madeWith": "Fait avec",
+    "by": "par",
+    "rights": "Tous droits réservés"
+  }
+}

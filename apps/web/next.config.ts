@@ -1,5 +1,8 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
 
 const nextConfig: NextConfig = {
   images: {
@@ -38,8 +41,8 @@ const nextConfig: NextConfig = {
   },
 };
 
-// Wrap config with Sentry for error tracking
-export default withSentryConfig(nextConfig, {
+// Wrap config with next-intl and Sentry
+export default withSentryConfig(withNextIntl(nextConfig), {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
