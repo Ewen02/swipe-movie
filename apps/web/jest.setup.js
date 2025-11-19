@@ -16,6 +16,9 @@ jest.mock('next/navigation', () => ({
   useSearchParams() {
     return new URLSearchParams()
   },
+  useParams() {
+    return {}
+  },
 }))
 
 // Mock next-auth
@@ -34,6 +37,19 @@ jest.mock('next-auth/react', () => ({
   },
   signIn: jest.fn(),
   signOut: jest.fn(),
+  SessionProvider: ({ children }) => children,
+}))
+
+// Mock next-auth
+jest.mock('next-auth', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}))
+
+// Mock lib/auth
+jest.mock('@/lib/auth', () => ({
+  authOptions: {},
+  getServerSession: jest.fn(),
 }))
 
 // Mock Socket.IO client
@@ -50,6 +66,21 @@ jest.mock('socket.io-client', () => {
   }))
 })
 
+// Mock Framer Motion
+jest.mock('framer-motion', () => ({
+  motion: {
+    div: 'div',
+    h1: 'h1',
+    h2: 'h2',
+    h3: 'h3',
+    p: 'p',
+    span: 'span',
+    button: 'button',
+    a: 'a',
+  },
+  AnimatePresence: ({ children }) => children,
+}))
+
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
   constructor() {}
@@ -60,3 +91,26 @@ global.IntersectionObserver = class IntersectionObserver {
   }
   unobserve() {}
 }
+
+// Mock ResizeObserver
+global.ResizeObserver = class ResizeObserver {
+  constructor() {}
+  disconnect() {}
+  observe() {}
+  unobserve() {}
+}
+
+// Mock window.matchMedia
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+})
