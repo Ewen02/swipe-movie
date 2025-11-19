@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowRight, Users, Film, Sparkles, Heart, X } from "lucide-react"
 import { useSession } from "next-auth/react"
+import { useTranslations } from 'next-intl'
 import { PublicHeader } from "@/components/layout/PublicHeader"
 import { Footer } from "@/components/layout/Footer"
 import { DemoDialog } from "@/components/demo/DemoDialog"
@@ -15,6 +16,7 @@ import { fadeInUp, fadeInScale, staggerContainer, slideInLeft, slideInRight } fr
 export default function LandingPage() {
   const { data: session, status } = useSession()
   const [showDemo, setShowDemo] = useState(false)
+  const t = useTranslations('landing')
 
   if (status === "loading") {
     return null // or a loading spinner
@@ -53,7 +55,7 @@ export default function LandingPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
               >
-                Décidez en groupe quel film regarder
+                {t('hero.title')}
               </motion.h1>
               <motion.p
                 className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto"
@@ -61,7 +63,7 @@ export default function LandingPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
-                Fini les débats sans fin ! Swipez, matchez et regardez ensemble en quelques secondes.
+                {t('hero.subtitle')}
               </motion.p>
               <motion.div
                 className="flex flex-col sm:flex-row gap-4 justify-center"
@@ -71,7 +73,7 @@ export default function LandingPage() {
               >
                 <Link href={isAuthenticated ? "/rooms" : "/login"}>
                   <Button size="lg" className="text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-shadow">
-                    {isAuthenticated ? "Accéder à mes rooms" : "Commencer gratuitement"}
+                    {isAuthenticated ? t('hero.ctaAuth') : t('hero.cta')}
                     <Sparkles className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
@@ -81,7 +83,7 @@ export default function LandingPage() {
                   className="text-lg px-8 py-6 border-2 hover:border-primary/50 transition-colors"
                   onClick={() => setShowDemo(true)}
                 >
-                  Voir la démo
+                  {t('hero.demo')}
                   <Film className="ml-2 h-5 w-5" />
                 </Button>
               </motion.div>
@@ -102,8 +104,8 @@ export default function LandingPage() {
                     <X className="h-16 w-16 text-red-500" />
                   </div>
                   <div className="p-6 text-center">
-                    <h3 className="font-bold text-lg mb-2">Passer</h3>
-                    <p className="text-sm text-muted-foreground">Swipez à gauche si le film ne vous intéresse pas</p>
+                    <h3 className="font-bold text-lg mb-2">{t('demoCards.pass.title')}</h3>
+                    <p className="text-sm text-muted-foreground">{t('demoCards.pass.description')}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -116,8 +118,8 @@ export default function LandingPage() {
                     <Film className="h-16 w-16 text-primary" />
                   </div>
                   <div className="p-6 text-center">
-                    <h3 className="font-bold text-lg mb-2">Découvrir</h3>
-                    <p className="text-sm text-muted-foreground">Des milliers de films à parcourir ensemble</p>
+                    <h3 className="font-bold text-lg mb-2">{t('demoCards.discover.title')}</h3>
+                    <p className="text-sm text-muted-foreground">{t('demoCards.discover.description')}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -130,8 +132,8 @@ export default function LandingPage() {
                     <Heart className="h-16 w-16 text-green-500" />
                   </div>
                   <div className="p-6 text-center">
-                    <h3 className="font-bold text-lg mb-2">Matcher</h3>
-                    <p className="text-sm text-muted-foreground">Swipez à droite pour aimer et créer un match</p>
+                    <h3 className="font-bold text-lg mb-2">{t('demoCards.match.title')}</h3>
+                    <p className="text-sm text-muted-foreground">{t('demoCards.match.description')}</p>
                   </div>
                 </CardContent>
               </Card>
