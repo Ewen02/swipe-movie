@@ -109,12 +109,15 @@
     "empty": "Aucune room active",
     "emptyDescription": "Créez votre première room pour commencer à swiper des films avec vos amis !",
     "active": "Rooms actives",
+    "myActiveRooms": "Mes rooms actives",
     "members": "{count} membres",
     "membersCount": "{count}/{max} membres",
     "new": "Nouveau",
     "access": "Accéder",
     "share": "Partager",
     "code": "Code",
+    "errorUnknown": "Erreur inconnue",
+    "retry": "Réessayer",
     "type": {
       "movie": "Films",
       "tv": "Séries"
@@ -152,12 +155,33 @@
     "notFound": "Room introuvable",
     "error": "Erreur",
     "errorLoading": "Impossible de charger la room",
+    "unnamedRoom": "Room sans nom",
+    "membersCount": "{count}/{max} membres",
+    "welcomeTitle": "Bienvenue !",
+    "welcomeDescription": "Vous avez rejoint la room avec succès.",
+    "roomFullTitle": "Room complète",
+    "roomFullDescription": "Cette room est complète ({current}/{max} membres). Demande au créateur de la room d'augmenter la capacité ou crée ta propre room !",
+    "joinErrorTitle": "Erreur",
+    "joinErrorDescription": "Impossible de rejoindre la room. Veuillez réessayer.",
+    "joinRoomDescription": "Rejoins cette room pour swiper et trouver des matches avec tes amis !",
+    "joiningButton": "Rejoindre la room",
+    "connecting": "Connexion...",
+    "roomMembers": "Membres de la room",
+    "unknownUser": "Utilisateur inconnu",
+    "moviesType": "🎬 Films",
+    "tvShowsType": "📺 Séries",
     "tabs": {
-      "swipe": "Swiper",
-      "matches": "Matches",
-      "history": "Historique",
-      "stats": "Stats",
-      "members": "Membres"
+      "swipe": "🎬 Swiper",
+      "matches": "✨ Matches",
+      "history": "📜 Historique",
+      "stats": "📊 Stats",
+      "members": "👥 Membres",
+      "swipeAriaLabel": "Swiper sur des films",
+      "matchesAriaLabel": "Voir les matches",
+      "historyAriaLabel": "Voir l'historique des swipes",
+      "statsAriaLabel": "Voir les statistiques",
+      "membersAriaLabel": "Voir les membres de la room",
+      "navigationAriaLabel": "Navigation de la room"
     }
   },
   "swipe": {
@@ -203,5 +227,296 @@
     "madeWith": "Fait avec",
     "by": "par",
     "rights": "Tous droits réservés"
+  },
+  "about": {
+    "title": "À propos de Swipe Movie",
+    "mission": {
+      "title": "Notre mission",
+      "p1": "Swipe Movie est né d'un constat simple : choisir un film à regarder en groupe est souvent une source de débat sans fin. Combien de fois avez-vous passé 30 minutes à chercher un film, pour finalement abandonner et regarder la même série pour la énième fois ?",
+      "p2": "Notre mission est de rendre cette décision rapide, démocratique et fun. Grâce à notre système de swipe inspiré des apps de rencontre, chaque membre du groupe peut exprimer ses préférences, et notre algorithme trouve automatiquement le film qui plaira à tout le monde."
+    },
+    "howItWorks": {
+      "title": "Comment ça marche",
+      "step1Title": "1. Créez une room",
+      "step1Desc": "Configurez vos préférences : genre de film, plateforme de streaming, note minimale, durée... Les filtres s'appliquent pour tous les membres de la room.",
+      "step2Title": "2. Invitez vos amis",
+      "step2Desc": "Partagez le code de la room avec vos amis, votre famille ou vos collègues. Pas besoin que tout le monde soit connecté en même temps !",
+      "step3Title": "3. Swipez",
+      "step3Desc": "Chacun swipe de son côté. À droite si le film vous intéresse, à gauche sinon. Dès que tous les membres ont liké le même film : c'est un match ! 🎉"
+    },
+    "catalog": {
+      "title": "Catalogue de films",
+      "description": "Nous utilisons la base de données The Movie Database (TMDb), qui contient des millions de films et séries. Les informations sont mises à jour régulièrement pour vous proposer les dernières sorties et les grands classiques."
+    },
+    "free": {
+      "title": "Gratuit et sans publicité",
+      "description": "Swipe Movie est 100% gratuit et ne contient aucune publicité. Pas de carte bancaire requise, pas d'abonnement caché. Notre objectif est de vous faire gagner du temps, pas de l'argent."
+    },
+    "cta": {
+      "title": "Prêt à simplifier vos soirées film ?",
+      "button": "Commencer gratuitement"
+    }
+  },
+  "contact": {
+    "title": "Contactez-nous",
+    "description": "Une question, une suggestion ou un problème ? Nous sommes là pour vous aider !",
+    "email": {
+      "title": "Email",
+      "description": "Pour toute question générale ou support"
+    },
+    "github": {
+      "title": "GitHub",
+      "description": "Signalez un bug ou proposez une amélioration",
+      "link": "Ouvrir une issue"
+    },
+    "faq": {
+      "title": "Questions fréquentes",
+      "q1": "Swipe Movie est-il vraiment gratuit ?",
+      "a1": "Oui, 100% gratuit et sans publicité. Pas de frais cachés, pas d'abonnement.",
+      "q2": "Comment inviter mes amis dans une room ?",
+      "a2": "Après avoir créé une room, vous recevez un code unique. Partagez ce code avec vos amis, ils pourront rejoindre la room depuis la page d'accueil en cliquant sur \"Rejoindre une room\".",
+      "q3": "Faut-il être connecté en même temps pour swiper ?",
+      "a3": "Non ! Chaque membre peut swiper à son rythme. Dès que tous les membres ont liké le même film, vous recevez une notification de match.",
+      "q4": "D'où viennent les informations sur les films ?",
+      "a4": "Nous utilisons The Movie Database (TMDb), une base de données collaborative avec des millions de films et séries. Les informations sont régulièrement mises à jour.",
+      "q5": "Mes données personnelles sont-elles sécurisées ?",
+      "a5": "Absolument. Nous ne collectons que les informations strictement nécessaires (nom et email via Google OAuth). Consultez notre",
+      "privacyLink": "politique de confidentialité",
+      "a5End": "pour plus de détails."
+    },
+    "cta": {
+      "title": "Vous n'avez pas trouvé votre réponse ?",
+      "description": "N'hésitez pas à nous contacter par email, nous vous répondrons dans les plus brefs délais.",
+      "button": "Nous contacter"
+    }
+  },
+  "privacy": {
+    "title": "Politique de confidentialité",
+    "lastUpdate": "Dernière mise à jour : 14 novembre 2025",
+    "commitment": {
+      "title": "Notre engagement",
+      "p1": "Chez Swipe Movie, nous prenons votre vie privée au sérieux. Cette politique de confidentialité explique quelles données nous collectons, pourquoi nous les collectons, et comment nous les utilisons.",
+      "p2": "Notre principe fondamental : nous ne collectons que les données strictement nécessaires au fonctionnement de l'application, et nous ne les vendons jamais à des tiers."
+    },
+    "dataCollected": {
+      "title": "Données collectées",
+      "account": {
+        "title": "1. Informations de compte",
+        "intro": "Lorsque vous vous connectez avec Google OAuth, nous collectons :",
+        "items": ["Votre nom", "Votre adresse email", "Votre photo de profil Google (si disponible)"]
+      },
+      "usage": {
+        "title": "2. Données d'utilisation",
+        "intro": "Pour faire fonctionner l'application, nous stockons :",
+        "items": ["Les rooms que vous créez ou rejoignez", "Vos swipes (like/dislike sur les films)", "Les matches détectés dans vos rooms"]
+      },
+      "technical": {
+        "title": "3. Données techniques",
+        "intro": "Pour améliorer l'expérience utilisateur, nous collectons via Vercel Analytics :",
+        "items": ["Pages visitées (de manière anonymisée)", "Temps passé sur l'application", "Pays d'origine (pour les statistiques générales)"]
+      }
+    },
+    "dataUsage": {
+      "title": "Comment nous utilisons vos données",
+      "service": {
+        "title": "Fournir le service :",
+        "description": "vos données de compte permettent de vous identifier, vos swipes permettent de trouver des matches avec les autres membres de vos rooms."
+      },
+      "improve": {
+        "title": "Améliorer l'application :",
+        "description": "les données d'usage nous aident à comprendre quelles fonctionnalités sont utilisées et lesquelles doivent être améliorées."
+      },
+      "communication": {
+        "title": "Communication :",
+        "description": "nous pouvons vous envoyer des notifications par email concernant votre compte (matches, invitations à des rooms, etc.)."
+      }
+    },
+    "security": {
+      "title": "Sécurité des données",
+      "intro": "Nous mettons en place des mesures de sécurité techniques et organisationnelles pour protéger vos données :",
+      "items": ["Connexion sécurisée via HTTPS", "Authentification via Google OAuth 2.0", "Base de données hébergée sur des serveurs sécurisés (Neon PostgreSQL)", "Sessions chiffrées et tokens d'authentification sécurisés", "Aucun stockage de mots de passe (délégué à Google)"]
+    },
+    "rights": {
+      "title": "Vos droits (RGPD)",
+      "intro": "Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits suivants :",
+      "access": {
+        "title": "Droit d'accès :",
+        "description": "vous pouvez demander une copie de toutes vos données personnelles"
+      },
+      "rectification": {
+        "title": "Droit de rectification :",
+        "description": "vous pouvez modifier vos informations de compte"
+      },
+      "erasure": {
+        "title": "Droit à l'effacement :",
+        "description": "vous pouvez demander la suppression complète de votre compte et de vos données"
+      },
+      "portability": {
+        "title": "Droit à la portabilité :",
+        "description": "vous pouvez récupérer vos données dans un format exploitable"
+      },
+      "contact": "Pour exercer ces droits, contactez-nous à"
+    },
+    "sharing": {
+      "title": "Partage de données avec des tiers",
+      "intro": "Nous ne vendons jamais vos données personnelles. Nous partageons certaines données uniquement avec :",
+      "google": "pour l'authentification OAuth",
+      "vercel": "hébergement de l'application et analytics anonymisés",
+      "railway": "hébergement du backend API",
+      "neon": "hébergement de la base de données PostgreSQL",
+      "tmdb": "pour récupérer les informations sur les films"
+    },
+    "cookies": {
+      "title": "Cookies",
+      "intro": "Nous utilisons des cookies strictement nécessaires au fonctionnement de l'application :",
+      "items": ["Cookie de session pour l'authentification (obligatoire)", "Cookie de préférence de thème (dark/light mode)"],
+      "noTracking": "Nous n'utilisons pas de cookies publicitaires ou de tracking tiers."
+    },
+    "changes": {
+      "title": "Modifications de cette politique",
+      "description": "Nous pouvons mettre à jour cette politique de confidentialité de temps en temps. La date de dernière mise à jour est indiquée en haut de cette page. En cas de changements importants, nous vous en informerons par email."
+    },
+    "contactSection": {
+      "title": "Contact",
+      "description": "Pour toute question concernant cette politique de confidentialité ou vos données personnelles, contactez-nous à"
+    }
+  },
+  "terms": {
+    "title": "Conditions générales d'utilisation",
+    "lastUpdate": "Dernière mise à jour : 14 novembre 2025",
+    "acceptance": {
+      "title": "1. Acceptation des conditions",
+      "p1": "En utilisant Swipe Movie, vous acceptez d'être lié par ces Conditions Générales d'Utilisation (CGU). Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre service.",
+      "p2": "Nous nous réservons le droit de modifier ces CGU à tout moment. Les modifications prendront effet immédiatement après leur publication sur cette page. Votre utilisation continue du service après la publication de modifications constitue votre acceptation de ces modifications."
+    },
+    "description": {
+      "title": "2. Description du service",
+      "intro": "Swipe Movie est une application web gratuite qui permet aux utilisateurs de :",
+      "items": [
+        "Créer des \"rooms\" pour choisir des films en groupe",
+        "Inviter d'autres utilisateurs à rejoindre leurs rooms",
+        "Swiper sur des films pour exprimer leurs préférences",
+        "Découvrir des \"matches\" lorsque tous les membres d'une room aiment le même film"
+      ],
+      "outro": "Le service utilise les données de The Movie Database (TMDb) pour fournir des informations sur les films."
+    },
+    "allowedUse": {
+      "title": "3. Utilisation autorisée",
+      "intro": "Vous êtes autorisé à :",
+      "items": [
+        "Utiliser Swipe Movie pour votre usage personnel et non commercial",
+        "Créer un compte avec vos informations Google",
+        "Créer et rejoindre des rooms",
+        "Swiper sur des films et voir vos matches",
+        "Partager les codes de vos rooms avec vos amis"
+      ]
+    },
+    "prohibitedUse": {
+      "title": "4. Utilisation interdite",
+      "intro": "Il est strictement interdit de :",
+      "items": [
+        "Utiliser le service à des fins commerciales sans autorisation écrite",
+        "Créer de faux comptes ou usurper l'identité d'autrui",
+        "Tenter de pirater, compromettre ou perturber le service",
+        "Utiliser des bots, scripts ou outils automatisés",
+        "Extraire ou scraper des données du service",
+        "Publier du contenu illégal, offensant ou inapproprié",
+        "Utiliser le service pour envoyer du spam ou du contenu non sollicité"
+      ]
+    },
+    "accounts": {
+      "title": "5. Comptes utilisateurs",
+      "intro": "Pour utiliser Swipe Movie, vous devez créer un compte en vous connectant avec Google OAuth. Vous êtes responsable de :",
+      "items": [
+        "Maintenir la sécurité de votre compte Google",
+        "Toutes les activités effectuées depuis votre compte",
+        "Nous informer immédiatement de toute utilisation non autorisée de votre compte"
+      ],
+      "outro": "Nous nous réservons le droit de suspendre ou de supprimer votre compte si nous soupçonnons une violation de ces CGU."
+    },
+    "intellectualProperty": {
+      "title": "6. Propriété intellectuelle",
+      "p1": "Swipe Movie et tous ses contenus (logo, design, code, etc.) sont protégés par les lois sur la propriété intellectuelle.",
+      "p2": "Les informations sur les films (affiches, synopsis, notes, etc.) sont fournies par The Movie Database (TMDb) et sont soumises à leurs propres conditions d'utilisation.",
+      "p3": "Vous conservez tous les droits sur les données que vous créez dans l'application (vos rooms, vos swipes, etc.)."
+    },
+    "liability": {
+      "title": "7. Limitation de responsabilité",
+      "intro": "Swipe Movie est fourni \"tel quel\" sans garantie d'aucune sorte. Nous ne garantissons pas que :",
+      "items": [
+        "Le service sera toujours disponible ou sans interruption",
+        "Les informations sur les films sont exactes ou à jour",
+        "Le service sera exempt d'erreurs ou de bugs"
+      ],
+      "outro": "En aucun cas, Swipe Movie ne sera responsable de dommages directs, indirects, accessoires ou consécutifs résultant de l'utilisation ou de l'impossibilité d'utiliser le service."
+    },
+    "termination": {
+      "title": "8. Résiliation",
+      "p1": "Vous pouvez cesser d'utiliser le service et supprimer votre compte à tout moment en nous contactant à",
+      "p2": "Nous nous réservons le droit de suspendre ou de résilier votre accès au service à tout moment, sans préavis, si nous estimons que vous avez violé ces CGU."
+    },
+    "law": {
+      "title": "9. Loi applicable",
+      "description": "Ces CGU sont régies par le droit français. Tout litige relatif à l'interprétation ou à l'exécution de ces CGU sera soumis aux tribunaux français compétents."
+    },
+    "contactSection": {
+      "title": "10. Contact",
+      "description": "Pour toute question concernant ces Conditions Générales d'Utilisation, contactez-nous à"
+    },
+    "entireAgreement": {
+      "title": "11. Intégralité de l'accord",
+      "description": "Ces CGU, ainsi que notre",
+      "privacyLink": "Politique de confidentialité",
+      "descriptionEnd": "constituent l'intégralité de l'accord entre vous et Swipe Movie concernant l'utilisation du service."
+    }
+  },
+  "login": {
+    "loading": "Chargement...",
+    "hero": {
+      "title": "Bienvenue sur Swipe Movie",
+      "subtitle": "Décidez enfin quel film regarder en groupe, sans débat sans fin !"
+    },
+    "features": {
+      "createRoom": {
+        "title": "Créez une room en 30 secondes",
+        "description": "Choisissez vos critères, invitez vos amis et swipez ensemble"
+      },
+      "catalog": {
+        "title": "Des milliers de films et séries",
+        "description": "Catalogue complet avec filtres par genre, plateforme, année..."
+      },
+      "matches": {
+        "title": "Matches en temps réel",
+        "description": "Notification instantanée dès que vous avez un match !"
+      }
+    },
+    "card": {
+      "title": "Connexion",
+      "subtitle": "Connectez-vous pour créer votre première room",
+      "googleButton": "Continuer avec Google",
+      "connecting": "Connexion en cours...",
+      "free": "100% gratuit",
+      "noCard": "Sans carte bancaire",
+      "terms": "En vous connectant, vous acceptez nos",
+      "termsLink": "CGU",
+      "and": "et notre",
+      "privacyLink": "politique de confidentialité"
+    }
+  },
+  "preview": {
+    "title": "🎬 Cinéma Theme Preview",
+    "card": {
+      "title": "Carte Film",
+      "description": "Découvrez votre nouvelle palette \"cinéma\""
+    },
+    "badges": {
+      "accent": "Accent",
+      "primary": "Primary",
+      "secondary": "Secondary"
+    },
+    "buttons": {
+      "primary": "Primary",
+      "destructive": "Destructive"
+    }
   }
 }

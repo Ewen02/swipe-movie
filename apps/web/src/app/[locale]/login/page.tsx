@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState, Suspense } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Film, Sparkles, Users } from "lucide-react"
@@ -13,6 +14,7 @@ import { Footer } from "@/components/layout/Footer"
 import { fadeInUp, fadeInScale, staggerContainer, slideInLeft, slideInRight } from "@/lib/animations"
 
 function LoginPageContent() {
+  const t = useTranslations('login')
   const { data: session, status } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -42,7 +44,7 @@ function LoginPageContent() {
       <div className="flex h-screen items-center justify-center bg-gradient-to-br from-background via-background to-accent/5">
         <div className="text-center">
           <Film className="w-12 h-12 mx-auto mb-4 animate-pulse text-primary" />
-          <p className="text-muted-foreground">Chargement...</p>
+          <p className="text-muted-foreground">{t('loading')}</p>
         </div>
       </div>
     )
@@ -83,7 +85,7 @@ function LoginPageContent() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
               >
-                Bienvenue sur Swipe Movie
+                {t('hero.title')}
               </motion.h1>
               <motion.p
                 className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
@@ -91,7 +93,7 @@ function LoginPageContent() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
-                Décidez enfin quel film regarder en groupe, sans débat sans fin !
+                {t('hero.subtitle')}
               </motion.p>
             </div>
           </motion.div>
@@ -113,9 +115,9 @@ function LoginPageContent() {
                         <Users className="h-7 w-7 text-primary" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-lg mb-2">Créez une room en 30 secondes</h3>
+                        <h3 className="font-bold text-lg mb-2">{t('features.createRoom.title')}</h3>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          Choisissez vos critères, invitez vos amis et swipez ensemble
+                          {t('features.createRoom.description')}
                         </p>
                       </div>
                     </div>
@@ -131,9 +133,9 @@ function LoginPageContent() {
                         <Film className="h-7 w-7 text-primary" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-lg mb-2">Des milliers de films et séries</h3>
+                        <h3 className="font-bold text-lg mb-2">{t('features.catalog.title')}</h3>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          Catalogue complet avec filtres par genre, plateforme, année...
+                          {t('features.catalog.description')}
                         </p>
                       </div>
                     </div>
@@ -149,9 +151,9 @@ function LoginPageContent() {
                         <Sparkles className="h-7 w-7 text-green-500" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-lg mb-2">Matches en temps réel</h3>
+                        <h3 className="font-bold text-lg mb-2">{t('features.matches.title')}</h3>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          Notification instantanée dès que vous avez un match !
+                          {t('features.matches.description')}
                         </p>
                       </div>
                     </div>
@@ -168,9 +170,9 @@ function LoginPageContent() {
             >
               <Card className="border-2 hover:border-primary/30 transition-colors shadow-lg">
                 <CardHeader className="text-center pb-6">
-                  <CardTitle className="text-2xl md:text-3xl mb-2">Connexion</CardTitle>
+                  <CardTitle className="text-2xl md:text-3xl mb-2">{t('card.title')}</CardTitle>
                   <CardDescription className="text-base">
-                    Connectez-vous pour créer votre première room
+                    {t('card.subtitle')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -184,7 +186,7 @@ function LoginPageContent() {
                     {isLoading ? (
                       <>
                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary mr-2" />
-                        Connexion en cours...
+                        {t('card.connecting')}
                       </>
                     ) : (
                       <>
@@ -210,25 +212,25 @@ function LoginPageContent() {
                             fill="#EA4335"
                           />
                         </svg>
-                        Continuer avec Google
+                        {t('card.googleButton')}
                       </>
                     )}
                   </Button>
 
                   <div className="text-center text-sm text-muted-foreground space-y-3">
                     <p className="flex items-center justify-center gap-2 flex-wrap font-medium">
-                      <span className="text-green-500">✓</span> 100% gratuit
+                      <span className="text-green-500">✓</span> {t('card.free')}
                       <span>•</span>
-                      <span className="text-green-500">✓</span> Sans carte bancaire
+                      <span className="text-green-500">✓</span> {t('card.noCard')}
                     </p>
                     <p className="text-xs">
-                      En vous connectant, vous acceptez nos{" "}
+                      {t('card.terms')}{" "}
                       <Link href="/terms" className="text-primary hover:underline font-medium">
-                        CGU
+                        {t('card.termsLink')}
                       </Link>{" "}
-                      et notre{" "}
+                      {t('card.and')}{" "}
                       <Link href="/privacy" className="text-primary hover:underline font-medium">
-                        politique de confidentialité
+                        {t('card.privacyLink')}
                       </Link>
                     </p>
                   </div>
@@ -245,16 +247,21 @@ function LoginPageContent() {
   )
 }
 
+function LoadingFallback() {
+  const t = useTranslations('login')
+  return (
+    <div className="flex h-screen items-center justify-center bg-gradient-to-br from-background via-background to-accent/5">
+      <div className="text-center">
+        <Film className="w-12 h-12 mx-auto mb-4 animate-pulse text-primary" />
+        <p className="text-muted-foreground">{t('loading')}</p>
+      </div>
+    </div>
+  )
+}
+
 export default function LoginPage() {
   return (
-    <Suspense fallback={
-      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-background via-background to-accent/5">
-        <div className="text-center">
-          <Film className="w-12 h-12 mx-auto mb-4 animate-pulse text-primary" />
-          <p className="text-muted-foreground">Chargement...</p>
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<LoadingFallback />}>
       <LoginPageContent />
     </Suspense>
   )

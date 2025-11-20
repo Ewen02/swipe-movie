@@ -17,6 +17,7 @@ import { joinRoom, createRoom, getMyRoom } from "@/lib/api/rooms"
 import { getGenres } from "@/lib/api/movies"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { useTranslations } from "next-intl"
 import type { MovieGenre } from "@/schemas/movies"
 import { Film, RefreshCw } from "lucide-react"
 import { Footer } from "@/components/layout/Footer"
@@ -26,6 +27,7 @@ import { useUserStats } from "@/hooks/useUserStats"
 import { fadeInUp, staggerContainer } from "@/lib/animations"
 
 function RoomsPageContent() {
+  const t = useTranslations('rooms')
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -61,7 +63,7 @@ function RoomsPageContent() {
       setShowCreateDialog(false)
       router.push(`/rooms/${room.code}`)
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Erreur inconnue")
+      setError(e instanceof Error ? e.message : t('errorUnknown'))
     } finally {
       setLoading(false)
     }
@@ -75,7 +77,7 @@ function RoomsPageContent() {
       setShowJoinDialog(false)
       router.push(`/rooms/${room.code}`)
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Erreur inconnue")
+      setError(e instanceof Error ? e.message : t('errorUnknown'))
     } finally {
       setLoading(false)
     }
@@ -110,7 +112,7 @@ function RoomsPageContent() {
                     className="gap-2"
                   >
                     <RefreshCw className="w-4 h-4" />
-                    Réessayer
+                    {t('retry')}
                   </Button>
                 </div>
               </CardContent>
@@ -131,7 +133,7 @@ function RoomsPageContent() {
               variants={fadeInUp}
             >
               <Film className="w-6 h-6 text-primary" />
-              Mes rooms actives
+              {t('myActiveRooms')}
             </motion.h2>
             <motion.div variants={fadeInUp}>
               <RoomsList rooms={rooms} />

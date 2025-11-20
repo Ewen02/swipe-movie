@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
+import { useTranslations } from "next-intl"
 import { createSwipe, deleteSwipe, getMySwipesByRoom } from "@/lib/api/swipes"
 import { joinRoom } from "@/lib/api/rooms"
 import { useRoomData, useMoviesData, useMatchNotifications } from "@/hooks/room"
@@ -26,6 +27,8 @@ import { RoomErrorBoundary } from "@/components/error"
 import { RoomPageSkeleton } from "@/components/room/RoomPageSkeleton"
 
 function RoomPageContent() {
+  const t = useTranslations('room')
+  const tSwipe = useTranslations('swipe')
   const router = useRouter()
   const { code } = useParams<{ code: string }>()
   const { data: session } = useSession()
@@ -174,7 +177,7 @@ function RoomPageContent() {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
-          <p className="text-red-500 text-lg font-semibold mb-2">Erreur</p>
+          <p className="text-red-500 text-lg font-semibold mb-2">{t('error')}</p>
           <p className="text-muted-foreground">{error}</p>
         </div>
       </div>
@@ -184,7 +187,7 @@ function RoomPageContent() {
   if (!room) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <p className="text-muted-foreground">Room introuvable</p>
+        <p className="text-muted-foreground">{t('notFound')}</p>
       </div>
     )
   }
@@ -200,8 +203,8 @@ function RoomPageContent() {
       // Reload room data to refresh membership
       await reloadRoom()
       toast({
-        title: "Bienvenue !",
-        description: "Vous avez rejoint la room avec succès.",
+        title: t('welcomeTitle'),
+        description: t('welcomeDescription'),
       })
     } catch (err) {
       console.error("Failed to join room:", err)
@@ -211,14 +214,14 @@ function RoomPageContent() {
       if (errorMessage.toLowerCase().includes('full') || errorMessage.toLowerCase().includes('pleine')) {
         toast({
           type: "error",
-          title: "Room complète",
-          description: `Cette room est complète (${room?.members.length || 0}/10 membres). Demande au créateur de la room d'augmenter la capacité ou crée ta propre room !`,
+          title: t('roomFullTitle'),
+          description: t('roomFullDescription', { current: room?.members.length || 0, max: 10 }),
         })
       } else {
         toast({
           type: "error",
-          title: "Erreur",
-          description: "Impossible de rejoindre la room. Veuillez réessayer.",
+          title: t('joinErrorTitle'),
+          description: t('joinErrorDescription'),
         })
       }
     } finally {
@@ -235,18 +238,18 @@ function RoomPageContent() {
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-6">
               <UserPlus className="w-10 h-10 text-primary" />
             </div>
-            <h1 className="text-2xl font-bold mb-2">{room.name || "Room sans nom"}</h1>
+            <h1 className="text-2xl font-bold mb-2">{room.name || t('unnamedRoom')}</h1>
             <div className="flex items-center justify-center gap-2 mb-6">
               <Badge variant="secondary" className="text-sm">
-                {room.type === 'movie' ? '🎬 Films' : '📺 Séries'}
+                {room.type === 'movie' ? t('moviesType') : t('tvShowsType')}
               </Badge>
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                 <Users className="w-4 h-4" />
-                <span>{room.members.length}/10 membres</span>
+                <span>{t('membersCount', { count: room.members.length, max: 10 })}</span>
               </div>
             </div>
             <p className="text-muted-foreground mb-6">
-              Rejoins cette room pour swiper et trouver des matches avec tes amis !
+              {t('joinRoomDescription')}
             </p>
             <Button
               onClick={handleJoinRoom}
@@ -257,12 +260,12 @@ function RoomPageContent() {
               {joiningRoom ? (
                 <>
                   <Film className="w-4 h-4 mr-2 animate-pulse" />
-                  Connexion...
+                  {t('connecting')}
                 </>
               ) : (
                 <>
                   <UserPlus className="w-4 h-4 mr-2" />
-                  Rejoindre la room
+                  {t('joiningButton')}
                 </>
               )}
             </Button>
@@ -296,22 +299,22 @@ function RoomPageContent() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
               <div className="flex-1 min-w-0">
                 <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
-                  {room.name || "Room sans nom"}
+                  {room.name || t('unnamedRoom')}
                 </h1>
                 <div className="flex flex-wrap gap-2 items-center">
                   <Badge variant="secondary" className="text-sm">
-                    {room.type === 'movie' ? '🎬 Films' : '📺 Séries'}
+                    {room.type === 'movie' ? t('moviesType') : t('tvShowsType')}
                   </Badge>
                   <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                     <Users className="w-4 h-4" />
-                    <span>{room.members.length}/10 membres</span>
+                    <span>{t('membersCount', { count: room.members.length, max: 10 })}</span>
                   </div>
                 </div>
               </div>
 
               <ShareRoomButton
                 roomCode={room.code}
-                roomName={room.name || "Room sans nom"}
+                roomName={room.name || t('unnamedRoom')}
                 variant="outline"
                 size="sm"
               />
@@ -331,12 +334,12 @@ function RoomPageContent() {
 
           {/* Main Content - Tabs */}
           <Tabs value={currentTab} onValueChange={handleTabChange} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5 h-12" aria-label="Navigation de la room">
-              <TabsTrigger value="swipe" className="text-base" aria-label="Swiper sur des films">🎬 Swiper</TabsTrigger>
-              <TabsTrigger value="matches" className="text-base" aria-label="Voir les matches">✨ Matches</TabsTrigger>
-              <TabsTrigger value="history" className="text-base" aria-label="Voir l'historique des swipes">📜 Historique</TabsTrigger>
-              <TabsTrigger value="stats" className="text-base" aria-label="Voir les statistiques">📊 Stats</TabsTrigger>
-              <TabsTrigger value="members" className="text-base" aria-label="Voir les membres de la room">👥 Membres</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-5 h-12" aria-label={t('tabs.navigationAriaLabel')}>
+              <TabsTrigger value="swipe" className="text-base" aria-label={t('tabs.swipeAriaLabel')}>{t('tabs.swipe')}</TabsTrigger>
+              <TabsTrigger value="matches" className="text-base" aria-label={t('tabs.matchesAriaLabel')}>{t('tabs.matches')}</TabsTrigger>
+              <TabsTrigger value="history" className="text-base" aria-label={t('tabs.historyAriaLabel')}>{t('tabs.history')}</TabsTrigger>
+              <TabsTrigger value="stats" className="text-base" aria-label={t('tabs.statsAriaLabel')}>{t('tabs.stats')}</TabsTrigger>
+              <TabsTrigger value="members" className="text-base" aria-label={t('tabs.membersAriaLabel')}>{t('tabs.members')}</TabsTrigger>
             </TabsList>
 
             {/* Swipe Tab */}
@@ -369,17 +372,17 @@ function RoomPageContent() {
                     <div className="text-6xl mb-4">🎬</div>
                     <h3 className="text-xl font-semibold mb-2">
                       {room?.genreId === null || room?.genreId === undefined
-                        ? "Configuration de la room incomplète"
+                        ? tSwipe('noGenre')
                         : !hasMoreMovies
-                        ? "Plus de films disponibles !"
-                        : "Aucun film disponible"}
+                        ? tSwipe('allSwiped')
+                        : tSwipe('noMovies')}
                     </h3>
                     <p className="text-muted-foreground mb-4">
                       {room?.genreId === null || room?.genreId === undefined
-                        ? "Cette room n'a pas de genre configuré. Demande au créateur de configurer un genre pour commencer à swiper !"
+                        ? tSwipe('noGenreDescription')
                         : !hasMoreMovies
-                        ? "Vous avez swipé tous les films disponibles avec ces filtres ! Essayez d'élargir vos critères (genre, note, année, plateforme) pour découvrir plus de contenus."
-                        : "Tous les films ont déjà été vus. Essaie de modifier les filtres de la room."}
+                        ? tSwipe('allSwipedDescription')
+                        : tSwipe('noMoviesDescription')}
                     </p>
                   </CardContent>
                 </Card>
@@ -424,7 +427,7 @@ function RoomPageContent() {
                 <CardContent className="p-6">
                   <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                     <Users className="w-5 h-5 text-primary" />
-                    Membres de la room
+                    {t('roomMembers')}
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {room.members.map((member, idx) => (
@@ -436,7 +439,7 @@ function RoomPageContent() {
                           {(member.name ?? "?")[0].toUpperCase()}
                         </div>
                         <span className="font-medium">
-                          {member.name ?? "Utilisateur inconnu"}
+                          {member.name ?? t('unknownUser')}
                         </span>
                       </div>
                     ))}
