@@ -15,7 +15,14 @@
     "db:studio": "npm --workspace apps/api run prisma:studio",
     "db:generate": "npm --workspace apps/api run prisma:generate",
     "db:reset": "npm --workspace apps/api run prisma migrate reset --force --skip-generate",
-    "dev:clean": "lsof -ti:3001 | xargs kill -9 2>/dev/null || true && npm run dev"
+    "dev:clean": "lsof -ti:3001 | xargs kill -9 2>/dev/null || true && npm run dev",
+    "test": "npm --workspace apps/web run test",
+    "test:ci": "npm --workspace apps/web run test:ci",
+    "test:e2e": "npm --workspace apps/web run test:e2e",
+    "test:e2e:ui": "npm --workspace apps/web run test:e2e:ui",
+    "test:e2e:debug": "npm --workspace apps/web run test:e2e:debug",
+    "build": "npm --workspace apps/web run build",
+    "lint": "npm --workspace apps/web run lint"
   },
   "devDependencies": {
     "@eslint/js": "^9.34.0",
