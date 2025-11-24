@@ -33,8 +33,8 @@ export function LanguageSelector() {
 
   return (
     <Select value={locale} onValueChange={handleLocaleChange}>
-      <SelectTrigger className="w-[140px] gap-2">
-        <Globe className="h-4 w-4" />
+      <SelectTrigger className="w-[140px] gap-2" aria-label="Select language">
+        <Globe className="h-4 w-4" aria-hidden="true" />
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
