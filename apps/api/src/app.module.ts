@@ -7,6 +7,7 @@ import { RoomsModule } from './modules/rooms/rooms.module';
 import { SwipesModule } from './modules/swipes/swipes.module';
 import { MatchesModule } from './modules/matches/matches.module';
 import { MoviesModule } from './modules/movies/movies.module';
+import { SubscriptionModule } from './modules/subscription/subscription.module';
 import { CacheConfigModule } from './modules/cache/cache.module';
 import { HttpsRedirectMiddleware } from './common/middleware/https-redirect.middleware';
 
@@ -37,6 +38,7 @@ import { HttpsRedirectMiddleware } from './common/middleware/https-redirect.midd
     SwipesModule,
     MatchesModule,
     MoviesModule,
+    SubscriptionModule,
   ],
   providers: [
     {
