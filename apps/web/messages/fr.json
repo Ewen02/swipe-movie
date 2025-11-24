@@ -518,5 +518,27 @@
       "primary": "Primary",
       "destructive": "Destructive"
     }
+  },
+  "onboarding": {
+    "step1": {
+      "title": "Créez une room en 30 secondes",
+      "description": "Choisissez un nom, sélectionnez vos filtres (genre, plateforme, note) et invitez vos amis !"
+    },
+    "step2": {
+      "title": "Invitez vos amis",
+      "description": "Partagez le code de la room avec vos colocs, votre famille ou vos amis. Tout le monde peut rejoindre facilement !"
+    },
+    "step3": {
+      "title": "Swipez ensemble",
+      "description": "Chacun swipe de son côté, comme sur Tinder. ❤️ pour aimer, ❌ pour passer."
+    },
+    "step4": {
+      "title": "Match automatique !",
+      "description": "Dès que tout le monde aime le même film, c'est un match ! Plus de débat, place au pop-corn 🍿"
+    },
+    "next": "Suivant",
+    "previous": "Précédent",
+    "skip": "Passer le tutorial",
+    "finish": "C'est parti !"
   }
 }

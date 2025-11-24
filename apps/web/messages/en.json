@@ -518,5 +518,27 @@
       "primary": "Primary",
       "destructive": "Destructive"
     }
+  },
+  "onboarding": {
+    "step1": {
+      "title": "Create a room in 30 seconds",
+      "description": "Choose a name, select your filters (genre, platform, rating) and invite your friends!"
+    },
+    "step2": {
+      "title": "Invite your friends",
+      "description": "Share the room code with your roommates, family or friends. Everyone can join easily!"
+    },
+    "step3": {
+      "title": "Swipe together",
+      "description": "Everyone swipes on their own, just like Tinder. ❤️ to like, ❌ to pass."
+    },
+    "step4": {
+      "title": "Automatic match!",
+      "description": "As soon as everyone likes the same movie, it's a match! No more debate, time for popcorn 🍿"
+    },
+    "next": "Next",
+    "previous": "Previous",
+    "skip": "Skip tutorial",
+    "finish": "Let's go!"
   }
 }
