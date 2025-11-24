@@ -7,6 +7,7 @@ import { RoomsList } from "@/components/room/RoomsList"
 import { RoomStatsHeader } from "@/components/room/RoomStatsHeader"
 import { CreateRoomDialog } from "@/components/room/CreateRoomDialog"
 import { JoinRoomDialog } from "@/components/room/JoinRoomDialog"
+import { OnboardingTutorial } from "@/components/onboarding"
 import {
   CreateRoomValues,
   JoinRoomValues,
@@ -24,6 +25,7 @@ import { Footer } from "@/components/layout/Footer"
 import { RoomErrorBoundary } from "@/components/error"
 import { RoomsPageSkeleton } from "./RoomsPageSkeleton"
 import { useUserStats } from "@/hooks/useUserStats"
+import { useOnboarding } from "@/hooks/useOnboarding"
 import { fadeInUp, staggerContainer } from "@/lib/animations"
 
 function RoomsPageContent() {
@@ -38,6 +40,9 @@ function RoomsPageContent() {
 
   // Load user statistics
   const userStats = useUserStats(rooms)
+
+  // Onboarding tutorial
+  const { showOnboarding, completeOnboarding, skipOnboarding } = useOnboarding()
 
   const loadData = () => {
     setLoading(true)
@@ -160,6 +165,14 @@ function RoomsPageContent() {
 
       {/* Footer */}
       <Footer />
+
+      {/* Onboarding Tutorial */}
+      {showOnboarding && (
+        <OnboardingTutorial
+          onComplete={completeOnboarding}
+          onSkip={skipOnboarding}
+        />
+      )}
     </div>
   )
 }
