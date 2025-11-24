@@ -1,4 +1,4 @@
-import { test as base, expect } from '@playwright/test'
+import { test as base, expect, Page } from '@playwright/test'
 import path from 'path'
 
 // Mock user data for testing
@@ -20,7 +20,7 @@ export const authFile = path.join(__dirname, '../.auth/user.json')
 
 // Extended test with authentication helpers
 export const test = base.extend<{
-  authenticatedPage: typeof base
+  authenticatedPage: Page
 }>({
   authenticatedPage: async ({ page, context }, use) => {
     // Mock NextAuth session cookie

@@ -1,0 +1,149 @@
+# Claude Code Rules - Swipe Movie
+
+## Git Commits
+- ❌ NEVER mention "Claude Code", "Claude", "AI", or "assistant" in commit messages
+- ✅ Write professional, clear commit messages following conventional commits
+- ✅ Format: `type(scope): description` (e.g., `feat(subscription): add Stripe payment integration`)
+- ✅ Types: feat, fix, refactor, perf, test, docs, chore, style
+
+## Code Quality - Production Ready
+- ✅ Always write production-ready code with error handling
+- ✅ Implement proper validation (class-validator, zod)
+- ✅ Add logging for critical operations (Winston/Pino)
+- ✅ Handle edge cases and error scenarios
+- ✅ Use environment variables for configuration
+- ✅ Implement proper TypeScript types (no `any` unless absolutely necessary)
+- ✅ Add JSDoc comments for complex functions
+- ✅ Follow SOLID principles
+- ✅ Implement proper security practices (sanitization, rate limiting, etc.)
+
+## NestJS Best Practices
+- ✅ Use dependency injection properly
+- ✅ Follow module-based architecture
+- ✅ Use DTOs with class-validator for validation
+- ✅ Implement Guards for authorization
+- ✅ Use Interceptors for transformation/logging
+- ✅ Use Pipes for validation and transformation
+- ✅ Implement proper exception filters
+- ✅ Use ConfigService for environment variables
+- ✅ Separate business logic in Services
+- ✅ Keep Controllers thin (routing only)
+- ✅ Use repositories pattern with Prisma
+- ✅ Implement proper transaction handling
+- ✅ Use proper HTTP status codes
+- ✅ Document APIs with Swagger/OpenAPI decorators
+
+## Next.js Best Practices
+- ✅ Use App Router (not Pages Router)
+- ✅ Implement Server Components by default
+- ✅ Use Client Components only when necessary ('use client')
+- ✅ Optimize images with next/image
+- ✅ Implement proper metadata for SEO
+- ✅ Use Server Actions for mutations
+- ✅ Implement proper loading and error states
+- ✅ Use Suspense boundaries appropriately
+- ✅ Optimize bundle size (dynamic imports)
+- ✅ Implement proper caching strategies
+- ✅ Use proper TypeScript types for props
+- ✅ Follow accessibility best practices (ARIA, semantic HTML)
+- ✅ Implement responsive design mobile-first
+- ✅ Use proper React patterns (hooks, composition)
+
+## Code Organization
+- ✅ Keep files focused and single-responsibility
+- ✅ Use barrel exports (index.ts) for clean imports
+- ✅ Organize by feature/domain, not by type
+- ✅ Keep components small and composable
+- ✅ Extract reusable logic into custom hooks
+- ✅ Separate business logic from presentation
+
+## Performance
+- ✅ Implement proper database indexes
+- ✅ Use pagination for large datasets
+- ✅ Implement caching where appropriate (Redis)
+- ✅ Optimize database queries (N+1 problem)
+- ✅ Use proper React memo/useMemo/useCallback
+- ✅ Implement lazy loading and code splitting
+- ✅ Minimize client-side JavaScript
+
+## Testing
+- ✅ Write unit tests for business logic
+- ✅ Write E2E tests for critical flows
+- ✅ Mock external dependencies
+- ✅ Test edge cases and error scenarios
+- ✅ Aim for meaningful test coverage (not 100% for the sake of it)
+
+## Security
+- ✅ Validate all user inputs
+- ✅ Sanitize data before database insertion
+- ✅ Use parameterized queries (Prisma does this)
+- ✅ Implement rate limiting
+- ✅ Use HTTPS only in production
+- ✅ Implement CORS properly
+- ✅ Hash passwords (bcrypt)
+- ✅ Use JWT with proper expiration
+- ✅ Implement CSRF protection
+- ✅ Follow OWASP Top 10 guidelines
+
+## Documentation
+- ✅ Document complex logic with comments
+- ✅ Keep README up to date
+- ✅ Document environment variables
+- ✅ Add JSDoc for public APIs
+- ✅ Keep inline comments concise and meaningful
+
+## Naming Conventions
+### NestJS
+- ✅ Services: `*.service.ts` (e.g., `subscription.service.ts`)
+- ✅ Controllers: `*.controller.ts` (e.g., `subscription.controller.ts`)
+- ✅ Modules: `*.module.ts` (e.g., `subscription.module.ts`)
+- ✅ DTOs: `*.dto.ts` (e.g., `create-subscription.dto.ts`)
+- ✅ Entities/Models: `*.entity.ts` or `*.model.ts`
+- ✅ Guards: `*.guard.ts` (e.g., `subscription.guard.ts`)
+- ✅ Interceptors: `*.interceptor.ts`
+- ✅ Pipes: `*.pipe.ts`
+
+### Next.js
+- ✅ Components: PascalCase (e.g., `UpgradePrompt.tsx`)
+- ✅ Hooks: camelCase with `use` prefix (e.g., `useSubscription.ts`)
+- ✅ Utils: camelCase (e.g., `formatPrice.ts`)
+- ✅ Pages: kebab-case folders with `page.tsx`
+- ✅ Layouts: `layout.tsx`
+- ✅ Loading states: `loading.tsx`
+- ✅ Error boundaries: `error.tsx`
+
+## Environment Variables
+- ✅ Use `.env.local` for local development (not committed)
+- ✅ Use `.env.example` for documentation (committed)
+- ✅ Validate env vars on startup
+- ✅ Use descriptive names (e.g., `DATABASE_URL`, not `DB`)
+- ✅ Group related variables (prefix: `STRIPE_`, `TMDB_`, etc.)
+
+## Error Handling
+- ✅ Use proper HTTP exceptions in NestJS
+- ✅ Implement global exception filter
+- ✅ Log errors with context (user ID, request ID)
+- ✅ Return user-friendly error messages
+- ✅ Don't expose sensitive information in errors
+- ✅ Use try-catch for async operations
+- ✅ Handle promise rejections
+
+## Git Workflow
+- ✅ Commit often with clear messages
+- ✅ One logical change per commit
+- ✅ Run tests before committing
+- ✅ Run linter before committing
+- ✅ Keep commits atomic and reversible
+
+## Code Review Checklist (Self-Review)
+Before committing, verify:
+- [ ] Code follows project conventions
+- [ ] No console.logs left in production code
+- [ ] Error handling implemented
+- [ ] Types are properly defined
+- [ ] No unused imports or variables
+- [ ] Code is readable and self-documenting
+- [ ] Performance considerations addressed
+- [ ] Security best practices followed
+- [ ] Tests pass (if applicable)
+- [ ] No breaking changes (or documented)

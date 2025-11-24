@@ -17,14 +17,15 @@ generator dbseed {
 }
 
 model User {
-  id      String       @id @default(cuid())
-  email   String       @unique
-  name    String?
-  roles   String[]     @default([])
-  members RoomMember[]
-  swipes  Swipe[]
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  id           String        @id @default(cuid())
+  email        String        @unique
+  name         String?
+  roles        String[]      @default([])
+  members      RoomMember[]
+  swipes       Swipe[]
+  subscription Subscription?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
 model Room {
@@ -93,4 +94,44 @@ model Match {
   @@index([roomId])
   @@index([createdAt])
   @@unique([roomId, movieId])
+}
+
+enum SubscriptionPlan {
+  FREE
+  STARTER
+  PRO
+  TEAM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  TRIALING
+  INCOMPLETE
+}
+
+model Subscription {
+  id     String   @id @default(cuid())
+  userId String   @unique
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Stripe integration
+  stripeCustomerId       String?   @unique
+  stripeSubscriptionId   String?   @unique
+  stripePriceId          String?
+  stripeCurrentPeriodEnd DateTime?
+
+  // Subscription details
+  plan   SubscriptionPlan   @default(FREE)
+  status SubscriptionStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([plan])
+  @@index([status])
+  @@index([stripeCustomerId])
+  @@index([stripeSubscriptionId])
 }
