@@ -540,5 +540,73 @@
     "previous": "Précédent",
     "skip": "Passer le tutorial",
     "finish": "C'est parti !"
+  },
+  "pricing": {
+    "title": "Choisissez votre forfait",
+    "subtitle": "Commencez gratuitement, passez au niveau supérieur quand vous en avez besoin",
+    "free": {
+      "description": "Parfait pour démarrer",
+      "features": {
+        "rooms": "3 salons maximum",
+        "participants": "4 participants par salon",
+        "swipes": "20 swipes par salon",
+        "expiry": "Salons expirés après 7 jours",
+        "filters": "Filtres avancés",
+        "email": "Notifications par email"
+      },
+      "cta": "Commencer"
+    },
+    "starter": {
+      "description": "Pour les utilisateurs réguliers",
+      "features": {
+        "rooms": "Salons illimités",
+        "participants": "8 participants par salon",
+        "swipes": "50 swipes par salon",
+        "expiry": "Expiration après 30 jours",
+        "email": "Notifications par email",
+        "filters": "Filtres avancés"
+      },
+      "cta": "Choisir Starter"
+    },
+    "pro": {
+      "description": "Idéal pour les power users",
+      "badge": "Le plus populaire",
+      "features": {
+        "unlimited": "Salons illimités",
+        "participants": "Participants illimités",
+        "swipes": "Swipes illimités",
+        "noExpiry": "Salons sans expiration",
+        "filters": "Filtres avancés",
+        "email": "Notifications par email"
+      },
+      "cta": "Choisir Pro"
+    },
+    "team": {
+      "description": "Pour les équipes et organisations",
+      "features": {
+        "accounts": "5 comptes équipe",
+        "everything": "Tout de Pro inclus",
+        "api": "Accès API",
+        "whitelabel": "Options white-label",
+        "support": "Support prioritaire",
+        "analytics": "Analytiques avancées"
+      },
+      "cta": "Choisir Team"
+    },
+    "faq": {
+      "title": "Questions fréquentes",
+      "q1": {
+        "question": "Puis-je annuler mon abonnement à tout moment ?",
+        "answer": "Oui, vous pouvez annuler votre abonnement à tout moment depuis les paramètres de votre compte. Vous conserverez l'accès aux fonctionnalités premium jusqu'à la fin de votre période de facturation."
+      },
+      "q2": {
+        "question": "Qu'arrive-t-il à mes salons si je rétrograde mon forfait ?",
+        "answer": "Vos salons existants resteront accessibles, mais vous ne pourrez pas créer de nouveaux salons dépassant les limites de votre forfait. Les anciens salons peuvent expirer selon la période de rétention de votre nouveau forfait."
+      },
+      "q3": {
+        "question": "Mes informations de paiement sont-elles sécurisées ?",
+        "answer": "Oui, nous utilisons Stripe pour le traitement des paiements, qui est conforme PCI-DSS et utilisé par des millions d'entreprises dans le monde. Nous ne stockons jamais vos informations de carte bancaire sur nos serveurs."
+      }
+    }
   }
 }

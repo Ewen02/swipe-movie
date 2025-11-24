@@ -540,5 +540,73 @@
     "previous": "Previous",
     "skip": "Skip tutorial",
     "finish": "Let's go!"
+  },
+  "pricing": {
+    "title": "Choose Your Plan",
+    "subtitle": "Start for free, upgrade when you need more features",
+    "free": {
+      "description": "Perfect to get started",
+      "features": {
+        "rooms": "3 rooms max",
+        "participants": "4 participants per room",
+        "swipes": "20 swipes per room",
+        "expiry": "Rooms expire after 7 days",
+        "filters": "Advanced filters",
+        "email": "Email notifications"
+      },
+      "cta": "Get Started"
+    },
+    "starter": {
+      "description": "For regular users",
+      "features": {
+        "rooms": "Unlimited rooms",
+        "participants": "8 participants per room",
+        "swipes": "50 swipes per room",
+        "expiry": "30-day room expiry",
+        "email": "Email notifications",
+        "filters": "Advanced filters"
+      },
+      "cta": "Choose Starter"
+    },
+    "pro": {
+      "description": "Best for power users",
+      "badge": "Most Popular",
+      "features": {
+        "unlimited": "Unlimited rooms",
+        "participants": "Unlimited participants",
+        "swipes": "Unlimited swipes",
+        "noExpiry": "Rooms never expire",
+        "filters": "Advanced filters",
+        "email": "Email notifications"
+      },
+      "cta": "Choose Pro"
+    },
+    "team": {
+      "description": "For teams and organizations",
+      "features": {
+        "accounts": "5 team accounts",
+        "everything": "Everything in Pro",
+        "api": "API access",
+        "whitelabel": "White-label options",
+        "support": "Priority support",
+        "analytics": "Advanced analytics"
+      },
+      "cta": "Choose Team"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": {
+        "question": "Can I cancel my subscription at any time?",
+        "answer": "Yes, you can cancel your subscription at any time from your account settings. You'll keep access to premium features until the end of your billing period."
+      },
+      "q2": {
+        "question": "What happens to my rooms if I downgrade?",
+        "answer": "Your existing rooms will remain accessible, but you won't be able to create new rooms that exceed your plan's limits. Older rooms may expire based on your new plan's retention period."
+      },
+      "q3": {
+        "question": "Is my payment information secure?",
+        "answer": "Yes, we use Stripe for payment processing, which is PCI-DSS compliant and trusted by millions of businesses worldwide. We never store your credit card information on our servers."
+      }
+    }
   }
 }
