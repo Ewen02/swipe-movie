@@ -608,5 +608,39 @@
         "answer": "Yes, we use Stripe for payment processing, which is PCI-DSS compliant and trusted by millions of businesses worldwide. We never store your credit card information on our servers."
       }
     }
+  },
+  "subscription": {
+    "upgrade": {
+      "rooms": {
+        "title": "Room Limit Reached",
+        "description": "You've reached the maximum of {limit} rooms on the FREE plan. Upgrade to create unlimited rooms and enjoy more features!"
+      },
+      "participants": {
+        "title": "Participant Limit Reached",
+        "description": "You've reached the maximum of {limit} participants per room on the FREE plan. Upgrade for more participants!"
+      },
+      "swipes": {
+        "title": "Swipe Limit Reached",
+        "description": "You've used all {limit} swipes in this room. Upgrade for unlimited swipes!"
+      },
+      "filters": {
+        "title": "Advanced Filters Locked",
+        "description": "Advanced filters are only available on PRO and TEAM plans. Upgrade to unlock powerful filtering options!"
+      },
+      "currentPlan": "Your current plan",
+      "recommended": "Recommended upgrade",
+      "benefits": {
+        "title": "What you'll get:",
+        "unlimitedRooms": "Unlimited rooms",
+        "unlimitedParticipants": "Unlimited participants",
+        "unlimitedSwipes": "Unlimited swipes",
+        "moreParticipants": "More participants per room",
+        "noExpiry": "Rooms never expire",
+        "advancedFilters": "Advanced filtering options",
+        "betterMatches": "Better movie matches"
+      },
+      "notNow": "Not now",
+      "viewPlans": "View Plans"
+    }
   }
 }

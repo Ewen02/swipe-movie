@@ -608,5 +608,39 @@
         "answer": "Oui, nous utilisons Stripe pour le traitement des paiements, qui est conforme PCI-DSS et utilisé par des millions d'entreprises dans le monde. Nous ne stockons jamais vos informations de carte bancaire sur nos serveurs."
       }
     }
+  },
+  "subscription": {
+    "upgrade": {
+      "rooms": {
+        "title": "Limite de salons atteinte",
+        "description": "Vous avez atteint le maximum de {limit} salons sur le forfait GRATUIT. Passez au niveau supérieur pour créer des salons illimités et profiter de plus de fonctionnalités !"
+      },
+      "participants": {
+        "title": "Limite de participants atteinte",
+        "description": "Vous avez atteint le maximum de {limit} participants par salon sur le forfait GRATUIT. Passez au niveau supérieur pour plus de participants !"
+      },
+      "swipes": {
+        "title": "Limite de swipes atteinte",
+        "description": "Vous avez utilisé tous les {limit} swipes de ce salon. Passez au niveau supérieur pour des swipes illimités !"
+      },
+      "filters": {
+        "title": "Filtres avancés verrouillés",
+        "description": "Les filtres avancés sont disponibles uniquement sur les forfaits PRO et TEAM. Passez au niveau supérieur pour débloquer des options de filtrage puissantes !"
+      },
+      "currentPlan": "Votre forfait actuel",
+      "recommended": "Mise à niveau recommandée",
+      "benefits": {
+        "title": "Ce que vous obtiendrez :",
+        "unlimitedRooms": "Salons illimités",
+        "unlimitedParticipants": "Participants illimités",
+        "unlimitedSwipes": "Swipes illimités",
+        "moreParticipants": "Plus de participants par salon",
+        "noExpiry": "Salons sans expiration",
+        "advancedFilters": "Options de filtrage avancées",
+        "betterMatches": "Meilleurs matchs de films"
+      },
+      "notNow": "Pas maintenant",
+      "viewPlans": "Voir les forfaits"
+    }
   }
 }
