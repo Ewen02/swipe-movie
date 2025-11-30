@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { Heart, X, Star, Clock, Film } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -74,16 +74,15 @@ interface SwipeCardProps {
   movie: DemoMovie;
   onSwipe: (direction: 'left' | 'right') => void;
   isTop: boolean;
+  exitDirection: 'left' | 'right' | null;
 }
 
-function SwipeCard({ movie, onSwipe, isTop }: SwipeCardProps) {
-  const x = useMotionValue(0);
-  const rotate = useTransform(x, [-200, 200], [-15, 15]);
-  const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0.5, 1, 1, 1, 0.5]);
+function SwipeCard({ movie, onSwipe, isTop, exitDirection }: SwipeCardProps) {
+  const [dragX, setDragX] = useState(0);
 
-  // Indicators opacity
-  const likeOpacity = useTransform(x, [0, 100], [0, 1]);
-  const nopeOpacity = useTransform(x, [-100, 0], [1, 0]);
+  const handleDrag = (_: any, info: PanInfo) => {
+    setDragX(info.offset.x);
+  };
 
   const handleDragEnd = (_: any, info: PanInfo) => {
     if (info.offset.x > 100) {
@@ -91,24 +90,35 @@ function SwipeCard({ movie, onSwipe, isTop }: SwipeCardProps) {
     } else if (info.offset.x < -100) {
       onSwipe('left');
     }
+    setDragX(0);
   };
+
+  // Calculate indicator opacities based on drag
+  const likeOpacity = Math.min(Math.max(dragX / 100, 0), 1);
+  const nopeOpacity = Math.min(Math.max(-dragX / 100, 0), 1);
 
   return (
     <motion.div
       className={`absolute inset-0 ${isTop ? 'cursor-grab active:cursor-grabbing' : ''}`}
-      style={{ x, rotate, opacity }}
       drag={isTop ? 'x' : false}
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.9}
+      onDrag={handleDrag}
       onDragEnd={handleDragEnd}
-      initial={{ scale: isTop ? 1 : 0.95, y: isTop ? 0 : 10 }}
-      animate={{ scale: isTop ? 1 : 0.95, y: isTop ? 0 : 10 }}
+      initial={{ scale: isTop ? 1 : 0.95, y: isTop ? 0 : 10, opacity: 1 }}
+      animate={{
+        scale: isTop ? 1 : 0.95,
+        y: isTop ? 0 : 10,
+        rotate: isTop ? dragX * 0.05 : 0,
+      }}
       exit={{
-        x: x.get() > 0 ? 300 : -300,
+        x: exitDirection === 'right' ? 400 : -400,
+        rotate: exitDirection === 'right' ? 20 : -20,
         opacity: 0,
-        transition: { duration: 0.3 }
+        transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }
       }}
       whileTap={isTop ? { scale: 1.02 } : undefined}
+      transition={{ type: 'spring', stiffness: 300, damping: 25 }}
     >
       <Card className="h-full overflow-hidden border-2 border-white/10 bg-background/90 backdrop-blur-sm shadow-2xl">
         {/* Movie Poster Area */}
@@ -118,7 +128,8 @@ function SwipeCard({ movie, onSwipe, isTop }: SwipeCardProps) {
           {/* Like indicator */}
           <motion.div
             className="absolute top-4 right-4 px-4 py-2 bg-green-500 rounded-lg border-4 border-green-400 rotate-12"
-            style={{ opacity: likeOpacity }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: likeOpacity }}
           >
             <span className="text-white font-bold text-xl">LIKE</span>
           </motion.div>
@@ -126,7 +137,8 @@ function SwipeCard({ movie, onSwipe, isTop }: SwipeCardProps) {
           {/* Nope indicator */}
           <motion.div
             className="absolute top-4 left-4 px-4 py-2 bg-red-500 rounded-lg border-4 border-red-400 -rotate-12"
-            style={{ opacity: nopeOpacity }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: nopeOpacity }}
           >
             <span className="text-white font-bold text-xl">NOPE</span>
           </motion.div>
@@ -169,11 +181,17 @@ export function InteractiveSwipeDemo({ className = '' }: InteractiveSwipeDemoPro
   const [movies, setMovies] = useState(demoMovies);
   const [liked, setLiked] = useState<string[]>([]);
   const [passed, setPassed] = useState<string[]>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [exitDirection, setExitDirection] = useState<'left' | 'right' | null>(null);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const handleSwipe = (direction: 'left' | 'right') => {
+    if (isAnimating) return;
+
     const current = movies[0];
     if (!current) return;
+
+    setIsAnimating(true);
+    setExitDirection(direction);
 
     if (direction === 'right') {
       setLiked(prev => [...prev, current.title]);
@@ -181,15 +199,15 @@ export function InteractiveSwipeDemo({ className = '' }: InteractiveSwipeDemoPro
       setPassed(prev => [...prev, current.title]);
     }
 
-    // Remove the swiped card and add it back at the end for infinite loop
-    setMovies(prev => {
-      const [first, ...rest] = prev;
-      return [...rest, first];
-    });
-  };
-
-  const handleButtonSwipe = (direction: 'left' | 'right') => {
-    handleSwipe(direction);
+    // Wait for animation to complete before updating the list
+    setTimeout(() => {
+      setMovies(prev => {
+        const [first, ...rest] = prev;
+        return [...rest, first];
+      });
+      setExitDirection(null);
+      setIsAnimating(false);
+    }, 400);
   };
 
   return (
@@ -200,10 +218,7 @@ export function InteractiveSwipeDemo({ className = '' }: InteractiveSwipeDemoPro
       </div>
 
       {/* Cards container */}
-      <div
-        ref={containerRef}
-        className="relative w-72 h-80 mx-auto"
-      >
+      <div className="relative w-72 h-80 mx-auto">
         <AnimatePresence mode="popLayout">
           {movies.slice(0, 3).map((movie, index) => (
             <SwipeCard
@@ -211,41 +226,44 @@ export function InteractiveSwipeDemo({ className = '' }: InteractiveSwipeDemoPro
               movie={movie}
               onSwipe={handleSwipe}
               isTop={index === 0}
+              exitDirection={index === 0 ? exitDirection : null}
             />
           ))}
         </AnimatePresence>
       </div>
 
-      {/* Action buttons */}
+      {/* Action buttons - X à gauche, Heart à droite */}
       <div className="flex justify-center gap-6 mt-6">
         <motion.button
-          className="w-14 h-14 rounded-full bg-red-500/10 border-2 border-red-500/30 flex items-center justify-center text-red-500 hover:bg-red-500/20 hover:border-red-500/50 transition-colors"
+          className="w-14 h-14 rounded-full bg-red-500/10 border-2 border-red-500/30 flex items-center justify-center text-red-500 hover:bg-red-500/20 hover:border-red-500/50 transition-colors disabled:opacity-50"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          onClick={() => handleButtonSwipe('left')}
+          onClick={() => handleSwipe('left')}
+          disabled={isAnimating}
         >
           <X className="w-7 h-7" />
         </motion.button>
 
         <motion.button
-          className="w-14 h-14 rounded-full bg-green-500/10 border-2 border-green-500/30 flex items-center justify-center text-green-500 hover:bg-green-500/20 hover:border-green-500/50 transition-colors"
+          className="w-14 h-14 rounded-full bg-green-500/10 border-2 border-green-500/30 flex items-center justify-center text-green-500 hover:bg-green-500/20 hover:border-green-500/50 transition-colors disabled:opacity-50"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          onClick={() => handleButtonSwipe('right')}
+          onClick={() => handleSwipe('right')}
+          disabled={isAnimating}
         >
           <Heart className="w-7 h-7" />
         </motion.button>
       </div>
 
-      {/* Stats */}
+      {/* Stats - inversé aussi pour cohérence */}
       <div className="flex justify-center gap-8 mt-4 text-sm text-muted-foreground">
-        <span className="flex items-center gap-1">
-          <Heart className="w-4 h-4 text-green-500" />
-          {liked.length} likés
-        </span>
         <span className="flex items-center gap-1">
           <X className="w-4 h-4 text-red-500" />
           {passed.length} passés
+        </span>
+        <span className="flex items-center gap-1">
+          <Heart className="w-4 h-4 text-green-500" />
+          {liked.length} likés
         </span>
       </div>
 
