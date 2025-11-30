@@ -194,3 +194,107 @@ export function SpotlightCard({ children, className = '' }: SpotlightCardProps) 
     </motion.div>
   );
 }
+
+interface GlowCardProps {
+  children: ReactNode;
+  className?: string;
+  glowColor?: 'primary' | 'accent' | 'green' | 'blue' | 'purple';
+  intensity?: 'subtle' | 'medium' | 'strong';
+  animated?: boolean;
+}
+
+/**
+ * GlowCard - Card with animated gradient glow effect around it
+ * Similar to Netwarm's pricing card effect
+ */
+export function GlowCard({
+  children,
+  className = '',
+  glowColor = 'primary',
+  intensity = 'medium',
+  animated = true,
+}: GlowCardProps) {
+  const colorMap = {
+    primary: 'hsl(var(--primary))',
+    accent: 'hsl(var(--accent))',
+    green: 'rgb(34, 197, 94)',
+    blue: 'rgb(59, 130, 246)',
+    purple: 'rgb(168, 85, 247)',
+  };
+
+  const intensityMap = {
+    subtle: { blur: '40px', opacity: 0.15 },
+    medium: { blur: '60px', opacity: 0.25 },
+    strong: { blur: '80px', opacity: 0.35 },
+  };
+
+  const color = colorMap[glowColor];
+  const { blur, opacity } = intensityMap[intensity];
+
+  return (
+    <div className={`relative ${className}`}>
+      {/* Glow effect */}
+      <motion.div
+        className="absolute -inset-4 rounded-3xl will-change-transform"
+        style={{
+          background: `radial-gradient(ellipse at center, ${color}, transparent 70%)`,
+          filter: `blur(${blur})`,
+          opacity,
+        }}
+        animate={
+          animated
+            ? {
+                scale: [1, 1.05, 1],
+                opacity: [opacity, opacity * 1.2, opacity],
+              }
+            : undefined
+        }
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: [0.45, 0, 0.55, 1],
+        }}
+      />
+      {/* Content */}
+      <div className="relative">{children}</div>
+    </div>
+  );
+}
+
+interface AnimatedBorderCardProps {
+  children: ReactNode;
+  className?: string;
+  borderWidth?: number;
+}
+
+/**
+ * AnimatedBorderCard - Card with animated gradient border
+ */
+export function AnimatedBorderCard({
+  children,
+  className = '',
+  borderWidth = 2,
+}: AnimatedBorderCardProps) {
+  return (
+    <div className={`relative p-[${borderWidth}px] rounded-2xl ${className}`}>
+      <motion.div
+        className="absolute inset-0 rounded-2xl will-change-transform"
+        style={{
+          background: 'linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--primary)))',
+          backgroundSize: '200% 100%',
+        }}
+        animate={{
+          backgroundPosition: ['0% center', '200% center'],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: 'linear',
+        }}
+      />
+      <div className="relative bg-background rounded-[calc(1rem-2px)] h-full">
+        {children}
+      </div>
+    </div>
+  );
+}

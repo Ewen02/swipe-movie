@@ -12,10 +12,11 @@ import { PublicHeader } from "@/components/layout/PublicHeader"
 import { Footer } from "@/components/layout/Footer"
 import { DemoDialog } from "@/components/demo/DemoDialog"
 import { fadeInUp, staggerContainer } from "@/lib/animations"
-import { AnimatedGradientBackground, ShimmerEffect } from "@/components/animations/AnimatedGradient"
+import { AnimatedGradientBackground, ShimmerEffect, GlowCard } from "@/components/animations/AnimatedGradient"
 import { ScrollReveal } from "@/components/animations/ScrollAnimations"
 import { FloatingElement } from "@/components/animations/FloatingElement"
 import { CountUp } from "@/components/animations/TextReveal"
+import { InteractiveSwipeDemo } from "@/components/demo/InteractiveSwipeDemo"
 
 export default function LandingPage() {
   const { status } = useSession()
@@ -329,6 +330,57 @@ export default function LandingPage() {
                 </CardContent>
               </Card>
             </ScrollReveal>
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Demo Section */}
+      <section className="py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/30 to-background" />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              {/* Text content */}
+              <ScrollReveal direction="left">
+                <div className="text-center lg:text-left">
+                  <h2 className="text-4xl md:text-5xl font-bold mb-6">
+                    <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                      Essayez maintenant
+                    </span>
+                  </h2>
+                  <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+                    Découvrez l'expérience de swipe directement ici. Glissez les cartes vers la droite pour liker ou vers la gauche pour passer.
+                  </p>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 justify-center lg:justify-start">
+                      <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                        <Heart className="w-5 h-5 text-green-500" />
+                      </div>
+                      <span className="text-muted-foreground">Swipez à droite = Like</span>
+                    </div>
+                    <div className="flex items-center gap-3 justify-center lg:justify-start">
+                      <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
+                        <X className="w-5 h-5 text-red-500" />
+                      </div>
+                      <span className="text-muted-foreground">Swipez à gauche = Pass</span>
+                    </div>
+                    <div className="flex items-center gap-3 justify-center lg:justify-start">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Sparkles className="w-5 h-5 text-primary" />
+                      </div>
+                      <span className="text-muted-foreground">Match quand tout le monde like !</span>
+                    </div>
+                  </div>
+                </div>
+              </ScrollReveal>
+
+              {/* Interactive demo with glow */}
+              <ScrollReveal direction="right" delay={0.2}>
+                <GlowCard glowColor="primary" intensity="medium" className="py-8">
+                  <InteractiveSwipeDemo />
+                </GlowCard>
+              </ScrollReveal>
+            </div>
           </div>
         </div>
       </section>
