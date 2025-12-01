@@ -35,10 +35,10 @@ export function JoinRoomDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-gradient-to-br from-background/98 to-background/95 backdrop-blur-xl border border-white/10">
         <DialogHeader className="space-y-3">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-primary flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-primary flex items-center justify-center shadow-lg">
               <Users className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -109,7 +109,7 @@ export function JoinRoomDialog({
                 </div>
               </div>
 
-              <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+              <div className="bg-gradient-to-br from-primary/10 to-accent/5 backdrop-blur-sm rounded-xl p-4 space-y-2 border border-white/10">
                 <p className="text-sm font-medium">Comment obtenir un code ?</p>
                 <ul className="text-xs text-muted-foreground space-y-1">
                   <li>• Demandez à un ami de créer une room</li>

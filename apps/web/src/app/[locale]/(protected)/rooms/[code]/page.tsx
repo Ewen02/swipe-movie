@@ -232,45 +232,53 @@ function RoomPageContent() {
   // If user is not a member, show join screen
   if (!isMember) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex items-center justify-center">
-        <Card className="max-w-md w-full mx-4">
-          <CardContent className="p-8 text-center">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-6">
-              <UserPlus className="w-10 h-10 text-primary" />
-            </div>
-            <h1 className="text-2xl font-bold mb-2">{room.name || t('unnamedRoom')}</h1>
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <Badge variant="secondary" className="text-sm">
-                {room.type === 'movie' ? t('moviesType') : t('tvShowsType')}
-              </Badge>
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                <Users className="w-4 h-4" />
-                <span>{t('membersCount', { count: room.members.length, max: 10 })}</span>
+      <div className="min-h-screen bg-background overflow-hidden flex items-center justify-center">
+        {/* Background orbs */}
+        <div className="fixed top-20 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10" />
+        <div className="fixed bottom-20 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl -z-10" />
+
+        <div className="relative group max-w-md w-full mx-4">
+          <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-lg opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
+          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+            <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
+            <div className="p-8 text-center">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg mb-6">
+                <UserPlus className="w-10 h-10 text-white" />
               </div>
+              <h1 className="text-2xl font-bold mb-2">{room.name || t('unnamedRoom')}</h1>
+              <div className="flex items-center justify-center gap-2 mb-6">
+                <Badge variant="secondary" className="text-sm bg-white/10 border-white/20">
+                  {room.type === 'movie' ? t('moviesType') : t('tvShowsType')}
+                </Badge>
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <Users className="w-4 h-4" />
+                  <span>{t('membersCount', { count: room.members.length, max: 10 })}</span>
+                </div>
+              </div>
+              <p className="text-muted-foreground mb-6">
+                {t('joinRoomDescription')}
+              </p>
+              <Button
+                onClick={handleJoinRoom}
+                disabled={joiningRoom}
+                size="lg"
+                className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg"
+              >
+                {joiningRoom ? (
+                  <>
+                    <Film className="w-4 h-4 mr-2 animate-pulse" />
+                    {t('connecting')}
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    {t('joiningButton')}
+                  </>
+                )}
+              </Button>
             </div>
-            <p className="text-muted-foreground mb-6">
-              {t('joinRoomDescription')}
-            </p>
-            <Button
-              onClick={handleJoinRoom}
-              disabled={joiningRoom}
-              size="lg"
-              className="w-full"
-            >
-              {joiningRoom ? (
-                <>
-                  <Film className="w-4 h-4 mr-2 animate-pulse" />
-                  {t('connecting')}
-                </>
-              ) : (
-                <>
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  {t('joiningButton')}
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     )
   }
@@ -292,8 +300,12 @@ function RoomPageContent() {
         onOpenChange={setShowMovieDetails}
       />
 
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex flex-col">
-        <div className="container mx-auto px-4 py-8 max-w-6xl flex-1">
+      <div className="min-h-screen bg-background overflow-hidden flex flex-col">
+        {/* Background orbs */}
+        <div className="fixed top-20 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10" />
+        <div className="fixed bottom-20 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl -z-10" />
+
+        <div className="container mx-auto px-4 py-8 max-w-6xl flex-1 relative z-10">
           {/* Header */}
           <div className="mb-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
@@ -323,13 +335,14 @@ function RoomPageContent() {
 
           {/* Success Message */}
           {successMessage && (
-            <Card className="mb-6 border-green-500/50 bg-green-500/10">
-              <CardContent className="py-4">
+            <div className="mb-6 relative bg-gradient-to-br from-green-500/20 to-green-500/10 backdrop-blur-xl border border-green-500/30 rounded-2xl overflow-hidden">
+              <div className="h-1 bg-gradient-to-r from-green-500 to-emerald-500" />
+              <div className="py-4 px-6">
                 <p className="text-green-700 dark:text-green-300 text-center font-medium">
                   {successMessage}
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
 
           {/* Main Content - Tabs */}
@@ -367,25 +380,28 @@ function RoomPageContent() {
                   isLoading={moviesLoading}
                 />
               ) : (
-                <Card className="border-dashed">
-                  <CardContent className="text-center py-20">
-                    <div className="text-6xl mb-4">🎬</div>
-                    <h3 className="text-xl font-semibold mb-2">
-                      {room?.genreId === null || room?.genreId === undefined
-                        ? tSwipe('noGenre')
-                        : !hasMoreMovies
-                        ? tSwipe('allSwiped')
-                        : tSwipe('noMovies')}
-                    </h3>
-                    <p className="text-muted-foreground mb-4">
-                      {room?.genreId === null || room?.genreId === undefined
-                        ? tSwipe('noGenreDescription')
-                        : !hasMoreMovies
-                        ? tSwipe('allSwipedDescription')
-                        : tSwipe('noMoviesDescription')}
-                    </p>
-                  </CardContent>
-                </Card>
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-lg opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
+                  <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border-2 border-dashed border-white/20 rounded-3xl overflow-hidden">
+                    <div className="text-center py-20 px-6">
+                      <div className="text-6xl mb-4">🎬</div>
+                      <h3 className="text-xl font-semibold mb-2">
+                        {room?.genreId === null || room?.genreId === undefined
+                          ? tSwipe('noGenre')
+                          : !hasMoreMovies
+                          ? tSwipe('allSwiped')
+                          : tSwipe('noMovies')}
+                      </h3>
+                      <p className="text-muted-foreground mb-4">
+                        {room?.genreId === null || room?.genreId === undefined
+                          ? tSwipe('noGenreDescription')
+                          : !hasMoreMovies
+                          ? tSwipe('allSwipedDescription')
+                          : tSwipe('noMoviesDescription')}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               )}
             </TabsContent>
 
@@ -423,29 +439,33 @@ function RoomPageContent() {
 
             {/* Members Tab */}
             <TabsContent value="members">
-              <Card>
-                <CardContent className="p-6">
-                  <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                    <Users className="w-5 h-5 text-primary" />
-                    {t('roomMembers')}
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {room.members.map((member, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
-                      >
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-semibold text-lg">
-                          {(member.name ?? "?")[0].toUpperCase()}
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-lg opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
+                <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+                  <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
+                  <div className="p-6">
+                    <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+                      <Users className="w-5 h-5 text-primary" />
+                      {t('roomMembers')}
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {room.members.map((member, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center gap-3 p-4 bg-gradient-to-br from-white/5 to-white/[0.02] rounded-xl hover:from-white/10 hover:to-white/5 transition-all duration-200 border border-white/10"
+                        >
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-semibold text-lg shadow-md">
+                            {(member.name ?? "?")[0].toUpperCase()}
+                          </div>
+                          <span className="font-medium">
+                            {member.name ?? t('unknownUser')}
+                          </span>
                         </div>
-                        <span className="font-medium">
-                          {member.name ?? t('unknownUser')}
-                        </span>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </TabsContent>
           </Tabs>
         </div>

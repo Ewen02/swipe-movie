@@ -1,9 +1,10 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { Card, CardContent } from "@/components/ui/card"
+import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { Film, Users, Heart, TrendingUp, Plus } from "lucide-react"
+import { Film, Users, Heart, TrendingUp, Plus, Sparkles } from "lucide-react"
+import { fadeInUp, staggerContainer } from "@/lib/animations"
 
 interface RoomStatsHeaderProps {
   totalRooms: number
@@ -23,87 +24,121 @@ export function RoomStatsHeader({
   const t = useTranslations('rooms')
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-accent/5 to-background border-2 border-primary/20 mb-12">
-      {/* Background decoration */}
-      <div className="absolute inset-0 bg-grid-white/10 [mask-image:radial-gradient(white,transparent_85%)]" />
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+      className="relative group mb-12"
+    >
+      {/* Glow effect on hover */}
+      <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-xl opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
 
-      <div className="relative p-8 md:p-12">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-3">
-            {t('title')} 🎬
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl">
-            {t('emptyDescription')}
-          </p>
-        </div>
+      <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+        {/* Top gradient bar */}
+        <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Card className="border-primary/20 bg-background/50 backdrop-blur">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">{t('stats.total')}</p>
-                  <p className="text-3xl font-bold text-primary">{totalRooms}</p>
-                </div>
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Film className="w-6 h-6 text-primary" />
+        <div className="p-8 md:p-12">
+          {/* Header */}
+          <motion.div variants={fadeInUp} className="mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-medium mb-4">
+              <Sparkles className="w-4 h-4" />
+              Vos salles de cinéma
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-3">
+              <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                {t('title')}
+              </span>
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-2xl">
+              {t('emptyDescription')}
+            </p>
+          </motion.div>
+
+          {/* Stats Grid */}
+          <motion.div variants={fadeInUp} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            {/* Total Rooms */}
+            <div className="relative group/stat">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-blue-500 rounded-2xl opacity-0 group-hover/stat:opacity-10 blur transition-opacity duration-300" />
+              <div className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-md border border-primary/20 rounded-2xl p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">{t('stats.total')}</p>
+                    <p className="text-3xl font-bold text-primary">{totalRooms}</p>
+                  </div>
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-blue-500 flex items-center justify-center shadow-lg">
+                    <Film className="w-7 h-7 text-white" />
+                  </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          <Card className="border-accent/20 bg-background/50 backdrop-blur">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">{t('stats.matches')}</p>
-                  <p className="text-3xl font-bold text-accent">{totalMatches}</p>
-                </div>
-                <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
-                  <Heart className="w-6 h-6 text-accent" />
+            {/* Total Matches */}
+            <div className="relative group/stat">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-accent to-pink-500 rounded-2xl opacity-0 group-hover/stat:opacity-10 blur transition-opacity duration-300" />
+              <div className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-md border border-accent/20 rounded-2xl p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">{t('stats.matches')}</p>
+                    <p className="text-3xl font-bold text-accent">{totalMatches}</p>
+                  </div>
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-accent to-pink-500 flex items-center justify-center shadow-lg">
+                    <Heart className="w-7 h-7 text-white" />
+                  </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          <Card className="border-green-500/20 bg-background/50 backdrop-blur">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">{t('stats.swipesToday')}</p>
-                  <p className="text-3xl font-bold text-green-500">{totalSwipesToday}</p>
-                </div>
-                <div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-green-500" />
+            {/* Swipes Today */}
+            <div className="relative group/stat">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl opacity-0 group-hover/stat:opacity-10 blur transition-opacity duration-300" />
+              <div className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-md border border-green-500/20 rounded-2xl p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">{t('stats.swipesToday')}</p>
+                    <p className="text-3xl font-bold text-green-500">{totalSwipesToday}</p>
+                  </div>
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
+                    <TrendingUp className="w-7 h-7 text-white" />
+                  </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </motion.div>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Button
-            size="lg"
-            className="bg-gradient-to-r from-primary to-accent hover:opacity-90 text-lg py-6 flex-1 sm:flex-initial"
-            onClick={onCreateRoom}
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            {t('create')}
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="border-2 text-lg py-6 flex-1 sm:flex-initial hover:bg-accent/10 hover:border-accent"
-            onClick={onJoinRoom}
-          >
-            <Users className="w-5 h-5 mr-2" />
-            {t('join')}
-          </Button>
+          {/* CTA Buttons */}
+          <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4">
+            <motion.div
+              className="flex-1 sm:flex-initial"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Button
+                size="lg"
+                className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 text-lg py-6 shadow-lg"
+                onClick={onCreateRoom}
+              >
+                <Plus className="w-5 h-5 mr-2" />
+                {t('create')}
+              </Button>
+            </motion.div>
+            <motion.div
+              className="flex-1 sm:flex-initial"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full border-2 border-white/20 hover:bg-white/5 hover:border-accent text-lg py-6"
+                onClick={onJoinRoom}
+              >
+                <Users className="w-5 h-5 mr-2" />
+                {t('join')}
+              </Button>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }

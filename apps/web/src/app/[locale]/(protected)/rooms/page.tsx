@@ -93,8 +93,12 @@ function RoomsPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
-      <div className="container mx-auto px-4 py-8 md:py-12">
+    <div className="min-h-screen bg-background overflow-hidden flex flex-col">
+      {/* Background orbs */}
+      <div className="fixed top-20 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10" />
+      <div className="fixed bottom-20 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl -z-10" />
+
+      <div className="flex-1 container mx-auto px-4 py-8 md:py-12 relative z-10">
         {/* Hero Header with Stats */}
         <RoomStatsHeader
           totalRooms={rooms?.rooms.length || 0}
@@ -106,22 +110,23 @@ function RoomsPageContent() {
 
         {error && (
           <div className="max-w-4xl mx-auto mb-6">
-            <Card className="border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-900/20">
+            <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-red-500/20 rounded-3xl overflow-hidden">
+              <div className="h-1 bg-gradient-to-r from-red-500 to-red-600" />
               <CardContent className="py-6 space-y-4">
-                <p className="text-red-600 dark:text-red-400 text-sm text-center">{error}</p>
+                <p className="text-red-500 text-sm text-center">{error}</p>
                 <div className="flex justify-center">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={loadData}
-                    className="gap-2"
+                    className="gap-2 border-white/20 hover:bg-white/5"
                   >
                     <RefreshCw className="w-4 h-4" />
                     {t('retry')}
                   </Button>
                 </div>
               </CardContent>
-            </Card>
+            </div>
           </div>
         )}
 

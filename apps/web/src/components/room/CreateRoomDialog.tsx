@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent } from "@/components/ui/card"
 import { RoomFilters, RoomFilterValues } from "./RoomFilters"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -59,10 +58,10 @@ export function CreateRoomDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-background/98 to-background/95 backdrop-blur-xl border border-white/10">
         <DialogHeader className="space-y-3">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -194,17 +193,17 @@ export function CreateRoomDialog({
             />
 
             {/* Filtres avancés - Section repliable */}
-            <Card className={`border-2 transition-colors ${
-              showAdvancedFilters ? "border-primary/30 bg-primary/5" : "border-border"
+            <div className={`relative rounded-2xl border transition-all ${
+              showAdvancedFilters ? "border-primary/30 bg-gradient-to-br from-primary/10 to-accent/5" : "border-white/10 bg-gradient-to-br from-background/50 to-background/30"
             }`}>
-              <CardContent className="p-5">
+              <div className="p-5">
                 <button
                   type="button"
                   onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
                   className="w-full flex items-center justify-between group"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
                       <Sparkles className="w-5 h-5 text-primary" />
                     </div>
                     <div className="text-left">
@@ -251,8 +250,8 @@ export function CreateRoomDialog({
                     )}
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             <Button
               type="submit"
