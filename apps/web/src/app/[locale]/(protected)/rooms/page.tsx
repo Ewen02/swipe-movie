@@ -1,13 +1,11 @@
 "use client"
 
+import { lazy, Suspense } from "react"
 import { motion } from "framer-motion"
-import { Card, CardContent } from "@/components/ui/card"
+import { CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { RoomsList } from "@/components/room/RoomsList"
 import { RoomStatsHeader } from "@/components/room/RoomStatsHeader"
-import { CreateRoomDialog } from "@/components/room/CreateRoomDialog"
-import { JoinRoomDialog } from "@/components/room/JoinRoomDialog"
-import { OnboardingTutorial } from "@/components/onboarding"
 import {
   CreateRoomValues,
   JoinRoomValues,
@@ -27,6 +25,11 @@ import { RoomsPageSkeleton } from "./RoomsPageSkeleton"
 import { useUserStats } from "@/hooks/useUserStats"
 import { useOnboarding } from "@/hooks/useOnboarding"
 import { fadeInUp, staggerContainer } from "@/lib/animations"
+
+// Lazy load dialogs - they're not needed until user interaction
+const CreateRoomDialog = lazy(() => import("@/components/room/CreateRoomDialog").then(m => ({ default: m.CreateRoomDialog })))
+const JoinRoomDialog = lazy(() => import("@/components/room/JoinRoomDialog").then(m => ({ default: m.JoinRoomDialog })))
+const OnboardingTutorial = lazy(() => import("@/components/onboarding").then(m => ({ default: m.OnboardingTutorial })))
 
 function RoomsPageContent() {
   const t = useTranslations('rooms')
@@ -151,33 +154,43 @@ function RoomsPageContent() {
           </motion.div>
         )}
 
-        {/* Dialogs */}
-        <CreateRoomDialog
-          open={showCreateDialog}
-          onOpenChange={setShowCreateDialog}
-          onSubmit={onCreate}
-          genres={genres}
-          loading={loading}
-        />
+        {/* Dialogs - Lazy loaded */}
+        <Suspense fallback={null}>
+          {showCreateDialog && (
+            <CreateRoomDialog
+              open={showCreateDialog}
+              onOpenChange={setShowCreateDialog}
+              onSubmit={onCreate}
+              genres={genres}
+              loading={loading}
+            />
+          )}
+        </Suspense>
 
-        <JoinRoomDialog
-          open={showJoinDialog}
-          onOpenChange={setShowJoinDialog}
-          onSubmit={onJoin}
-          loading={loading}
-        />
+        <Suspense fallback={null}>
+          {showJoinDialog && (
+            <JoinRoomDialog
+              open={showJoinDialog}
+              onOpenChange={setShowJoinDialog}
+              onSubmit={onJoin}
+              loading={loading}
+            />
+          )}
+        </Suspense>
       </div>
 
       {/* Footer */}
       <Footer />
 
-      {/* Onboarding Tutorial */}
-      {showOnboarding && (
-        <OnboardingTutorial
-          onComplete={completeOnboarding}
-          onSkip={skipOnboarding}
-        />
-      )}
+      {/* Onboarding Tutorial - Lazy loaded */}
+      <Suspense fallback={null}>
+        {showOnboarding && (
+          <OnboardingTutorial
+            onComplete={completeOnboarding}
+            onSkip={skipOnboarding}
+          />
+        )}
+      </Suspense>
     </div>
   )
 }

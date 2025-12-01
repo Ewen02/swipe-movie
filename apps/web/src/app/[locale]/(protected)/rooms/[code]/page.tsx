@@ -1,14 +1,13 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, lazy, Suspense } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { useSession } from "next-auth/react"
+import { useSession } from "@/lib/auth-client"
 import { useTranslations } from "next-intl"
 import { createSwipe, deleteSwipe, getMySwipesByRoom } from "@/lib/api/swipes"
 import { joinRoom } from "@/lib/api/rooms"
 import { useRoomData, useMoviesData, useMatchNotifications } from "@/hooks/room"
 import type { MovieBasic } from "@/schemas/movies"
-import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
@@ -17,14 +16,16 @@ import { MovieCardSkeleton } from "@/components/swipe/MovieCardSkeleton"
 import { MatchesList } from "@/components/room/MatchesList"
 import { MatchAnimation } from "@/components/room/MatchAnimation"
 import { ShareRoomButton } from "@/components/room/ShareRoomButton"
-import { MovieDetailsModal } from "@/components/movies/MovieDetailsModal"
-import { Analytics } from "@/components/room/Analytics"
-import { SwipeHistory } from "@/components/room/SwipeHistory"
 import { Users, Film, UserPlus } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Footer } from "@/components/layout/Footer"
 import { RoomErrorBoundary } from "@/components/error"
 import { RoomPageSkeleton } from "@/components/room/RoomPageSkeleton"
+
+// Lazy load heavy components that are not always visible
+const MovieDetailsModal = lazy(() => import("@/components/movies/MovieDetailsModal").then(m => ({ default: m.MovieDetailsModal })))
+const Analytics = lazy(() => import("@/components/room/Analytics").then(m => ({ default: m.Analytics })))
+const SwipeHistory = lazy(() => import("@/components/room/SwipeHistory").then(m => ({ default: m.SwipeHistory })))
 
 function RoomPageContent() {
   const t = useTranslations('room')
@@ -292,13 +293,17 @@ function RoomPageContent() {
         onComplete={handleMatchAnimationComplete}
       />
 
-      {/* Movie Details Modal */}
-      <MovieDetailsModal
-        movieId={selectedMovieId}
-        mediaType={room?.type as "movie" | "tv" | undefined}
-        open={showMovieDetails}
-        onOpenChange={setShowMovieDetails}
-      />
+      {/* Movie Details Modal - Lazy loaded */}
+      <Suspense fallback={null}>
+        {showMovieDetails && (
+          <MovieDetailsModal
+            movieId={selectedMovieId}
+            mediaType={room?.type as "movie" | "tv" | undefined}
+            open={showMovieDetails}
+            onOpenChange={setShowMovieDetails}
+          />
+        )}
+      </Suspense>
 
       <div className="min-h-screen bg-background overflow-hidden flex flex-col">
         {/* Background orbs */}
@@ -410,31 +415,35 @@ function RoomPageContent() {
               <MatchesList roomId={room.id} totalMembers={room.members.length} refreshTrigger={refreshMatches} roomFilters={room} />
             </TabsContent>
 
-            {/* History Tab */}
+            {/* History Tab - Lazy loaded */}
             <TabsContent value="history">
-              <SwipeHistory
-                roomId={room.id}
-                onUndo={async (movieId: string) => {
-                  // Delete the swipe from backend
-                  await deleteSwipe(room.id, movieId)
-                  // Remove from swiped set
-                  setSwipedMovieIds(prev => {
-                    const newSet = new Set(prev)
-                    newSet.delete(movieId)
-                    return newSet
-                  })
-                  // Refresh matches
-                  setRefreshMatches(prev => prev + 1)
-                  // Switch to swipe tab to see the movie again
-                  setCurrentTab("swipe")
-                }}
-                mediaType={room?.type as "movie" | "tv"}
-              />
+              <Suspense fallback={<div className="text-center py-8 text-muted-foreground">Loading...</div>}>
+                <SwipeHistory
+                  roomId={room.id}
+                  onUndo={async (movieId: string) => {
+                    // Delete the swipe from backend
+                    await deleteSwipe(room.id, movieId)
+                    // Remove from swiped set
+                    setSwipedMovieIds(prev => {
+                      const newSet = new Set(prev)
+                      newSet.delete(movieId)
+                      return newSet
+                    })
+                    // Refresh matches
+                    setRefreshMatches(prev => prev + 1)
+                    // Switch to swipe tab to see the movie again
+                    setCurrentTab("swipe")
+                  }}
+                  mediaType={room?.type as "movie" | "tv"}
+                />
+              </Suspense>
             </TabsContent>
 
-            {/* Stats Tab */}
+            {/* Stats Tab - Lazy loaded */}
             <TabsContent value="stats">
-              <Analytics roomId={room.id} mediaType={room?.type as "movie" | "tv"} />
+              <Suspense fallback={<div className="text-center py-8 text-muted-foreground">Loading...</div>}>
+                <Analytics roomId={room.id} mediaType={room?.type as "movie" | "tv"} />
+              </Suspense>
             </TabsContent>
 
             {/* Members Tab */}

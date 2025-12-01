@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react"
-import { useSession } from "next-auth/react"
+import { useSession } from "@/lib/auth-client"
 import { getMoviesByGenre, getBatchWatchProviders, MovieFilters } from "@/lib/api/movies"
 import { shuffleWithSeed } from "@/lib/utils"
 import type { RoomWithMembersResponseDto } from "@/schemas/rooms"
