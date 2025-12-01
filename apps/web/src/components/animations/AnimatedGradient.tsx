@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 interface AnimatedGradientBackgroundProps {
   children?: ReactNode;
@@ -13,7 +14,7 @@ interface AnimatedGradientBackgroundProps {
 /**
  * AnimatedGradientBackground - Smooth animated gradient background
  * Optimized for performance with GPU-accelerated transforms
- * Reduced opacity and blur for better mobile performance
+ * Automatically reduces animations on mobile for better performance
  */
 export function AnimatedGradientBackground({
   children,
@@ -21,51 +22,57 @@ export function AnimatedGradientBackground({
   intensity = 'medium',
   speed = 'medium',
 }: AnimatedGradientBackgroundProps) {
-  // Intensity presets for opacity
+  const reduceMotion = useReducedMotion();
+
+  // Intensity presets for opacity - reduced on mobile
   const opacityMap = {
-    subtle: { primary: 0.15, secondary: 0.1 },
-    medium: { primary: 0.2, secondary: 0.15 },
-    strong: { primary: 0.3, secondary: 0.2 },
+    subtle: { primary: reduceMotion ? 0.1 : 0.15, secondary: reduceMotion ? 0.08 : 0.1 },
+    medium: { primary: reduceMotion ? 0.12 : 0.2, secondary: reduceMotion ? 0.1 : 0.15 },
+    strong: { primary: reduceMotion ? 0.18 : 0.3, secondary: reduceMotion ? 0.12 : 0.2 },
   };
 
-  // Speed presets in seconds
+  // Speed presets in seconds - slower on mobile for less CPU usage
   const speedMap = {
-    slow: 12,
-    medium: 8,
-    fast: 5,
+    slow: reduceMotion ? 20 : 12,
+    medium: reduceMotion ? 15 : 8,
+    fast: reduceMotion ? 10 : 5,
   };
 
   const opacity = opacityMap[intensity];
   const duration = speedMap[speed];
 
+  // Reduced blur on mobile for better performance
+  const blurAmount = reduceMotion ? '40px' : '60px';
+  const smallBlur = reduceMotion ? '30px' : '50px';
+
   return (
     <div className={`relative overflow-hidden ${className}`}>
       {/* Primary orb - top left */}
       <motion.div
-        className="absolute -top-1/3 -left-1/4 w-[500px] h-[500px] rounded-full will-change-transform"
+        className="absolute -top-1/3 -left-1/4 w-[300px] h-[300px] md:w-[500px] md:h-[500px] rounded-full will-change-transform"
         style={{
           background: `radial-gradient(circle, hsl(var(--primary) / ${opacity.primary}) 0%, transparent 70%)`,
-          filter: 'blur(60px)',
+          filter: `blur(${blurAmount})`,
         }}
-        animate={{
+        animate={reduceMotion ? undefined : {
           x: [0, 80, 0],
           y: [0, 40, 0],
         }}
         transition={{
           duration,
           repeat: Infinity,
-          ease: [0.45, 0, 0.55, 1], // Custom easing for smoother motion
+          ease: [0.45, 0, 0.55, 1],
         }}
       />
 
-      {/* Secondary orb - bottom right */}
+      {/* Secondary orb - bottom right - hidden on mobile for performance */}
       <motion.div
-        className="absolute -bottom-1/3 -right-1/4 w-[400px] h-[400px] rounded-full will-change-transform"
+        className="absolute -bottom-1/3 -right-1/4 w-[400px] h-[400px] md:block hidden rounded-full will-change-transform"
         style={{
           background: `radial-gradient(circle, hsl(var(--accent) / ${opacity.primary}) 0%, transparent 70%)`,
-          filter: 'blur(60px)',
+          filter: `blur(${blurAmount})`,
         }}
-        animate={{
+        animate={reduceMotion ? undefined : {
           x: [0, -60, 0],
           y: [0, -30, 0],
         }}
@@ -77,14 +84,14 @@ export function AnimatedGradientBackground({
         }}
       />
 
-      {/* Tertiary orb - center accent */}
+      {/* Tertiary orb - center accent - hidden on mobile */}
       <motion.div
-        className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[250px] h-[250px] rounded-full will-change-transform"
+        className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[250px] h-[250px] rounded-full will-change-transform hidden md:block"
         style={{
           background: `radial-gradient(circle, hsl(var(--primary) / ${opacity.secondary}) 0%, transparent 70%)`,
-          filter: 'blur(50px)',
+          filter: `blur(${smallBlur})`,
         }}
-        animate={{
+        animate={reduceMotion ? undefined : {
           x: [0, 40, -40, 0],
           opacity: [0.4, 0.7, 0.4],
         }}
