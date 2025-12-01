@@ -5,7 +5,7 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Users, Film, Sparkles, Heart, X, Zap, Shield, Globe, Star, Quote, CheckCircle2, Clock, Smartphone, Play } from "lucide-react"
-import { useSession } from "next-auth/react"
+import { useSession } from "@/lib/auth-client"
 import { useTranslations } from 'next-intl'
 import { PublicHeader } from "@/components/layout/PublicHeader"
 import { Footer } from "@/components/layout/Footer"
@@ -16,15 +16,15 @@ import { CountUp } from "@/components/animations/TextReveal"
 import { InteractiveSwipeDemo } from "@/components/demo/InteractiveSwipeDemo"
 
 export default function LandingPage() {
-  const { status } = useSession()
+  const { data: session, isPending } = useSession()
   const [showDemo, setShowDemo] = useState(false)
   const t = useTranslations('landing')
 
-  if (status === "loading") {
+  if (isPending) {
     return null
   }
 
-  const isAuthenticated = status === "authenticated"
+  const isAuthenticated = !!session
 
   return (
     <div className="min-h-screen bg-background overflow-hidden">

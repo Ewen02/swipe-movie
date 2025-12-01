@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { Providers } from "../providers"
-import { auth } from "@/lib/auth"
 import { Analytics } from "@vercel/analytics/react"
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
@@ -92,7 +91,6 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  const session = await auth()
   const messages = await getMessages();
 
   return (
@@ -101,7 +99,7 @@ export default async function LocaleLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
-          <Providers session={session}>{children}</Providers>
+          <Providers>{children}</Providers>
         </NextIntlClientProvider>
         <Analytics />
       </body>
