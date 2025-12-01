@@ -18,7 +18,7 @@ const intlMiddleware = createMiddleware({
 })
 
 // Public paths that don't require authentication
-const publicPaths = ['/', '/login', '/about', '/contact', '/privacy', '/terms', '/preview']
+const publicPaths = ['/', '/login', '/about', '/contact', '/privacy', '/terms', '/preview', '/pricing']
 
 function isPublicPath(pathname: string): boolean {
   // Remove locale prefix if present
