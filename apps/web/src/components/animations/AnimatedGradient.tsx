@@ -118,19 +118,23 @@ interface GradientBorderProps {
 
 /**
  * GradientBorder - Animated gradient border effect
+ * Respects user's reduced motion preference
  */
 export function GradientBorder({
   children,
   className = '',
   animated = true,
 }: GradientBorderProps) {
+  const reduceMotion = useReducedMotion();
+  const shouldAnimate = animated && !reduceMotion;
+
   return (
     <div className={`relative p-[2px] rounded-2xl ${className}`}>
       <motion.div
         className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary via-accent to-primary will-change-transform"
         style={{ backgroundSize: '200% 100%' }}
         animate={
-          animated
+          shouldAnimate
             ? { backgroundPosition: ['0% center', '200% center', '0% center'] }
             : undefined
         }
@@ -156,22 +160,27 @@ interface ShimmerEffectProps {
 /**
  * ShimmerEffect - Subtle shimmering highlight effect
  * Reduced intensity for a more elegant look
+ * Respects user's reduced motion preference
  */
 export function ShimmerEffect({ children, className = '', delay = 2 }: ShimmerEffectProps) {
+  const reduceMotion = useReducedMotion();
+
   return (
     <div className={`relative overflow-hidden rounded-lg ${className}`}>
       {children}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 pointer-events-none"
-        initial={{ x: '-100%' }}
-        animate={{ x: '200%' }}
-        transition={{
-          duration: 1.5,
-          repeat: Infinity,
-          repeatDelay: delay + 1,
-          ease: [0.4, 0, 0.2, 1],
-        }}
-      />
+      {!reduceMotion && (
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 pointer-events-none"
+          initial={{ x: '-100%' }}
+          animate={{ x: '200%' }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            repeatDelay: delay + 1,
+            ease: [0.4, 0, 0.2, 1],
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -213,6 +222,7 @@ interface GlowCardProps {
 /**
  * GlowCard - Card with animated gradient glow effect around it
  * Similar to Netwarm's pricing card effect
+ * Respects user's reduced motion preference
  */
 export function GlowCard({
   children,
@@ -221,6 +231,8 @@ export function GlowCard({
   intensity = 'medium',
   animated = true,
 }: GlowCardProps) {
+  const reduceMotion = useReducedMotion();
+
   const colorMap = {
     primary: 'hsl(var(--primary))',
     accent: 'hsl(var(--accent))',
@@ -237,6 +249,7 @@ export function GlowCard({
 
   const color = colorMap[glowColor];
   const { blur, opacity } = intensityMap[intensity];
+  const shouldAnimate = animated && !reduceMotion;
 
   return (
     <div className={`relative ${className}`}>
@@ -249,7 +262,7 @@ export function GlowCard({
           opacity,
         }}
         animate={
-          animated
+          shouldAnimate
             ? {
                 scale: [1, 1.05, 1],
                 opacity: [opacity, opacity * 1.2, opacity],
@@ -276,12 +289,15 @@ interface AnimatedBorderCardProps {
 
 /**
  * AnimatedBorderCard - Card with animated gradient border
+ * Respects user's reduced motion preference
  */
 export function AnimatedBorderCard({
   children,
   className = '',
   borderWidth = 2,
 }: AnimatedBorderCardProps) {
+  const reduceMotion = useReducedMotion();
+
   return (
     <div className={`relative p-[${borderWidth}px] rounded-2xl ${className}`}>
       <motion.div
@@ -290,7 +306,7 @@ export function AnimatedBorderCard({
           background: 'linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--primary)))',
           backgroundSize: '200% 100%',
         }}
-        animate={{
+        animate={reduceMotion ? undefined : {
           backgroundPosition: ['0% center', '200% center'],
         }}
         transition={{
