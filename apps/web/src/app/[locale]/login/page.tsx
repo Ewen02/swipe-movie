@@ -1,6 +1,6 @@
 "use client"
 
-import { signIn, useSession } from "next-auth/react"
+import { signIn, useSession } from "@/lib/auth-client"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState, Suspense } from "react"
 import Link from "next/link"
@@ -12,7 +12,7 @@ import { PublicHeader } from "@/components/layout/PublicHeader"
 
 function LoginPageContent() {
   const t = useTranslations('login')
-  const { status } = useSession()
+  const { data: session, isPending } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
@@ -20,22 +20,25 @@ function LoginPageContent() {
   const callbackUrl = searchParams.get("callbackUrl") || "/rooms"
 
   useEffect(() => {
-    if (status === "authenticated") {
+    if (session) {
       router.push(callbackUrl)
     }
-  }, [status, router, callbackUrl])
+  }, [session, router, callbackUrl])
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true)
     try {
-      await signIn("google", { callbackUrl })
+      await signIn.social({
+        provider: "google",
+        callbackURL: callbackUrl,
+      })
     } catch (error) {
       console.error("Sign in error:", error)
       setIsLoading(false)
     }
   }
 
-  if (status === "loading") {
+  if (isPending) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="text-center">
@@ -46,7 +49,7 @@ function LoginPageContent() {
     )
   }
 
-  if (status === "authenticated") {
+  if (session) {
     return null
   }
 

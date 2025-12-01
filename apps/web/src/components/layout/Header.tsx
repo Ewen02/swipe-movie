@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { useSession, signOut } from "next-auth/react"
+import { useSession, signOut } from "@/lib/auth-client"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import {
@@ -32,6 +32,11 @@ export function Header() {
   const { data: session } = useSession()
   const [showSignOutDialog, setShowSignOutDialog] = useState(false)
   const t = useTranslations()
+
+  const handleSignOut = async () => {
+    await signOut()
+    window.location.href = "/login"
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -103,7 +108,7 @@ export function Header() {
           <AlertDialogFooter>
             <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => signOut({ callbackUrl: "/login" })}
+              onClick={handleSignOut}
               className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
             >
               {t('auth.signOut')}

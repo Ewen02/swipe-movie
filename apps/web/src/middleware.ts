@@ -1,6 +1,6 @@
 import createMiddleware from 'next-intl/middleware'
 import { NextRequest, NextResponse } from 'next/server'
-import { getToken } from 'next-auth/jwt'
+import { getSessionCookie } from 'better-auth/cookies'
 import { locales, defaultLocale } from './i18n'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
@@ -35,9 +35,11 @@ export default async function middleware(req: NextRequest) {
 
   const pathname = req.nextUrl.pathname
 
-  // Check if user is authenticated
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
-  const isAuthenticated = Boolean(token?.email)
+  // Check if user is authenticated using Better Auth session cookie
+  const sessionCookie = getSessionCookie(req, {
+    cookiePrefix: "swipe-movie",
+  })
+  const isAuthenticated = Boolean(sessionCookie)
 
   // Check if path is public
   const isPublic = isPublicPath(pathname)
