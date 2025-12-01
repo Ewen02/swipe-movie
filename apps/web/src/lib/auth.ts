@@ -71,6 +71,11 @@ export const authOptions: NextAuthOptions = {
       },
     },
   },
+  pages: {
+    signIn: '/login',
+    error: '/login', // Redirect to login page on error
+    signOut: '/',
+  },
   callbacks: {
     async signIn({ user }) {
       try {
