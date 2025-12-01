@@ -1,22 +1,40 @@
-import { getSession } from "next-auth/react"
+import { getSession } from "@/lib/auth-client"
+import { getCachedEmail, setCachedEmail, clearSessionCache } from "@/lib/session-cache"
 
-import { auth } from "@/lib/auth"
-
-export async function apiFetch(input: string, init: RequestInit = {}) {
-  const headers = new Headers(init.headers)
-  let access: string | undefined
-
-  if (typeof window === "undefined") {
-    const session = await auth()
-    access = session?.accessToken
-  } else {
-    const session = await getSession()
-    access = session?.accessToken as string | undefined
+async function getCachedUserEmail(): Promise<string | undefined> {
+  // Return cached email if available
+  const cached = getCachedEmail()
+  if (cached) {
+    return cached
   }
 
-  if (access) headers.set("Authorization", `Bearer ${access}`)
+  try {
+    const session = await getSession()
+    const email = session?.data?.user?.email
 
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}${input}`, { ...init, headers })
+    if (email) {
+      setCachedEmail(email)
+    } else {
+      clearSessionCache()
+    }
+
+    return email
+  } catch (e) {
+    console.error("[api] Failed to get session:", e)
+    clearSessionCache()
+    return undefined
+  }
+}
+
+export async function apiFetch(input: string, init: RequestInit = {}) {
+  const reqHeaders = new Headers(init.headers)
+  const userEmail = await getCachedUserEmail()
+
+  if (userEmail) {
+    reqHeaders.set("X-User-Email", userEmail)
+  }
+
+  return fetch(`${process.env.NEXT_PUBLIC_API_URL}${input}`, { ...init, headers: reqHeaders })
 }
 
 // Helpers REST

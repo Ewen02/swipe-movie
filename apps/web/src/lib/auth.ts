@@ -1,6 +1,12 @@
-import NextAuth from "next-auth"
-import { getServerSession, type NextAuthOptions } from "next-auth"
-import Google from "next-auth/providers/google"
+import { betterAuth } from "better-auth"
+import { prismaAdapter } from "better-auth/adapters/prisma"
+import { nextCookies } from "better-auth/next-js"
+import { PrismaClient } from "@prisma/client"
+
+// Initialize Prisma client (singleton pattern for serverless)
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
+const prisma = globalForPrisma.prisma || new PrismaClient()
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
 
 /**
  * Fetch with retry logic for resilience against temporary network issues
@@ -27,140 +33,66 @@ async function fetchWithRetry(
   throw new Error('Max retries reached')
 }
 
-export const authOptions: NextAuthOptions = {
-  providers: [
-    Google({
+export const auth = betterAuth({
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  secret: process.env.BETTER_AUTH_SECRET,
+  database: prismaAdapter(prisma, {
+    provider: "postgresql",
+  }),
+  socialProviders: {
+    google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-  ],
+    },
+  },
   session: {
-    strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-    updateAge: 24 * 60 * 60, // Update session every 24 hours
-  },
-  jwt: {
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
-  cookies: {
-    sessionToken: {
-      name: `${process.env.NODE_ENV === 'production' ? '__Secure-' : ''}next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-      },
-    },
-    callbackUrl: {
-      name: `${process.env.NODE_ENV === 'production' ? '__Secure-' : ''}next-auth.callback-url`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-      },
-    },
-    csrfToken: {
-      name: `${process.env.NODE_ENV === 'production' ? '__Host-' : ''}next-auth.csrf-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-      },
+    expiresIn: 60 * 60 * 24 * 30, // 30 days
+    updateAge: 60 * 60 * 24, // 24 hours
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 5, // 5 minutes cache
     },
   },
-  pages: {
-    signIn: '/login',
-    error: '/login', // Redirect to login page on error
-    signOut: '/',
-  },
-  callbacks: {
-    async signIn({ user }) {
-      try {
-        const response = await fetchWithRetry(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/oauth-upsert`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: user.email, name: user.name ?? undefined }),
-          },
-          2 // 2 retries with exponential backoff
-        )
-
-        if (!response.ok) {
-          const text = await response.text()
-          console.error("oauth-upsert failed with status:", response.status, "body:", text)
-          // Allow sign in even if upsert fails (graceful degradation)
-          // The user will be created on next successful attempt
-          console.warn("Allowing sign in despite upsert failure for better UX")
-          return true
-        }
-
-        return true
-      } catch (e) {
-        console.error("oauth-upsert failed after retries", e)
-        // Allow sign in even if upsert fails (graceful degradation)
-        // This prevents blocking users due to temporary backend issues
-        console.warn("Allowing sign in despite upsert error for resilience")
-        return true
-      }
+  account: {
+    accountLinking: {
+      enabled: true,
     },
-    async jwt({ token, user }) {
-      if (user?.email) {
-        try {
-          const res = await fetchWithRetry(
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/login-oauth`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email: user.email }),
-            },
-            2 // 2 retries with exponential backoff
-          )
-
-          if (res.ok) {
-            const data = await res.json()
-            if (data?.accessToken) {
-              token.accessToken = data.accessToken
-            }
-          } else {
-            const text = await res.text()
-            console.error("login-oauth failed with status:", res.status, "body:", text)
+  },
+  advanced: {
+    cookiePrefix: "swipe-movie",
+    useSecureCookies: process.env.NODE_ENV === "production",
+  },
+  plugins: [nextCookies()],
+  // Callbacks to sync with backend API
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          // Sync user with backend API when a new user is created
+          try {
+            await fetchWithRetry(
+              `${process.env.NEXT_PUBLIC_API_URL}/auth/oauth-upsert`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  email: user.email,
+                  name: user.name ?? user.email?.split('@')[0] ?? 'User'
+                }),
+              },
+              2
+            )
+            console.log(`[WEB] [Better Auth] User synced with backend: ${user.email}`)
+          } catch (e) {
+            console.error("[WEB] [Better Auth] Failed to sync user with backend:", e)
+            // Don't block auth flow on backend sync failure
           }
-        } catch (e) {
-          console.error("login-oauth failed after retries", e)
-        }
-      }
-      return token
-    },
-    async session({ session, token }) {
-      if (typeof token.accessToken === "string") {
-        session.accessToken = token.accessToken
-
-        // Decode JWT to get user ID
-        try {
-          const base64Url = token.accessToken.split('.')[1]
-          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
-          const payload = JSON.parse(Buffer.from(base64, 'base64').toString())
-
-          if (session.user && payload.sub) {
-            session.user.id = payload.sub
-          }
-        } catch (e) {
-          console.error("Failed to decode JWT token", e)
-        }
-      } else {
-        session.accessToken = undefined
-      }
-      return session
+        },
+      },
     },
   },
-}
+})
 
-export const authHandler = NextAuth(authOptions)
-
-export function auth() {
-  return getServerSession(authOptions)
-}
+// Type exports for client usage
+export type Session = typeof auth.$Infer.Session
+export type User = typeof auth.$Infer.Session.user
