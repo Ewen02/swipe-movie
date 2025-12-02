@@ -31,7 +31,8 @@ function RoomPageContent() {
   const t = useTranslations('room')
   const tSwipe = useTranslations('swipe')
   const router = useRouter()
-  const { code } = useParams<{ code: string }>()
+  const params = useParams<{ code: string }>()
+  const code = params?.code ?? ""
   const { data: session } = useSession()
   const { toast } = useToast()
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
@@ -487,7 +488,8 @@ function RoomPageContent() {
 }
 
 export default function RoomPage() {
-  const { code } = useParams<{ code: string }>()
+  const params = useParams<{ code: string }>()
+  const code = params?.code ?? ""
 
   return (
     <RoomErrorBoundary roomId={code}>

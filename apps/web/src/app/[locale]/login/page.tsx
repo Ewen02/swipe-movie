@@ -17,7 +17,7 @@ function LoginPageContent() {
   const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
 
-  const callbackUrl = searchParams.get("callbackUrl") || "/rooms"
+  const callbackUrl = searchParams?.get("callbackUrl") || "/rooms"
 
   useEffect(() => {
     if (session) {

@@ -23,7 +23,7 @@ export function LanguageSelector() {
     if (newLocale === locale) return
 
     // Remove locale prefix from pathname to get the base path
-    const basePath = pathname.replace(/^\/(fr|en)/, '') || '/'
+    const basePath = (pathname ?? '/').replace(/^\/(fr|en)/, '') || '/'
 
     // Use transition for smooth navigation
     startTransition(async () => {
