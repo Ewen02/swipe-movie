@@ -42,7 +42,7 @@ function RoomsPageContent() {
   const [showJoinDialog, setShowJoinDialog] = useState(false)
 
   // Load user statistics
-  const userStats = useUserStats(rooms)
+  const userStats = useUserStats(rooms !== null && rooms.rooms.length > 0)
 
   // Onboarding tutorial
   const { showOnboarding, completeOnboarding, skipOnboarding } = useOnboarding()

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import { getUserStats } from "@/lib/api/swipes"
-import type { UserRoomsResponseDto } from "@/schemas/rooms"
+import { getUserStats, type UserStatsResponse } from "@/lib/api/swipes"
 
 interface UserStats {
   totalMatches: number
@@ -9,7 +8,7 @@ interface UserStats {
   loading: boolean
 }
 
-export function useUserStats(rooms: UserRoomsResponseDto | null): UserStats {
+export function useUserStats(hasRooms: boolean): UserStats {
   const [stats, setStats] = useState<UserStats>({
     totalMatches: 0,
     totalSwipesToday: 0,
@@ -22,7 +21,7 @@ export function useUserStats(rooms: UserRoomsResponseDto | null): UserStats {
   const loadingRef = useRef(false)
 
   useEffect(() => {
-    if (!rooms || rooms.rooms.length === 0) {
+    if (!hasRooms) {
       setStats({
         totalMatches: 0,
         totalSwipesToday: 0,
@@ -44,7 +43,7 @@ export function useUserStats(rooms: UserRoomsResponseDto | null): UserStats {
         setStats((prev) => ({ ...prev, loading: true }))
 
         // Single API call to get all stats
-        const data = await getUserStats()
+        const data: UserStatsResponse = await getUserStats()
 
         setStats({
           totalMatches: data.totalMatches,
@@ -67,7 +66,7 @@ export function useUserStats(rooms: UserRoomsResponseDto | null): UserStats {
     }
 
     loadStats()
-  }, [rooms])
+  }, [hasRooms])
 
   return stats
 }
