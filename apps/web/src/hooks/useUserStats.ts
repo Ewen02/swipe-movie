@@ -46,26 +46,27 @@ export function useUserStats(rooms: UserRoomsResponseDto | null): UserStats {
         // Load matches and swipes for all rooms with rate limiting
         const roomIds = rooms.rooms.map((r) => r.id)
 
-        // Limit concurrent requests to 3 at a time to avoid rate limits
-        const chunkSize = 3
+        // Limit to first 5 rooms to avoid rate limiting
+        // TODO: Create a backend endpoint that returns aggregated stats
+        const limitedRoomIds = roomIds.slice(0, 5)
         const matchesResults: any[] = []
         const swipesResults: any[] = []
 
-        for (let i = 0; i < roomIds.length; i += chunkSize) {
-          const chunk = roomIds.slice(i, i + chunkSize)
-
-          const [matchesChunk, swipesChunk] = await Promise.all([
-            Promise.all(chunk.map((id) => getMatchesByRoom(id).catch(() => []))),
-            Promise.all(chunk.map((id) => getMySwipesByRoom(id).catch(() => []))),
-          ])
-
-          matchesResults.push(...matchesChunk)
-          swipesResults.push(...swipesChunk)
-
-          // Add small delay between chunks to avoid rate limiting
-          if (i + chunkSize < roomIds.length) {
-            await new Promise(resolve => setTimeout(resolve, 100))
+        // Process one room at a time to avoid rate limits
+        for (const roomId of limitedRoomIds) {
+          try {
+            const [matches, swipes] = await Promise.all([
+              getMatchesByRoom(roomId).catch(() => []),
+              getMySwipesByRoom(roomId).catch(() => []),
+            ])
+            matchesResults.push(matches)
+            swipesResults.push(swipes)
+          } catch {
+            // Ignore errors for individual rooms
           }
+
+          // Small delay between rooms
+          await new Promise(resolve => setTimeout(resolve, 50))
         }
 
         // Calculate total matches (unique across all rooms)
