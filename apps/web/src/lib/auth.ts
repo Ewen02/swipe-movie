@@ -33,12 +33,28 @@ async function fetchWithRetry(
   throw new Error('Max retries reached')
 }
 
+// Get the base URL for Better Auth
+const getAuthBaseURL = () => {
+  if (process.env.BETTER_AUTH_URL) {
+    return process.env.BETTER_AUTH_URL
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
+  }
+  return "http://localhost:3000"
+}
+
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL: getAuthBaseURL(),
   secret: process.env.BETTER_AUTH_SECRET,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
+  trustedOrigins: [
+    "https://swipe-movie.com",
+    "https://www.swipe-movie.com",
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "",
+  ].filter(Boolean),
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
