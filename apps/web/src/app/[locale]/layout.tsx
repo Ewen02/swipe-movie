@@ -83,10 +83,8 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  // Await params in Next.js 15
   const { locale } = await params;
 
-  // Validate that the incoming `locale` parameter is valid
   if (!locales.includes(locale as any)) {
     notFound();
   }
@@ -95,9 +93,7 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NextIntlClientProvider messages={messages}>
           <Providers>{children}</Providers>
         </NextIntlClientProvider>

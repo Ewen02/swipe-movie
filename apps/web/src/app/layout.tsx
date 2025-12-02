@@ -1,5 +1,5 @@
-// This is the root layout - it only passes through to the [locale] layout
-// The actual layout configuration is in [locale]/layout.tsx
+// Root layout - passes through to [locale] layout
+// next-intl requires the [locale] layout to provide html/body
 export default function RootLayout({
   children,
 }: {

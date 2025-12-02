@@ -218,10 +218,21 @@
     "description": "Nous sommes désolés, quelque chose s'est mal passé",
     "retry": "Réessayer",
     "home": "Accueil",
+    "back": "Retour",
     "details": "Détails de l'erreur",
     "notFound": "Page non trouvée",
     "unauthorized": "Non autorisé",
-    "forbidden": "Accès interdit"
+    "forbidden": "Accès interdit",
+    "404": {
+      "badge": "Page non trouvée",
+      "title": "Page introuvable",
+      "description": "La page que vous recherchez n'existe pas ou a été déplacée."
+    },
+    "500": {
+      "badge": "Erreur serveur",
+      "title": "Une erreur est survenue",
+      "description": "Nous sommes désolés, quelque chose s'est mal passé."
+    }
   },
   "footer": {
     "madeWith": "Fait avec",

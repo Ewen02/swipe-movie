@@ -218,10 +218,21 @@
     "description": "We're sorry, something went wrong",
     "retry": "Retry",
     "home": "Home",
+    "back": "Back",
     "details": "Error details",
     "notFound": "Page not found",
     "unauthorized": "Unauthorized",
-    "forbidden": "Access forbidden"
+    "forbidden": "Access forbidden",
+    "404": {
+      "badge": "Page not found",
+      "title": "Page not found",
+      "description": "The page you're looking for doesn't exist or has been moved."
+    },
+    "500": {
+      "badge": "Server error",
+      "title": "An error occurred",
+      "description": "We're sorry, something went wrong."
+    }
   },
   "footer": {
     "madeWith": "Made with",
