@@ -160,6 +160,51 @@ export class SwipesService {
     return { deleted: true };
   }
 
+  async getUserStats(userId: string) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Get all user's rooms
+    const userRooms = await this.prisma.roomMember.findMany({
+      where: { userId },
+      select: { roomId: true },
+    });
+
+    const roomIds = userRooms.map((r) => r.roomId);
+
+    if (roomIds.length === 0) {
+      return {
+        totalMatches: 0,
+        totalSwipes: 0,
+        totalSwipesToday: 0,
+      };
+    }
+
+    // Count total matches across all user's rooms
+    const totalMatches = await this.prisma.match.count({
+      where: { roomId: { in: roomIds } },
+    });
+
+    // Count total swipes by user
+    const totalSwipes = await this.prisma.swipe.count({
+      where: { userId },
+    });
+
+    // Count swipes today
+    const totalSwipesToday = await this.prisma.swipe.count({
+      where: {
+        userId,
+        createdAt: { gte: today },
+      },
+    });
+
+    return {
+      totalMatches,
+      totalSwipes,
+      totalSwipesToday,
+    };
+  }
+
   async getRoomAnalytics(roomId: string, userId: string) {
     // Verify room exists and user is a member
     const room = await this.prisma.room.findUnique({

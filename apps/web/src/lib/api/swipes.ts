@@ -64,6 +64,21 @@ export async function getMySwipesByRoom(roomId: string): Promise<Swipe[]> {
 }
 
 /**
+ * Get user stats (matches, swipes) - single API call
+ */
+export async function getUserStats(): Promise<{
+  totalMatches: number
+  totalSwipes: number
+  totalSwipesToday: number
+}> {
+  const response = await GET("/swipes/stats")
+  if (!response.ok) {
+    throw new Error("Failed to get user stats")
+  }
+  return response.json()
+}
+
+/**
  * Get room analytics and statistics
  */
 export async function getRoomAnalytics(roomId: string) {
