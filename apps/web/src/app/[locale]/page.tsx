@@ -9,7 +9,6 @@ import { useSession } from "@/lib/auth-client"
 import { useTranslations } from 'next-intl'
 import { PublicHeader } from "@/components/layout/PublicHeader"
 import { Footer } from "@/components/layout/Footer"
-import { DemoDialog } from "@/components/demo/DemoDialog"
 import { ShimmerEffect } from "@/components/animations/AnimatedGradient"
 import { ScrollReveal } from "@/components/animations/ScrollAnimations"
 import { CountUp } from "@/components/animations/TextReveal"
@@ -17,7 +16,6 @@ import { InteractiveSwipeDemo } from "@/components/demo/InteractiveSwipeDemo"
 
 export default function LandingPage() {
   const { data: session, isPending } = useSession()
-  const [showDemo, setShowDemo] = useState(false)
   const t = useTranslations('landing')
 
   if (isPending) {
@@ -74,7 +72,7 @@ export default function LandingPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
                       >
-                        <span className="text-foreground">Swipe. Match. Watch. </span>
+                        <span className="text-foreground">Swipe, Match, Watch </span>
                         <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Together.</span>
                       </motion.h1>
 
@@ -101,15 +99,6 @@ export default function LandingPage() {
                             </Button>
                           </ShimmerEffect>
                         </Link>
-                        <Button
-                          size="lg"
-                          variant="outline"
-                          className="text-lg px-8 py-7 border-white/20 hover:bg-white/5"
-                          onClick={() => setShowDemo(true)}
-                        >
-                          <Play className="mr-2 h-5 w-5" />
-                          Voir la démo
-                        </Button>
                       </motion.div>
 
                       {/* Trust indicators */}
@@ -691,9 +680,6 @@ export default function LandingPage() {
 
       {/* Footer */}
       <Footer />
-
-      {/* Demo Dialog */}
-      <DemoDialog open={showDemo} onOpenChange={setShowDemo} />
     </div>
   )
 }

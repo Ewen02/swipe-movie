@@ -53,10 +53,10 @@ export default function PricingPage() {
         { text: 'Historique complet des swipes', included: true },
         { text: 'Statistiques détaillées', included: true },
       ],
-      cta: 'Essayer PRO',
+      cta: 'Passer à PRO',
       highlighted: true,
       badge: 'Le plus populaire',
-      comingSoon: true,
+      comingSoon: false,
       popular: true,
     },
   ]

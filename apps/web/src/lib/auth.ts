@@ -1,12 +1,20 @@
 import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
 import { nextCookies } from "better-auth/next-js"
+import { stripe } from "@better-auth/stripe"
+import Stripe from "stripe"
 import { PrismaClient } from "@prisma/client"
 
 // Initialize Prisma client (singleton pattern for serverless)
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 const prisma = globalForPrisma.prisma || new PrismaClient()
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
+
+// Initialize Stripe client (only if configured)
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY
+const stripeClient = stripeSecretKey && !stripeSecretKey.includes("your_stripe")
+  ? new Stripe(stripeSecretKey, { apiVersion: "2025-11-17.clover" })
+  : null
 
 /**
  * Fetch with retry logic for resilience against temporary network issues
@@ -78,7 +86,25 @@ export const auth = betterAuth({
     cookiePrefix: "swipe-movie",
     useSecureCookies: process.env.NODE_ENV === "production",
   },
-  plugins: [nextCookies()],
+  plugins: [
+    nextCookies(),
+    // Stripe plugin for subscription management
+    ...(stripeClient ? [stripe({
+      stripeClient,
+      stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
+      createCustomerOnSignUp: true,
+      subscription: {
+        enabled: true,
+        plans: [
+          {
+            name: "pro",
+            priceId: process.env.STRIPE_PRICE_PRO_MONTHLY!,
+            annualDiscountPriceId: process.env.STRIPE_PRICE_PRO_ANNUAL,
+          },
+        ],
+      },
+    })] : []),
+  ],
   // Callbacks to sync with backend API
   databaseHooks: {
     user: {

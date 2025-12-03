@@ -1,4 +1,5 @@
 import { createAuthClient } from "better-auth/react"
+import { stripeClient } from "@better-auth/stripe/client"
 import { clearSessionCache } from "@/lib/session-cache"
 
 // Use NEXT_PUBLIC_AUTH_URL if set, otherwise auto-detect from VERCEL_URL or fallback to localhost
@@ -17,6 +18,11 @@ const getBaseURL = () => {
 
 export const authClient = createAuthClient({
   baseURL: getBaseURL(),
+  plugins: [
+    stripeClient({
+      subscription: true,
+    }),
+  ],
 })
 
 // Wrap signOut to clear session cache
@@ -34,3 +40,6 @@ export const {
 } = authClient
 
 export const signOut = wrappedSignOut
+
+// Export subscription methods from stripe client
+export const subscription = authClient.subscription

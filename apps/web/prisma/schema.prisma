@@ -1,3 +1,4 @@
+
 enum RoomType {
   MOVIE
   TV
@@ -17,22 +18,24 @@ generator dbseed {
 }
 
 model User {
-  id            String        @id @default(cuid())
-  email         String        @unique
-  name          String?
-  emailVerified Boolean       @default(false)
-  image         String?
-  roles         String[]      @default([])
-  members       RoomMember[]
-  swipes        Swipe[]
-  subscription  Subscription?
-  sessions      Session[]
-  accounts      Account[]
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id               String         @id @default(cuid())
+  email            String         @unique
+  name             String?
+  emailVerified    Boolean        @default(false)
+  image            String?
+  roles            String[]       @default([])
+  stripeCustomerId String?        @unique
+  members          RoomMember[]
+  swipes           Swipe[]
+  subscriptions    Subscription[]
+  sessions         Session[]
+  accounts         Account[]
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
 }
 
 // Better Auth - Sessions table
+
 model Session {
   id        String   @id @default(cuid())
   userId    String
@@ -49,6 +52,7 @@ model Session {
 }
 
 // Better Auth - OAuth Accounts table
+
 model Account {
   id                    String    @id @default(cuid())
   userId                String
@@ -70,6 +74,7 @@ model Account {
 }
 
 // Better Auth - Email Verification table
+
 model Verification {
   id         String   @id @default(cuid())
   identifier String
@@ -82,23 +87,23 @@ model Verification {
 }
 
 model Room {
-  id        String       @id @default(cuid())
-  code      String       @unique
-  name      String       @default("Untitled Room")
-  capacity  Int          @default(10)
-  type        RoomType   @default(MOVIE)
-  genreId     Int        @default(0)
-  selectedTmdbId  Int?
+  id             String   @id @default(cuid())
+  code           String   @unique
+  name           String   @default("Untitled Room")
+  capacity       Int      @default(10)
+  type           RoomType @default(MOVIE)
+  genreId        Int      @default(0)
+  selectedTmdbId Int?
 
   // Advanced filters
-  minRating           Float?   // Note minimum (ex: 7.0)
-  releaseYearMin      Int?     // Année de sortie min (ex: 2020)
-  releaseYearMax      Int?     // Année de sortie max (ex: 2024)
-  runtimeMin          Int?     // Durée minimum en minutes
-  runtimeMax          Int?     // Durée maximum en minutes
-  watchProviders      Int[]    @default([]) // IDs des plateformes (Netflix=8, Prime=119, etc.)
-  watchRegion         String?  @default("FR") // Région pour les watch providers
-  originalLanguage    String?  // Langue originale (ex: "en", "fr", "ja")
+  minRating        Float? // Note minimum (ex: 7.0)
+  releaseYearMin   Int? // Année de sortie min (ex: 2020)
+  releaseYearMax   Int? // Année de sortie max (ex: 2024)
+  runtimeMin       Int? // Durée minimum en minutes
+  runtimeMax       Int? // Durée maximum en minutes
+  watchProviders   Int[]   @default([]) // IDs des plateformes (Netflix=8, Prime=119, etc.)
+  watchRegion      String? @default("FR") // Région pour les watch providers
+  originalLanguage String? // Langue originale (ex: "en", "fr", "ja")
 
   members   RoomMember[]
   matches   Match[]
@@ -129,7 +134,7 @@ model Swipe {
   value     Boolean
   createdAt DateTime @default(now())
 
-  user      User     @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   @@index([roomId])
   @@index([userId])
@@ -149,40 +154,27 @@ model Match {
   @@unique([roomId, movieId])
 }
 
-enum SubscriptionPlan {
-  FREE
-  STARTER
-  PRO
-  TEAM
-}
-
-enum SubscriptionStatus {
-  ACTIVE
-  CANCELED
-  PAST_DUE
-  TRIALING
-  INCOMPLETE
-}
-
+// Better Auth Stripe - Subscription table
 model Subscription {
-  id     String   @id @default(cuid())
-  userId String   @unique
-  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                   String    @id @default(cuid())
+  plan                 String    // Plan name (e.g., "pro", "free")
+  referenceId          String    // User ID or Organization ID
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  status               String    @default("incomplete")
+  periodStart          DateTime?
+  periodEnd            DateTime?
+  cancelAtPeriodEnd    Boolean   @default(false)
+  seats                Int?
+  trialStart           DateTime?
+  trialEnd             DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
-  // Stripe integration
-  stripeCustomerId       String?   @unique
-  stripeSubscriptionId   String?   @unique
-  stripePriceId          String?
-  stripeCurrentPeriodEnd DateTime?
+  // Relation to user
+  user User @relation(fields: [referenceId], references: [id], onDelete: Cascade)
 
-  // Subscription details
-  plan   SubscriptionPlan   @default(FREE)
-  status SubscriptionStatus @default(ACTIVE)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([userId])
+  @@index([referenceId])
   @@index([plan])
   @@index([status])
   @@index([stripeCustomerId])
