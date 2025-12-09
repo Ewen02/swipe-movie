@@ -5,19 +5,28 @@ import {
   Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../../infra/prisma.service';
-import { SubscriptionPlan, SubscriptionStatus } from '@prisma/client';
 import {
   CreateSubscriptionDto,
   UpdateSubscriptionDto,
   SubscriptionResponseDto,
   FeatureLimitsDto,
 } from './dto';
+import {
+  SubscriptionPlan,
+  SubscriptionStatus,
+  FEATURE_LIMITS,
+  isPlanHigherOrEqual,
+  type SubscriptionPlanType,
+  type SubscriptionStatusType,
+} from '@swipe-movie/subscription';
+
+// Re-export for backward compatibility
+export { SubscriptionPlan, SubscriptionStatus, type SubscriptionPlanType, type SubscriptionStatusType };
 
 /**
  * Subscription service handling subscription lifecycle and feature access
  *
- * Phase 1: No Stripe integration (FREE tier only)
- * Phase 2: Full Stripe integration with webhooks
+ * Uses Better Auth Stripe for subscription management
  */
 @Injectable()
 export class SubscriptionService {
@@ -28,58 +37,20 @@ export class SubscriptionService {
   /**
    * Get feature limits based on subscription plan
    */
-  getFeatureLimits(plan: SubscriptionPlan): FeatureLimitsDto {
-    const limits: Record<SubscriptionPlan, FeatureLimitsDto> = {
-      [SubscriptionPlan.FREE]: {
-        maxRooms: 3,
-        maxParticipants: 4,
-        maxSwipes: 20,
-        roomExpiryDays: 7,
-        hasAdvancedFilters: false,
-        hasEmailNotifications: false,
-        hasApiAccess: false,
-      },
-      [SubscriptionPlan.STARTER]: {
-        maxRooms: -1, // unlimited
-        maxParticipants: 8,
-        maxSwipes: 50,
-        roomExpiryDays: 30,
-        hasAdvancedFilters: false,
-        hasEmailNotifications: true,
-        hasApiAccess: false,
-      },
-      [SubscriptionPlan.PRO]: {
-        maxRooms: -1, // unlimited
-        maxParticipants: -1, // unlimited
-        maxSwipes: -1, // unlimited
-        roomExpiryDays: -1, // no expiry
-        hasAdvancedFilters: true,
-        hasEmailNotifications: true,
-        hasApiAccess: false,
-      },
-      [SubscriptionPlan.TEAM]: {
-        maxRooms: -1, // unlimited
-        maxParticipants: -1, // unlimited
-        maxSwipes: -1, // unlimited
-        roomExpiryDays: -1, // no expiry
-        hasAdvancedFilters: true,
-        hasEmailNotifications: true,
-        hasApiAccess: true,
-      },
-    };
-
-    return limits[plan];
+  getFeatureLimits(plan: string): FeatureLimitsDto {
+    const normalizedPlan = plan.toLowerCase() as SubscriptionPlanType;
+    // Use shared FEATURE_LIMITS from @swipe-movie/subscription
+    return FEATURE_LIMITS[normalizedPlan] || FEATURE_LIMITS[SubscriptionPlan.FREE];
   }
 
   /**
    * Create a new subscription for a user
-   * Phase 1: Only creates FREE subscriptions
    */
   async createSubscription(
     dto: CreateSubscriptionDto,
   ): Promise<SubscriptionResponseDto> {
-    const existingSubscription = await this.prisma.subscription.findUnique({
-      where: { userId: dto.userId },
+    const existingSubscription = await this.prisma.subscription.findFirst({
+      where: { referenceId: dto.userId },
     });
 
     if (existingSubscription) {
@@ -88,11 +59,10 @@ export class SubscriptionService {
 
     const subscription = await this.prisma.subscription.create({
       data: {
-        userId: dto.userId,
+        referenceId: dto.userId,
         plan: dto.plan,
         status: SubscriptionStatus.ACTIVE,
         stripeCustomerId: dto.stripeCustomerId,
-        stripePriceId: dto.stripePriceId,
       },
     });
 
@@ -100,22 +70,22 @@ export class SubscriptionService {
       `Created subscription for user ${dto.userId} with plan ${dto.plan}`,
     );
 
-    return subscription;
+    return this.mapToResponseDto(subscription);
   }
 
   /**
    * Get subscription by user ID
    */
   async getSubscription(userId: string): Promise<SubscriptionResponseDto> {
-    const subscription = await this.prisma.subscription.findUnique({
-      where: { userId },
+    const subscription = await this.prisma.subscription.findFirst({
+      where: { referenceId: userId },
     });
 
     if (!subscription) {
       throw new NotFoundException(`Subscription not found for user ${userId}`);
     }
 
-    return subscription;
+    return this.mapToResponseDto(subscription);
   }
 
   /**
@@ -124,14 +94,15 @@ export class SubscriptionService {
   async getSubscriptionOrNull(
     userId: string,
   ): Promise<SubscriptionResponseDto | null> {
-    return await this.prisma.subscription.findUnique({
-      where: { userId },
+    const subscription = await this.prisma.subscription.findFirst({
+      where: { referenceId: userId },
     });
+
+    return subscription ? this.mapToResponseDto(subscription) : null;
   }
 
   /**
    * Update subscription (plan change, status change, etc.)
-   * Phase 2: Will integrate with Stripe for upgrades/downgrades
    */
   async updateSubscription(
     userId: string,
@@ -141,17 +112,21 @@ export class SubscriptionService {
 
     const updated = await this.prisma.subscription.update({
       where: { id: subscription.id },
-      data: dto,
+      data: {
+        plan: dto.plan,
+        status: dto.status,
+        stripeCustomerId: dto.stripeCustomerId,
+        stripeSubscriptionId: dto.stripeSubscriptionId,
+      },
     });
 
     this.logger.log(`Updated subscription for user ${userId}`);
 
-    return updated;
+    return this.mapToResponseDto(updated);
   }
 
   /**
    * Cancel subscription
-   * Phase 2: Will cancel Stripe subscription
    */
   async cancelSubscription(userId: string): Promise<SubscriptionResponseDto> {
     const subscription = await this.getSubscription(userId);
@@ -160,12 +135,13 @@ export class SubscriptionService {
       where: { id: subscription.id },
       data: {
         status: SubscriptionStatus.CANCELED,
+        cancelAtPeriodEnd: true,
       },
     });
 
     this.logger.log(`Cancelled subscription for user ${userId}`);
 
-    return cancelled;
+    return this.mapToResponseDto(cancelled);
   }
 
   /**
@@ -224,7 +200,7 @@ export class SubscriptionService {
   /**
    * Get user's current plan
    */
-  async getUserPlan(userId: string): Promise<SubscriptionPlan> {
+  async getUserPlan(userId: string): Promise<string> {
     const subscription = await this.getSubscriptionOrNull(userId);
     return subscription?.plan || SubscriptionPlan.FREE;
   }
@@ -234,18 +210,42 @@ export class SubscriptionService {
    */
   async hasMinimumPlan(
     userId: string,
-    requiredPlan: SubscriptionPlan,
+    requiredPlan: string,
   ): Promise<boolean> {
     const userPlan = await this.getUserPlan(userId);
+    // Use shared isPlanHigherOrEqual from @swipe-movie/subscription
+    return isPlanHigherOrEqual(
+      userPlan.toLowerCase() as SubscriptionPlanType,
+      requiredPlan.toLowerCase() as SubscriptionPlanType,
+    );
+  }
 
-    // Plan hierarchy: FREE < STARTER < PRO < TEAM
-    const planHierarchy = {
-      [SubscriptionPlan.FREE]: 0,
-      [SubscriptionPlan.STARTER]: 1,
-      [SubscriptionPlan.PRO]: 2,
-      [SubscriptionPlan.TEAM]: 3,
+  /**
+   * Map Prisma subscription to response DTO
+   */
+  private mapToResponseDto(subscription: {
+    id: string;
+    plan: string;
+    referenceId: string;
+    status: string;
+    stripeCustomerId: string | null;
+    stripeSubscriptionId: string | null;
+    periodStart: Date | null;
+    periodEnd: Date | null;
+    createdAt: Date;
+    updatedAt: Date;
+  }): SubscriptionResponseDto {
+    return {
+      id: subscription.id,
+      userId: subscription.referenceId,
+      plan: subscription.plan,
+      status: subscription.status,
+      stripeCustomerId: subscription.stripeCustomerId,
+      stripeSubscriptionId: subscription.stripeSubscriptionId,
+      periodStart: subscription.periodStart,
+      periodEnd: subscription.periodEnd,
+      createdAt: subscription.createdAt,
+      updatedAt: subscription.updatedAt,
     };
-
-    return planHierarchy[userPlan] >= planHierarchy[requiredPlan];
   }
 }

@@ -12,7 +12,6 @@ import {
 import { SubscriptionService } from './subscription.service';
 import { CreateSubscriptionDto, UpdateSubscriptionDto } from './dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { SubscriptionPlan } from '@prisma/client';
 
 /**
  * Subscription controller
@@ -46,7 +45,7 @@ export class SubscriptionController {
    * Get feature limits for a specific plan
    */
   @Get('limits/:plan')
-  async getPlanLimits(@Param('plan') plan: SubscriptionPlan) {
+  async getPlanLimits(@Param('plan') plan: string) {
     return this.subscriptionService.getFeatureLimits(plan);
   }
 

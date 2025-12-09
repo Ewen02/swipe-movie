@@ -9,13 +9,10 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
+    "dev": "nest start --watch",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main",
-    "prisma": "prisma",
-    "prisma:generate": "prisma generate",
-    "prisma:studio": "prisma studio",
-    "migrate": "prisma migrate dev",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -36,9 +33,12 @@
     "@nestjs/swagger": "^11.2.0",
     "@nestjs/throttler": "^6.4.0",
     "@nestjs/websockets": "^11.1.6",
-    "@prisma/client": "^6.15.0",
+    "@prisma/client": "^6.8.2",
     "@sentry/nestjs": "^10.25.0",
     "@sentry/profiling-node": "^10.25.0",
+    "@swipe-movie/database": "workspace:*",
+    "@swipe-movie/subscription": "workspace:*",
+    "@swipe-movie/types": "workspace:*",
     "bcrypt": "^6.0.0",
     "cache-manager": "^7.2.4",
     "cache-manager-redis-yet": "^5.1.5",
@@ -50,10 +50,10 @@
     "passport": "^0.7.0",
     "passport-custom": "^1.1.1",
     "passport-jwt": "^4.0.1",
-    "prisma": "^6.15.0",
     "redis": "^5.9.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "socket.io": "^4.8.1",
     "stripe": "^20.0.0",
     "swagger-ui-express": "^5.0.1"
   },
@@ -101,6 +101,6 @@
     "testEnvironment": "node"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node ../../packages/database/prisma/seed.ts"
   }
 }

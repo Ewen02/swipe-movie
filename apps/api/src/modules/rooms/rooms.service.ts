@@ -22,7 +22,7 @@ import {
   MemberRoomsResponseDto,
 } from './dtos';
 
-import { RoomType } from '../../types/room-type';
+import { RoomType, type RoomTypeValue } from '@swipe-movie/types';
 
 import { generateRoomCode } from '../../common/utils/code';
 
@@ -44,7 +44,7 @@ export class RoomsService {
       name: room.name,
       code: room.code,
       genreId: room.genreId,
-      type: room.type as RoomType,
+      type: room.type as RoomTypeValue,
       createdBy: room.createdBy,
       createdAt: room.createdAt,
       watchProviders: room.watchProviders,
@@ -105,7 +105,7 @@ export class RoomsService {
           createdBy: userId,
           name: dto.name,
           genreId: dto.genreId,
-          type: dto.type.toUpperCase() as RoomType,
+          type: dto.type.toUpperCase() as RoomTypeValue,
           minRating: dto.minRating,
           releaseYearMin: dto.releaseYearMin,
           releaseYearMax: dto.releaseYearMax,

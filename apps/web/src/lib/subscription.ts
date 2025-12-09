@@ -1,122 +1,52 @@
 /**
  * Subscription utilities for client-side feature gating
- *
- * Phase 1: All users are on FREE tier
- * Phase 2: Fetch actual subscription from API
+ * Re-exports from shared @swipe-movie/subscription package
  */
 
-export enum SubscriptionPlan {
-  FREE = 'FREE',
-  STARTER = 'STARTER',
-  PRO = 'PRO',
-  TEAM = 'TEAM',
-}
+// Re-export everything from the shared package
+export {
+  SubscriptionPlan,
+  SubscriptionStatus,
+  FEATURE_LIMITS,
+  getFeatureLimits,
+  canPerformAction,
+  getRequiredPlan,
+  hasFeature,
+  checkLimit,
+  isPlanHigherOrEqual,
+  getUpgradeOptions,
+  type SubscriptionPlanType,
+  type SubscriptionStatusType,
+  type FeatureLimits,
+  type SubscriptionData,
+} from '@swipe-movie/subscription';
 
-export interface FeatureLimits {
-  maxRooms: number; // -1 = unlimited
-  maxParticipants: number;
-  maxSwipes: number;
-  roomExpiryDays: number; // -1 = no expiry
-  hasAdvancedFilters: boolean;
-  hasEmailNotifications: boolean;
-  hasApiAccess: boolean;
-}
-
-export const FEATURE_LIMITS: Record<SubscriptionPlan, FeatureLimits> = {
-  [SubscriptionPlan.FREE]: {
-    maxRooms: 3,
-    maxParticipants: 4,
-    maxSwipes: 20,
-    roomExpiryDays: 7,
-    hasAdvancedFilters: false,
-    hasEmailNotifications: false,
-    hasApiAccess: false,
-  },
-  [SubscriptionPlan.STARTER]: {
-    maxRooms: -1, // unlimited
-    maxParticipants: 8,
-    maxSwipes: 50,
-    roomExpiryDays: 30,
-    hasAdvancedFilters: false,
-    hasEmailNotifications: true,
-    hasApiAccess: false,
-  },
-  [SubscriptionPlan.PRO]: {
-    maxRooms: -1,
-    maxParticipants: -1,
-    maxSwipes: -1,
-    roomExpiryDays: -1,
-    hasAdvancedFilters: true,
-    hasEmailNotifications: true,
-    hasApiAccess: false,
-  },
-  [SubscriptionPlan.TEAM]: {
-    maxRooms: -1,
-    maxParticipants: -1,
-    maxSwipes: -1,
-    roomExpiryDays: -1,
-    hasAdvancedFilters: true,
-    hasEmailNotifications: true,
-    hasApiAccess: true,
-  },
-};
-
-/**
- * Get feature limits for a plan
- */
-export function getFeatureLimits(plan: SubscriptionPlan): FeatureLimits {
-  return FEATURE_LIMITS[plan];
-}
-
-/**
- * Check if user can perform action based on current count and limit
- */
-export function canPerformAction(
-  currentCount: number,
-  limit: number,
-): boolean {
-  if (limit === -1) return true; // unlimited
-  return currentCount < limit;
-}
-
-/**
- * Get minimum required plan for a feature
- */
-export function getRequiredPlan(
-  feature: keyof FeatureLimits,
-): SubscriptionPlan {
-  if (feature === 'hasAdvancedFilters' || feature === 'hasApiAccess') {
-    return SubscriptionPlan.PRO;
-  }
-  if (feature === 'hasEmailNotifications') {
-    return SubscriptionPlan.STARTER;
-  }
-  return SubscriptionPlan.PRO; // default for unlimited features
-}
+import { SubscriptionPlan, type SubscriptionPlanType } from '@swipe-movie/subscription';
 
 /**
  * Phase 1: Get current user plan (always FREE)
  * Phase 2: Replace with API call
  */
-export async function getCurrentPlan(): Promise<SubscriptionPlan> {
+export async function getCurrentPlan(): Promise<SubscriptionPlanType> {
   // TODO Phase 2: Fetch from /api/subscriptions/me
   return SubscriptionPlan.FREE;
 }
 
 /**
- * Check if user has reached limit and needs upgrade
+ * Legacy compatibility - Check if user has reached limit and needs upgrade
+ * @deprecated Use checkLimit from @swipe-movie/subscription directly
  */
-export async function checkLimit(
+export async function checkLimitAsync(
   limitType: 'maxRooms' | 'maxParticipants' | 'maxSwipes',
   currentCount: number,
-): Promise<{ allowed: boolean; limit: number; plan: SubscriptionPlan }> {
+): Promise<{ allowed: boolean; limit: number; plan: SubscriptionPlanType }> {
   const plan = await getCurrentPlan();
-  const limits = getFeatureLimits(plan);
-  const limit = limits[limitType];
+  const { checkLimit } = await import('@swipe-movie/subscription');
+  const result = checkLimit(plan, limitType, currentCount);
 
   return {
-    allowed: canPerformAction(currentCount, limit),
-    limit,
+    allowed: result.allowed,
+    limit: result.limit,
     plan,
   };
 }

@@ -1,16 +1,13 @@
-import { IsString, IsEnum, IsOptional } from 'class-validator';
-import { SubscriptionPlan } from '@prisma/client';
+import { IsString, IsIn, IsOptional } from 'class-validator';
+
+const VALID_PLANS = ['free', 'starter', 'pro', 'team'] as const;
 
 export class CreateSubscriptionDto {
   @IsString()
   userId!: string;
 
-  @IsEnum(SubscriptionPlan)
-  plan!: SubscriptionPlan;
-
-  @IsString()
-  @IsOptional()
-  stripePriceId?: string;
+  @IsIn(VALID_PLANS)
+  plan!: string;
 
   @IsString()
   @IsOptional()

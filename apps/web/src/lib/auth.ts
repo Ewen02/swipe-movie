@@ -3,12 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma"
 import { nextCookies } from "better-auth/next-js"
 import { stripe } from "@better-auth/stripe"
 import Stripe from "stripe"
-import { PrismaClient } from "@prisma/client"
-
-// Initialize Prisma client (singleton pattern for serverless)
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
-const prisma = globalForPrisma.prisma || new PrismaClient()
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
+import { prisma } from "@swipe-movie/database"
 
 // Initialize Stripe client (only if configured)
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY

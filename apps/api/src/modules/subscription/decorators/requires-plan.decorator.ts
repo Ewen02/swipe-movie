@@ -1,13 +1,12 @@
 import { SetMetadata } from '@nestjs/common';
-import { SubscriptionPlan } from '@prisma/client';
 
 /**
  * Decorator to specify minimum required subscription plan for a route
  *
  * Usage:
  * @UseGuards(SubscriptionGuard)
- * @RequiresPlan(SubscriptionPlan.PRO)
+ * @RequiresPlan('pro')
  * async someRoute() {}
  */
-export const RequiresPlan = (plan: SubscriptionPlan) =>
+export const RequiresPlan = (plan: string) =>
   SetMetadata('requiredPlan', plan);

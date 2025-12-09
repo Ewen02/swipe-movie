@@ -1,28 +1,29 @@
 {
   "name": "swipe-movie",
   "private": true,
-  "workspaces": [
-    "apps/*"
-  ],
+  "packageManager": "pnpm@9.15.0",
   "scripts": {
-    "dev:web": "npm --workspace apps/web run dev",
-    "storybook": "npm --workspace apps/web run storybook",
-    "dev:web:storybook": "concurrently -n WEB,STORYBOOK -c blue,magenta \"npm run dev:web\" \"npm --workspace apps/web run storybook\"",
-    "dev:api": "npm --workspace apps/api run start:dev",
-    "dev": "concurrently -n WEB,API -c blue,green \"npm run dev:web\" \"npm run dev:api\" \"npm run db:studio\"",
-    "postinstall": "npm -w apps/api run prisma:generate || true",
-    "db:migrate": "npm --workspace apps/api run migrate",
-    "db:studio": "npm --workspace apps/api run prisma:studio",
-    "db:generate": "npm --workspace apps/api run prisma:generate",
-    "db:reset": "npm --workspace apps/api run prisma migrate reset --force --skip-generate",
-    "dev:clean": "lsof -ti:3001 | xargs kill -9 2>/dev/null || true && npm run dev",
-    "test": "npm --workspace apps/web run test",
-    "test:ci": "npm --workspace apps/web run test:ci",
-    "test:e2e": "npm --workspace apps/web run test:e2e",
-    "test:e2e:ui": "npm --workspace apps/web run test:e2e:ui",
-    "test:e2e:debug": "npm --workspace apps/web run test:e2e:debug",
-    "build": "npm --workspace apps/web run build",
-    "lint": "npm --workspace apps/web run lint"
+    "dev": "turbo dev",
+    "dev:web": "turbo dev --filter=swipe-movie-web",
+    "dev:api": "turbo start:dev --filter=api",
+    "build": "turbo build",
+    "build:web": "turbo build --filter=swipe-movie-web",
+    "build:api": "turbo build --filter=api",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "test:ci": "pnpm --filter swipe-movie-web test:ci",
+    "test:e2e": "pnpm --filter swipe-movie-web test:e2e",
+    "test:e2e:ui": "pnpm --filter swipe-movie-web test:e2e:ui",
+    "test:e2e:debug": "pnpm --filter swipe-movie-web test:e2e:debug",
+    "storybook": "pnpm --filter swipe-movie-web storybook",
+    "db:generate": "pnpm --filter @swipe-movie/database db:generate",
+    "db:migrate": "pnpm --filter @swipe-movie/database db:migrate",
+    "db:push": "pnpm --filter @swipe-movie/database db:push",
+    "db:studio": "pnpm --filter @swipe-movie/database db:studio",
+    "db:reset": "pnpm --filter @swipe-movie/database prisma migrate reset --force --skip-generate",
+    "postinstall": "pnpm db:generate || true",
+    "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules",
+    "dev:clean": "lsof -ti:3001 | xargs kill -9 2>/dev/null || true && pnpm dev"
   },
   "devDependencies": {
     "@eslint/js": "^9.34.0",
@@ -36,6 +37,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "globals": "^16.3.0",
     "prettier": "^3.6.2",
+    "turbo": "^2.3.3",
     "typescript-eslint": "^8.41.0"
   },
   "dependencies": {

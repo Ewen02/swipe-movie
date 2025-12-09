@@ -5,7 +5,6 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { SubscriptionPlan } from '@prisma/client';
 import { SubscriptionService } from '../subscription.service';
 
 /**
@@ -13,7 +12,7 @@ import { SubscriptionService } from '../subscription.service';
  *
  * Usage:
  * @UseGuards(SubscriptionGuard)
- * @RequiresPlan(SubscriptionPlan.PRO)
+ * @RequiresPlan('pro')
  * async someRoute() {}
  */
 @Injectable()
@@ -24,7 +23,7 @@ export class SubscriptionGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredPlan = this.reflector.get<SubscriptionPlan>(
+    const requiredPlan = this.reflector.get<string>(
       'requiredPlan',
       context.getHandler(),
     );

@@ -5,12 +5,12 @@ import { locales, defaultLocale } from './i18n'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
 
-// Create i18n middleware with automatic locale detection
+// Create i18n proxy with automatic locale detection
 // Detects locale from:
 // 1. NEXT_LOCALE cookie (user preference)
 // 2. Accept-Language header (browser language)
 // 3. defaultLocale as fallback
-const intlMiddleware = createMiddleware({
+const intlProxy = createMiddleware({
   locales,
   defaultLocale,
   localePrefix: 'as-needed', // Don't show /fr in URL for default locale
@@ -26,11 +26,11 @@ function isPublicPath(pathname: string): boolean {
   return publicPaths.some(path => pathWithoutLocale === path || pathWithoutLocale.startsWith(path + '/'))
 }
 
-export default async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   if (isDevelopment) {
-    console.log('[middleware] request', req.nextUrl.pathname)
+    console.log('[proxy] request', req.nextUrl.pathname)
     const locale = req.cookies.get('NEXT_LOCALE')
-    console.log('[middleware] NEXT_LOCALE cookie:', locale?.value || 'not set')
+    console.log('[proxy] NEXT_LOCALE cookie:', locale?.value || 'not set')
   }
 
   const pathname = req.nextUrl.pathname
@@ -45,7 +45,7 @@ export default async function middleware(req: NextRequest) {
   const isPublic = isPublicPath(pathname)
 
   if (isDevelopment) {
-    console.log('[middleware] auth check', {
+    console.log('[proxy] auth check', {
       path: pathname,
       isPublic,
       isAuthenticated,
@@ -60,8 +60,8 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // Apply i18n middleware for all requests
-  return intlMiddleware(req)
+  // Apply i18n proxy for all requests
+  return intlProxy(req)
 }
 
 export const config = {

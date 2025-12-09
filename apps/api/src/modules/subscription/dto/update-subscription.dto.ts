@@ -1,14 +1,16 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { SubscriptionPlan, SubscriptionStatus } from '@prisma/client';
+import { IsIn, IsOptional, IsString } from 'class-validator';
+
+const VALID_PLANS = ['free', 'starter', 'pro', 'team'] as const;
+const VALID_STATUSES = ['active', 'canceled', 'past_due', 'trialing', 'incomplete'] as const;
 
 export class UpdateSubscriptionDto {
-  @IsEnum(SubscriptionPlan)
+  @IsIn(VALID_PLANS)
   @IsOptional()
-  plan?: SubscriptionPlan;
+  plan?: string;
 
-  @IsEnum(SubscriptionStatus)
+  @IsIn(VALID_STATUSES)
   @IsOptional()
-  status?: SubscriptionStatus;
+  status?: string;
 
   @IsString()
   @IsOptional()
@@ -16,5 +18,5 @@ export class UpdateSubscriptionDto {
 
   @IsString()
   @IsOptional()
-  stripePriceId?: string;
+  stripeCustomerId?: string;
 }

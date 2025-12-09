@@ -1,14 +1,12 @@
-import { SubscriptionPlan, SubscriptionStatus } from '@prisma/client';
-
 export class SubscriptionResponseDto {
   id!: string;
   userId!: string;
-  plan!: SubscriptionPlan;
-  status!: SubscriptionStatus;
+  plan!: string;
+  status!: string;
   stripeCustomerId!: string | null;
   stripeSubscriptionId!: string | null;
-  stripePriceId!: string | null;
-  stripeCurrentPeriodEnd!: Date | null;
+  periodStart!: Date | null;
+  periodEnd!: Date | null;
   createdAt!: Date;
   updatedAt!: Date;
 }

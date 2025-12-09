@@ -8,8 +8,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { StripeService } from './stripe.service';
-import { SubscriptionService } from './subscription.service';
-import { SubscriptionPlan, SubscriptionStatus } from '@prisma/client';
+import { SubscriptionService, SubscriptionPlan, SubscriptionStatus } from './subscription.service';
 import Stripe from 'stripe';
 
 /**
@@ -17,8 +16,8 @@ import Stripe from 'stripe';
  *
  * Handles Stripe webhook events for subscription lifecycle
  *
- * Phase 1: Configuration only
- * Phase 2: Active webhook processing
+ * Note: Better Auth handles webhooks on the Web app side.
+ * This controller is for direct API Stripe integration if needed.
  */
 @Controller('webhooks/stripe')
 export class StripeWebhookController {
@@ -113,7 +112,6 @@ export class StripeWebhookController {
       return;
     }
 
-    const customerId = session.customer as string;
     const subscriptionId = session.subscription as string;
 
     this.logger.log(
@@ -121,7 +119,6 @@ export class StripeWebhookController {
     );
 
     // Subscription will be updated via subscription.created event
-    // Just log for now
   }
 
   /**
@@ -149,14 +146,12 @@ export class StripeWebhookController {
         plan,
         status,
         stripeSubscriptionId: subscription.id,
-        stripePriceId: priceId,
       });
     } else {
       await this.subscriptionService.createSubscription({
         userId,
         plan,
         stripeCustomerId: customerId,
-        stripePriceId: priceId,
       });
     }
 
@@ -225,7 +220,7 @@ export class StripeWebhookController {
   /**
    * Map Stripe price ID to subscription plan
    */
-  private mapPriceIdToPlan(priceId: string): SubscriptionPlan {
+  private mapPriceIdToPlan(priceId: string): string {
     const priceIds = this.stripeService.getPriceIds();
 
     if (priceId === priceIds.starter) return SubscriptionPlan.STARTER;
@@ -238,7 +233,7 @@ export class StripeWebhookController {
   /**
    * Map Stripe subscription status to our status
    */
-  private mapStripeStatus(status: Stripe.Subscription.Status): SubscriptionStatus {
+  private mapStripeStatus(status: Stripe.Subscription.Status): string {
     switch (status) {
       case 'active':
         return SubscriptionStatus.ACTIVE;
