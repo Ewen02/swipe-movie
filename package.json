@@ -15,7 +15,7 @@
     "test:e2e": "pnpm --filter swipe-movie-web test:e2e",
     "test:e2e:ui": "pnpm --filter swipe-movie-web test:e2e:ui",
     "test:e2e:debug": "pnpm --filter swipe-movie-web test:e2e:debug",
-    "storybook": "pnpm --filter swipe-movie-web storybook",
+    "storybook": "pnpm --filter @swipe-movie/ui storybook",
     "db:generate": "pnpm --filter @swipe-movie/database db:generate",
     "db:migrate": "pnpm --filter @swipe-movie/database db:migrate",
     "db:push": "pnpm --filter @swipe-movie/database db:push",
