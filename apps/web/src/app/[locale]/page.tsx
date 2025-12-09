@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
+import { Button } from "@swipe-movie/ui"
 import { ArrowRight, Users, Film, Sparkles, Heart, X, Zap, Shield, Globe, Star, Quote, CheckCircle2, Clock, Smartphone, Play } from "lucide-react"
 import { useSession } from "@/lib/auth-client"
 import { useTranslations } from 'next-intl'

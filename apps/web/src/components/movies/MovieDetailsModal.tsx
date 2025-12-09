@@ -6,10 +6,10 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
+  Badge,
+  Button,
+  Skeleton,
+} from "@swipe-movie/ui"
 import { getMovieDetails } from "@/lib/api/movies"
 import type { MovieDetails } from "@/schemas/movies"
 import { Calendar, Clock, Star, Globe, Film, ExternalLink } from "lucide-react"

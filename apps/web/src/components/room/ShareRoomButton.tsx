@@ -1,18 +1,18 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import { Button } from "@/components/ui/button"
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+  Input,
+  Label,
+} from "@swipe-movie/ui"
 import { Share2, Copy, CheckCircle2, QrCode } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import QRCode from "react-qr-code"
 
 interface ShareRoomButtonProps {

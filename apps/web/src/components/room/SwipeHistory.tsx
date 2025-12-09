@@ -1,11 +1,15 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
+  Card,
+  CardContent,
+  Badge,
+  Button,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -14,7 +18,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+} from "@swipe-movie/ui"
 import { getMySwipesByRoom } from "@/lib/api/swipes"
 import { getBatchMovieDetails } from "@/lib/api/movies"
 import { ThumbsUp, ThumbsDown, Film, Undo2, RefreshCw, Loader2 } from "lucide-react"

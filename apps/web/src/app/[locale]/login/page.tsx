@@ -6,7 +6,7 @@ import { useEffect, useState, Suspense } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { useTranslations } from "next-intl"
-import { Button } from "@/components/ui/button"
+import { Button } from "@swipe-movie/ui"
 import { Film, Sparkles, Heart, X, CheckCircle2, Shield, Zap } from "lucide-react"
 import { PublicHeader } from "@/components/layout/PublicHeader"
 

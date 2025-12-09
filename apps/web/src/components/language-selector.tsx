@@ -9,7 +9,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@swipe-movie/ui'
 import { Globe } from 'lucide-react'
 import { useTransition } from 'react'
 import { setUserLocale } from '@/actions/locale'

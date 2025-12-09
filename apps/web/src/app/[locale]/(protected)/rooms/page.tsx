@@ -2,8 +2,7 @@
 
 import { lazy, Suspense } from "react"
 import { motion } from "framer-motion"
-import { CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { CardContent, Button } from "@swipe-movie/ui"
 import { RoomsList } from "@/components/room/RoomsList"
 import { RoomStatsHeader } from "@/components/room/RoomStatsHeader"
 import {

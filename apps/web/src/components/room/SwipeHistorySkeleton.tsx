@@ -1,5 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Card, CardContent, Skeleton } from "@swipe-movie/ui"
 
 export function SwipeHistorySkeleton() {
   return (

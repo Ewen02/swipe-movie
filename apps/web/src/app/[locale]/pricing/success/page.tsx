@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { CheckCircle, PartyPopper, ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@swipe-movie/ui'
 import { PublicHeader } from '@/components/layout/PublicHeader'
 import { Footer } from '@/components/layout/Footer'
 import Link from 'next/link'

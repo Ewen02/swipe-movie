@@ -3,8 +3,7 @@
 import React, { Component, ErrorInfo, ReactNode } from "react"
 import * as Sentry from "@sentry/nextjs"
 import { AlertTriangle, RefreshCw, Home } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@swipe-movie/ui"
 
 interface Props {
   children: ReactNode

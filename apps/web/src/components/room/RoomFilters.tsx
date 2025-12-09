@@ -1,16 +1,16 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
 import {
+  Label,
+  Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
+  Badge,
+} from "@swipe-movie/ui"
 import { X, Loader2 } from "lucide-react"
 import { getAllWatchProviders } from "@/lib/api/movies"
 import type { MovieWatchProvider } from "@/schemas/movies"

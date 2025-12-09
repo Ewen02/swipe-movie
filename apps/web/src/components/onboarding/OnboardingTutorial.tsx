@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Button, Card, CardContent } from "@swipe-movie/ui"
 import { X, ArrowRight, ArrowLeft, Check } from "lucide-react"
 import { useTranslations } from "next-intl"
 

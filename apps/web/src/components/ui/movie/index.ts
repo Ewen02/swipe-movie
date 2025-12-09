@@ -1,5 +1,10 @@
+// App-specific component
 export { ProviderList } from "./ProviderList"
-export { RatingBadge } from "./RatingBadge"
-export { VoteCountBadge } from "./VoteCountBadge"
-export { ReleaseDateBadge } from "./ReleaseDateBadge"
-export { AgreementBadge } from "./AgreementBadge"
+
+// Re-export movie badges from @swipe-movie/ui
+export {
+  RatingBadge,
+  VoteCountBadge,
+  ReleaseDateBadge,
+  AgreementBadge,
+} from "@swipe-movie/ui"

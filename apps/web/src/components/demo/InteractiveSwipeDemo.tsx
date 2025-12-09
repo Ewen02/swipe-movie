@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { Heart, X, Star, Clock, Film } from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, Badge } from '@swipe-movie/ui';
 
 interface DemoMovie {
   id: number;

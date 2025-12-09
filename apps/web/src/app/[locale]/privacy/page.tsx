@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent } from "@swipe-movie/ui"
 import { Shield, Lock, Eye, Trash2, Database } from "lucide-react"
 import { Footer } from "@/components/layout/Footer"
 import { PublicHeader } from "@/components/layout/PublicHeader"

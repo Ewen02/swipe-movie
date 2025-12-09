@@ -4,7 +4,7 @@ export { cn } from './utils/cn';
 // =============================================================================
 // HOOKS
 // =============================================================================
-export { useToast, type Toast, type ToastType } from './hooks/use-toast';
+export { useToast, type Toast as ToastData, type ToastType } from './hooks/use-toast';
 
 // =============================================================================
 // ATOMS - Basic building blocks
@@ -122,3 +122,15 @@ export {
 } from './organisms/form';
 export { Toast } from './organisms/toast';
 export { Toaster } from './organisms/toaster';
+export {
+  PricingCard,
+  type PricingCardProps,
+  type PricingFeature,
+} from './organisms/pricing-card';
+export {
+  UpgradeModal,
+  type UpgradeModalProps,
+  type UpgradeModalTranslations,
+  type UpgradeFeature,
+  type PlanTier,
+} from './organisms/upgrade-modal';

@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent, Badge, Button } from "@swipe-movie/ui"
 import { ExternalLink, RefreshCw } from "lucide-react"
 import { Match } from "@/schemas/swipes"
 import { MovieBasic } from "@/schemas/movies"

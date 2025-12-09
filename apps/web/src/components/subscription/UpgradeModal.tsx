@@ -7,8 +7,8 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+  Button,
+} from '@swipe-movie/ui';
 import { Crown, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 

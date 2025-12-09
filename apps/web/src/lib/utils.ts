@@ -1,9 +1,5 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
+// Re-export cn from the UI package for convenience
+export { cn } from "@swipe-movie/ui"
 
 /**
  * Seeded random number generator for consistent shuffling per user

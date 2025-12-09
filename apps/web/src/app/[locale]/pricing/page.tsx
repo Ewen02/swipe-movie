@@ -7,13 +7,13 @@ import { motion } from 'framer-motion'
 import { Check, HelpCircle, Zap } from 'lucide-react'
 import { PublicHeader } from '@/components/layout/PublicHeader'
 import { Footer } from '@/components/layout/Footer'
-import { Badge } from '@/components/ui/badge'
 import {
+  Badge,
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
+} from "@swipe-movie/ui"
 
 export default function PricingPage() {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly')

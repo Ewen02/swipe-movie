@@ -1,20 +1,19 @@
 "use client"
 
 import { createContext, useContext, ReactNode } from "react"
-import { useToast as useToastHook } from "@/hooks/use-toast"
-import { Toaster } from "@/components/ui/toaster"
+import { useToast as useToastHook, Toaster } from "@swipe-movie/ui"
 
 type ToastContextType = ReturnType<typeof useToastHook>
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined)
 
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const toast = useToastHook()
+  const toastState = useToastHook()
 
   return (
-    <ToastContext.Provider value={toast}>
+    <ToastContext.Provider value={toastState}>
       {children}
-      <Toaster />
+      <Toaster toasts={toastState.toasts} dismiss={toastState.dismiss} />
     </ToastContext.Provider>
   )
 }

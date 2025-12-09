@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
+import { Button } from "@swipe-movie/ui"
 import { Heart, Users, Film, Sparkles, ArrowRight } from "lucide-react"
 import { Footer } from "@/components/layout/Footer"
 import { PublicHeader } from "@/components/layout/PublicHeader"

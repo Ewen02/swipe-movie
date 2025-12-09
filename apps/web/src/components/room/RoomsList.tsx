@@ -1,8 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Badge, Button } from "@swipe-movie/ui"
 import { useRouter } from "next/navigation"
 import type { UserRoomsResponseDto } from "@/schemas/rooms"
 import { Film, Tv, ArrowRight, Calendar, Sparkles } from "lucide-react"

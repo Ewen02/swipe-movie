@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl"
 import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
+import { Button } from "@swipe-movie/ui"
 import { Film, Users, Heart, TrendingUp, Plus, Sparkles } from "lucide-react"
 import { fadeInUp, staggerContainer } from "@/lib/animations"
 

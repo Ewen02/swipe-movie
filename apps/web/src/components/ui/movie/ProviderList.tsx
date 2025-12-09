@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/badge"
+import { Badge } from "@swipe-movie/ui"
 import { getProvidersByIds } from "@/lib/constants/providers"
 
 type ProviderVariant = "card" | "match" | "topMatch"

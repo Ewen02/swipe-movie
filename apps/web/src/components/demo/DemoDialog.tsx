@@ -7,10 +7,11 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+  Button,
+  Card,
+  CardContent,
+  Badge,
+} from "@swipe-movie/ui"
 import { Heart, X, Star, Film, RotateCcw, Sparkles } from "lucide-react"
 import Image from "next/image"
 import { fadeInUp, staggerContainer } from "@/lib/animations"

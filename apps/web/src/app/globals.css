@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Include UI package source files for Tailwind to scan */
+@source "../../../../packages/ui/src";
+
 @plugin "tailwindcss-animate";
 @import "tw-animate-css";
 
