@@ -31,6 +31,7 @@
     "rooms": "Mes Rooms",
     "profile": "Profil",
     "settings": "Paramètres",
+    "subscription": "Abonnement",
     "about": "À propos",
     "contact": "Contact",
     "privacy": "Confidentialité",
@@ -198,7 +199,11 @@
     "loading": "Chargement des films...",
     "rating": "Note",
     "votes": "{count} votes",
-    "releaseDate": "Sortie"
+    "releaseDate": "Sortie",
+    "limitReached": "Limite de swipes atteinte",
+    "limitReachedDescription": "Vous avez atteint la limite de swipes pour cette room. Passez à un plan supérieur pour continuer.",
+    "swipeError": "Erreur lors du swipe",
+    "swipeErrorDescription": "Une erreur est survenue lors de l'enregistrement de votre choix."
   },
   "match": {
     "title": "C'est un match !",
@@ -617,6 +622,36 @@
       "q3": {
         "question": "Mes informations de paiement sont-elles sécurisées ?",
         "answer": "Oui, nous utilisons Stripe pour le traitement des paiements, qui est conforme PCI-DSS et utilisé par des millions d'entreprises dans le monde. Nous ne stockons jamais vos informations de carte bancaire sur nos serveurs."
+      }
+    }
+  },
+  "dashboard": {
+    "subscription": {
+      "title": "Mon abonnement",
+      "subtitle": "Gérez votre abonnement et consultez votre utilisation",
+      "backToRooms": "Retour aux rooms",
+      "currentPlan": "Forfait actuel",
+      "renewsOn": "Renouvellement le {date}",
+      "upgrade": "Passer au niveau supérieur",
+      "usage": {
+        "title": "Utilisation",
+        "rooms": "Rooms actives",
+        "swipesPerRoom": "Swipes par room",
+        "participantsPerRoom": "Participants par room",
+        "unlimited": "Illimité"
+      },
+      "features": {
+        "title": "Fonctionnalités",
+        "advancedFilters": "Filtres avancés",
+        "emailNotifications": "Notifications par email",
+        "apiAccess": "Accès API",
+        "roomExpiry": "Expiration des rooms: {days} jours",
+        "unlimited": "illimité"
+      },
+      "upgradeCta": {
+        "title": "Débloquez plus de fonctionnalités",
+        "description": "Passez à un forfait supérieur pour profiter de rooms illimitées, plus de participants et des filtres avancés.",
+        "button": "Voir les forfaits"
       }
     }
   },

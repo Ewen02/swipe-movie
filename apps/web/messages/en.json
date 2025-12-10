@@ -31,6 +31,7 @@
     "rooms": "My Rooms",
     "profile": "Profile",
     "settings": "Settings",
+    "subscription": "Subscription",
     "about": "About",
     "contact": "Contact",
     "privacy": "Privacy",
@@ -198,7 +199,11 @@
     "loading": "Loading movies...",
     "rating": "Rating",
     "votes": "{count} votes",
-    "releaseDate": "Release"
+    "releaseDate": "Release",
+    "limitReached": "Swipe limit reached",
+    "limitReachedDescription": "You have reached the swipe limit for this room. Upgrade your plan to continue.",
+    "swipeError": "Swipe error",
+    "swipeErrorDescription": "An error occurred while saving your choice."
   },
   "match": {
     "title": "It's a match!",
@@ -617,6 +622,36 @@
       "q3": {
         "question": "Is my payment information secure?",
         "answer": "Yes, we use Stripe for payment processing, which is PCI-DSS compliant and trusted by millions of businesses worldwide. We never store your credit card information on our servers."
+      }
+    }
+  },
+  "dashboard": {
+    "subscription": {
+      "title": "My Subscription",
+      "subtitle": "Manage your subscription and view your usage",
+      "backToRooms": "Back to rooms",
+      "currentPlan": "Current Plan",
+      "renewsOn": "Renews on {date}",
+      "upgrade": "Upgrade",
+      "usage": {
+        "title": "Usage",
+        "rooms": "Active rooms",
+        "swipesPerRoom": "Swipes per room",
+        "participantsPerRoom": "Participants per room",
+        "unlimited": "Unlimited"
+      },
+      "features": {
+        "title": "Features",
+        "advancedFilters": "Advanced filters",
+        "emailNotifications": "Email notifications",
+        "apiAccess": "API access",
+        "roomExpiry": "Room expiry: {days} days",
+        "unlimited": "unlimited"
+      },
+      "upgradeCta": {
+        "title": "Unlock more features",
+        "description": "Upgrade to a higher plan for unlimited rooms, more participants, and advanced filters.",
+        "button": "View plans"
       }
     }
   },
