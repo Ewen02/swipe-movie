@@ -8,6 +8,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../../infra/prisma.service';
+import { SubscriptionService } from '../subscription/subscription.service';
 import {
   PaginationQueryDto,
   PaginatedResponseDto,
@@ -30,7 +31,10 @@ import { generateRoomCode } from '../../common/utils/code';
 export class RoomsService {
   private readonly logger = new Logger(RoomsService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private subscriptionService: SubscriptionService,
+  ) {}
 
   /**
    * Maps a room object to a response DTO with optional fields
@@ -87,6 +91,31 @@ export class RoomsService {
     dto: CreateRoomDto,
   ): Promise<RoomCreateResponseDto> {
     this.logger.log(`Creating room for user ${userId}`);
+
+    // Check room creation limit based on subscription
+    const roomsCount = await this.prisma.room.count({
+      where: { createdBy: userId, deletedAt: null },
+    });
+
+    const { allowed, limit } = await this.subscriptionService.checkLimit(
+      userId,
+      'maxRooms',
+      roomsCount,
+    );
+
+    if (!allowed) {
+      this.logger.warn(
+        `User ${userId} reached room limit (${limit}). Current: ${roomsCount}`,
+      );
+      throw new ForbiddenException({
+        message: `Room limit reached. You can create up to ${limit} rooms on your current plan.`,
+        code: 'ROOM_LIMIT_REACHED',
+        limit,
+        current: roomsCount,
+        upgradeRequired: true,
+      });
+    }
+
     return this.prisma.$transaction(async (tx) => {
       // Verify user exists, if not throw an error
       const user = await tx.user.findUnique({
@@ -153,8 +182,30 @@ export class RoomsService {
     if (!room) throw new NotFoundException('Room not found');
     if (room.deletedAt)
       throw new HttpException('Room is no longer active', HttpStatus.GONE);
-    if (room.members.length >= room.capacity)
-      throw new ForbiddenException('Room is full');
+
+    // Check if user is already a member (no need to check limits)
+    const isAlreadyMember = room.members.some((m) => m.userId === userId);
+    if (!isAlreadyMember) {
+      // Check participant limit based on room creator's subscription
+      const { allowed, limit } = await this.subscriptionService.checkLimit(
+        room.createdBy,
+        'maxParticipants',
+        room.members.length,
+      );
+
+      if (!allowed) {
+        this.logger.warn(
+          `Room ${room.id} reached participant limit (${limit}). Current: ${room.members.length}`,
+        );
+        throw new ForbiddenException({
+          message: `This room has reached the maximum number of participants (${limit}) allowed by the room creator's plan.`,
+          code: 'PARTICIPANT_LIMIT_REACHED',
+          limit,
+          current: room.members.length,
+          upgradeRequired: true,
+        });
+      }
+    }
 
     await this.prisma.roomMember.upsert({
       where: { roomId_userId: { roomId: room.id, userId } },

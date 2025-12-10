@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../../infra/prisma.service';
 import { MatchesService } from '../matches/matches.service';
+import { SubscriptionService } from '../subscription/subscription.service';
 
 import { ResponseSwipeDto, ResponseCreateSwipeDto } from './dtos';
 
@@ -9,6 +10,8 @@ export class SwipesService {
   constructor(
     private prisma: PrismaService,
     private matchesService: MatchesService,
+    @Inject(forwardRef(() => SubscriptionService))
+    private subscriptionService: SubscriptionService,
   ) {}
 
   async create(
@@ -24,6 +27,36 @@ export class SwipesService {
 
     if (!member) {
       throw new ForbiddenException('You are not a member of this room');
+    }
+
+    // Check if this is a new swipe (not an update) before checking limits
+    const existingSwipe = await this.prisma.swipe.findUnique({
+      where: {
+        userId_roomId_movieId: { userId, roomId, movieId },
+      },
+    });
+
+    // Only check swipe limit for new swipes, not updates
+    if (!existingSwipe) {
+      const swipesCount = await this.prisma.swipe.count({
+        where: { userId, roomId },
+      });
+
+      const { allowed, limit } = await this.subscriptionService.checkLimit(
+        userId,
+        'maxSwipes',
+        swipesCount,
+      );
+
+      if (!allowed) {
+        throw new ForbiddenException({
+          message: `Swipe limit reached. You can make up to ${limit} swipes per room on your current plan.`,
+          code: 'SWIPE_LIMIT_REACHED',
+          limit,
+          current: swipesCount,
+          upgradeRequired: true,
+        });
+      }
     }
 
     const swipe = await this.prisma.swipe.upsert({
