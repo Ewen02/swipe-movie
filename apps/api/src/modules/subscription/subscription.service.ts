@@ -4,6 +4,7 @@ import {
   BadRequestException,
   Logger,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../infra/prisma.service';
 import {
   CreateSubscriptionDto,
@@ -32,7 +33,10 @@ export { SubscriptionPlan, SubscriptionStatus, type SubscriptionPlanType, type S
 export class SubscriptionService {
   private readonly logger = new Logger(SubscriptionService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly configService: ConfigService,
+  ) {}
 
   /**
    * Get feature limits based on subscription plan
@@ -181,6 +185,13 @@ export class SubscriptionService {
     limitType: 'maxRooms' | 'maxParticipants' | 'maxSwipes',
     currentCount: number,
   ): Promise<{ allowed: boolean; limit: number }> {
+    // Feature flag: if disabled, always allow (PMF testing phase)
+    const limitsEnabled =
+      this.configService.get('ENABLE_SUBSCRIPTION_LIMITS', 'false') === 'true';
+    if (!limitsEnabled) {
+      return { allowed: true, limit: -1 };
+    }
+
     const subscription = await this.getSubscriptionOrNull(userId);
     const plan = subscription?.plan || SubscriptionPlan.FREE;
     const limits = this.getFeatureLimits(plan);
@@ -218,6 +229,70 @@ export class SubscriptionService {
       userPlan.toLowerCase() as SubscriptionPlanType,
       requiredPlan.toLowerCase() as SubscriptionPlanType,
     );
+  }
+
+  /**
+   * Get user's usage statistics for subscription dashboard
+   */
+  async getUsageStats(userId: string) {
+    // Count user's active rooms (rooms they created that are not deleted)
+    const activeRoomsCount = await this.prisma.room.count({
+      where: {
+        createdBy: userId,
+        deletedAt: null,
+      },
+    });
+
+    // Get rooms user is member of
+    const userRooms = await this.prisma.roomMember.findMany({
+      where: { userId },
+      select: { roomId: true },
+    });
+    const roomIds = userRooms.map((r) => r.roomId);
+
+    // For swipes per room - count swipes grouped by room
+    let maxSwipesInRoom = 0;
+    if (roomIds.length > 0) {
+      const swipesByRoom = await this.prisma.swipe.groupBy({
+        by: ['roomId'],
+        where: {
+          userId,
+          roomId: { in: roomIds },
+        },
+        _count: { id: true },
+      });
+
+      maxSwipesInRoom = swipesByRoom.reduce(
+        (max, room) => Math.max(max, room._count.id),
+        0,
+      );
+    }
+
+    // For participants - get the maximum members in any room the user created
+    const userRoomsWithMembers = await this.prisma.room.findMany({
+      where: {
+        createdBy: userId,
+        deletedAt: null,
+      },
+      select: {
+        _count: {
+          select: {
+            members: true,
+          },
+        },
+      },
+    });
+
+    const maxParticipantsInRoom = userRoomsWithMembers.reduce(
+      (max, room) => Math.max(max, room._count.members),
+      0,
+    );
+
+    return {
+      activeRooms: activeRoomsCount,
+      maxSwipesInRoom,
+      maxParticipantsInRoom,
+    };
   }
 
   /**

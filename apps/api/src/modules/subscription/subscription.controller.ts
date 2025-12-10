@@ -8,8 +8,11 @@ import {
   Param,
   UseGuards,
   Request,
+  BadRequestException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { SubscriptionService } from './subscription.service';
+import { StripeService } from './stripe.service';
 import { CreateSubscriptionDto, UpdateSubscriptionDto } from './dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -22,7 +25,11 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 @Controller('subscriptions')
 @UseGuards(JwtAuthGuard)
 export class SubscriptionController {
-  constructor(private readonly subscriptionService: SubscriptionService) {}
+  constructor(
+    private readonly subscriptionService: SubscriptionService,
+    private readonly stripeService: StripeService,
+    private readonly configService: ConfigService,
+  ) {}
 
   /**
    * Get current user's subscription
@@ -39,6 +46,44 @@ export class SubscriptionController {
   async getMyLimits(@Request() req: any) {
     const plan = await this.subscriptionService.getUserPlan(req.user.id);
     return this.subscriptionService.getFeatureLimits(plan);
+  }
+
+  /**
+   * Get current user's usage statistics
+   */
+  @Get('me/usage')
+  async getMyUsage(@Request() req: any) {
+    return await this.subscriptionService.getUsageStats(req.user.id);
+  }
+
+  /**
+   * Create Stripe Customer Portal session
+   * Allows users to manage their subscription (cancel, update payment, etc.)
+   */
+  @Post('portal')
+  async createPortalSession(@Request() req: any) {
+    const subscription = await this.subscriptionService.getSubscriptionOrNull(
+      req.user.id,
+    );
+
+    if (!subscription?.stripeCustomerId) {
+      throw new BadRequestException(
+        'No Stripe customer found. You need an active paid subscription to access the portal.',
+      );
+    }
+
+    const frontendUrl = this.configService.get<string>(
+      'FRONTEND_URL',
+      'http://localhost:3000',
+    );
+    const returnUrl = `${frontendUrl}/dashboard/subscription`;
+
+    const portalUrl = await this.stripeService.createPortalSession({
+      customerId: subscription.stripeCustomerId,
+      returnUrl,
+    });
+
+    return { url: portalUrl };
   }
 
   /**
