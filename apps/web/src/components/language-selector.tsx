@@ -9,15 +9,22 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Skeleton,
 } from '@swipe-movie/ui'
 import { Globe } from 'lucide-react'
-import { useTransition } from 'react'
+import { useTransition, useState, useEffect } from 'react'
 import { setUserLocale } from '@/actions/locale'
 
 export function LanguageSelector() {
   const locale = useLocale()
   const [, startTransition] = useTransition()
   const pathname = useNextPathname()
+  const [mounted, setMounted] = useState(false)
+
+  // Prevent hydration mismatch by only rendering after mount
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleLocaleChange = (newLocale: string) => {
     if (newLocale === locale) return
@@ -29,6 +36,15 @@ export function LanguageSelector() {
     startTransition(async () => {
       await setUserLocale(newLocale, basePath)
     })
+  }
+
+  // Prevent hydration mismatch - show skeleton until client-side mounted
+  if (!mounted) {
+    return (
+      <div className="flex items-center gap-2">
+        <Skeleton className="h-9 w-[140px]" />
+      </div>
+    )
   }
 
   return (

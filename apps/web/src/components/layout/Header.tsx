@@ -24,7 +24,7 @@ import {
 } from "@swipe-movie/ui"
 import { ThemeToggle } from "@/components/layout/ThemeToggle"
 import { LanguageSelector } from "@/components/language-selector"
-import { User, LogOut, Film } from "lucide-react"
+import { User, LogOut, Film, CreditCard } from "lucide-react"
 
 export function Header() {
   const { data: session } = useSession()
@@ -57,6 +57,15 @@ export function Header() {
             <ThemeToggle />
 
             {session?.user && (
+              <Button variant="outline" size="sm" asChild className="gap-2">
+                <Link href="/dashboard/subscription">
+                  <CreditCard className="h-4 w-4" />
+                  <span className="hidden sm:inline">{t('nav.subscription')}</span>
+                </Link>
+              </Button>
+            )}
+
+            {session?.user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="icon" className="relative">
@@ -77,6 +86,12 @@ export function Header() {
                     <Link href="/rooms" className="cursor-pointer">
                       <Film className="mr-2 h-4 w-4" />
                       {t('nav.rooms')}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard/subscription" className="cursor-pointer">
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      {t('nav.subscription')}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
