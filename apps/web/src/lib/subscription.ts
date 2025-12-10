@@ -24,12 +24,36 @@ export {
 import { SubscriptionPlan, type SubscriptionPlanType } from '@swipe-movie/subscription';
 
 /**
- * Phase 1: Get current user plan (always FREE)
- * Phase 2: Replace with API call
+ * Get current user's subscription plan from the API
+ * Returns FREE if no subscription exists or on error
  */
 export async function getCurrentPlan(): Promise<SubscriptionPlanType> {
-  // TODO Phase 2: Fetch from /api/subscriptions/me
-  return SubscriptionPlan.FREE;
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subscriptions/me`, {
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      // 404 means no subscription - return FREE tier
+      if (response.status === 404) {
+        return SubscriptionPlan.FREE;
+      }
+      throw new Error(`Failed to fetch subscription: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    const plan = data?.plan?.toLowerCase() as SubscriptionPlanType;
+
+    // Validate plan is a known type
+    if (Object.values(SubscriptionPlan).includes(plan)) {
+      return plan;
+    }
+
+    return SubscriptionPlan.FREE;
+  } catch (error) {
+    console.error('[getCurrentPlan] Error fetching subscription:', error);
+    return SubscriptionPlan.FREE;
+  }
 }
 
 /**
