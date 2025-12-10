@@ -5,10 +5,12 @@ import { useParams, useRouter } from "next/navigation"
 import { useSession } from "@/lib/auth-client"
 import { useTranslations } from "next-intl"
 import { createSwipe, deleteSwipe, getMySwipesByRoom } from "@/lib/api/swipes"
+import { ApiError } from "@/lib/http"
 import { joinRoom } from "@/lib/api/rooms"
 import { useRoomData, useMoviesData, useMatchNotifications } from "@/hooks/room"
 import type { MovieBasic } from "@/schemas/movies"
-import { Badge, Button, useToast } from "@swipe-movie/ui"
+import { Badge, Button } from "@swipe-movie/ui"
+import { useToast } from "@/components/providers/toast-provider"
 import { MovieCards } from "@/components/swipe/MovieCards"
 import { MovieCardSkeleton } from "@/components/swipe/MovieCardSkeleton"
 import { MatchesList } from "@/components/room/MatchesList"
@@ -103,8 +105,26 @@ function RoomPageContent() {
       })
       // Re-add the movie back to the list on error
       setMovies(prev => [movie, ...prev])
+
+      // Show appropriate error message
+      const isSwipeLimitError = err instanceof ApiError &&
+        (err.code === 'SWIPE_LIMIT_REACHED' || err.message.toLowerCase().includes('swipe limit'))
+
+      if (isSwipeLimitError) {
+        toast({
+          type: "error",
+          title: tSwipe('limitReached'),
+          description: tSwipe('limitReachedDescription'),
+        })
+      } else {
+        toast({
+          type: "error",
+          title: tSwipe('swipeError'),
+          description: err instanceof Error ? err.message : tSwipe('swipeErrorDescription'),
+        })
+      }
     }
-  }, [room, setSwipedMovieIds, setMovies, triggerMatchAnimation])
+  }, [room, setSwipedMovieIds, setMovies, triggerMatchAnimation, toast, tSwipe])
 
   const handleUndo = useCallback(async (movie: MovieBasic) => {
     if (!room) return

@@ -14,6 +14,7 @@ export const API_ERRORS = {
   },
   SWIPES: {
     400: "Swipe invalide",
+    403: "Limite de swipes atteinte",
     404: "Room ou film introuvable",
   },
   MATCHES: {
