@@ -15,7 +15,11 @@
     "filter": "Filter",
     "sort": "Sort",
     "viewMore": "View more",
-    "viewLess": "View less"
+    "viewLess": "View less",
+    "menu": "Menu",
+    "language": "Language",
+    "theme": "Theme",
+    "navigation": "Navigation"
   },
   "auth": {
     "signIn": "Sign in",
@@ -105,6 +109,7 @@
   },
   "rooms": {
     "title": "My Rooms",
+    "yourRooms": "Your movie rooms",
     "create": "Create a room",
     "join": "Join a room",
     "empty": "No active rooms",
@@ -127,6 +132,18 @@
       "total": "Total rooms",
       "matches": "Matches found",
       "swipesToday": "Swipes today"
+    },
+    "emptyState": {
+      "title": "No active rooms",
+      "description": "Create your first room to start swiping movies with your friends!"
+    },
+    "card": {
+      "unnamed": "Unnamed room",
+      "new": "New",
+      "movies": "Movies",
+      "series": "Series",
+      "filtered": "Filtered",
+      "access": "Access"
     }
   },
   "room": {
@@ -172,11 +189,11 @@
     "moviesType": "🎬 Movies",
     "tvShowsType": "📺 TV Shows",
     "tabs": {
-      "swipe": "🎬 Swipe",
-      "matches": "✨ Matches",
-      "history": "📜 History",
-      "stats": "📊 Stats",
-      "members": "👥 Members",
+      "swipe": "Swipe",
+      "matches": "Matches",
+      "history": "History",
+      "stats": "Stats",
+      "members": "Members",
       "swipeAriaLabel": "Swipe on movies",
       "matchesAriaLabel": "View matches",
       "historyAriaLabel": "View swipe history",

@@ -15,7 +15,11 @@
     "filter": "Filtrer",
     "sort": "Trier",
     "viewMore": "Voir plus",
-    "viewLess": "Voir moins"
+    "viewLess": "Voir moins",
+    "menu": "Menu",
+    "language": "Langue",
+    "theme": "Thème",
+    "navigation": "Navigation"
   },
   "auth": {
     "signIn": "Se connecter",
@@ -105,6 +109,7 @@
   },
   "rooms": {
     "title": "Mes Rooms",
+    "yourRooms": "Vos salles de cinéma",
     "create": "Créer une room",
     "join": "Rejoindre une room",
     "empty": "Aucune room active",
@@ -127,6 +132,18 @@
       "total": "Total de rooms",
       "matches": "Matches trouvés",
       "swipesToday": "Swipes aujourd'hui"
+    },
+    "emptyState": {
+      "title": "Aucune room active",
+      "description": "Créez votre première room pour commencer à swiper des films avec vos amis !"
+    },
+    "card": {
+      "unnamed": "Room sans nom",
+      "new": "Nouveau",
+      "movies": "Films",
+      "series": "Séries",
+      "filtered": "Filtré",
+      "access": "Accéder"
     }
   },
   "room": {
@@ -172,11 +189,11 @@
     "moviesType": "🎬 Films",
     "tvShowsType": "📺 Séries",
     "tabs": {
-      "swipe": "🎬 Swiper",
-      "matches": "✨ Matches",
-      "history": "📜 Historique",
-      "stats": "📊 Stats",
-      "members": "👥 Membres",
+      "swipe": "Swiper",
+      "matches": "Matches",
+      "history": "Historique",
+      "stats": "Stats",
+      "members": "Membres",
       "swipeAriaLabel": "Swiper sur des films",
       "matchesAriaLabel": "Voir les matches",
       "historyAriaLabel": "Voir l'historique des swipes",
