@@ -1,14 +1,20 @@
-import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 import createNextIntlPlugin from 'next-intl/plugin';
+import withSerwistInit from "@serwist/next";
 
 const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
 
-const nextConfig: NextConfig = {
+const withSerwist = withSerwistInit({
+  swSrc: "src/app/sw.ts",
+  swDest: "public/sw.js",
+  disable: process.env.NODE_ENV === "development",
+});
+
+const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
+        protocol: 'https' as const,
         hostname: 'image.tmdb.org',
         pathname: '/t/p/**',
       },
@@ -41,8 +47,8 @@ const nextConfig: NextConfig = {
   },
 };
 
-// Wrap config with next-intl and Sentry
-export default withSentryConfig(withNextIntl(nextConfig), {
+// Wrap config with Serwist, next-intl and Sentry
+export default withSentryConfig(withSerwist(withNextIntl(nextConfig)), {
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
   silent: !process.env.CI,
