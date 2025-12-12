@@ -6,7 +6,10 @@ import {
   NotFoundException,
   ForbiddenException,
   Logger,
+  Inject,
 } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 import { PrismaService } from '../../infra/prisma.service';
 import { SubscriptionService } from '../subscription/subscription.service';
 import {
@@ -27,6 +30,12 @@ import { RoomType, type RoomTypeValue } from '@swipe-movie/types';
 
 import { generateRoomCode } from '../../common/utils/code';
 
+// Cache TTL constants (in milliseconds)
+const CACHE_TTL = {
+  USER_ROOMS: 5 * 60 * 1000, // 5 minutes
+  ROOM_BY_CODE: 2 * 60 * 1000, // 2 minutes
+} as const;
+
 @Injectable()
 export class RoomsService {
   private readonly logger = new Logger(RoomsService.name);
@@ -34,7 +43,22 @@ export class RoomsService {
   constructor(
     private prisma: PrismaService,
     private subscriptionService: SubscriptionService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
+
+  /**
+   * Invalidate user rooms cache
+   */
+  private async invalidateUserRoomsCache(userId: string): Promise<void> {
+    await this.cacheManager.del(`rooms:user:${userId}`);
+  }
+
+  /**
+   * Invalidate room cache by code
+   */
+  private async invalidateRoomCache(code: string): Promise<void> {
+    await this.cacheManager.del(`rooms:code:${code}`);
+  }
 
   /**
    * Maps a room object to a response DTO with optional fields
@@ -168,6 +192,10 @@ export class RoomsService {
           userId,
         },
       });
+
+      // Invalidate user rooms cache after creation
+      await this.invalidateUserRoomsCache(userId);
+
       return room as RoomCreateResponseDto;
     });
   }
@@ -238,6 +266,12 @@ export class RoomsService {
 
     if (!joinedRoom) throw new NotFoundException('Room not found');
 
+    // Invalidate caches after joining
+    await Promise.all([
+      this.invalidateUserRoomsCache(userId),
+      this.invalidateRoomCache(code),
+    ]);
+
     return this.mapToRoomResponse<RoomJoinResponseDto>(joinedRoom);
   }
 
@@ -261,6 +295,12 @@ export class RoomsService {
       });
       this.logger.log(`Room ${roomId} deleted after last member left`);
     }
+
+    // Invalidate caches after leaving
+    await Promise.all([
+      this.invalidateUserRoomsCache(userId),
+      this.invalidateRoomCache(room.code),
+    ]);
 
     return { ok: true };
   }
@@ -311,6 +351,14 @@ export class RoomsService {
   }
 
   async getByCode(code: string): Promise<RoomWithMembersResponseDto> {
+    const cacheKey = `rooms:code:${code}`;
+
+    // Try to get from cache
+    const cached = await this.cacheManager.get<RoomWithMembersResponseDto>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     const room = await this.prisma.room.findUnique({
       where: { code },
       select: {
@@ -337,7 +385,12 @@ export class RoomsService {
       throw new NotFoundException('Room not found');
     }
 
-    return this.mapToRoomResponse<RoomWithMembersResponseDto>(room, room.members);
+    const result = this.mapToRoomResponse<RoomWithMembersResponseDto>(room, room.members);
+
+    // Store in cache
+    await this.cacheManager.set(cacheKey, result, CACHE_TTL.ROOM_BY_CODE);
+
+    return result;
   }
 
   async getUserRooms(
@@ -415,6 +468,14 @@ export class RoomsService {
     }
 
     // Otherwise, return all rooms (backward compatibility)
+    const cacheKey = `rooms:user:${userId}`;
+
+    // Try to get from cache (only for non-paginated requests)
+    const cached = await this.cacheManager.get<MemberRoomsResponseDto>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     const rooms = await this.prisma.room.findMany({
       where,
       select: {
@@ -443,7 +504,7 @@ export class RoomsService {
       orderBy: { createdAt: 'desc' },
     });
 
-    return {
+    const result: MemberRoomsResponseDto = {
       rooms: rooms.map((room) => ({
         id: room.id,
         name: room.name,
@@ -464,6 +525,11 @@ export class RoomsService {
         memberCount: room._count.members,
       })),
     };
+
+    // Store in cache
+    await this.cacheManager.set(cacheKey, result, CACHE_TTL.USER_ROOMS);
+
+    return result;
   }
 
   private async expireOldRooms() {
