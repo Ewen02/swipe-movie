@@ -3,17 +3,19 @@
 import { motion } from "framer-motion"
 import { Badge, Button } from "@swipe-movie/ui"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import type { UserRoomsResponseDto } from "@/schemas/rooms"
-import { Film, Tv, ArrowRight, Calendar, Sparkles } from "lucide-react"
+import { Film, Tv, ArrowRight, Users, Heart, Star, Sparkles, Plus } from "lucide-react"
 import { ShareRoomButton } from "./ShareRoomButton"
-import { fadeInUp } from "@/lib/animations"
 
 interface RoomsListProps {
   rooms: UserRoomsResponseDto
+  onCreateRoom?: () => void
 }
 
-export function RoomsList({ rooms }: RoomsListProps) {
+export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
   const router = useRouter()
+  const t = useTranslations('rooms')
 
   if (rooms.rooms.length === 0) {
     return (
@@ -26,10 +28,25 @@ export function RoomsList({ rooms }: RoomsListProps) {
                 <Film className="w-10 h-10 text-primary" />
               </div>
             </div>
-            <h3 className="text-xl font-semibold mb-2">Aucune room active</h3>
+            <h3 className="text-xl font-semibold mb-2">{t('emptyState.title')}</h3>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              Créez votre première room pour commencer à swiper des films avec vos amis !
+              {t('emptyState.description')}
             </p>
+            {onCreateRoom && (
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg"
+                  onClick={onCreateRoom}
+                >
+                  <Plus className="w-5 h-5 mr-2" />
+                  {t('create')}
+                </Button>
+              </motion.div>
+            )}
           </div>
         </div>
       </div>
@@ -40,7 +57,7 @@ export function RoomsList({ rooms }: RoomsListProps) {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {rooms.rooms.map((room, index) => {
         const createdDate = new Date(room.createdAt)
-        const isRecent = Date.now() - createdDate.getTime() < 24 * 60 * 60 * 1000 // Less than 24h
+        const isRecent = Date.now() - createdDate.getTime() < 24 * 60 * 60 * 1000
 
         return (
           <motion.div
@@ -52,79 +69,95 @@ export function RoomsList({ rooms }: RoomsListProps) {
             onClick={() => router.push(`/rooms/${room.code}`)}
           >
             {/* Hover glow */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
 
-            <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden group-hover:border-primary/30 transition-all duration-300">
-              <div className="p-6">
+            <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden group-hover:border-primary/40 transition-all duration-300">
+              {/* Top accent bar */}
+              <div className={`h-1 ${
+                room.type === "movie"
+                  ? "bg-gradient-to-r from-primary to-blue-500"
+                  : "bg-gradient-to-r from-accent to-purple-500"
+              }`} />
+
+              <div className="p-5">
                 {/* Header */}
-                <div className="flex items-start justify-between gap-3 mb-4">
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-lg ${
-                      room.type === "movie"
-                        ? "bg-gradient-to-br from-primary to-blue-500"
-                        : "bg-gradient-to-br from-accent to-purple-500"
-                    }`}>
-                      {room.type === "movie" ? (
-                        <Film className="w-6 h-6 text-white" />
-                      ) : (
-                        <Tv className="w-6 h-6 text-white" />
+                <div className="flex items-start gap-3 mb-4">
+                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center shadow-lg shrink-0 ${
+                    room.type === "movie"
+                      ? "bg-gradient-to-br from-primary to-blue-500"
+                      : "bg-gradient-to-br from-accent to-purple-500"
+                  }`}>
+                    {room.type === "movie" ? (
+                      <Film className="w-5 h-5 text-white" />
+                    ) : (
+                      <Tv className="w-5 h-5 text-white" />
+                    )}
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-lg truncate" title={room.name || t('card.unnamed')}>
+                        {room.name || t('card.unnamed')}
+                      </h3>
+                      {isRecent && (
+                        <Badge className="text-[10px] px-1.5 py-0 bg-green-500/20 text-green-500 border-green-500/30 shrink-0">
+                          {t('card.new')}
+                        </Badge>
                       )}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-lg truncate">
-                        {room.name || "Room sans nom"}
-                      </h3>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Badge variant="outline" className="font-mono text-xs border-white/20">
-                          {room.code}
-                        </Badge>
-                        {isRecent && (
-                          <Badge className="text-xs bg-green-500/20 text-green-600 dark:text-green-400 border-green-500/30">
-                            Nouveau
-                          </Badge>
-                        )}
+
+                    {/* Stats row */}
+                    <div className="flex items-center gap-3 text-sm">
+                      <div className="flex items-center gap-1 text-blue-400">
+                        <Users className="w-3.5 h-3.5" />
+                        <span>{room.memberCount || 0}</span>
                       </div>
+                      <div className={`flex items-center gap-1 ${
+                        (room.matchCount || 0) > 0 ? "text-pink-400" : "text-muted-foreground"
+                      }`}>
+                        <Heart className={`w-3.5 h-3.5 ${(room.matchCount || 0) > 0 ? "fill-pink-400" : ""}`} />
+                        <span>{room.matchCount || 0}</span>
+                      </div>
+                      <Badge variant="outline" className="font-mono text-[10px] px-1.5 py-0 border-white/20 text-muted-foreground">
+                        {room.code}
+                      </Badge>
                     </div>
                   </div>
                 </div>
 
-                {/* Details */}
-                <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-4 pb-4 border-b border-white/10">
-                  <div className="flex items-center gap-1.5">
-                    <Calendar className="w-4 h-4" />
-                    <span>
-                      {createdDate.toLocaleDateString("fr-FR", {
-                        day: "numeric",
-                        month: "short",
-                      })}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Badge variant="secondary" className="capitalize bg-white/5 border-white/10">
-                      {room.type === "movie" ? "🎬 Films" : "📺 Séries"}
-                    </Badge>
-                  </div>
-                  {room.genreId && room.genreId > 0 && (
-                    <div className="flex items-center gap-1.5">
-                      <Sparkles className="w-4 h-4 text-primary" />
-                      <span>Genre filtré</span>
-                    </div>
-                  )}
+                {/* Details row */}
+                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground mb-4 pb-4 border-b border-white/10">
+                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-white/5 border-white/10">
+                    {room.type === "movie" ? t('card.movies') : t('card.series')}
+                  </Badge>
                   {room.minRating && room.minRating > 0 && (
-                    <div className="flex items-center gap-1.5">
-                      <span>⭐ {room.minRating}+</span>
+                    <div className="flex items-center gap-1">
+                      <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                      <span>{room.minRating}+</span>
                     </div>
                   )}
+                  {room.genreId && room.genreId > 0 && (
+                    <div className="flex items-center gap-1 text-primary">
+                      <Sparkles className="w-3 h-3" />
+                      <span>{t('card.filtered')}</span>
+                    </div>
+                  )}
+                  <span className="text-muted-foreground/60">
+                    {createdDate.toLocaleDateString(undefined, {
+                      day: "numeric",
+                      month: "short",
+                    })}
+                  </span>
                 </div>
 
                 {/* Actions */}
                 <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                   <ShareRoomButton
                     roomCode={room.code}
-                    roomName={room.name || "Room sans nom"}
+                    roomName={room.name || t('card.unnamed')}
                     variant="outline"
                     size="sm"
-                    className="flex-1 border-white/20 hover:bg-white/5"
+                    className="flex-1 border-white/20 hover:bg-white/5 text-xs h-9"
                   />
                   <motion.div
                     className="flex-1"
@@ -133,14 +166,14 @@ export function RoomsList({ rooms }: RoomsListProps) {
                   >
                     <Button
                       size="sm"
-                      className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-md"
+                      className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-md text-xs h-9"
                       onClick={(e) => {
                         e.stopPropagation()
                         router.push(`/rooms/${room.code}`)
                       }}
                     >
-                      Accéder
-                      <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                      {t('card.access')}
+                      <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </motion.div>
                 </div>

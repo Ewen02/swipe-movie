@@ -42,7 +42,7 @@ export function RoomStatsHeader({
           <motion.div variants={fadeInUp} className="mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-medium mb-4">
               <Sparkles className="w-4 h-4" />
-              Vos salles de cinéma
+              {t('yourRooms')}
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-3">
               <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
@@ -55,18 +55,23 @@ export function RoomStatsHeader({
           </motion.div>
 
           {/* Stats Grid */}
-          <motion.div variants={fadeInUp} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <motion.div variants={fadeInUp} className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-8">
             {/* Total Rooms */}
             <div className="relative group/stat">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-blue-500 rounded-2xl opacity-0 group-hover/stat:opacity-10 blur transition-opacity duration-300" />
-              <div className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-md border border-primary/20 rounded-2xl p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">{t('stats.total')}</p>
-                    <p className="text-3xl font-bold text-primary">{totalRooms}</p>
+              <div className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-md border border-primary/20 rounded-2xl p-4 sm:p-3 md:p-6">
+                <div className="flex flex-row items-center justify-between sm:flex-col sm:items-start md:flex-row md:items-center md:justify-between gap-2">
+                  <div className="flex items-center gap-3 sm:order-2 md:order-1 sm:w-full">
+                    <div className="sm:hidden w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-blue-500 flex items-center justify-center shadow-lg">
+                      <Film className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm sm:text-xs md:text-sm text-muted-foreground mb-0.5">{t('stats.total')}</p>
+                      <p className="text-3xl sm:text-2xl md:text-3xl font-bold text-primary">{totalRooms}</p>
+                    </div>
                   </div>
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-blue-500 flex items-center justify-center shadow-lg">
-                    <Film className="w-7 h-7 text-white" />
+                  <div className="hidden sm:flex sm:order-1 md:order-2 w-10 h-10 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-primary to-blue-500 items-center justify-center shadow-lg">
+                    <Film className="w-5 h-5 md:w-7 md:h-7 text-white" />
                   </div>
                 </div>
               </div>
@@ -75,14 +80,19 @@ export function RoomStatsHeader({
             {/* Total Matches */}
             <div className="relative group/stat">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-accent to-pink-500 rounded-2xl opacity-0 group-hover/stat:opacity-10 blur transition-opacity duration-300" />
-              <div className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-md border border-accent/20 rounded-2xl p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">{t('stats.matches')}</p>
-                    <p className="text-3xl font-bold text-accent">{totalMatches}</p>
+              <div className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-md border border-accent/20 rounded-2xl p-4 sm:p-3 md:p-6">
+                <div className="flex flex-row items-center justify-between sm:flex-col sm:items-start md:flex-row md:items-center md:justify-between gap-2">
+                  <div className="flex items-center gap-3 sm:order-2 md:order-1 sm:w-full">
+                    <div className="sm:hidden w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-pink-500 flex items-center justify-center shadow-lg">
+                      <Heart className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm sm:text-xs md:text-sm text-muted-foreground mb-0.5">{t('stats.matches')}</p>
+                      <p className="text-3xl sm:text-2xl md:text-3xl font-bold text-accent">{totalMatches}</p>
+                    </div>
                   </div>
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-accent to-pink-500 flex items-center justify-center shadow-lg">
-                    <Heart className="w-7 h-7 text-white" />
+                  <div className="hidden sm:flex sm:order-1 md:order-2 w-10 h-10 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-accent to-pink-500 items-center justify-center shadow-lg">
+                    <Heart className="w-5 h-5 md:w-7 md:h-7 text-white" />
                   </div>
                 </div>
               </div>
@@ -91,14 +101,19 @@ export function RoomStatsHeader({
             {/* Swipes Today */}
             <div className="relative group/stat">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl opacity-0 group-hover/stat:opacity-10 blur transition-opacity duration-300" />
-              <div className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-md border border-green-500/20 rounded-2xl p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">{t('stats.swipesToday')}</p>
-                    <p className="text-3xl font-bold text-green-500">{totalSwipesToday}</p>
+              <div className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-md border border-green-500/20 rounded-2xl p-4 sm:p-3 md:p-6">
+                <div className="flex flex-row items-center justify-between sm:flex-col sm:items-start md:flex-row md:items-center md:justify-between gap-2">
+                  <div className="flex items-center gap-3 sm:order-2 md:order-1 sm:w-full">
+                    <div className="sm:hidden w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
+                      <TrendingUp className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm sm:text-xs md:text-sm text-muted-foreground mb-0.5">{t('stats.swipesToday')}</p>
+                      <p className="text-3xl sm:text-2xl md:text-3xl font-bold text-green-500">{totalSwipesToday}</p>
+                    </div>
                   </div>
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
-                    <TrendingUp className="w-7 h-7 text-white" />
+                  <div className="hidden sm:flex sm:order-1 md:order-2 w-10 h-10 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 items-center justify-center shadow-lg">
+                    <TrendingUp className="w-5 h-5 md:w-7 md:h-7 text-white" />
                   </div>
                 </div>
               </div>

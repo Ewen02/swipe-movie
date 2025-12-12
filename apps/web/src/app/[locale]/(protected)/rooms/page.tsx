@@ -26,7 +26,7 @@ import { useOnboarding } from "@/hooks/useOnboarding"
 import { fadeInUp, staggerContainer } from "@/lib/animations"
 
 // Lazy load dialogs - they're not needed until user interaction
-const CreateRoomDialog = lazy(() => import("@/components/room/CreateRoomDialog").then(m => ({ default: m.CreateRoomDialog })))
+const CreateRoomStepper = lazy(() => import("@/components/room/create-room").then(m => ({ default: m.CreateRoomStepper })))
 const JoinRoomDialog = lazy(() => import("@/components/room/JoinRoomDialog").then(m => ({ default: m.JoinRoomDialog })))
 const OnboardingTutorial = lazy(() => import("@/components/onboarding").then(m => ({ default: m.OnboardingTutorial })))
 
@@ -148,7 +148,7 @@ function RoomsPageContent() {
               {t('myActiveRooms')}
             </motion.h2>
             <motion.div variants={fadeInUp}>
-              <RoomsList rooms={rooms} />
+              <RoomsList rooms={rooms} onCreateRoom={() => setShowCreateDialog(true)} />
             </motion.div>
           </motion.div>
         )}
@@ -156,7 +156,7 @@ function RoomsPageContent() {
         {/* Dialogs - Lazy loaded */}
         <Suspense fallback={null}>
           {showCreateDialog && (
-            <CreateRoomDialog
+            <CreateRoomStepper
               open={showCreateDialog}
               onOpenChange={setShowCreateDialog}
               onSubmit={onCreate}
