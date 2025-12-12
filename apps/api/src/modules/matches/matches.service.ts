@@ -1,4 +1,6 @@
 import { Injectable, NotFoundException, forwardRef, Inject } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 import { PrismaService } from '../../infra/prisma.service';
 import { MatchesGateway } from './matches.gateway';
 
@@ -9,13 +11,26 @@ import {
   getPaginationParams,
 } from '../../common/dtos';
 
+// Cache TTL constants (in milliseconds)
+const CACHE_TTL = {
+  ROOM_MATCHES: 60 * 1000, // 1 minute (real-time data needs frequent updates)
+} as const;
+
 @Injectable()
 export class MatchesService {
   constructor(
     private prisma: PrismaService,
     @Inject(forwardRef(() => MatchesGateway))
     private matchesGateway: MatchesGateway,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
+
+  /**
+   * Invalidate matches cache for a room
+   */
+  private async invalidateRoomMatchesCache(roomId: string): Promise<void> {
+    await this.cacheManager.del(`matches:room:${roomId}`);
+  }
 
   async createIfNeeded(
     roomId: string,
@@ -40,6 +55,9 @@ export class MatchesService {
       ...match,
       voteCount: likes,
     };
+
+    // Invalidate cache after match creation
+    await this.invalidateRoomMatchesCache(roomId);
 
     // Emit WebSocket event for real-time notification
     this.matchesGateway.emitMatchCreated(roomId, matchDto);
@@ -123,6 +141,14 @@ export class MatchesService {
     }
 
     // Otherwise, return all matches (backward compatibility)
+    const cacheKey = `matches:room:${roomId}`;
+
+    // Try to get from cache
+    const cached = await this.cacheManager.get<ResponseMatchDto[]>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     const matches = await this.prisma.match.findMany({
       where,
       orderBy: { createdAt: 'desc' },
@@ -153,9 +179,14 @@ export class MatchesService {
     );
 
     // Enrich matches with vote counts
-    return matches.map((match) => ({
+    const result = matches.map((match) => ({
       ...match,
       voteCount: voteCountMap.get(match.movieId) || 0,
     }));
+
+    // Store in cache
+    await this.cacheManager.set(cacheKey, result, CACHE_TTL.ROOM_MATCHES);
+
+    return result;
   }
 }
