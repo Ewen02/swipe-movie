@@ -1,10 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
   Badge,
   Button,
@@ -12,7 +12,7 @@ import {
 } from "@swipe-movie/ui"
 import { getMovieDetails } from "@/lib/api/movies"
 import type { MovieDetails } from "@/schemas/movies"
-import { Calendar, Clock, Star, Globe, Film, ExternalLink } from "lucide-react"
+import { Calendar, Clock, Star, Globe, Film, ExternalLink, Play, Users, DollarSign, X } from "lucide-react"
 import Image from "next/image"
 
 interface MovieDetailsModalProps {
@@ -31,10 +31,12 @@ export function MovieDetailsModal({
   const [movie, setMovie] = useState<MovieDetails | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showTrailer, setShowTrailer] = useState(false)
 
   useEffect(() => {
     if (movieId && open) {
       loadMovieDetails()
+      setShowTrailer(false)
     }
   }, [movieId, open, mediaType])
 
@@ -57,12 +59,18 @@ export function MovieDetailsModal({
   const formatRuntime = (minutes: number) => {
     const hours = Math.floor(minutes / 60)
     const mins = minutes % 60
-    return `${hours}h ${mins}min`
+    return hours > 0 ? `${hours}h ${mins}min` : `${mins}min`
   }
 
   const formatMoney = (amount: number) => {
-    if (amount === 0) return "N/A"
-    return new Intl.NumberFormat("fr-FR", {
+    if (amount === 0) return null
+    if (amount >= 1_000_000_000) {
+      return `${(amount / 1_000_000_000).toFixed(1)}B$`
+    }
+    if (amount >= 1_000_000) {
+      return `${(amount / 1_000_000).toFixed(0)}M$`
+    }
+    return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 0,
@@ -70,284 +78,207 @@ export function MovieDetailsModal({
     }).format(amount)
   }
 
-  const formatDate = (dateString: string) => {
-    try {
-      return new Date(dateString).toLocaleDateString("fr-FR", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    } catch {
-      return dateString
-    }
-  }
-
   // Get provider URL or search page
-  const getProviderUrl = (providerId: number, providerName: string) => {
-    // Map of common provider IDs to their search/browse URLs
+  const getProviderUrl = (providerId: number) => {
     const providerUrls: Record<number, string> = {
-      8: "https://www.netflix.com/search?q=" + encodeURIComponent(movie?.title || ""), // Netflix
-      119: "https://www.primevideo.com/search/ref=atv_nb_sug?phrase=" + encodeURIComponent(movie?.title || ""), // Amazon Prime
-      337: "https://www.disneyplus.com/search?q=" + encodeURIComponent(movie?.title || ""), // Disney+
-      531: "https://www.paramountplus.com/search/?query=" + encodeURIComponent(movie?.title || ""), // Paramount+
-      350: "https://tv.apple.com/search?q=" + encodeURIComponent(movie?.title || ""), // Apple TV+
-      1899: "https://www.max.com/search?q=" + encodeURIComponent(movie?.title || ""), // Max
-      283: "https://www.crunchyroll.com/search?q=" + encodeURIComponent(movie?.title || ""), // Crunchyroll
-      2: "https://tv.apple.com/search?q=" + encodeURIComponent(movie?.title || ""), // Apple TV
+      8: "https://www.netflix.com/search?q=" + encodeURIComponent(movie?.title || ""),
+      119: "https://www.primevideo.com/search/ref=atv_nb_sug?phrase=" + encodeURIComponent(movie?.title || ""),
+      337: "https://www.disneyplus.com/search?q=" + encodeURIComponent(movie?.title || ""),
+      531: "https://www.paramountplus.com/search/?query=" + encodeURIComponent(movie?.title || ""),
+      350: "https://tv.apple.com/search?q=" + encodeURIComponent(movie?.title || ""),
+      1899: "https://www.max.com/search?q=" + encodeURIComponent(movie?.title || ""),
+      283: "https://www.crunchyroll.com/search?q=" + encodeURIComponent(movie?.title || ""),
     }
 
-    // If we have a specific URL for this provider, use it
     if (providerUrls[providerId]) {
       return providerUrls[providerId]
     }
 
-    // Otherwise, link to JustWatch for this specific movie/show
     const type = mediaType === "tv" ? "tv-show" : "movie"
     const slug = movie?.title?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || ""
     return `https://www.justwatch.com/fr/${type}/${slug}`
   }
 
+  // Find trailer
+  const trailer = movie?.videos?.find(
+    (v) => v.site === 'YouTube' && v.type === 'Trailer' && v.official
+  ) || movie?.videos?.find(
+    (v) => v.site === 'YouTube' && v.type === 'Trailer'
+  ) || movie?.videos?.find((v) => v.site === 'YouTube')
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" aria-describedby="movie-details-description">
+      <DialogContent
+        className="max-w-2xl w-[95vw] max-h-[90vh] overflow-hidden p-0 gap-0 bg-background/95 backdrop-blur-xl border-white/10"
+        aria-describedby="movie-details-description"
+      >
+        {/* Loading State */}
         {loading && (
-          <>
-            <DialogTitle className="sr-only">Chargement des détails du film</DialogTitle>
-            <div id="movie-details-description" className="space-y-6">
-              {/* Backdrop skeleton */}
-              <div className="relative -mx-6 -mt-6 h-64 overflow-hidden rounded-t-lg">
-                <Skeleton className="h-full w-full" />
-              </div>
-
-              {/* Title and basic info */}
-              <div className="space-y-3">
-                <Skeleton className="h-10 w-3/4" />
-                <div className="flex gap-3 flex-wrap">
-                  <Skeleton className="h-6 w-20 rounded-full" />
-                  <Skeleton className="h-6 w-16 rounded-full" />
-                  <Skeleton className="h-6 w-24 rounded-full" />
-                </div>
-              </div>
-
-              {/* Overview */}
-              <div className="space-y-2">
-                <Skeleton className="h-6 w-32" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-4/5" />
-              </div>
-
-              {/* Cast */}
-              <div className="space-y-3">
-                <Skeleton className="h-6 w-24" />
-                <div className="flex gap-4 overflow-x-auto">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <div key={i} className="flex-shrink-0 space-y-2">
-                      <Skeleton className="h-24 w-20 rounded-lg" />
-                      <Skeleton className="h-3 w-20" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Providers */}
-              <div className="space-y-3">
-                <Skeleton className="h-6 w-48" />
-                <div className="flex gap-3">
-                  {[1, 2, 3].map((i) => (
-                    <Skeleton key={i} className="h-12 w-12 rounded-lg" />
-                  ))}
-                </div>
+          <div className="p-6 space-y-6">
+            <DialogTitle className="sr-only">Chargement des détails</DialogTitle>
+            <Skeleton className="h-48 sm:h-64 w-full rounded-lg" />
+            <div className="space-y-3">
+              <Skeleton className="h-8 w-3/4" />
+              <div className="flex gap-2">
+                <Skeleton className="h-6 w-16 rounded-full" />
+                <Skeleton className="h-6 w-20 rounded-full" />
+                <Skeleton className="h-6 w-16 rounded-full" />
               </div>
             </div>
-          </>
+            <Skeleton className="h-20 w-full" />
+          </div>
         )}
 
+        {/* Error State */}
         {error && (
-          <>
-            <DialogTitle className="sr-only">Erreur de chargement</DialogTitle>
-            <div id="movie-details-description" className="text-center py-8">
-              <Film className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-red-500">{error}</p>
-              <Button onClick={loadMovieDetails} variant="outline" className="mt-4">
-                Réessayer
-              </Button>
-            </div>
-          </>
+          <div className="p-6 text-center py-16">
+            <DialogTitle className="sr-only">Erreur</DialogTitle>
+            <Film className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+            <p className="text-red-500 mb-4">{error}</p>
+            <Button onClick={loadMovieDetails} variant="outline">
+              Réessayer
+            </Button>
+          </div>
         )}
 
+        {/* Movie Content */}
         {movie && !loading && (
-          <div id="movie-details-description" className="space-y-6">
-            {/* Header with backdrop */}
-            <div className="relative -mx-6 -mt-6 mb-4">
-              {movie.backdropUrl && (
-                <div className="relative h-64 w-full">
+          <div id="movie-details-description" className="flex flex-col max-h-[90vh]">
+            {/* Hero Section with Backdrop */}
+            <div className="relative flex-shrink-0">
+              {/* Backdrop Image */}
+              <div className="relative h-48 sm:h-64 w-full overflow-hidden">
+                {movie.backdropUrl ? (
                   <Image
                     src={movie.backdropUrl}
                     alt={movie.title}
                     fill
                     className="object-cover"
                     priority
-                    sizes="(max-width: 768px) 100vw, 896px"
+                    sizes="(max-width: 768px) 100vw, 672px"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-                </div>
-              )}
+                ) : movie.posterUrl ? (
+                  <Image
+                    src={movie.posterUrl}
+                    alt={movie.title}
+                    fill
+                    className="object-cover blur-sm scale-110"
+                    sizes="(max-width: 768px) 100vw, 672px"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20" />
+                )}
 
-              <div className="absolute bottom-4 left-6 right-6">
-                <DialogTitle className="text-3xl font-bold text-white drop-shadow-lg">
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+
+                {/* Play Trailer Button */}
+                {trailer && (
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setShowTrailer(true)}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow-2xl"
+                  >
+                    <Play className="w-7 h-7 text-gray-900 ml-1" fill="currentColor" />
+                  </motion.button>
+                )}
+
+                {/* Rating Badge */}
+                <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-black/60 backdrop-blur-sm">
+                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  <span className="text-white font-semibold text-sm">
+                    {movie.voteAverage.toFixed(1)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Title Section - Overlapping */}
+              <div className="px-5 -mt-12 relative z-10">
+                <DialogTitle className="text-2xl sm:text-3xl font-bold text-foreground leading-tight">
                   {movie.title}
                 </DialogTitle>
                 {movie.tagline && (
-                  <p className="text-white/90 italic mt-1 drop-shadow">
-                    {movie.tagline}
+                  <p className="text-muted-foreground italic mt-1 text-sm">
+                    "{movie.tagline}"
                   </p>
                 )}
               </div>
             </div>
 
-            {/* Metadata row */}
-            <div className="flex flex-wrap gap-3">
-              <Badge variant="secondary" className="flex items-center gap-1">
-                <Star className="w-3 h-3 fill-yellow-500 text-yellow-500" />
-                {movie.voteAverage.toFixed(1)} ({movie.voteCount.toLocaleString()} votes)
-              </Badge>
-
-              {movie.releaseDate && (
-                <Badge variant="outline" className="flex items-center gap-1">
-                  <Calendar className="w-3 h-3" />
-                  {formatDate(movie.releaseDate)}
-                </Badge>
-              )}
-
-              {movie.runtime > 0 && (
-                <Badge variant="outline" className="flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
-                  {formatRuntime(movie.runtime)}
-                </Badge>
-              )}
-
-              {movie.originalLanguage && (
-                <Badge variant="outline" className="flex items-center gap-1">
-                  <Globe className="w-3 h-3" />
-                  {movie.originalLanguage.toUpperCase()}
-                </Badge>
-              )}
-            </div>
-
-            {/* Genres */}
-            {movie.genres.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {movie.genres.map((genre) => (
-                  <Badge key={genre.id} variant="default">
-                    {genre.name}
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto px-5 pb-5 space-y-5">
+              {/* Quick Info Pills */}
+              <div className="flex flex-wrap gap-2 pt-3">
+                {movie.releaseDate && (
+                  <Badge variant="secondary" className="gap-1.5 px-2.5 py-1">
+                    <Calendar className="w-3.5 h-3.5" />
+                    {new Date(movie.releaseDate).getFullYear()}
                   </Badge>
-                ))}
+                )}
+                {movie.runtime > 0 && (
+                  <Badge variant="secondary" className="gap-1.5 px-2.5 py-1">
+                    <Clock className="w-3.5 h-3.5" />
+                    {formatRuntime(movie.runtime)}
+                  </Badge>
+                )}
+                {movie.originalLanguage && (
+                  <Badge variant="secondary" className="gap-1.5 px-2.5 py-1">
+                    <Globe className="w-3.5 h-3.5" />
+                    {movie.originalLanguage.toUpperCase()}
+                  </Badge>
+                )}
+                {movie.voteCount > 0 && (
+                  <Badge variant="outline" className="gap-1.5 px-2.5 py-1">
+                    <Users className="w-3.5 h-3.5" />
+                    {movie.voteCount.toLocaleString()} votes
+                  </Badge>
+                )}
               </div>
-            )}
 
-            {/* Overview */}
-            {movie.overview && (
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Synopsis</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {movie.overview}
-                </p>
-              </div>
-            )}
-
-            {/* Trailer */}
-            {movie.videos && movie.videos.length > 0 && (() => {
-              // Find the first official YouTube trailer
-              const trailer = movie.videos.find(
-                (v) => v.site === 'YouTube' && v.type === 'Trailer' && v.official
-              ) || movie.videos.find(
-                (v) => v.site === 'YouTube' && v.type === 'Trailer'
-              ) || movie.videos.find((v) => v.site === 'YouTube');
-
-              return trailer ? (
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Bande-annonce</h3>
-                  <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                    <iframe
-                      className="absolute top-0 left-0 w-full h-full rounded-lg"
-                      src={`https://www.youtube.com/embed/${trailer.key}`}
-                      title={trailer.name}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
-                </div>
-              ) : null;
-            })()}
-
-            {/* Cast */}
-            {movie.cast && movie.cast.length > 0 && (
-              <div>
-                <h3 className="text-lg font-semibold mb-3">Casting principal</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                  {movie.cast.map((actor) => (
-                    <div key={actor.id} className="text-center">
-                      <div className="relative w-full aspect-[2/3] mb-2 bg-muted rounded-lg overflow-hidden">
-                        {actor.profilePath ? (
-                          <Image
-                            src={actor.profilePath}
-                            alt={actor.name}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 20vw"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-muted">
-                            <span className="text-4xl text-muted-foreground">👤</span>
-                          </div>
-                        )}
-                      </div>
-                      <p className="font-medium text-sm truncate">{actor.name}</p>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {actor.character}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Crew */}
-            {movie.crew && movie.crew.length > 0 && (
-              <div>
-                <h3 className="text-lg font-semibold mb-3">Équipe technique</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                  {movie.crew.map((member) => (
-                    <div key={`${member.id}-${member.job}`} className="p-3 bg-muted/50 rounded-lg">
-                      <p className="font-medium text-sm">{member.name}</p>
-                      <p className="text-xs text-muted-foreground">{member.job}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Watch Providers */}
-            {movie.watchProviders && movie.watchProviders.length > 0 && (
-              <div>
-                <h3 className="text-lg font-semibold mb-3">Disponible sur</h3>
-                <div className="flex flex-wrap gap-3">
-                  {movie.watchProviders.map((provider) => (
-                    <Button
-                      key={provider.id}
-                      asChild
-                      variant="outline"
-                      className="h-auto p-3 hover:bg-primary/10 hover:border-primary transition-colors"
+              {/* Genres */}
+              {movie.genres.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {movie.genres.map((genre) => (
+                    <Badge
+                      key={genre.id}
+                      className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20"
                     >
+                      {genre.name}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+
+              {/* Synopsis */}
+              {movie.overview && (
+                <div>
+                  <h3 className="text-sm font-semibold text-muted-foreground mb-2 uppercase tracking-wide">
+                    Synopsis
+                  </h3>
+                  <p className="text-foreground/90 leading-relaxed text-sm sm:text-base">
+                    {movie.overview}
+                  </p>
+                </div>
+              )}
+
+              {/* Watch Providers */}
+              {movie.watchProviders && movie.watchProviders.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wide">
+                    Où regarder
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {movie.watchProviders.map((provider) => (
                       <a
-                        href={getProviderUrl(provider.id, provider.name)}
+                        key={provider.id}
+                        href={getProviderUrl(provider.id)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary/50 transition-all group"
                       >
                         {provider.logoPath && (
-                          <div className="relative w-10 h-10 rounded overflow-hidden flex-shrink-0">
+                          <div className="relative w-8 h-8 rounded-md overflow-hidden">
                             <Image
                               src={provider.logoPath}
                               alt={provider.name}
@@ -357,79 +288,126 @@ export function MovieDetailsModal({
                           </div>
                         )}
                         <span className="text-sm font-medium">{provider.name}</span>
-                        <ExternalLink className="w-4 h-4 ml-1 opacity-60" />
+                        <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-60 transition-opacity" />
                       </a>
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Budget & Revenue */}
-            {(movie.budget > 0 || movie.revenue > 0) && (
-              <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
-                {movie.budget > 0 && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">Budget</p>
-                    <p className="text-lg font-semibold">{formatMoney(movie.budget)}</p>
+                    ))}
                   </div>
-                )}
-                {movie.revenue > 0 && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">Box Office</p>
-                    <p className="text-lg font-semibold">{formatMoney(movie.revenue)}</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Production Companies */}
-            {movie.productionCompanies.length > 0 && (
-              <div>
-                <h3 className="text-sm font-semibold mb-2 text-muted-foreground">
-                  Production
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {movie.productionCompanies.map((company) => (
-                    <span
-                      key={company.id}
-                      className="text-sm px-2 py-1 bg-muted rounded"
-                    >
-                      {company.name}
-                    </span>
-                  ))}
                 </div>
-              </div>
-            )}
-
-            {/* External Links */}
-            <div className="flex gap-3 pt-4 border-t">
-              {movie.homepage && (
-                <Button asChild variant="outline" size="sm">
-                  <a
-                    href={movie.homepage}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Site officiel
-                  </a>
-                </Button>
               )}
 
-              {movie.imdbId && (
-                <Button asChild variant="outline" size="sm">
-                  <a
-                    href={`https://www.imdb.com/title/${movie.imdbId}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    IMDb
-                  </a>
-                </Button>
+              {/* Cast - Grid layout */}
+              {movie.cast && movie.cast.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wide">
+                    Casting
+                  </h3>
+                  <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
+                    {movie.cast.slice(0, 10).map((actor) => (
+                      <div key={actor.id} className="text-center">
+                        <div className="relative w-full aspect-square mb-2 rounded-full overflow-hidden bg-muted ring-2 ring-white/10">
+                          {actor.profilePath ? (
+                            <Image
+                              src={actor.profilePath}
+                              alt={actor.name}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 640px) 25vw, 20vw"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-2xl text-muted-foreground">
+                              👤
+                            </div>
+                          )}
+                        </div>
+                        <p className="font-medium text-[11px] truncate">{actor.name}</p>
+                        <p className="text-[9px] text-muted-foreground truncate">
+                          {actor.character}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
+
+              {/* Budget & Revenue */}
+              {(movie.budget > 0 || movie.revenue > 0) && (
+                <div className="grid grid-cols-2 gap-3">
+                  {movie.budget > 0 && (
+                    <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+                      <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
+                        <DollarSign className="w-3.5 h-3.5" />
+                        Budget
+                      </div>
+                      <p className="font-semibold text-lg">{formatMoney(movie.budget)}</p>
+                    </div>
+                  )}
+                  {movie.revenue > 0 && (
+                    <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+                      <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
+                        <DollarSign className="w-3.5 h-3.5" />
+                        Box Office
+                      </div>
+                      <p className="font-semibold text-lg">{formatMoney(movie.revenue)}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* External Links */}
+              <div className="flex flex-wrap gap-2 pt-2">
+                {movie.homepage && (
+                  <Button asChild variant="outline" size="sm" className="gap-2">
+                    <a href={movie.homepage} target="_blank" rel="noopener noreferrer">
+                      <Globe className="w-4 h-4" />
+                      Site officiel
+                    </a>
+                  </Button>
+                )}
+                {movie.imdbId && (
+                  <Button asChild variant="outline" size="sm" className="gap-2">
+                    <a href={`https://www.imdb.com/title/${movie.imdbId}`} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="w-4 h-4" />
+                      IMDb
+                    </a>
+                  </Button>
+                )}
+              </div>
             </div>
+
+            {/* Trailer Modal */}
+            <AnimatePresence>
+              {showTrailer && trailer && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 z-50 bg-black/95 flex flex-col"
+                >
+                  <div className="flex items-center justify-between p-4">
+                    <h3 className="text-white font-semibold">Bande-annonce</h3>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="text-white hover:bg-white/10"
+                      onClick={() => setShowTrailer(false)}
+                    >
+                      <X className="w-5 h-5" />
+                    </Button>
+                  </div>
+                  <div className="flex-1 px-4 pb-4">
+                    <div className="relative w-full h-full rounded-lg overflow-hidden">
+                      <iframe
+                        className="absolute inset-0 w-full h-full"
+                        src={`https://www.youtube.com/embed/${trailer.key}?autoplay=1`}
+                        title={trailer.name}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )}
       </DialogContent>
