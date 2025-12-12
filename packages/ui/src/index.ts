@@ -134,3 +134,9 @@ export {
   type UpgradeFeature,
   type PlanTier,
 } from './organisms/upgrade-modal';
+export {
+  FortuneWheel,
+  type FortuneWheelProps,
+  type FortuneWheelItem,
+  type FortuneWheelTranslations,
+} from './organisms/fortune-wheel';

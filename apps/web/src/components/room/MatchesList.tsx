@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import { Card, CardContent, Badge, Button } from "@swipe-movie/ui"
+import { Card, CardContent, Badge, Button, FortuneWheel, type FortuneWheelItem } from "@swipe-movie/ui"
 import { ExternalLink, RefreshCw } from "lucide-react"
 import { Match } from "@/schemas/swipes"
 import { MovieBasic } from "@/schemas/movies"
@@ -141,6 +141,35 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilt
             roomFilters={roomFilters}
             onShowDetails={() => handleShowDetails(topMatch.movie!.id)}
           />
+        )}
+
+        {/* Fortune Wheel for all matches */}
+        {matches.length >= 2 && (
+          <div className="flex justify-center">
+            <FortuneWheel
+              items={matches
+                .filter((m): m is MatchWithMovie & { movie: MovieBasic } => !!m.movie)
+                .map((m): FortuneWheelItem => ({
+                  id: m.id,
+                  label: m.movie.title,
+                  imageUrl: m.movie.posterUrl,
+                }))}
+              onSpinEnd={(item) => {
+                const match = matches.find((m) => m.id === item.id)
+                if (match?.movie) {
+                  handleShowDetails(match.movie.id)
+                }
+              }}
+              translations={{
+                triggerButton: "Laisser le hasard choisir",
+                title: "Roue du destin",
+                spinButton: "Faire tourner !",
+                spinningText: "La roue tourne...",
+                resultTitle: "Le destin a choisi !",
+                resultSubtitle: "Bon visionnage !",
+              }}
+            />
+          </div>
         )}
 
         {/* Other Matches Section */}
