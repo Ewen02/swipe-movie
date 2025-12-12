@@ -1,16 +1,51 @@
-# TODO - Swipe Movie SaaS Phase 1
+# TODO - Swipe Movie
 
-## ✅ Terminé
+> Dernière mise à jour: Décembre 2024
+
+---
+
+## ✅ Phase 1 - SaaS Foundation (Terminé)
 
 - [x] **Chantier 0**: Optimisation Monorepo - Migration vers `@swipe-movie/ui`
 - [x] **Chantier 1**: Stripe Customer Portal Route (`POST /subscriptions/portal`)
 - [x] **Chantier 2**: Feature Gating complet (rooms, swipes, participants)
 - [x] **Chantier 3**: Dashboard Subscription (`/dashboard/subscription`)
-- [x] **Feature Flag**: `ENABLE_SUBSCRIPTION_LIMITS` (défaut: false)
+- [x] **Feature Flag**: `ENABLE_SUBSCRIPTION_LIMITS` (défaut: false pour PMF)
 
 ---
 
-## 🔲 Reste à faire (~29h)
+## ✅ Phase 3 - Features Concurrentielles (Terminé)
+
+> Inspiré de l'analyse concurrentielle (Queue, Matched, Letterboxd)
+> Voir [docs/COMPETITOR_ANALYSIS.md](docs/COMPETITOR_ANALYSIS.md)
+
+### Quick Wins - Fun Factor
+
+| Feature | Statut | Fichiers |
+|---------|--------|----------|
+| **QR Code invitation** | ✅ | `ShareRoomButton.tsx` + `react-qr-code` |
+| **Trailers YouTube** | ✅ | `MovieDetailsModal.tsx` (iframe YouTube) |
+| **Spinner (roue)** | ✅ | `FortuneWheel` dans `@swipe-movie/ui` |
+| **Share match** | ✅ | `ShareMatchButton.tsx` (Web Share API + réseaux sociaux) |
+
+---
+
+## ✅ Phase 4 - PWA Optimisation (Terminé)
+
+### Service Worker (Serwist)
+- [x] Cache offline des images TMDB (30 jours)
+- [x] Cache API avec Network First (5 min)
+- [x] Push notifications setup
+- [x] Fichier: `apps/web/src/app/sw.ts`
+
+### Installation & UX
+- [x] Bannière "Ajouter à l'écran d'accueil" (`PWAInstallBanner.tsx`)
+- [x] Hook `usePWAInstall.ts` (détection iOS/Android)
+- [x] Support iOS avec instructions Safari
+
+---
+
+## 🔲 Phase 2 - Infrastructure (~29h)
 
 ### Chantier 4: Email System (Resend) - 15h
 
@@ -48,15 +83,54 @@
 
 ---
 
-## 📊 Résumé
+## 🔲 Phase 5 - Engagement (Stretch Goals)
 
-| Statut | Chantier | Effort |
-|:------:|----------|-------:|
-| ✅ | Optimisation Monorepo | 16h |
-| ✅ | Stripe Customer Portal | 2h |
-| ✅ | Feature Gating | 12h |
-| ✅ | Dashboard Subscription | 16h |
-| ✅ | Feature Flag Limits | 0.5h |
-| 🔲 | **Email System (Resend)** | **15h** |
-| 🔲 | **RGPD Compliance** | **14h** |
-| | **TOTAL RESTANT** | **~29h** |
+| Feature | Effort | Description |
+|---------|--------|-------------|
+| **Badges utilisateur** | 8h | Gamification (10 rooms, 100 swipes...) |
+| **Historique swipes** | 6h | Voir ses swipes passés |
+| **Room vocale** | 40h | WebRTC audio pendant session |
+| **Réactions live** | 16h | Emojis temps réel via WebSocket |
+| **Watchlist perso** | 12h | Sauvegarder films hors room |
+
+---
+
+## 📊 Résumé par Phase
+
+| Phase | Description | Effort | Statut |
+|:-----:|-------------|-------:|:------:|
+| 1 | SaaS Foundation | 46.5h | ✅ |
+| 3 | Features Concurrentielles | 12h | ✅ |
+| 4 | PWA Optimisation | 8h | ✅ |
+| 2 | Infrastructure (Email + RGPD) | 29h | 🔲 |
+| 5 | Engagement (Stretch) | 82h | 🔲 |
+
+---
+
+## 🎯 Prochaine priorité
+
+1. [ ] Email System (Resend) - 15h
+2. [ ] RGPD Cookie Banner - 3h
+3. [ ] Page Settings avec export/delete - 11h
+
+---
+
+## 💡 Notes
+
+### Ce qu'on ne fait PAS (pour l'instant)
+- ❌ Watchlist complète (Queue le fait mieux)
+- ❌ Tracking épisodes/séries (TV Time le fait mieux)
+- ❌ App native (PWA suffit pour PMF)
+- ❌ Calendrier sorties (pas prioritaire)
+
+### Notre différenciateur
+> **Swipe Movie** = Sessions temps réel en groupe
+>
+> Les concurrents (Queue, Matched) font du swipe **asynchrone**.
+> Nous sommes les seuls à faire du swipe **synchrone en room**.
+
+### Fichiers créés cette session
+- `packages/ui/src/organisms/fortune-wheel.tsx` - Composant roue de la fortune
+- `apps/web/src/app/sw.ts` - Service Worker Serwist
+- `apps/web/src/hooks/usePWAInstall.ts` - Hook installation PWA
+- `apps/web/src/components/pwa/PWAInstallBanner.tsx` - Bannière installation
