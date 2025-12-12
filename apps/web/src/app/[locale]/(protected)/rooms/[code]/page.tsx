@@ -21,6 +21,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@swipe-movie/ui"
 import { Footer } from "@/components/layout/Footer"
 import { RoomErrorBoundary } from "@/components/error"
 import { RoomPageSkeleton } from "@/components/room/RoomPageSkeleton"
+import { BottomTabNav } from "@/components/room/BottomTabNav"
 
 // Lazy load heavy components that are not always visible
 const MovieDetailsModal = lazy(() => import("@/components/movies/MovieDetailsModal").then(m => ({ default: m.MovieDetailsModal })))
@@ -325,35 +326,85 @@ function RoomPageContent() {
       </Suspense>
 
       <div className="min-h-screen bg-background overflow-hidden flex flex-col">
-        {/* Background orbs */}
-        <div className="fixed top-20 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10" />
-        <div className="fixed bottom-20 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl -z-10" />
+        {/* Background gradient orbs - visible and animated */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+          {/* Top left orb - primary color (purple) */}
+          <div
+            className="absolute -top-20 -left-20 w-[600px] h-[600px] bg-purple-600/30 rounded-full blur-[120px] animate-pulse"
+            style={{ animationDuration: '6s' }}
+          />
+          {/* Bottom right orb - accent color (pink) */}
+          <div
+            className="absolute -bottom-20 -right-20 w-[600px] h-[600px] bg-pink-600/30 rounded-full blur-[120px] animate-pulse"
+            style={{ animationDuration: '8s', animationDelay: '2s' }}
+          />
+          {/* Center orb - blend */}
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-violet-500/20 rounded-full blur-[100px] animate-pulse"
+            style={{ animationDuration: '10s', animationDelay: '1s' }}
+          />
+          {/* Additional accent orbs */}
+          <div
+            className="absolute top-1/4 right-1/3 w-80 h-80 bg-fuchsia-500/20 rounded-full blur-[80px] animate-pulse"
+            style={{ animationDuration: '7s', animationDelay: '3s' }}
+          />
+          <div
+            className="absolute bottom-1/4 left-1/3 w-80 h-80 bg-indigo-500/20 rounded-full blur-[80px] animate-pulse"
+            style={{ animationDuration: '5s', animationDelay: '4s' }}
+          />
+        </div>
 
-        <div className="container mx-auto px-4 py-8 max-w-6xl flex-1 relative z-10">
-          {/* Header */}
-          <div className="mb-8">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-              <div className="flex-1 min-w-0">
-                <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
-                  {room.name || t('unnamedRoom')}
-                </h1>
-                <div className="flex flex-wrap gap-2 items-center">
-                  <Badge variant="secondary" className="text-sm">
-                    {room.type === 'movie' ? t('moviesType') : t('tvShowsType')}
-                  </Badge>
-                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <Users className="w-4 h-4" />
-                    <span>{t('membersCount', { count: room.members.length, max: 10 })}</span>
+        <div className="container mx-auto px-4 py-6 sm:py-8 max-w-6xl flex-1 relative z-10">
+          {/* Header - Modern Card Design */}
+          <div className="mb-6 sm:mb-8">
+            <div className="relative group">
+              {/* Subtle glow effect on hover */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-accent/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+              <div className="relative bg-gradient-to-br from-white/10 to-white/5 dark:from-white/5 dark:to-white/[0.02] backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-5">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    {/* Room Title with Icon */}
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
+                        <Film className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                      </div>
+                      <div>
+                        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight">
+                          {room.name || t('unnamedRoom')}
+                        </h1>
+                        <p className="text-xs sm:text-sm text-muted-foreground">
+                          Code: <span className="font-mono font-semibold text-primary">{room.code}</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Badges Row */}
+                    <div className="flex flex-wrap gap-2 items-center">
+                      <Badge className="bg-gradient-to-r from-primary/20 to-primary/10 text-primary border-primary/20 hover:from-primary/30 hover:to-primary/20">
+                        {room.type === 'movie' ? (
+                          <><Film className="w-3 h-3 mr-1" /> {t('moviesType')}</>
+                        ) : (
+                          <><Film className="w-3 h-3 mr-1" /> {t('tvShowsType')}</>
+                        )}
+                      </Badge>
+                      <Badge variant="outline" className="gap-1.5 border-white/20 bg-white/5">
+                        <Users className="w-3 h-3" />
+                        {room.members.length}/10
+                      </Badge>
+                    </div>
                   </div>
+
+                  {/* Share Button - More Prominent */}
+                  <ShareRoomButton
+                    roomCode={room.code}
+                    roomName={room.name || t('unnamedRoom')}
+                    variant="default"
+                    size="default"
+                    className="bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg text-white"
+                  />
                 </div>
               </div>
-
-              <ShareRoomButton
-                roomCode={room.code}
-                roomName={room.name || t('unnamedRoom')}
-                variant="outline"
-                size="sm"
-              />
             </div>
           </div>
 
@@ -371,7 +422,8 @@ function RoomPageContent() {
 
           {/* Main Content - Tabs */}
           <Tabs value={currentTab} onValueChange={handleTabChange} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5 h-12" aria-label={t('tabs.navigationAriaLabel')}>
+            {/* Desktop tabs - hidden on mobile (using BottomTabNav instead) */}
+            <TabsList className="hidden sm:grid w-full grid-cols-5 h-12" aria-label={t('tabs.navigationAriaLabel')}>
               <TabsTrigger value="swipe" className="text-base" aria-label={t('tabs.swipeAriaLabel')}>{t('tabs.swipe')}</TabsTrigger>
               <TabsTrigger value="matches" className="text-base" aria-label={t('tabs.matchesAriaLabel')}>{t('tabs.matches')}</TabsTrigger>
               <TabsTrigger value="history" className="text-base" aria-label={t('tabs.historyAriaLabel')}>{t('tabs.history')}</TabsTrigger>
@@ -498,8 +550,27 @@ function RoomPageContent() {
           </Tabs>
         </div>
 
-        {/* Footer */}
-        <Footer />
+        {/* Footer - hidden on mobile when bottom nav is shown */}
+        <div className="hidden sm:block">
+          <Footer />
+        </div>
+
+        {/* Bottom Tab Navigation - Mobile only */}
+        <BottomTabNav
+          currentTab={currentTab}
+          onTabChange={handleTabChange}
+          matchCount={refreshMatches}
+          translations={{
+            swipe: t('tabs.swipe'),
+            matches: t('tabs.matches'),
+            history: t('tabs.history'),
+            stats: t('tabs.stats'),
+            members: t('tabs.members'),
+          }}
+        />
+
+        {/* Spacer for bottom nav on mobile */}
+        <div className="h-20 sm:hidden" />
       </div>
     </>
   )
