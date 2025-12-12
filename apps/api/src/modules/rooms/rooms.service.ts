@@ -374,6 +374,12 @@ export class RoomsService {
             watchProviders: true,
             watchRegion: true,
             originalLanguage: true,
+            _count: {
+              select: {
+                matches: true,
+                members: true,
+              },
+            },
           },
           skip,
           take,
@@ -383,7 +389,25 @@ export class RoomsService {
       ]);
 
       return new PaginatedResponseDto(
-        rooms,
+        rooms.map((room) => ({
+          id: room.id,
+          name: room.name,
+          code: room.code,
+          genreId: room.genreId,
+          type: room.type,
+          createdAt: room.createdAt,
+          createdBy: room.createdBy,
+          minRating: room.minRating,
+          releaseYearMin: room.releaseYearMin,
+          releaseYearMax: room.releaseYearMax,
+          runtimeMin: room.runtimeMin,
+          runtimeMax: room.runtimeMax,
+          watchProviders: room.watchProviders,
+          watchRegion: room.watchRegion,
+          originalLanguage: room.originalLanguage,
+          matchCount: room._count.matches,
+          memberCount: room._count.members,
+        })),
         pagination.page ?? 1,
         pagination.limit ?? 20,
         total,
@@ -409,11 +433,37 @@ export class RoomsService {
         watchProviders: true,
         watchRegion: true,
         originalLanguage: true,
+        _count: {
+          select: {
+            matches: true,
+            members: true,
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
 
-    return { rooms };
+    return {
+      rooms: rooms.map((room) => ({
+        id: room.id,
+        name: room.name,
+        code: room.code,
+        genreId: room.genreId,
+        type: room.type,
+        createdAt: room.createdAt,
+        createdBy: room.createdBy,
+        minRating: room.minRating,
+        releaseYearMin: room.releaseYearMin,
+        releaseYearMax: room.releaseYearMax,
+        runtimeMin: room.runtimeMin,
+        runtimeMax: room.runtimeMax,
+        watchProviders: room.watchProviders,
+        watchRegion: room.watchRegion,
+        originalLanguage: room.originalLanguage,
+        matchCount: room._count.matches,
+        memberCount: room._count.members,
+      })),
+    };
   }
 
   private async expireOldRooms() {

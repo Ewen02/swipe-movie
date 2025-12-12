@@ -69,7 +69,15 @@ export class RoomMembersResponseDto {
   members!: UserResponseDto[];
 }
 
+export class RoomWithStatsResponseDto extends RoomBaseResponseDto {
+  @ApiProperty({ example: 3 })
+  matchCount!: number;
+
+  @ApiProperty({ example: 5 })
+  memberCount!: number;
+}
+
 export class MemberRoomsResponseDto {
-  @ApiProperty({ type: [RoomBaseResponseDto] })
-  rooms!: RoomBaseResponseDto[];
+  @ApiProperty({ type: [RoomWithStatsResponseDto] })
+  rooms!: RoomWithStatsResponseDto[];
 }

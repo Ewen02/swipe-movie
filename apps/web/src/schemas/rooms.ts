@@ -73,7 +73,14 @@ export const roomMembersResponseSchema = z.object({
 })
 export type RoomMembersResponseDto = z.infer<typeof roomMembersResponseSchema>
 
+// Room with stats (matchCount, memberCount)
+export const roomWithStatsSchema = roomSchema.extend({
+  matchCount: z.number().default(0),
+  memberCount: z.number().default(0),
+})
+export type RoomWithStats = z.infer<typeof roomWithStatsSchema>
+
 export const userRoomsResponseSchema = z.object({
-  rooms: z.array(roomSchema),
+  rooms: z.array(roomWithStatsSchema),
 })
 export type UserRoomsResponseDto = z.infer<typeof userRoomsResponseSchema>
