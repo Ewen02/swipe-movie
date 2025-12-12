@@ -1,6 +1,6 @@
 // Session cache to avoid multiple get-session requests per page load
 let cachedSession: { email: string; timestamp: number } | null = null
-const SESSION_CACHE_TTL = 60 * 1000 // 1 minute cache
+const SESSION_CACHE_TTL = 5 * 60 * 1000 // 5 minutes cache (aligned with server cookie cache)
 
 export function getCachedEmail(): string | undefined {
   const now = Date.now()
