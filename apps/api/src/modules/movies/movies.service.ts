@@ -32,8 +32,8 @@ export interface MovieFilters {
 const CACHE_TTL = {
   MOVIE_DETAILS: 24 * 60 * 60 * 1000, // 24 hours
   GENRES: 7 * 24 * 60 * 60 * 1000, // 7 days
-  DISCOVER: 60 * 60 * 1000, // 1 hour
-  WATCH_PROVIDERS: 24 * 60 * 60 * 1000, // 24 hours
+  DISCOVER: 6 * 60 * 60 * 1000, // 6 hours (increased from 1h)
+  WATCH_PROVIDERS: 7 * 24 * 60 * 60 * 1000, // 7 days (increased from 24h)
 } as const;
 
 @Injectable()
