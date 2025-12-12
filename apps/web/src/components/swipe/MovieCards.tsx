@@ -61,48 +61,85 @@ function MovieCard({
   const rotate = useMotionValue(0)
   const opacity = useTransform(x, [-200, -150, 0, 150, 200], [0, 1, 1, 1, 0])
 
+  // Enhanced transforms for better visual feedback
+  const scale = useTransform(x, [-200, 0, 200], [0.95, 1, 0.95])
+  const boxShadow = useTransform(
+    x,
+    [-200, 0, 200],
+    [
+      "0 25px 50px -12px rgba(239, 68, 68, 0.4)",  // Red glow left (nope)
+      "0 25px 50px -12px rgba(0, 0, 0, 0.25)",     // Neutral shadow
+      "0 25px 50px -12px rgba(34, 197, 94, 0.4)"  // Green glow right (like)
+    ]
+  )
+
   const likeOpacity = useTransform(x, [0, 100], [0, 1])
   const nopeOpacity = useTransform(x, [-100, 0], [1, 0])
   const likeScale = useTransform(x, [0, 150], [0.8, 1.2])
   const nopeScale = useTransform(x, [-150, 0], [1.2, 0.8])
+
+  // Badge rotation follows card rotation
+  const likeBadgeRotate = useTransform(x, [0, 150], [15, 25])
+  const nopeBadgeRotate = useTransform(x, [-150, 0], [-25, -15])
 
   const handleDragEnd = (_event: any, info: PanInfo) => {
     if (!isActive) return
 
     const threshold = 75
     const velocity = info.velocity.x
+    const absVelocity = Math.abs(velocity)
 
-    if (Math.abs(info.offset.x) > threshold || Math.abs(velocity) > 400) {
+    if (Math.abs(info.offset.x) > threshold || absVelocity > 400) {
       const direction = info.offset.x > 0 ? "right" : "left"
-      handleSwipe(direction)
+      // Velocity-based exit: faster swipe = faster exit animation
+      const exitDuration = Math.max(0.2, 0.4 - (absVelocity / 2000))
+      handleSwipe(direction, exitDuration)
     } else {
-      animate(x, 0, { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] })
-      animate(rotate, 0, { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] })
+      // Rubber band spring back animation
+      animate(x, 0, {
+        type: "spring",
+        damping: 20,
+        stiffness: 400,
+      })
+      animate(rotate, 0, {
+        type: "spring",
+        damping: 20,
+        stiffness: 400,
+      })
     }
   }
 
-  const handleSwipe = (direction: "left" | "right") => {
-    // Haptic feedback si disponible
+  // Store exit duration for animation
+  const [exitDuration, setExitDuration] = useState(0.4)
+
+  const handleSwipe = (direction: "left" | "right", duration: number = 0.4) => {
+    // Enhanced haptic feedback patterns
     if (typeof window !== "undefined" && "vibrate" in navigator) {
-      // Vibration différente selon like/dislike
-      navigator.vibrate(direction === "right" ? [30, 10, 30] : 50)
+      if (direction === "right") {
+        // Celebratory pattern for likes
+        navigator.vibrate([30, 20, 50])
+      } else {
+        // Short decisive pattern for nope
+        navigator.vibrate([40])
+      }
     }
 
-    // Créer des particules pour les likes
+    // Créer des particules pour les likes (more particles for likes)
     if (direction === "right") {
-      const newParticles: Particle[] = Array.from({ length: 12 }, (_, i) => ({
+      const newParticles: Particle[] = Array.from({ length: 16 }, (_, i) => ({
         id: Date.now() + i,
-        x: Math.random() * 100 - 50,
-        y: Math.random() * 100 - 50,
-        color: ["#22c55e", "#10b981", "#34d399", "#6ee7b7"][Math.floor(Math.random() * 4)],
-        delay: Math.random() * 0.1,
+        x: Math.random() * 150 - 75,
+        y: Math.random() * 150 - 75,
+        color: ["#22c55e", "#10b981", "#34d399", "#6ee7b7", "#fbbf24", "#f59e0b"][Math.floor(Math.random() * 6)],
+        delay: Math.random() * 0.15,
       }))
       setParticles(newParticles)
 
       // Nettoyer les particules après l'animation
-      setTimeout(() => setParticles([]), 1000)
+      setTimeout(() => setParticles([]), 1200)
     }
 
+    setExitDuration(duration)
     setExitDirection(direction)
     onSwipe(movie, direction)
   }
@@ -110,7 +147,8 @@ function MovieCard({
   const handleDrag = () => {
     if (!isActive) return
     const currentX = x.get()
-    const rotationValue = (currentX / 300) * 25
+    // Increased rotation from 25° to 30° for more dynamic feel
+    const rotationValue = (currentX / 300) * 30
     rotate.set(rotationValue)
   }
 
@@ -154,9 +192,8 @@ function MovieCard({
     }
   }, [isActive, onButtonSwipeRef, onButtonHoverRef])
 
-  const translateY = 0
   const zIndex = totalCards - index
-  const shouldShow = index < 2
+  const shouldShow = index < 3 // Show up to 3 cards in stack
 
   const releaseYear = movie.releaseDate ? new Date(movie.releaseDate).getFullYear() : null
 
@@ -165,15 +202,21 @@ function MovieCard({
       className={cn("absolute inset-0", isActive ? "cursor-grab active:cursor-grabbing" : "pointer-events-none")}
       style={{
         x: isActive ? x : 0,
-        rotate: isActive ? rotate : 0,
-        opacity: shouldShow ? (isActive ? opacity : 1) : 0,
-        y: translateY,
+        rotate: isActive ? rotate : (index === 1 ? -2 : -4), // Slight rotation for stacked cards
+        scale: isActive ? scale : (index === 1 ? 0.96 : 0.92), // More noticeable scale for stack
+        opacity: shouldShow ? (isActive ? opacity : (index === 1 ? 0.85 : 0.7)) : 0,
+        y: index === 0 ? 0 : (index === 1 ? 12 : 24), // Cards peek from behind (positive Y = below)
         zIndex,
+        boxShadow: isActive
+          ? boxShadow
+          : index === 1
+            ? "0 15px 35px -10px rgba(0, 0, 0, 0.2)"
+            : "0 20px 40px -15px rgba(0, 0, 0, 0.15)",
       }}
       drag={isActive ? "x" : false}
       dragConstraints={{ left: -400, right: 400 }}
       dragMomentum={false}
-      dragElastic={0.1}
+      dragElastic={0.15} // Slightly more elastic for better feel
       onDrag={handleDrag}
       onDragEnd={handleDragEnd}
       animate={
@@ -181,11 +224,19 @@ function MovieCard({
           ? {
               x: exitDirection === "right" ? 400 : -400,
               opacity: 0,
-              rotate: exitDirection === "right" ? 25 : -25,
+              rotate: exitDirection === "right" ? 30 : -30, // Increased from 25 to 30
+              scale: 0.9, // Scale down on exit
             }
           : {}
       }
-      transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+      transition={{
+        duration: exitDirection ? exitDuration : 0.4,
+        ease: [0.25, 0.46, 0.45, 0.94],
+        // Spring physics for more natural feel when not exiting
+        type: exitDirection ? "tween" : "spring",
+        damping: 25,
+        stiffness: 300,
+      }}
       initial={index === 0 ? { scale: 0.95, opacity: 0 } : {}}
       whileInView={index === 0 ? { scale: 1, opacity: 1 } : {}}
     >
@@ -238,10 +289,24 @@ function MovieCard({
 
                 <motion.div
                   className="absolute top-8 right-8 flex items-center gap-2"
-                  style={{ opacity: likeOpacity, scale: likeScale }}
+                  style={{
+                    opacity: likeOpacity,
+                    scale: likeScale,
+                    rotate: likeBadgeRotate,
+                  }}
                 >
-                  <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xl font-bold px-6 py-3 rotate-12 border-4 border-white shadow-2xl flex items-center gap-2">
-                    <Heart className="w-5 h-5 fill-white" />
+                  <Badge
+                    className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xl font-bold px-6 py-3 border-4 border-white flex items-center gap-2"
+                    style={{
+                      boxShadow: "0 0 30px rgba(34, 197, 94, 0.6), 0 10px 40px rgba(0, 0, 0, 0.3)",
+                    }}
+                  >
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ repeat: Infinity, duration: 0.6 }}
+                    >
+                      <Heart className="w-5 h-5 fill-white" />
+                    </motion.div>
                     LIKE
                     <Sparkles className="w-4 h-4" />
                   </Badge>
@@ -249,10 +314,24 @@ function MovieCard({
 
                 <motion.div
                   className="absolute top-8 left-8 flex items-center gap-2"
-                  style={{ opacity: nopeOpacity, scale: nopeScale }}
+                  style={{
+                    opacity: nopeOpacity,
+                    scale: nopeScale,
+                    rotate: nopeBadgeRotate,
+                  }}
                 >
-                  <Badge className="bg-gradient-to-r from-red-500 to-rose-500 text-white text-xl font-bold px-6 py-3 -rotate-12 border-4 border-white shadow-2xl flex items-center gap-2">
-                    <X className="w-5 h-5" />
+                  <Badge
+                    className="bg-gradient-to-r from-red-500 to-rose-500 text-white text-xl font-bold px-6 py-3 border-4 border-white flex items-center gap-2"
+                    style={{
+                      boxShadow: "0 0 30px rgba(239, 68, 68, 0.6), 0 10px 40px rgba(0, 0, 0, 0.3)",
+                    }}
+                  >
+                    <motion.div
+                      animate={{ rotate: [-5, 5, -5] }}
+                      transition={{ repeat: Infinity, duration: 0.3 }}
+                    >
+                      <X className="w-5 h-5" />
+                    </motion.div>
                     NOPE
                   </Badge>
                 </motion.div>
@@ -302,13 +381,14 @@ function MovieCard({
                   <Button
                     size="icon"
                     variant="secondary"
-                    className="shrink-0 bg-white/95 hover:bg-white shadow-lg border border-white/20 backdrop-blur-sm"
+                    className="shrink-0 w-10 h-10 sm:w-9 sm:h-9 bg-white/90 hover:bg-white shadow-lg border-2 border-white/40 backdrop-blur-md rounded-full transition-all hover:scale-110 active:scale-95"
                     onClick={(e) => {
                       e.stopPropagation()
                       onShowDetails(movie.id)
                     }}
+                    aria-label="Voir les détails"
                   >
-                    <Info className="w-4 h-4 text-primary" />
+                    <Info className="w-5 h-5 sm:w-4 sm:h-4 text-gray-800" />
                   </Button>
                 )}
               </div>
@@ -452,45 +532,45 @@ export function MovieCards({ movies, onSwipe, onUndo, onEmpty, onShowDetails, ro
 
   return (
     <div className="relative">
-      {/* Active Filters Display */}
+      {/* Active Filters Display - Compact pill design */}
       {roomFilters && (
-        <div className="mb-6 max-w-sm mx-auto">
-          <div className="flex flex-wrap gap-2 justify-center">
+        <div className="mb-4 max-w-sm mx-auto">
+          <div className="flex flex-wrap gap-1.5 justify-center">
             {roomFilters.minRating !== null && roomFilters.minRating !== undefined && (
-              <Badge variant="secondary" className="text-xs gap-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200">
-                <Star className="w-3 h-3 fill-yellow-500" />
-                Note ≥ {roomFilters.minRating.toFixed(1)}
+              <Badge className="text-[11px] gap-1 px-2.5 py-1 bg-amber-500/20 text-amber-300 border-amber-500/30 hover:bg-amber-500/30 transition-colors">
+                <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                {roomFilters.minRating.toFixed(1)}+
               </Badge>
             )}
 
             {(roomFilters.releaseYearMin !== null && roomFilters.releaseYearMin !== undefined) ||
              (roomFilters.releaseYearMax !== null && roomFilters.releaseYearMax !== undefined) ? (
-              <Badge variant="secondary" className="text-xs gap-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200">
+              <Badge className="text-[11px] gap-1 px-2.5 py-1 bg-blue-500/20 text-blue-300 border-blue-500/30 hover:bg-blue-500/30 transition-colors">
                 <Calendar className="w-3 h-3" />
                 {roomFilters.releaseYearMin && roomFilters.releaseYearMax
-                  ? `${roomFilters.releaseYearMin} - ${roomFilters.releaseYearMax}`
+                  ? `${roomFilters.releaseYearMin}-${roomFilters.releaseYearMax}`
                   : roomFilters.releaseYearMin
-                    ? `Depuis ${roomFilters.releaseYearMin}`
-                    : `Jusqu'à ${roomFilters.releaseYearMax}`}
+                    ? `${roomFilters.releaseYearMin}+`
+                    : `≤${roomFilters.releaseYearMax}`}
               </Badge>
             ) : null}
 
             {(roomFilters.runtimeMin !== null && roomFilters.runtimeMin !== undefined &&
               roomFilters.runtimeMax !== null && roomFilters.runtimeMax !== undefined) && (
-              <Badge variant="secondary" className="text-xs gap-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200">
-                ⏱️ {roomFilters.runtimeMin === 0 && roomFilters.runtimeMax === 90
-                    ? "Court (<90min)"
+              <Badge className="text-[11px] gap-1 px-2.5 py-1 bg-purple-500/20 text-purple-300 border-purple-500/30 hover:bg-purple-500/30 transition-colors">
+                {roomFilters.runtimeMin === 0 && roomFilters.runtimeMax === 90
+                    ? "< 90min"
                     : roomFilters.runtimeMin === 90 && roomFilters.runtimeMax === 180
-                      ? "Moyen (90-180min)"
+                      ? "90-180min"
                       : roomFilters.runtimeMin === 180
-                        ? "Long (>180min)"
+                        ? "> 180min"
                         : `${roomFilters.runtimeMin}-${roomFilters.runtimeMax}min`}
               </Badge>
             )}
 
             {roomFilters.originalLanguage && (
-              <Badge variant="secondary" className="text-xs gap-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200">
-                🌐 {roomFilters.originalLanguage.toUpperCase()}
+              <Badge className="text-[11px] gap-1 px-2.5 py-1 bg-emerald-500/20 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/30 transition-colors">
+                {roomFilters.originalLanguage.toUpperCase()}
               </Badge>
             )}
 
@@ -499,36 +579,42 @@ export function MovieCards({ movies, onSwipe, onUndo, onEmpty, onShowDetails, ro
                 {getProvidersByIds(roomFilters.watchProviders).filter((p): p is NonNullable<typeof p> => p !== undefined).map((provider) => (
                   <Badge
                     key={provider.id}
-                    variant="secondary"
-                    className="text-xs gap-1 bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-200"
+                    className="text-[11px] gap-1 px-2.5 py-1 bg-pink-500/20 text-pink-300 border-pink-500/30 hover:bg-pink-500/30 transition-colors"
                   >
-                    {provider.logo} {provider.name}
+                    {provider.logo}
                   </Badge>
                 ))}
               </>
             )}
 
             {roomFilters.watchRegion && (
-              <Badge variant="secondary" className="text-xs gap-1 bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200">
-                🌍 {roomFilters.watchRegion.toUpperCase()}
+              <Badge className="text-[11px] gap-1 px-2.5 py-1 bg-orange-500/20 text-orange-300 border-orange-500/30 hover:bg-orange-500/30 transition-colors">
+                {roomFilters.watchRegion.toUpperCase()}
               </Badge>
             )}
           </div>
         </div>
       )}
 
-      <div className="relative h-[600px] w-full max-w-sm mx-auto">
+      {/* Card container - with enhanced stack preview */}
+      <div className="relative h-[450px] sm:h-[550px] md:h-[600px] w-full max-w-sm mx-auto">
+        {/* Stack shadow hint - shows there are more cards */}
+        {currentCards.length > 2 && !isLoading && (
+          <div className="absolute inset-x-4 -bottom-2 h-4 bg-gradient-to-t from-black/10 to-transparent rounded-b-xl blur-sm" />
+        )}
+
         {isLoading ? (
           <div className="absolute inset-0">
             <MovieCardSkeleton />
           </div>
         ) : (
-          currentCards.filter(Boolean).slice(0, 2).map((movie, index) => (
+          /* Show up to 3 cards in stack for better depth effect */
+          currentCards.filter(Boolean).slice(0, 3).map((movie, index) => (
             <MovieCard
               key={movie.id}
               movie={movie}
               index={index}
-              totalCards={2}
+              totalCards={Math.min(currentCards.length, 3)}
               isActive={index === 0}
               onSwipe={handleCardSwipe}
               onShowDetails={onShowDetails}
@@ -553,109 +639,135 @@ export function MovieCards({ movies, onSwipe, onUndo, onEmpty, onShowDetails, ro
         )}
       </div>
 
-      <div className="flex justify-center gap-6 mt-8">
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+      {/* Swipe Buttons - Enhanced with vibrant colors and glow effects */}
+      <div className="flex justify-center items-center gap-4 sm:gap-6 mt-4 sm:mt-8">
+        {/* NOPE Button */}
+        <motion.div
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="relative"
+        >
+          {/* Glow effect */}
+          <div className="absolute inset-0 rounded-full bg-red-500/30 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
           <Button
             size="lg"
-            variant="outline"
-            className="rounded-full w-16 h-16 p-0 border-2 border-red-200 hover:border-red-400 hover:bg-red-50 dark:border-red-800 dark:hover:border-red-600 dark:hover:bg-red-950 bg-white dark:bg-gray-900 shadow-lg hover:shadow-xl transition-all group"
+            className="relative rounded-full w-16 h-16 sm:w-18 sm:h-18 p-0 bg-gradient-to-br from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 border-0 shadow-[0_8px_30px_-5px_rgba(239,68,68,0.5)] hover:shadow-[0_8px_40px_-5px_rgba(239,68,68,0.7)] transition-all duration-300 group"
             onClick={() => handleButtonSwipe("left")}
             onMouseEnter={() => handleButtonHover("left")}
             onMouseLeave={handleButtonHoverEnd}
             disabled={isLoading || currentCards.length === 0}
           >
-            <X className="w-7 h-7 text-red-500 group-hover:text-red-600 transition-colors" />
+            <X className="w-7 h-7 sm:w-8 sm:h-8 text-white drop-shadow-md transition-transform group-hover:rotate-12" />
           </Button>
         </motion.div>
 
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+        {/* Undo Button */}
+        <motion.div
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.92 }}
+        >
           <Button
             size="lg"
             variant="outline"
-            className="rounded-full w-14 h-14 p-0 border-2 border-gray-200 hover:border-gray-400 hover:bg-gray-50 dark:border-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-800 bg-white dark:bg-gray-900 shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+            className="rounded-full w-12 h-12 sm:w-14 sm:h-14 p-0 border-2 border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed group"
             onClick={handleUndo}
             disabled={isLoading || !lastSwipe}
             title="Annuler (Ctrl+Z)"
           >
-            <Undo2 className="w-5 h-5 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 transition-colors" />
+            <Undo2 className="w-5 h-5 sm:w-6 sm:h-6 text-white/70 group-hover:text-white transition-all group-hover:-rotate-45" />
           </Button>
         </motion.div>
 
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+        {/* LIKE Button */}
+        <motion.div
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="relative"
+        >
+          {/* Glow effect */}
+          <div className="absolute inset-0 rounded-full bg-green-500/30 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
           <Button
             size="lg"
-            variant="outline"
-            className="rounded-full w-16 h-16 p-0 border-2 border-green-200 hover:border-green-400 hover:bg-green-50 dark:border-green-800 dark:hover:border-green-600 dark:hover:bg-green-950 bg-white dark:bg-gray-900 shadow-lg hover:shadow-xl transition-all group relative overflow-hidden"
+            className="relative rounded-full w-16 h-16 sm:w-18 sm:h-18 p-0 bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 border-0 shadow-[0_8px_30px_-5px_rgba(34,197,94,0.5)] hover:shadow-[0_8px_40px_-5px_rgba(34,197,94,0.7)] transition-all duration-300 group overflow-hidden"
             onClick={() => handleButtonSwipe("right")}
             onMouseEnter={() => handleButtonHover("right")}
             onMouseLeave={handleButtonHoverEnd}
             disabled={isLoading || currentCards.length === 0}
           >
-            <Heart className="w-7 h-7 text-green-500 group-hover:text-green-600 transition-colors relative z-10 group-hover:fill-green-500" />
+            {/* Shine effect on hover */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Heart className="w-7 h-7 sm:w-8 sm:h-8 text-white drop-shadow-md relative z-10 transition-transform group-hover:scale-110 group-hover:fill-white" />
           </Button>
         </motion.div>
       </div>
 
-      {/* Stats */}
+      {/* Stats - Compact floating pill */}
       {swipeCount > 0 && (
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex justify-center mt-6"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex justify-center mt-4"
         >
-          <div className="flex items-center gap-6 px-6 py-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-full shadow-md border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center shadow-sm">
-                <Heart className="w-4 h-4 text-white fill-white" />
-              </div>
-              <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                {likeCount}
-              </span>
+          <div className="flex items-center gap-3 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/10">
+            <div className="flex items-center gap-1.5">
+              <Heart className="w-4 h-4 text-green-400 fill-green-400" />
+              <span className="text-sm font-semibold text-white/90">{likeCount}</span>
             </div>
-
-            <div className="w-px h-6 bg-gray-300 dark:bg-gray-600" />
-
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-gray-400 to-gray-500 flex items-center justify-center shadow-sm">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                {swipeCount}
-              </span>
+            <div className="w-px h-4 bg-white/20" />
+            <div className="flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-purple-400" />
+              <span className="text-sm font-semibold text-white/90">{swipeCount}</span>
             </div>
-
-            <div className="w-px h-6 bg-gray-300 dark:bg-gray-600" />
-
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                {Math.round((likeCount / swipeCount) * 100)}% ❤️
-              </span>
-            </div>
+            <div className="w-px h-4 bg-white/20" />
+            <span className="text-xs font-medium text-white/60">
+              {Math.round((likeCount / swipeCount) * 100)}%
+            </span>
           </div>
         </motion.div>
       )}
 
-      <div className="flex justify-center mt-6">
-        <div className="flex gap-1">
-          {movies.map((_: MovieBasic, index: number) => (
-            <div
-              key={index}
-              className={cn(
-                "w-2 h-2 rounded-full transition-all duration-300",
-                index < movies.length - currentCards.length
-                  ? "bg-gradient-to-r from-purple-400 to-pink-400"
-                  : index === movies.length - currentCards.length
-                    ? "bg-gradient-to-r from-purple-500 to-pink-500 w-3 h-3 shadow-lg"
-                    : "bg-gray-200 dark:bg-gray-700",
-              )}
-            />
-          ))}
+      {/* Progress indicator - Show remaining count instead of dots */}
+      <div className="flex justify-center mt-4">
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-full border border-white/10">
+          <div className="flex gap-0.5">
+            {/* Show max 7 dots */}
+            {Array.from({ length: Math.min(7, movies.length) }).map((_, index) => {
+              const swipedCount = movies.length - currentCards.length
+              const isCompleted = index < Math.min(swipedCount, 7)
+              const isCurrent = index === Math.min(swipedCount, 6)
+
+              return (
+                <motion.div
+                  key={index}
+                  className={cn(
+                    "rounded-full transition-all duration-300",
+                    isCompleted
+                      ? "w-2 h-2 bg-gradient-to-r from-primary to-accent"
+                      : isCurrent
+                        ? "w-3 h-3 bg-primary shadow-[0_0_8px_rgba(139,92,246,0.5)]"
+                        : "w-2 h-2 bg-white/20",
+                  )}
+                  animate={isCurrent ? { scale: [1, 1.2, 1] } : {}}
+                  transition={{ repeat: Infinity, duration: 2 }}
+                />
+              )
+            })}
+          </div>
+          {currentCards.length > 0 && (
+            <span className="text-[10px] text-white/50 font-medium ml-1">
+              {currentCards.length} restants
+            </span>
+          )}
         </div>
       </div>
 
-      <div className="text-center mt-6 text-sm text-gray-500 dark:text-gray-400">
-        <p>Glissez ou utilisez les boutons • ← → pour naviguer • Ctrl+Z pour annuler</p>
+      {/* Keyboard hints - Desktop only */}
+      <div className="text-center mt-4 text-xs text-white/30 hidden sm:block">
+        <p>← → pour swiper • Ctrl+Z annuler</p>
       </div>
+
+      {/* Bottom spacing for mobile nav */}
+      <div className="h-4 sm:hidden" />
     </div>
   )
 }
