@@ -1,22 +1,15 @@
 "use client"
 
-import { lazy, Suspense } from "react"
+import { lazy, Suspense, useState } from "react"
 import { motion } from "framer-motion"
 import { CardContent, Button } from "@swipe-movie/ui"
 import { RoomsList } from "@/components/room/RoomsList"
 import { RoomStatsHeader } from "@/components/room/RoomStatsHeader"
-import {
-  CreateRoomValues,
-  JoinRoomValues,
-  UserRoomsResponseDto
-} from "@/schemas/rooms"
+import { CreateRoomValues, JoinRoomValues } from "@/schemas/rooms"
 
-import { joinRoom, createRoom, getMyRoom } from "@/lib/api/rooms"
-import { getGenres } from "@/lib/api/movies"
+import { joinRoom, createRoom } from "@/lib/api/rooms"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
-import type { MovieGenre } from "@/schemas/movies"
 import { Film, RefreshCw } from "lucide-react"
 import { Footer } from "@/components/layout/Footer"
 import { RoomErrorBoundary } from "@/components/error"
@@ -24,6 +17,8 @@ import { RoomsPageSkeleton } from "./RoomsPageSkeleton"
 import { useUserStats } from "@/hooks/useUserStats"
 import { useOnboarding } from "@/hooks/useOnboarding"
 import { fadeInUp, staggerContainer } from "@/lib/animations"
+import { useRooms } from "@/hooks/useRooms"
+import { useGenres } from "@/hooks/useGenres"
 
 // Lazy load dialogs - they're not needed until user interaction
 const CreateRoomStepper = lazy(() => import("@/components/room/create-room").then(m => ({ default: m.CreateRoomStepper })))
@@ -33,64 +28,59 @@ const OnboardingTutorial = lazy(() => import("@/components/onboarding").then(m =
 function RoomsPageContent() {
   const t = useTranslations('rooms')
   const router = useRouter()
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [rooms, setRooms] = useState<UserRoomsResponseDto | null>(null)
-  const [genres, setGenres] = useState<MovieGenre[]>([])
+  const [actionError, setActionError] = useState<string | null>(null)
+  const [actionLoading, setActionLoading] = useState(false)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [showJoinDialog, setShowJoinDialog] = useState(false)
 
+  // SWR hooks for data fetching with caching
+  const { rooms, isLoading: roomsLoading, error: roomsError, refresh: refreshRooms } = useRooms()
+  const { genres, isLoading: genresLoading } = useGenres()
+
+  // Combine loading states
+  const loading = roomsLoading || genresLoading
+  const error = actionError || roomsError
+
   // Load user statistics
-  const userStats = useUserStats(rooms !== null && rooms.rooms.length > 0)
+  const userStats = useUserStats(rooms.length > 0)
 
   // Onboarding tutorial
   const { showOnboarding, completeOnboarding, skipOnboarding } = useOnboarding()
 
-  const loadData = () => {
-    setLoading(true)
-    setError(null)
-    Promise.all([getMyRoom(), getGenres()])
-      .then(([roomsData, genresData]) => {
-        setRooms(roomsData)
-        setGenres(genresData)
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false))
-  }
-
-  useEffect(() => {
-    loadData()
-  }, [])
-
   const onCreate = async (values: CreateRoomValues) => {
     try {
-      setError(null)
-      setLoading(true)
+      setActionError(null)
+      setActionLoading(true)
       const room = await createRoom(values)
       setShowCreateDialog(false)
+      // Refresh rooms cache after creation
+      refreshRooms()
       router.push(`/rooms/${room.code}`)
     } catch (e) {
-      setError(e instanceof Error ? e.message : t('errorUnknown'))
+      setActionError(e instanceof Error ? e.message : t('errorUnknown'))
     } finally {
-      setLoading(false)
+      setActionLoading(false)
     }
   }
 
   const onJoin = async (values: JoinRoomValues) => {
     try {
-      setError(null)
-      setLoading(true)
+      setActionError(null)
+      setActionLoading(true)
       const room = await joinRoom(values)
       setShowJoinDialog(false)
+      // Refresh rooms cache after joining
+      refreshRooms()
       router.push(`/rooms/${room.code}`)
     } catch (e) {
-      setError(e instanceof Error ? e.message : t('errorUnknown'))
+      setActionError(e instanceof Error ? e.message : t('errorUnknown'))
     } finally {
-      setLoading(false)
+      setActionLoading(false)
     }
   }
 
-  if (loading) {
+  // Show skeleton only on initial load (no cached data)
+  if (loading && rooms.length === 0) {
     return <RoomsPageSkeleton />
   }
 
@@ -103,7 +93,7 @@ function RoomsPageContent() {
       <div className="flex-1 container mx-auto px-4 py-8 md:py-12 relative z-10">
         {/* Hero Header with Stats */}
         <RoomStatsHeader
-          totalRooms={rooms?.rooms.length || 0}
+          totalRooms={rooms.length}
           totalMatches={userStats.totalMatches}
           totalSwipesToday={userStats.totalSwipesToday}
           onCreateRoom={() => setShowCreateDialog(true)}
@@ -120,7 +110,7 @@ function RoomsPageContent() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={loadData}
+                    onClick={() => refreshRooms()}
                     className="gap-2 border-white/20 hover:bg-white/5"
                   >
                     <RefreshCw className="w-4 h-4" />
@@ -133,25 +123,23 @@ function RoomsPageContent() {
         )}
 
         {/* My Rooms Section */}
-        {rooms && (
-          <motion.div
-            className="max-w-6xl mx-auto"
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
+        <motion.div
+          className="max-w-6xl mx-auto"
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+        >
+          <motion.h2
+            className="text-2xl font-semibold mb-6 flex items-center gap-2"
+            variants={fadeInUp}
           >
-            <motion.h2
-              className="text-2xl font-semibold mb-6 flex items-center gap-2"
-              variants={fadeInUp}
-            >
-              <Film className="w-6 h-6 text-primary" />
-              {t('myActiveRooms')}
-            </motion.h2>
-            <motion.div variants={fadeInUp}>
-              <RoomsList rooms={rooms} onCreateRoom={() => setShowCreateDialog(true)} />
-            </motion.div>
+            <Film className="w-6 h-6 text-primary" />
+            {t('myActiveRooms')}
+          </motion.h2>
+          <motion.div variants={fadeInUp}>
+            <RoomsList rooms={{ rooms }} onCreateRoom={() => setShowCreateDialog(true)} />
           </motion.div>
-        )}
+        </motion.div>
 
         {/* Dialogs - Lazy loaded */}
         <Suspense fallback={null}>
@@ -161,7 +149,7 @@ function RoomsPageContent() {
               onOpenChange={setShowCreateDialog}
               onSubmit={onCreate}
               genres={genres}
-              loading={loading}
+              loading={actionLoading}
             />
           )}
         </Suspense>
@@ -172,7 +160,7 @@ function RoomsPageContent() {
               open={showJoinDialog}
               onOpenChange={setShowJoinDialog}
               onSubmit={onJoin}
-              loading={loading}
+              loading={actionLoading}
             />
           )}
         </Suspense>
