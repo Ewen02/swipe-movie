@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
+import useSWR from "swr"
 import { getRoomByCode } from "@/lib/api/rooms"
 import { getMySwipesByRoom } from "@/lib/api/swipes"
 import type { RoomWithMembersResponseDto } from "@/schemas/rooms"
+import type { Swipe } from "@/schemas/swipes"
 
 interface UseRoomDataProps {
   code: string
@@ -18,57 +20,91 @@ interface UseRoomDataReturn {
   reloadRoom: () => Promise<void>
 }
 
+// SWR fetcher for room data
+const roomFetcher = (code: string) => getRoomByCode(code)
+
+// SWR fetcher for swipes data
+const swipesFetcher = (roomId: string) => getMySwipesByRoom(roomId)
+
 export function useRoomData({ code }: UseRoomDataProps): UseRoomDataReturn {
-  const [room, setRoom] = useState<RoomWithMembersResponseDto | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [swipedMovieIds, setSwipedMovieIds] = useState<Set<string>>(new Set())
-  const [swipesLoaded, setSwipesLoaded] = useState(false)
+  // Local state for optimistic updates on swipes
+  const [localSwipedIds, setLocalSwipedIds] = useState<Set<string> | null>(null)
 
+  // SWR for room data with 2 min cache
+  const {
+    data: room,
+    error: roomError,
+    isLoading: roomLoading,
+    mutate: mutateRoom,
+  } = useSWR<RoomWithMembersResponseDto>(
+    code ? `/api/rooms/code/${code}` : null,
+    () => roomFetcher(code),
+    {
+      dedupingInterval: 2 * 60 * 1000,
+      revalidateOnFocus: false,
+    }
+  )
+
+  // SWR for swipes data - depends on room being loaded
+  const {
+    data: swipes,
+    error: swipesError,
+    isLoading: swipesLoading,
+    mutate: mutateSwipes,
+  } = useSWR<Swipe[]>(
+    room?.id ? `/api/swipes/me/${room.id}` : null,
+    () => swipesFetcher(room!.id),
+    {
+      dedupingInterval: 60 * 1000, // 1 min cache for swipes
+      revalidateOnFocus: false,
+    }
+  )
+
+  // Convert swipes to Set of movie IDs (use local state if available for optimistic updates)
+  const swipedMovieIds = useMemo(() => {
+    if (localSwipedIds !== null) {
+      return localSwipedIds
+    }
+    return new Set(swipes?.map(s => s.movieId) ?? [])
+  }, [swipes, localSwipedIds])
+
+  // Setter that updates local state for optimistic updates
+  const setSwipedMovieIds = useCallback((updater: React.SetStateAction<Set<string>>) => {
+    setLocalSwipedIds(prev => {
+      const current = prev ?? swipedMovieIds
+      if (typeof updater === "function") {
+        return updater(current)
+      }
+      return updater
+    })
+  }, [swipedMovieIds])
+
+  // Reset local state when server data updates
   useEffect(() => {
-    if (!code) return
-    loadRoom()
-  }, [code])
-
-  const loadRoom = async () => {
-    try {
-      setLoading(true)
-      const roomData = await getRoomByCode(code)
-      setRoom(roomData)
-
-      // Load user's swipes for this room
-      await loadSwipes(roomData.id)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load room")
-    } finally {
-      setLoading(false)
+    if (swipes) {
+      setLocalSwipedIds(null)
     }
-  }
+  }, [swipes])
 
-  const loadSwipes = async (roomId: string) => {
-    try {
-      const swipes = await getMySwipesByRoom(roomId)
-      const swipedIds = new Set(swipes.map(swipe => swipe.movieId))
-      setSwipedMovieIds(swipedIds)
-      setSwipesLoaded(true)
-    } catch (err) {
-      console.error("Failed to load swipes:", err)
-      setSwipesLoaded(true) // Set to true even on error so we don't block loading
-    }
-  }
+  const reloadSwipes = useCallback(async () => {
+    setLocalSwipedIds(null)
+    await mutateSwipes()
+  }, [mutateSwipes])
 
-  const reloadSwipes = async () => {
-    if (!room) return
-    await loadSwipes(room.id)
-  }
+  const reloadRoom = useCallback(async () => {
+    await mutateRoom()
+  }, [mutateRoom])
 
-  const reloadRoom = async () => {
-    await loadRoom()
-  }
+  // Combine loading states
+  const loading = roomLoading || (room && swipesLoading)
+  const swipesLoaded = !swipesLoading && (swipes !== undefined || swipesError !== undefined)
+
+  // Combine errors
+  const error = roomError?.message ?? swipesError?.message ?? null
 
   return {
-    room,
-    loading,
+    room: room ?? null,
+    loading: !!loading,
     error,
     swipedMovieIds,
     swipesLoaded,
