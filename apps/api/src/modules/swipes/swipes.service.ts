@@ -1,9 +1,16 @@
 import { Injectable, NotFoundException, ForbiddenException, Inject, forwardRef } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 import { PrismaService } from '../../infra/prisma.service';
 import { MatchesService } from '../matches/matches.service';
 import { SubscriptionService } from '../subscription/subscription.service';
 
 import { ResponseSwipeDto, ResponseCreateSwipeDto } from './dtos';
+
+// Cache TTL constants (in milliseconds)
+const CACHE_TTL = {
+  USER_SWIPES_IN_ROOM: 2 * 60 * 1000, // 2 minutes
+} as const;
 
 @Injectable()
 export class SwipesService {
@@ -12,7 +19,15 @@ export class SwipesService {
     private matchesService: MatchesService,
     @Inject(forwardRef(() => SubscriptionService))
     private subscriptionService: SubscriptionService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
+
+  /**
+   * Invalidate user swipes cache for a specific room
+   */
+  private async invalidateUserSwipesCache(userId: string, roomId: string): Promise<void> {
+    await this.cacheManager.del(`swipes:user:${userId}:room:${roomId}`);
+  }
 
   async create(
     userId: string,
@@ -86,6 +101,9 @@ export class SwipesService {
       },
     });
 
+    // Invalidate cache after swipe
+    await this.invalidateUserSwipesCache(userId, roomId);
+
     const match = value
       ? await this.matchesService.createIfNeeded(roomId, movieId)
       : null;
@@ -116,6 +134,14 @@ export class SwipesService {
     userId: string,
     roomId: string,
   ): Promise<ResponseSwipeDto[]> {
+    const cacheKey = `swipes:user:${userId}:room:${roomId}`;
+
+    // Try to get from cache
+    const cached = await this.cacheManager.get<ResponseSwipeDto[]>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     const room = await this.prisma.room.findUnique({
       where: { id: roomId },
       select: { id: true },
@@ -125,12 +151,17 @@ export class SwipesService {
       throw new NotFoundException('Room not found');
     }
 
-    return this.prisma.swipe.findMany({
+    const swipes = await this.prisma.swipe.findMany({
       where: {
         userId,
         roomId,
       },
     });
+
+    // Store in cache
+    await this.cacheManager.set(cacheKey, swipes, CACHE_TTL.USER_SWIPES_IN_ROOM);
+
+    return swipes;
   }
 
   async delete(
@@ -189,6 +220,9 @@ export class SwipesService {
         });
       }
     }
+
+    // Invalidate cache after delete
+    await this.invalidateUserSwipesCache(userId, roomId);
 
     return { deleted: true };
   }
