@@ -4,7 +4,8 @@ import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { Trophy, Sparkles, Heart } from "lucide-react"
 import { MovieBasic } from "@/schemas/movies"
-import { useEffect } from "react"
+import { useEffect, useCallback } from "react"
+import confetti from "canvas-confetti"
 
 interface MatchAnimationProps {
   show: boolean
@@ -13,12 +14,65 @@ interface MatchAnimationProps {
 }
 
 export function MatchAnimation({ show, movie, onComplete }: MatchAnimationProps) {
+  // Trigger confetti explosion
+  const fireConfetti = useCallback(() => {
+    // First burst - center
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#fbbf24', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6'],
+    })
+
+    // Second burst - left side
+    setTimeout(() => {
+      confetti({
+        particleCount: 50,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: ['#22c55e', '#10b981', '#34d399'],
+      })
+    }, 150)
+
+    // Third burst - right side
+    setTimeout(() => {
+      confetti({
+        particleCount: 50,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: ['#22c55e', '#10b981', '#34d399'],
+      })
+    }, 300)
+
+    // Final celebration burst
+    setTimeout(() => {
+      confetti({
+        particleCount: 150,
+        spread: 100,
+        origin: { y: 0.5, x: 0.5 },
+        colors: ['#fbbf24', '#f59e0b', '#22c55e', '#ec4899', '#8b5cf6'],
+        startVelocity: 45,
+        gravity: 0.8,
+      })
+    }, 450)
+  }, [])
+
   useEffect(() => {
     if (show) {
-      const timer = setTimeout(onComplete, 3000)
+      // Fire confetti when animation starts
+      fireConfetti()
+
+      // Haptic feedback for match celebration
+      if (typeof window !== "undefined" && "vibrate" in navigator) {
+        navigator.vibrate([50, 30, 50, 30, 100])
+      }
+
+      const timer = setTimeout(onComplete, 3500)
       return () => clearTimeout(timer)
     }
-  }, [show, onComplete])
+  }, [show, onComplete, fireConfetti])
 
   return (
     <AnimatePresence>
