@@ -13,8 +13,9 @@ export function SWRProvider({ children }: SWRProviderProps) {
       value={{
         // Cache for 5 minutes
         dedupingInterval: 5 * 60 * 1000,
-        // Revalidate on focus (user returns to tab)
-        revalidateOnFocus: true,
+        // Don't revalidate on focus - reduces unnecessary API calls when returning to tab
+        // Individual hooks can override this if needed
+        revalidateOnFocus: false,
         // Don't revalidate on reconnect to reduce requests
         revalidateOnReconnect: false,
         // Retry on error (3 times with exponential backoff)

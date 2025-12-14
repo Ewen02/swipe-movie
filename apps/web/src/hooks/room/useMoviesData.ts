@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react"
 import { useSession } from "@/lib/auth-client"
-import { getMoviesByGenre, getBatchWatchProviders, MovieFilters } from "@/lib/api/movies"
+import { getMoviesByGenre, getBatchWatchProviders, getRecommendedMoviesForRoom, MovieFilters } from "@/lib/api/movies"
 import { shuffleWithSeed } from "@/lib/utils"
 import type { RoomWithMembersResponseDto } from "@/schemas/rooms"
 import type { MovieBasic } from "@/schemas/movies"
@@ -66,51 +66,57 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
       // Use roomData if provided, otherwise use room state
       const currentRoom = roomData || room
 
-      // Build filters from room settings
-      const filters: MovieFilters = {}
-      if (currentRoom?.minRating) filters.minRating = currentRoom.minRating
-      if (currentRoom?.releaseYearMin) filters.releaseYearMin = currentRoom.releaseYearMin
-      if (currentRoom?.releaseYearMax) filters.releaseYearMax = currentRoom.releaseYearMax
-      if (currentRoom?.runtimeMin) filters.runtimeMin = currentRoom.runtimeMin
-      if (currentRoom?.runtimeMax) filters.runtimeMax = currentRoom.runtimeMax
-      if (currentRoom?.watchProviders && currentRoom.watchProviders.length > 0) {
-        filters.watchProviders = currentRoom.watchProviders
-        // Always set watch region when filtering by providers (defaults to FR)
-        filters.watchRegion = currentRoom.watchRegion || "FR"
-      }
-      if (currentRoom?.originalLanguage) filters.originalLanguage = currentRoom.originalLanguage
+      let moviesData: MovieBasic[]
 
-      const moviesData = await getMoviesByGenre(genreId, type, page, filters)
+      // Use recommendations endpoint if we have a room ID (includes watched/watchlist data)
+      if (currentRoom?.id) {
+        moviesData = await getRecommendedMoviesForRoom(currentRoom.id, page)
+      } else {
+        // Fallback to regular genre endpoint
+        // Build filters from room settings
+        const filters: MovieFilters = {}
+        if (currentRoom?.minRating) filters.minRating = currentRoom.minRating
+        if (currentRoom?.releaseYearMin) filters.releaseYearMin = currentRoom.releaseYearMin
+        if (currentRoom?.releaseYearMax) filters.releaseYearMax = currentRoom.releaseYearMax
+        if (currentRoom?.runtimeMin) filters.runtimeMin = currentRoom.runtimeMin
+        if (currentRoom?.runtimeMax) filters.runtimeMax = currentRoom.runtimeMax
+        if (currentRoom?.watchProviders && currentRoom.watchProviders.length > 0) {
+          filters.watchProviders = currentRoom.watchProviders
+          // Always set watch region when filtering by providers (defaults to FR)
+          filters.watchRegion = currentRoom.watchRegion || "FR"
+        }
+        if (currentRoom?.originalLanguage) filters.originalLanguage = currentRoom.originalLanguage
+
+        moviesData = await getMoviesByGenre(genreId, type, page, filters)
+      }
 
       // Use custom swiped IDs if provided (avoids closure issues)
       const swipedIds = customSwipedIds || swipedMovieIds
 
-      // Log for debugging
-      console.log(`[useMoviesData] Page ${page}, Type: ${append ? 'append' : 'replace'}`)
-      console.log(`[useMoviesData] Fetched ${moviesData.length} movies from API`)
-      console.log(`[useMoviesData] Already swiped: ${swipedIds.size} movies`, Array.from(swipedIds))
-      console.log(`[useMoviesData] Fetched movie IDs:`, moviesData.map(m => m.id))
-
       // Filter out already swiped movies (both likes and dislikes)
       const filteredMovies = moviesData.filter(movie => !swipedIds.has(movie.id.toString()))
-
-      console.log(`[useMoviesData] After filtering swiped: ${filteredMovies.length} movies`)
-      console.log(`[useMoviesData] Filtered movie IDs:`, filteredMovies.map(m => m.id))
 
       // Shuffle movies with user email + room ID as seed for consistent but unique ordering per user
       const seed = `${session?.user?.email || 'anonymous'}-${currentRoom?.id || room?.id || 'room'}-${page}`
       const shuffledMovies = shuffleWithSeed(filteredMovies, seed)
 
-      // Load watch providers for the movies
+      // Load watch providers for movies that don't already have them
       try {
         const validMovies = shuffledMovies.filter(Boolean)
-        const movieIds = validMovies.map(m => m.id)
-        const providersMap = await getBatchWatchProviders(movieIds, type)
 
-        // Add providers to movies
+        // Only fetch providers for movies that don't have them yet
+        const moviesNeedingProviders = validMovies.filter(m => !m.watchProviders || m.watchProviders.length === 0)
+        const movieIdsNeedingProviders = moviesNeedingProviders.map(m => m.id)
+
+        // Skip API call if all movies already have providers
+        const providersMap = movieIdsNeedingProviders.length > 0
+          ? await getBatchWatchProviders(movieIdsNeedingProviders, type)
+          : {}
+
+        // Add providers to movies (preserve recommendation data: isWatched, isInWatchlist, watchlistMemberCount)
         const moviesWithProviders = validMovies.map(movie => ({
           ...movie,
-          watchProviders: providersMap[movie.id] || []
+          watchProviders: movie.watchProviders || providersMap[movie.id] || [],
         }))
 
         if (append) {

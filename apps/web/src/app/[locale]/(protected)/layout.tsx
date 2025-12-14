@@ -5,8 +5,8 @@ import { getMyRoomServer, getGenresServer } from "@/lib/api-server"
 import { ROOMS_KEY } from "@/hooks/useRooms"
 import { GENRES_KEY } from "@/hooks/useGenres"
 
-export const dynamic = "force-dynamic"
-export const revalidate = 0
+// Removed force-dynamic to enable Next.js caching
+// SWR handles data freshness on the client side with keepPreviousData
 
 export default async function ProtectedLayout({
   children,

@@ -166,3 +166,20 @@ export async function getAllWatchProviders(
   const data = await response.json()
   return Array.isArray(data) ? data : []
 }
+
+/**
+ * Get recommended movies for a room with watched/watchlist indicators
+ * This endpoint enriches movies with isWatched, isInWatchlist, and watchlistMemberCount
+ */
+export async function getRecommendedMoviesForRoom(
+  roomId: string,
+  page = 1
+): Promise<MovieBasic[]> {
+  const response = await GET(`/recommendations/room/${roomId}?page=${page}`)
+  if (!response.ok) {
+    console.error("Failed to fetch recommendations")
+    return []
+  }
+  const data = await response.json()
+  return data.movies || []
+}
