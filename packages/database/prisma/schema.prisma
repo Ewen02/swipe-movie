@@ -24,20 +24,21 @@ enum RoomType {
 // ==========================================
 
 model User {
-  id               String         @id @default(cuid())
-  email            String         @unique
+  id               String             @id @default(cuid())
+  email            String             @unique
   name             String?
-  emailVerified    Boolean        @default(false)
+  emailVerified    Boolean            @default(false)
   image            String?
-  roles            String[]       @default([])
-  stripeCustomerId String?        @unique
+  roles            String[]           @default([])
+  stripeCustomerId String?            @unique
   members          RoomMember[]
   swipes           Swipe[]
   subscriptions    Subscription[]
   sessions         Session[]
   accounts         Account[]
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  mediaLibrary     UserMediaLibrary[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
 }
 
 model Session {
@@ -71,6 +72,7 @@ model Account {
   updatedAt             DateTime  @updatedAt
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, providerId], name: "userId_providerId")
   @@index([userId])
   @@index([providerId, accountId])
 }
@@ -156,6 +158,30 @@ model Match {
   @@unique([roomId, movieId])
   @@index([roomId])
   @@index([createdAt])
+}
+
+// ==========================================
+// External Services (Trakt, AniList)
+// ==========================================
+
+model UserMediaLibrary {
+  id         String    @id @default(cuid())
+  userId     String
+  tmdbId     String
+  mediaType  String    // 'movie' | 'tv'
+  status     String    // 'watched' | 'watchlist' | 'rated'
+  rating     Float?
+  source     String    // 'trakt' | 'anilist' | 'manual'
+  externalId String?
+  watchedAt  DateTime?
+  importedAt DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tmdbId, mediaType])
+  @@index([userId, status])
+  @@index([userId, source])
 }
 
 // ==========================================
