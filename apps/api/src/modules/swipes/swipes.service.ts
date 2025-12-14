@@ -4,6 +4,7 @@ import type { Cache } from 'cache-manager';
 import { PrismaService } from '../../infra/prisma.service';
 import { MatchesService } from '../matches/matches.service';
 import { SubscriptionService } from '../subscription/subscription.service';
+import { RecommendationsService } from '../recommendations/recommendations.service';
 
 import { ResponseSwipeDto, ResponseCreateSwipeDto } from './dtos';
 
@@ -20,6 +21,8 @@ export class SwipesService {
     @Inject(forwardRef(() => SubscriptionService))
     private subscriptionService: SubscriptionService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    @Inject(forwardRef(() => RecommendationsService))
+    private recommendationsService: RecommendationsService,
   ) {}
 
   /**
@@ -101,8 +104,11 @@ export class SwipesService {
       },
     });
 
-    // Invalidate cache after swipe
-    await this.invalidateUserSwipesCache(userId, roomId);
+    // Invalidate caches after swipe
+    await Promise.all([
+      this.invalidateUserSwipesCache(userId, roomId),
+      this.recommendationsService.invalidateRoomRecommendationsCache(roomId),
+    ]);
 
     const match = value
       ? await this.matchesService.createIfNeeded(roomId, movieId)
@@ -213,16 +219,18 @@ export class SwipesService {
         where: { roomId, movieId, value: true },
       });
 
-      // If less than 2 likes remain, delete the match
+      // If less than 2 likes remain, delete the match via matchesService
+      // This will also emit the WebSocket event to notify other users
       if (remainingLikes < 2) {
-        await this.prisma.match.deleteMany({
-          where: { roomId, movieId },
-        });
+        await this.matchesService.deleteMatch(roomId, movieId);
       }
     }
 
-    // Invalidate cache after delete
-    await this.invalidateUserSwipesCache(userId, roomId);
+    // Invalidate caches after delete
+    await Promise.all([
+      this.invalidateUserSwipesCache(userId, roomId),
+      this.recommendationsService.invalidateRoomRecommendationsCache(roomId),
+    ]);
 
     return { deleted: true };
   }

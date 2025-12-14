@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import * as crypto from 'crypto';
+import type { MovieFilters } from '@swipe-movie/types';
 import {
   MovieBasicDto,
   MoviesGenresDto,
@@ -17,16 +18,8 @@ import {
 import { TmdbService } from '../tmdb/tmdb.service';
 import { TMDB_IMAGE_BASE, TMDB_DEFAULT_LANG } from '../tmdb/tmdb.constants';
 
-export interface MovieFilters {
-  minRating?: number;
-  releaseYearMin?: number;
-  releaseYearMax?: number;
-  runtimeMin?: number;
-  runtimeMax?: number;
-  watchProviders?: number[];
-  watchRegion?: string;
-  originalLanguage?: string;
-}
+// Re-export for backward compatibility
+export type { MovieFilters } from '@swipe-movie/types';
 
 // Cache TTL constants (in milliseconds)
 const CACHE_TTL = {
@@ -326,14 +319,26 @@ export class MoviesService {
         return [];
       }
 
-      // Deduplicate providers by provider_id (TMDB sometimes returns duplicates)
-      const uniqueProvidersMap = new Map<number, { id: number; name: string; logoPath: string }>();
+      // Deduplicate providers by normalized name to avoid duplicates like
+      // "Crunchyroll" and "Crunchyroll Amazon Channel"
+      const uniqueProvidersMap = new Map<string, { id: number; name: string; logoPath: string }>();
+
+      // Patterns to normalize provider names (remove channel suffixes)
+      const normalizeProviderName = (name: string): string => {
+        return name
+          .replace(/ Amazon Channel$/i, '')
+          .replace(/ Apple TV Channel$/i, '')
+          .replace(/ Roku Premium Channel$/i, '')
+          .trim();
+      };
 
       frProviders.flatrate.forEach((p) => {
-        if (!uniqueProvidersMap.has(p.provider_id)) {
-          uniqueProvidersMap.set(p.provider_id, {
+        const normalizedName = normalizeProviderName(p.provider_name);
+        // Keep the first occurrence (usually the main provider, not the channel)
+        if (!uniqueProvidersMap.has(normalizedName)) {
+          uniqueProvidersMap.set(normalizedName, {
             id: p.provider_id,
-            name: p.provider_name,
+            name: normalizedName, // Use normalized name
             logoPath: p.logo_path
               ? `${TMDB_IMAGE_BASE.POSTER}${p.logo_path}`
               : '',

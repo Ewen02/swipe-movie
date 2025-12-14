@@ -1,9 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
+import type {
+  MovieBasic,
+  MovieDetails,
+  MovieGenre,
+  MovieWatchProvider,
+  MovieVideo,
+  MovieCast,
+  MovieCrew,
+  ProductionCompany,
+  ProductionCountry,
+  SpokenLanguage,
+} from '@swipe-movie/types';
 
 /**
- * 🔹 DTO de base pour les films (liste, résumé)
+ * DTO de base pour les films (liste, résumé)
+ * Implements MovieBasic from @swipe-movie/types
  */
-export class MovieBasicDto {
+export class MovieBasicDto implements MovieBasic {
   @ApiProperty({ example: 550 })
   id!: number;
 
@@ -56,17 +69,23 @@ export class MovieBasicDto {
     ],
     required: false,
   })
-  watchProviders?: {
-    id: number;
-    name: string;
-    logoPath: string;
-  }[];
+  watchProviders?: MovieWatchProvider[];
+
+  @ApiProperty({ example: false, required: false })
+  isWatched?: boolean;
+
+  @ApiProperty({ example: true, required: false })
+  isInWatchlist?: boolean;
+
+  @ApiProperty({ example: 2, required: false })
+  watchlistMemberCount?: number;
 }
 
 /**
- * 🔹 DTO pour les genres (utilisé pour `GET /movies/genres`)
+ * DTO pour les genres (utilisé pour `GET /movies/genres`)
+ * Implements MovieGenre from @swipe-movie/types
  */
-export class MoviesGenresDto {
+export class MoviesGenresDto implements MovieGenre {
   @ApiProperty({ example: 18 })
   id!: number;
 
@@ -75,9 +94,10 @@ export class MoviesGenresDto {
 }
 
 /**
- * 🔹 DTO détaillé (hérite de MovieBasicDto)
+ * DTO détaillé (hérite de MovieBasicDto)
+ * Implements MovieDetails from @swipe-movie/types
  */
-export class MovieDetailsDto extends MovieBasicDto {
+export class MovieDetailsDto extends MovieBasicDto implements MovieDetails {
   @ApiProperty({ example: 63000000 })
   budget!: number;
 
@@ -105,7 +125,7 @@ export class MovieDetailsDto extends MovieBasicDto {
       { id: 53, name: 'Thriller' },
     ],
   })
-  genres!: MoviesGenresDto[];
+  genres!: MovieGenre[];
 
   @ApiProperty({
     example: [
@@ -113,28 +133,17 @@ export class MovieDetailsDto extends MovieBasicDto {
       { id: 25, name: '20th Century Fox', origin_country: 'US' },
     ],
   })
-  productionCompanies!: {
-    id: number;
-    name: string;
-    origin_country: string;
-  }[];
+  productionCompanies!: ProductionCompany[];
 
   @ApiProperty({
     example: [{ iso_3166_1: 'US', name: 'United States of America' }],
   })
-  productionCountries!: {
-    iso_3166_1: string;
-    name: string;
-  }[];
+  productionCountries!: ProductionCountry[];
 
   @ApiProperty({
     example: [{ iso_639_1: 'en', english_name: 'English', name: 'English' }],
   })
-  spokenLanguages!: {
-    iso_639_1: string;
-    english_name: string;
-    name: string;
-  }[];
+  spokenLanguages!: SpokenLanguage[];
 
   @ApiProperty({
     example: [
@@ -149,14 +158,7 @@ export class MovieDetailsDto extends MovieBasicDto {
     ],
     required: false,
   })
-  videos?: {
-    id: string;
-    key: string;
-    name: string;
-    site: string;
-    type: string;
-    official: boolean;
-  }[];
+  videos?: MovieVideo[];
 
   @ApiProperty({
     example: [
@@ -169,12 +171,7 @@ export class MovieDetailsDto extends MovieBasicDto {
     ],
     required: false,
   })
-  cast?: {
-    id: number;
-    name: string;
-    character: string;
-    profilePath: string | null;
-  }[];
+  cast?: MovieCast[];
 
   @ApiProperty({
     example: [
@@ -187,10 +184,5 @@ export class MovieDetailsDto extends MovieBasicDto {
     ],
     required: false,
   })
-  crew?: {
-    id: number;
-    name: string;
-    job: string;
-    department: string;
-  }[];
+  crew?: MovieCrew[];
 }

@@ -7,11 +7,13 @@ import {
   ForbiddenException,
   Logger,
   Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import { PrismaService } from '../../infra/prisma.service';
 import { SubscriptionService } from '../subscription/subscription.service';
+import { MatchesGateway } from '../matches/matches.gateway';
 import {
   PaginationQueryDto,
   PaginatedResponseDto,
@@ -26,15 +28,9 @@ import {
   MemberRoomsResponseDto,
 } from './dtos';
 
-import { RoomType, type RoomTypeValue } from '@swipe-movie/types';
+import { RoomType, type RoomTypeValue, CacheTTL } from '@swipe-movie/types';
 
 import { generateRoomCode } from '../../common/utils/code';
-
-// Cache TTL constants (in milliseconds)
-const CACHE_TTL = {
-  USER_ROOMS: 5 * 60 * 1000, // 5 minutes
-  ROOM_BY_CODE: 2 * 60 * 1000, // 2 minutes
-} as const;
 
 @Injectable()
 export class RoomsService {
@@ -44,6 +40,8 @@ export class RoomsService {
     private prisma: PrismaService,
     private subscriptionService: SubscriptionService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    @Inject(forwardRef(() => MatchesGateway))
+    private matchesGateway: MatchesGateway,
   ) {}
 
   /**
@@ -243,6 +241,12 @@ export class RoomsService {
 
     this.logger.log(`User ${userId} joined room ${room.id}`);
 
+    // Get user info for WebSocket notification
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, name: true },
+    });
+
     const joinedRoom = await this.prisma.room.findUnique({
       where: { id: room.id },
       select: {
@@ -271,6 +275,11 @@ export class RoomsService {
       this.invalidateUserRoomsCache(userId),
       this.invalidateRoomCache(code),
     ]);
+
+    // Emit WebSocket event to notify other room members (only for new members)
+    if (!isAlreadyMember && user) {
+      this.matchesGateway.emitUserJoined(room.id, { id: user.id, name: user.name });
+    }
 
     return this.mapToRoomResponse<RoomJoinResponseDto>(joinedRoom);
   }
@@ -301,6 +310,9 @@ export class RoomsService {
       this.invalidateUserRoomsCache(userId),
       this.invalidateRoomCache(room.code),
     ]);
+
+    // Emit WebSocket event to notify other room members
+    this.matchesGateway.emitUserLeft(roomId, userId);
 
     return { ok: true };
   }
@@ -388,7 +400,7 @@ export class RoomsService {
     const result = this.mapToRoomResponse<RoomWithMembersResponseDto>(room, room.members);
 
     // Store in cache
-    await this.cacheManager.set(cacheKey, result, CACHE_TTL.ROOM_BY_CODE);
+    await this.cacheManager.set(cacheKey, result, CacheTTL.ROOM_BY_CODE);
 
     return result;
   }
@@ -527,7 +539,7 @@ export class RoomsService {
     };
 
     // Store in cache
-    await this.cacheManager.set(cacheKey, result, CACHE_TTL.USER_ROOMS);
+    await this.cacheManager.set(cacheKey, result, CacheTTL.USER_ROOMS);
 
     return result;
   }
