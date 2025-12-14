@@ -25,7 +25,7 @@ export function useMatchNotifications({ roomId }: UseMatchNotificationsProps): U
   const lastProcessedMatchId = useRef<string | null>(null)
 
   // WebSocket connection for real-time match notifications
-  const { newMatch, resetNewMatch } = useRoomSocket(roomId)
+  const { newMatch, resetNewMatch, deletedMatchMovieId, resetDeletedMatch } = useRoomSocket(roomId)
 
   // Handle new match from WebSocket
   useEffect(() => {
@@ -69,6 +69,17 @@ export function useMatchNotifications({ roomId }: UseMatchNotificationsProps): U
 
     handleNewMatch()
   }, [newMatch, toast, resetNewMatch])
+
+  // Handle deleted match from WebSocket (when someone undoes a swipe)
+  useEffect(() => {
+    if (!deletedMatchMovieId) return
+
+    // Trigger refresh of matches list to remove the deleted match
+    setRefreshMatches((prev) => prev + 1)
+
+    // Reset the deleted match state
+    resetDeletedMatch()
+  }, [deletedMatchMovieId, resetDeletedMatch])
 
   const handleMatchAnimationComplete = useCallback(() => {
     setShowMatchAnimation(false)

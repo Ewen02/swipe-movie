@@ -12,6 +12,12 @@ import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { ConfigService } from '@nestjs/config';
 import { MatchBaseDto } from './dtos/match.dto';
+import {
+  SocketEvents,
+  SocketConfig,
+  SocketUser,
+  SocketMatch,
+} from '@swipe-movie/types';
 
 @WebSocketGateway({
   cors: {
@@ -31,8 +37,8 @@ import { MatchBaseDto } from './dtos/match.dto';
     credentials: true,
   },
   namespace: '/matches',
-  pingTimeout: 60000, // 60 seconds
-  pingInterval: 25000, // 25 seconds
+  pingTimeout: SocketConfig.PING_TIMEOUT,
+  pingInterval: SocketConfig.PING_INTERVAL,
   connectTimeout: 45000, // 45 seconds
   maxHttpBufferSize: 1e6, // 1 MB
   transports: ['websocket', 'polling'],
@@ -181,10 +187,40 @@ export class MatchesGateway
   // Method called by the service when a match is created
   emitMatchCreated(roomId: string, match: MatchBaseDto, movie?: unknown) {
     this.logger.log(`Emitting match created for room: ${roomId}`);
-    this.server.to(`room:${roomId}`).emit('matchCreated', {
+    this.server.to(`room:${roomId}`).emit(SocketEvents.MATCH_CREATED, {
       roomId,
       match,
       movie,
+    });
+  }
+
+  // Method called by the service when a match is deleted (undo)
+  emitMatchDeleted(roomId: string, movieId: string) {
+    this.logger.log(`Emitting match deleted for room: ${roomId}, movie: ${movieId}`);
+    this.server.to(`room:${roomId}`).emit(SocketEvents.MATCH_DELETED, {
+      roomId,
+      movieId,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  // Method called when a user joins the room (for member list sync)
+  emitUserJoined(roomId: string, user: SocketUser) {
+    this.logger.log(`Emitting user joined for room: ${roomId}, user: ${user.id}`);
+    this.server.to(`room:${roomId}`).emit(SocketEvents.USER_JOINED, {
+      roomId,
+      user,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  // Method called when a user leaves the room
+  emitUserLeft(roomId: string, userId: string) {
+    this.logger.log(`Emitting user left for room: ${roomId}, user: ${userId}`);
+    this.server.to(`room:${roomId}`).emit(SocketEvents.USER_LEFT, {
+      roomId,
+      userId,
+      timestamp: new Date().toISOString(),
     });
   }
 }

@@ -36,33 +36,81 @@ export class MatchesService {
     roomId: string,
     movieId: string,
   ): Promise<ResponseMatchDto | null> {
-    const likes = await this.prisma.swipe.count({
-      where: { roomId, movieId, value: true },
-    });
+    // Use transaction with serializable isolation to prevent race conditions
+    // when multiple users like the same movie simultaneously
+    const result = await this.prisma.$transaction(
+      async (tx) => {
+        const likes = await tx.swipe.count({
+          where: { roomId, movieId, value: true },
+        });
 
-    if (likes < 2) {
+        if (likes < 2) {
+          return null;
+        }
+
+        // Check if match already exists to avoid duplicate WebSocket events
+        const existingMatch = await tx.match.findUnique({
+          where: { roomId_movieId: { roomId, movieId } },
+          select: { id: true },
+        });
+
+        if (existingMatch) {
+          // Match already exists, don't emit duplicate event
+          return null;
+        }
+
+        const match = await tx.match.create({
+          data: { roomId, movieId },
+          select: { id: true, roomId: true, movieId: true, createdAt: true },
+        });
+
+        return {
+          ...match,
+          voteCount: likes,
+          isNew: true,
+        };
+      },
+      {
+        isolationLevel: 'Serializable',
+      },
+    );
+
+    if (!result) {
       return null;
     }
 
-    const match = await this.prisma.match.upsert({
-      where: { roomId_movieId: { roomId, movieId } },
-      update: {},
-      create: { roomId, movieId },
-      select: { id: true, roomId: true, movieId: true, createdAt: true },
-    });
-
-    const matchDto = {
-      ...match,
-      voteCount: likes,
-    };
+    const { isNew, ...matchDto } = result;
 
     // Invalidate cache after match creation
     await this.invalidateRoomMatchesCache(roomId);
 
-    // Emit WebSocket event for real-time notification
-    this.matchesGateway.emitMatchCreated(roomId, matchDto);
+    // Emit WebSocket event for real-time notification (only for new matches)
+    if (isNew) {
+      this.matchesGateway.emitMatchCreated(roomId, matchDto);
+    }
 
     return matchDto;
+  }
+
+  /**
+   * Delete a match and notify all users in the room
+   */
+  async deleteMatch(roomId: string, movieId: string): Promise<boolean> {
+    const deleted = await this.prisma.match.deleteMany({
+      where: { roomId, movieId },
+    });
+
+    if (deleted.count > 0) {
+      // Invalidate cache
+      await this.invalidateRoomMatchesCache(roomId);
+
+      // Emit WebSocket event to notify all users
+      this.matchesGateway.emitMatchDeleted(roomId, movieId);
+
+      return true;
+    }
+
+    return false;
   }
 
   async findByRoom(

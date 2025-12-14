@@ -8,7 +8,7 @@ import { MatchesGateway } from './matches.gateway';
 @Module({
   controllers: [MatchesController],
   providers: [MatchesService, MatchesGateway, PrismaService],
-  exports: [MatchesService],
+  exports: [MatchesService, MatchesGateway],
   imports: [CacheModule.register()],
 })
 export class MatchesModule {}
