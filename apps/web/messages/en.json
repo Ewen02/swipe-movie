@@ -36,6 +36,7 @@
     "profile": "Profile",
     "settings": "Settings",
     "subscription": "Subscription",
+    "connections": "Connections",
     "about": "About",
     "contact": "Contact",
     "privacy": "Privacy",
@@ -670,6 +671,33 @@
         "description": "Upgrade to a higher plan for unlimited rooms, more participants, and advanced filters.",
         "button": "View plans"
       }
+    }
+  },
+  "connections": {
+    "title": "Connected Services",
+    "subtitle": "Connect your accounts to improve recommendations",
+    "backToRooms": "Back to rooms",
+    "connected": "Connected",
+    "disconnected": "Not connected",
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "sync": "Sync",
+    "syncing": "Syncing...",
+    "lastSync": "Last sync",
+    "syncSuccess": "Sync successful",
+    "syncError": "Sync error",
+    "connectSuccess": "Account connected",
+    "connectError": "Connection error",
+    "disconnectSuccess": "Account disconnected",
+    "disconnectError": "Disconnection error",
+    "imported": "{count} items imported",
+    "trakt": {
+      "name": "Trakt",
+      "description": "Sync your watched movies and TV shows history"
+    },
+    "anilist": {
+      "name": "AniList",
+      "description": "Import your anime library"
     }
   },
   "subscription": {

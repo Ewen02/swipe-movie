@@ -36,6 +36,7 @@
     "profile": "Profil",
     "settings": "Paramètres",
     "subscription": "Abonnement",
+    "connections": "Connexions",
     "about": "À propos",
     "contact": "Contact",
     "privacy": "Confidentialité",
@@ -670,6 +671,33 @@
         "description": "Passez à un forfait supérieur pour profiter de rooms illimitées, plus de participants et des filtres avancés.",
         "button": "Voir les forfaits"
       }
+    }
+  },
+  "connections": {
+    "title": "Services connectés",
+    "subtitle": "Connectez vos comptes pour améliorer les recommandations",
+    "backToRooms": "Retour aux rooms",
+    "connected": "Connecté",
+    "disconnected": "Non connecté",
+    "connect": "Connecter",
+    "disconnect": "Déconnecter",
+    "sync": "Synchroniser",
+    "syncing": "Synchronisation...",
+    "lastSync": "Dernière sync",
+    "syncSuccess": "Synchronisation réussie",
+    "syncError": "Erreur de synchronisation",
+    "connectSuccess": "Compte connecté",
+    "connectError": "Erreur de connexion",
+    "disconnectSuccess": "Compte déconnecté",
+    "disconnectError": "Erreur de déconnexion",
+    "imported": "{count} éléments importés",
+    "trakt": {
+      "name": "Trakt",
+      "description": "Synchronisez votre historique de films et séries vus"
+    },
+    "anilist": {
+      "name": "AniList",
+      "description": "Importez votre bibliothèque d'anime"
     }
   },
   "subscription": {
