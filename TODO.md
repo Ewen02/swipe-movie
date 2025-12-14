@@ -1,6 +1,6 @@
 # TODO - Swipe Movie
 
-> Dernière mise à jour: Décembre 2024
+> Dernière mise à jour: 14 Décembre 2024
 
 ---
 
@@ -83,6 +83,41 @@
 
 ---
 
+## 🔲 Phase 6 - Intégrations Externes (NOUVEAU - Feedback Testeurs)
+
+> Basé sur le feedback des testeurs : algo de recommandation, connexion loggers externes
+
+### Intégration Loggers (Trakt + AniList)
+
+| Feature | Effort | Description |
+|---------|--------|-------------|
+| **Schema Prisma UserMediaLibrary** | 1h | Modèle pour stocker watchlist/watched importés |
+| **Types partagés** | 0.5h | `packages/types/src/external-services.ts` |
+| **Module Trakt.tv** | 4h | OAuth + sync watchlist/watched + mapping TMDB |
+| **Module AniList** | 4h | OAuth + GraphQL + mapping TMDB |
+| **Page Connexions Profil** | 2h | UI `/profile/connections` |
+| **Callback OAuth** | 1h | Page `/auth/[provider]/callback` |
+
+### Algorithme de Recommandation
+
+| Feature | Effort | Description |
+|---------|--------|-------------|
+| **Module Recommandations** | 3h | Service de scoring et tri |
+| **Exclusion films vus** | 1h | Filtrer films déjà vus par le groupe |
+| **Priorisation watchlist commune** | 1h | Films dans watchlist de tous en premier |
+| **Badges "Déjà vu"** | 1h | Indicateurs sur cartes swipe |
+
+### Multi-sources Notes (Optionnel)
+
+| Feature | Effort | Description |
+|---------|--------|-------------|
+| **Module OMDB** | 2h | IMDb + Rotten Tomatoes + Metacritic |
+| **Affichage multi-notes** | 1h | UI pour afficher plusieurs sources |
+
+**Total Phase 6** : ~16h
+
+---
+
 ## 🔲 Phase 5 - Engagement (Stretch Goals)
 
 | Feature | Effort | Description |
@@ -92,6 +127,9 @@
 | **Room vocale** | 40h | WebRTC audio pendant session |
 | **Réactions live** | 16h | Emojis temps réel via WebSocket |
 | **Watchlist perso** | 12h | Sauvegarder films hors room |
+| **Swipes enrichis** | 4h | 4 types : intéressé / pas intéressé / vu aimé / vu pas aimé |
+| **Historique détaillé room** | 4h | Voir qui a swipé quoi |
+| **Support flèches clavier** | 2h | Navigation clavier pour swipe |
 
 ---
 
@@ -103,12 +141,23 @@
 | 3 | Features Concurrentielles | 12h | ✅ |
 | 4 | PWA Optimisation | 8h | ✅ |
 | 2 | Infrastructure (Email + RGPD) | 29h | 🔲 |
-| 5 | Engagement (Stretch) | 82h | 🔲 |
+| **6** | **Intégrations Externes (Trakt/AniList)** | **16h** | **🔲 NOUVEAU** |
+| 5 | Engagement (Stretch) | 90h | 🔲 |
 
 ---
 
 ## 🎯 Prochaine priorité
 
+### Phase 6 - Intégrations Externes (Feedback Testeurs)
+1. [ ] Schema Prisma `UserMediaLibrary` + migration
+2. [ ] Types partagés `external-services.ts`
+3. [ ] Module Trakt.tv (OAuth + sync)
+4. [ ] Module AniList (OAuth + GraphQL)
+5. [ ] Page `/profile/connections`
+6. [ ] Module Recommandations (scoring + exclusion)
+7. [ ] Badges "Déjà vu" sur cartes
+
+### Phase 2 - Infrastructure (Après Phase 6)
 1. [ ] Email System (Resend) - 15h
 2. [ ] RGPD Cookie Banner - 3h
 3. [ ] Page Settings avec export/delete - 11h
