@@ -18,3 +18,12 @@ export * from './match';
 
 // API types
 export * from './api';
+
+// Socket types
+export * from './socket';
+
+// Shared constants
+export * from './constants';
+
+// External services (Trakt, AniList)
+export * from './external-services';
