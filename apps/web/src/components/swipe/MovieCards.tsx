@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import { motion, type PanInfo, useMotionValue, useTransform, animate } from "framer-motion"
 import { Card, CardContent, Button, Badge } from "@swipe-movie/ui"
-import { Heart, X, Undo2, Sparkles, Star, Calendar, Info } from "lucide-react"
+import { Heart, X, Undo2, Sparkles, Star, Calendar, Info, Eye, Bookmark } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { MovieBasic } from "@/schemas/movies"
 import { RoomWithMembersResponseDto } from "@/schemas/rooms"
@@ -262,6 +262,28 @@ function MovieCard({
               sizes="(max-width: 640px) 100vw, 448px"
               priority={index === 0}
             />
+
+            {/* Status badges (Watched / Watchlist) */}
+            {movie.isWatched && (
+              <div className="absolute top-3 left-3 z-10">
+                <Badge className="bg-green-500/90 text-white text-xs font-semibold px-2.5 py-1 flex items-center gap-1.5 shadow-lg backdrop-blur-sm border border-green-400/30">
+                  <Eye className="w-3.5 h-3.5" />
+                  Deja vu
+                </Badge>
+              </div>
+            )}
+
+            {movie.isInWatchlist && !movie.isWatched && (
+              <div className="absolute top-3 left-3 z-10">
+                <Badge className="bg-purple-500/90 text-white text-xs font-semibold px-2.5 py-1 flex items-center gap-1.5 shadow-lg backdrop-blur-sm border border-purple-400/30">
+                  <Bookmark className="w-3.5 h-3.5" />
+                  Watchlist
+                  {movie.watchlistMemberCount && movie.watchlistMemberCount > 1 && (
+                    <span className="text-[10px] opacity-80">({movie.watchlistMemberCount})</span>
+                  )}
+                </Badge>
+              </div>
+            )}
 
             {isActive && (
               <>

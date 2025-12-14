@@ -49,23 +49,25 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilt
       // Create a map of movieId -> movie for quick lookup
       const movieMap = new Map(movies.map((movie) => [movie.id.toString(), movie]))
 
-      // Calculate ranking score for each match
-      const matchesWithMovies = matchesData.map((match) => {
-        const movie = movieMap.get(match.movieId)
+      // Calculate ranking score for each match and filter out matches without valid movie data
+      const matchesWithMovies = matchesData
+        .map((match) => {
+          const movie = movieMap.get(match.movieId)
 
-        if (!movie) {
-          return { ...match, rankingScore: 0 }
-        }
+          if (!movie) {
+            return null // Will be filtered out
+          }
 
-        // Calculate ranking score:
-        // - 70% weight: vote count (agreement percentage)
-        // - 30% weight: TMDb rating
-        const agreementScore = (match.voteCount / totalMembers) * 70
-        const ratingScore = (movie.voteAverage / 10) * 30
-        const rankingScore = agreementScore + ratingScore
+          // Calculate ranking score:
+          // - 70% weight: vote count (agreement percentage)
+          // - 30% weight: TMDb rating
+          const agreementScore = (match.voteCount / totalMembers) * 70
+          const ratingScore = (movie.voteAverage / 10) * 30
+          const rankingScore = agreementScore + ratingScore
 
-        return { ...match, movie, rankingScore }
-      })
+          return { ...match, movie, rankingScore }
+        })
+        .filter((match): match is NonNullable<typeof match> => match !== null)
 
       // Sort by ranking score (highest first)
       matchesWithMovies.sort((a, b) => (b.rankingScore || 0) - (a.rankingScore || 0))
@@ -189,59 +191,49 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilt
                 onClick={() => match.movie && handleShowDetails(match.movie.id)}
               >
                 <CardContent className="p-0">
-                  {match.movie ? (
-                    <>
-                      <div className="relative aspect-[2/3]">
-                        <Image
-                          src={match.movie.posterUrl || match.movie.backdropUrl}
-                          alt={match.movie.title}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                          <div className="absolute bottom-2 right-2">
-                            <Badge className="bg-green-500 text-white">
-                              <ExternalLink className="w-3 h-3 mr-1" />
-                              TMDb
-                            </Badge>
-                          </div>
-                        </div>
-                        {/* Vote count badge */}
-                        <VoteCountBadge voteCount={match.voteCount} variant="absolute" />
-
-                        {/* Watch Providers */}
-                        {roomFilters?.watchProviders && roomFilters.watchProviders.length > 0 && (
-                          <ProviderList
-                            providerIds={roomFilters.watchProviders}
-                            variant="match"
-                            maxVisible={2}
-                            showNames={false}
-                          />
-                        )}
+                  <div className="relative aspect-[2/3]">
+                    <Image
+                      src={match.movie!.posterUrl || match.movie!.backdropUrl}
+                      alt={match.movie!.title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="absolute bottom-2 right-2">
+                        <Badge className="bg-green-500 text-white">
+                          <ExternalLink className="w-3 h-3 mr-1" />
+                          TMDb
+                        </Badge>
                       </div>
-                      <div className="p-3 space-y-1">
-                        <h4 className="font-semibold text-sm line-clamp-2 text-gray-900 dark:text-white">
-                          {match.movie.title}
-                        </h4>
-                        <div className="flex items-center justify-between text-xs">
-                          <RatingBadge rating={match.movie.voteAverage} variant="match" />
-                          <VoteCountBadge
-                            voteCount={match.voteCount}
-                            totalMembers={totalMembers}
-                            showPercentage={true}
-                            variant="inline"
-                          />
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="aspect-[2/3] bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                      <p className="text-gray-500 dark:text-gray-400 text-sm">
-                        Film #{match.movieId}
-                      </p>
                     </div>
-                  )}
+                    {/* Vote count badge */}
+                    <VoteCountBadge voteCount={match.voteCount} variant="absolute" />
+
+                    {/* Watch Providers */}
+                    {roomFilters?.watchProviders && roomFilters.watchProviders.length > 0 && (
+                      <ProviderList
+                        providerIds={roomFilters.watchProviders}
+                        variant="match"
+                        maxVisible={2}
+                        showNames={false}
+                      />
+                    )}
+                  </div>
+                  <div className="p-3 space-y-1">
+                    <h4 className="font-semibold text-sm line-clamp-2 text-gray-900 dark:text-white">
+                      {match.movie!.title}
+                    </h4>
+                    <div className="flex items-center justify-between text-xs">
+                      <RatingBadge rating={match.movie!.voteAverage} variant="match" />
+                      <VoteCountBadge
+                        voteCount={match.voteCount}
+                        totalMembers={totalMembers}
+                        showPercentage={true}
+                        variant="inline"
+                      />
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             ))}

@@ -26,7 +26,7 @@ import {
 } from "@swipe-movie/ui"
 import { ThemeToggle } from "@/components/layout/ThemeToggle"
 import { LanguageSelector } from "@/components/language-selector"
-import { User, LogOut, Film, CreditCard, Menu, X, Settings, Globe } from "lucide-react"
+import { User, LogOut, Film, CreditCard, Menu, X, Settings, Globe, Link2 } from "lucide-react"
 
 export function Header() {
   const { data: session, isPending } = useSession()
@@ -140,6 +140,12 @@ export function Header() {
                         {t('nav.subscription')}
                       </Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/connections" className="cursor-pointer">
+                        <Link2 className="mr-2 h-4 w-4" />
+                        {t('nav.connections')}
+                      </Link>
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       className="cursor-pointer text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 focus:bg-red-500/10"
@@ -187,6 +193,12 @@ export function Header() {
                       <Link href="/dashboard/subscription" className="cursor-pointer">
                         <CreditCard className="mr-2 h-4 w-4" />
                         {t('nav.subscription')}
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/connections" className="cursor-pointer">
+                        <Link2 className="mr-2 h-4 w-4" />
+                        {t('nav.connections')}
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -324,6 +336,15 @@ export function Header() {
                       >
                         <CreditCard className="h-5 w-5 text-accent" />
                         <span>{t('nav.subscription')}</span>
+                      </Link>
+
+                      <Link
+                        href="/connections"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-white/5 transition-colors"
+                      >
+                        <Link2 className="h-5 w-5 text-purple-500" />
+                        <span>{t('nav.connections')}</span>
                       </Link>
                     </div>
                   )}
