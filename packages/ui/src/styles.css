@@ -146,3 +146,155 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ==========================================
+   Liquid Glass Design System
+   ========================================== */
+
+:root {
+  /* Liquid Glass - Light Mode */
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.4);
+  --glass-bg-intense: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-border-highlight: rgba(255, 255, 255, 0.6);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --glass-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.15);
+  --glass-inner-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  --glass-glow: 0 0 40px rgba(168, 85, 247, 0.15);
+
+  /* Blur Levels */
+  --glass-blur-sm: 8px;
+  --glass-blur-md: 16px;
+  --glass-blur-lg: 24px;
+  --glass-blur-xl: 40px;
+
+  /* Refraction / Shine Effect */
+  --glass-shine-start: rgba(255, 255, 255, 0.5);
+  --glass-shine-end: rgba(255, 255, 255, 0);
+  --glass-refraction: rgba(255, 255, 255, 0.1);
+}
+
+.dark {
+  /* Liquid Glass - Dark Mode */
+  --glass-bg: rgba(30, 30, 35, 0.6);
+  --glass-bg-subtle: rgba(30, 30, 35, 0.4);
+  --glass-bg-intense: rgba(30, 30, 35, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-highlight: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --glass-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.4);
+  --glass-inner-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  --glass-glow: 0 0 40px rgba(168, 85, 247, 0.2);
+
+  /* Refraction / Shine Effect - Dark */
+  --glass-shine-start: rgba(255, 255, 255, 0.15);
+  --glass-shine-end: rgba(255, 255, 255, 0);
+  --glass-refraction: rgba(255, 255, 255, 0.05);
+}
+
+/* Liquid Glass Utility Classes */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur-lg));
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-inner-shadow);
+}
+
+.glass-subtle {
+  background: var(--glass-bg-subtle);
+  backdrop-filter: blur(var(--glass-blur-md));
+  -webkit-backdrop-filter: blur(var(--glass-blur-md));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-intense {
+  background: var(--glass-bg-intense);
+  backdrop-filter: blur(var(--glass-blur-xl));
+  -webkit-backdrop-filter: blur(var(--glass-blur-xl));
+  border: 1px solid var(--glass-border-highlight);
+  box-shadow: var(--glass-shadow-lg), var(--glass-inner-shadow);
+}
+
+/* Glass Shine Effect (top highlight) */
+.glass-shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(
+    to bottom,
+    var(--glass-shine-start),
+    var(--glass-shine-end)
+  );
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Glass Glow Effect */
+.glass-glow {
+  box-shadow: var(--glass-shadow), var(--glass-glow);
+}
+
+/* Animated Gradient Background for Glass Containers */
+@keyframes glass-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.glass-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--glass-refraction),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: glass-shimmer 3s ease-in-out infinite;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Liquid Blob Animation */
+@keyframes liquid-blob {
+  0%, 100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  50% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+}
+
+.liquid-blob {
+  animation: liquid-blob 8s ease-in-out infinite;
+}
+
+/* Breathing Animation for Glass Elements */
+@keyframes glass-breathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.95;
+  }
+}
+
+.glass-breathe {
+  animation: glass-breathe 4s ease-in-out infinite;
+}

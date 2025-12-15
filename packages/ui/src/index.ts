@@ -21,12 +21,43 @@ export { VoteCountBadge } from './atoms/vote-count-badge';
 export { AgreementBadge } from './atoms/agreement-badge';
 export { ReleaseDateBadge } from './atoms/release-date-badge';
 
+// Liquid Glass Components
+export {
+  GlassCard,
+  GlassCardHeader,
+  GlassCardTitle,
+  GlassCardDescription,
+  GlassCardContent,
+  GlassCardFooter,
+  glassCardVariants,
+  type GlassCardProps,
+} from './atoms/glass-card';
+export {
+  GlassButton,
+  glassButtonVariants,
+  type GlassButtonProps,
+} from './atoms/glass-button';
+export {
+  GlassBadge,
+  glassBadgeVariants,
+  type GlassBadgeProps,
+} from './atoms/glass-badge';
+
 // =============================================================================
 // MOLECULES - Combinations of atoms
 // =============================================================================
 export { Avatar, AvatarImage, AvatarFallback } from './molecules/avatar';
 export { Alert, AlertTitle, AlertDescription } from './molecules/alert';
 export { Progress } from './molecules/progress';
+
+// Liquid Glass Molecules
+export {
+  GlassPanel,
+  GlassModal,
+  glassPanelVariants,
+  type GlassPanelProps,
+  type GlassModalProps,
+} from './molecules/glass-panel';
 
 // =============================================================================
 // ORGANISMS - Complex UI components
