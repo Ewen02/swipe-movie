@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import { Card, CardContent, Badge, Button, FortuneWheel, type FortuneWheelItem } from "@swipe-movie/ui"
-import { ExternalLink, RefreshCw } from "lucide-react"
+import { Button, FortuneWheel, type FortuneWheelItem } from "@swipe-movie/ui"
+import { RefreshCw } from "lucide-react"
 import { Match } from "@/schemas/swipes"
 import { MovieBasic } from "@/schemas/movies"
 import { RoomWithMembersResponseDto } from "@/schemas/rooms"
@@ -108,14 +108,19 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilt
 
   if (matches.length === 0) {
     return (
-      <div className="text-center py-12 px-4">
-        <div className="text-5xl mb-4">🎬</div>
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-          Aucun match pour le moment
-        </h3>
-        <p className="text-gray-600 dark:text-gray-400">
-          Continuez à swiper pour trouver un film que tout le monde aime !
-        </p>
+      <div className="relative group">
+        <div className="absolute -inset-1 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border-2 border-dashed border-white/20 rounded-3xl">
+          <div className="text-center py-16 px-6">
+            <div className="text-6xl mb-4">🎬</div>
+            <h3 className="text-xl font-semibold mb-2">
+              Aucun match pour le moment
+            </h3>
+            <p className="text-muted-foreground">
+              Continuez à swiper pour trouver un film que tout le monde aime !
+            </p>
+          </div>
+        </div>
       </div>
     )
   }
@@ -176,67 +181,69 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilt
 
         {/* Other Matches Section */}
       {otherMatches.length > 0 && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Autres Matches ({otherMatches.length})
-            </h3>
-          </div>
+        <div className="relative group">
+          <div className="absolute -inset-1 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+            <div className="h-1 bg-gradient-to-r from-green-500 to-emerald-500" />
+            <div className="p-5">
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <span className="w-6 h-6 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400 text-sm">
+                  {otherMatches.length}
+                </span>
+                Autres Matches
+              </h3>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {otherMatches.map((match) => (
-              <Card
-                key={match.id}
-                className="group hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
-                onClick={() => match.movie && handleShowDetails(match.movie.id)}
-              >
-                <CardContent className="p-0">
-                  <div className="relative aspect-[2/3]">
-                    <Image
-                      src={match.movie!.posterUrl || match.movie!.backdropUrl}
-                      alt={match.movie!.title}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="absolute bottom-2 right-2">
-                        <Badge className="bg-green-500 text-white">
-                          <ExternalLink className="w-3 h-3 mr-1" />
-                          TMDb
-                        </Badge>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {otherMatches.map((match) => (
+                  <div
+                    key={match.id}
+                    className="group/card cursor-pointer"
+                    onClick={() => match.movie && handleShowDetails(match.movie.id)}
+                  >
+                    <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-white/5">
+                      <Image
+                        src={match.movie!.posterUrl || match.movie!.backdropUrl}
+                        alt={match.movie!.title}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover/card:scale-105"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      />
+                      {/* Gradient overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                      {/* Vote count badge */}
+                      <VoteCountBadge voteCount={match.voteCount} variant="absolute" />
+
+                      {/* Watch Providers */}
+                      {roomFilters?.watchProviders && roomFilters.watchProviders.length > 0 && (
+                        <ProviderList
+                          providerIds={roomFilters.watchProviders}
+                          variant="match"
+                          maxVisible={2}
+                          showNames={false}
+                        />
+                      )}
+
+                      {/* Bottom info */}
+                      <div className="absolute bottom-0 left-0 right-0 p-3">
+                        <h4 className="font-semibold text-sm text-white line-clamp-2 mb-1">
+                          {match.movie!.title}
+                        </h4>
+                        <div className="flex items-center justify-between">
+                          <RatingBadge rating={match.movie!.voteAverage} variant="match" />
+                          <VoteCountBadge
+                            voteCount={match.voteCount}
+                            totalMembers={totalMembers}
+                            showPercentage={true}
+                            variant="inline"
+                          />
+                        </div>
                       </div>
                     </div>
-                    {/* Vote count badge */}
-                    <VoteCountBadge voteCount={match.voteCount} variant="absolute" />
-
-                    {/* Watch Providers */}
-                    {roomFilters?.watchProviders && roomFilters.watchProviders.length > 0 && (
-                      <ProviderList
-                        providerIds={roomFilters.watchProviders}
-                        variant="match"
-                        maxVisible={2}
-                        showNames={false}
-                      />
-                    )}
                   </div>
-                  <div className="p-3 space-y-1">
-                    <h4 className="font-semibold text-sm line-clamp-2 text-gray-900 dark:text-white">
-                      {match.movie!.title}
-                    </h4>
-                    <div className="flex items-center justify-between text-xs">
-                      <RatingBadge rating={match.movie!.voteAverage} variant="match" />
-                      <VoteCountBadge
-                        voteCount={match.voteCount}
-                        totalMembers={totalMembers}
-                        showPercentage={true}
-                        variant="inline"
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}
