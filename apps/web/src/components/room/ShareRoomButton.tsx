@@ -5,15 +5,12 @@ import {
   Button,
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
-  Input,
-  Label,
+  DialogTitle,
 } from "@swipe-movie/ui"
-import { Share2, Copy, CheckCircle2, QrCode } from "lucide-react"
+import { Share2, Copy, CheckCircle2, QrCode, Link2, Hash, Sparkles } from "lucide-react"
 import QRCode from "react-qr-code"
+import { cn } from "@/lib/utils"
 
 interface ShareRoomButtonProps {
   roomCode: string
@@ -88,112 +85,136 @@ export function ShareRoomButton({
           Inviter
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Inviter des amis</DialogTitle>
-          <DialogDescription>
-            Partage cette room pour que tes amis puissent swiper avec toi!
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-md border-0 bg-transparent p-0 shadow-none">
+        <DialogTitle className="sr-only">Inviter des amis</DialogTitle>
+        <div className="relative">
+          {/* Glow effect */}
+          <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-cyan-500/30 rounded-3xl blur-xl" />
 
-        <div className="space-y-4">
-          {/* Native Share Button (mobile only) */}
-          {canShare && (
-            <Button
-              onClick={handleNativeShare}
-              className="w-full"
-              size="lg"
-              variant="default"
-            >
-              <Share2 className="w-4 h-4 mr-2" />
-              Partager
-            </Button>
-          )}
+          {/* Main content */}
+          <div className="relative bg-gradient-to-br from-background/95 to-background/90 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden">
+            {/* Gradient accent bar */}
+            <div className="h-1.5 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500" />
 
-          {/* Room Link */}
-          <div className="space-y-2">
-            <Label htmlFor="room-link" className="text-sm font-medium">
-              Lien de la room
-            </Label>
-            <div className="flex gap-2">
-              <Input
-                id="room-link"
-                value={roomUrl}
-                readOnly
-                className="flex-1 font-mono text-sm"
-                onClick={(e) => e.currentTarget.select()}
-              />
-              <Button
-                onClick={handleCopyLink}
-                variant="outline"
-                size="icon"
-                className="shrink-0"
-                aria-label={copiedLink ? "Lien copié" : "Copier le lien de la room"}
+            <div className="p-6 space-y-6">
+              {/* Header */}
+              <div className="text-center space-y-2">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 mb-2">
+                  <Sparkles className="w-7 h-7 text-purple-400" />
+                </div>
+                <h2 className="text-xl font-bold">Inviter des amis</h2>
+                <p className="text-sm text-muted-foreground">
+                  Partage cette room pour swiper ensemble !
+                </p>
+              </div>
+
+              {/* Native Share Button (mobile only) */}
+              {canShare && (
+                <button
+                  onClick={handleNativeShare}
+                  className="w-full relative group"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl">
+                    <Share2 className="w-5 h-5" />
+                    Partager
+                  </div>
+                </button>
+              )}
+
+              {/* Room Link */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                  <Link2 className="w-4 h-4" />
+                  Lien de la room
+                </div>
+                <div className="flex gap-2">
+                  <div
+                    className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl font-mono text-sm truncate cursor-pointer hover:bg-white/10 transition-colors"
+                    onClick={handleCopyLink}
+                  >
+                    {roomUrl}
+                  </div>
+                  <button
+                    onClick={handleCopyLink}
+                    className={cn(
+                      "shrink-0 w-12 h-12 flex items-center justify-center rounded-xl border transition-all",
+                      copiedLink
+                        ? "bg-green-500/20 border-green-500/50 text-green-400"
+                        : "bg-white/5 border-white/10 hover:bg-white/10 text-muted-foreground hover:text-foreground"
+                    )}
+                    aria-label={copiedLink ? "Lien copié" : "Copier le lien de la room"}
+                  >
+                    {copiedLink ? (
+                      <CheckCircle2 className="w-5 h-5" />
+                    ) : (
+                      <Copy className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Room Code */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                  <Hash className="w-4 h-4" />
+                  Code de la room
+                </div>
+                <div className="flex gap-2">
+                  <div
+                    className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl font-mono text-lg font-bold text-center uppercase tracking-[0.3em] cursor-pointer hover:bg-white/10 transition-colors"
+                    onClick={handleCopyCode}
+                  >
+                    {roomCode}
+                  </div>
+                  <button
+                    onClick={handleCopyCode}
+                    className={cn(
+                      "shrink-0 w-12 h-12 flex items-center justify-center rounded-xl border transition-all",
+                      copiedCode
+                        ? "bg-green-500/20 border-green-500/50 text-green-400"
+                        : "bg-white/5 border-white/10 hover:bg-white/10 text-muted-foreground hover:text-foreground"
+                    )}
+                    aria-label={copiedCode ? "Code copié" : "Copier le code de la room"}
+                  >
+                    {copiedCode ? (
+                      <CheckCircle2 className="w-5 h-5" />
+                    ) : (
+                      <Copy className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+                <p className="text-xs text-muted-foreground text-center">
+                  Tes amis peuvent rejoindre avec ce code depuis l'accueil
+                </p>
+              </div>
+
+              {/* QR Code Toggle */}
+              <button
+                onClick={() => setShowQR(!showQR)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium transition-colors"
               >
-                {copiedLink ? (
-                  <CheckCircle2 className="w-4 h-4 text-green-500" />
-                ) : (
-                  <Copy className="w-4 h-4" />
-                )}
-              </Button>
+                <QrCode className="w-4 h-4" />
+                {showQR ? "Masquer" : "Afficher"} le QR Code
+              </button>
+
+              {/* QR Code Display */}
+              {showQR && (
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 rounded-2xl blur-md" />
+                  <div className="relative flex justify-center p-6 bg-white rounded-2xl">
+                    <QRCode
+                      value={roomUrl}
+                      size={180}
+                      level="M"
+                      bgColor="#ffffff"
+                      fgColor="#000000"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-
-          {/* Room Code */}
-          <div className="space-y-2">
-            <Label htmlFor="room-code" className="text-sm font-medium">
-              Code de la room
-            </Label>
-            <div className="flex gap-2">
-              <Input
-                id="room-code"
-                value={roomCode}
-                readOnly
-                className="flex-1 font-mono text-lg font-bold text-center uppercase tracking-wider"
-                onClick={(e) => e.currentTarget.select()}
-              />
-              <Button
-                onClick={handleCopyCode}
-                variant="outline"
-                size="icon"
-                className="shrink-0"
-                aria-label={copiedCode ? "Code copié" : "Copier le code de la room"}
-              >
-                {copiedCode ? (
-                  <CheckCircle2 className="w-4 h-4 text-green-500" />
-                ) : (
-                  <Copy className="w-4 h-4" />
-                )}
-              </Button>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Les amis peuvent aussi rejoindre avec ce code depuis la page d'accueil
-            </p>
-          </div>
-
-          {/* QR Code Toggle */}
-          <Button
-            onClick={() => setShowQR(!showQR)}
-            variant="ghost"
-            className="w-full"
-            size="sm"
-          >
-            <QrCode className="w-4 h-4 mr-2" />
-            {showQR ? "Masquer" : "Afficher"} le QR Code
-          </Button>
-
-          {/* QR Code Display */}
-          {showQR && (
-            <div className="flex justify-center p-4 bg-white rounded-lg">
-              <QRCode
-                value={roomUrl}
-                size={200}
-                level="M"
-                bgColor="#ffffff"
-                fgColor="#000000"
-              />
-            </div>
-          )}
         </div>
       </DialogContent>
     </Dialog>
