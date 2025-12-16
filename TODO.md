@@ -141,21 +141,21 @@
 | 3 | Features Concurrentielles | 12h | ✅ |
 | 4 | PWA Optimisation | 8h | ✅ |
 | 2 | Infrastructure (Email + RGPD) | 29h | 🔲 |
-| **6** | **Intégrations Externes (Trakt/AniList)** | **16h** | **🔲 NOUVEAU** |
+| **6** | **Intégrations Externes (Trakt/AniList)** | **16h** | **✅** |
 | 5 | Engagement (Stretch) | 90h | 🔲 |
 
 ---
 
 ## 🎯 Prochaine priorité
 
-### Phase 6 - Intégrations Externes (Feedback Testeurs)
-1. [ ] Schema Prisma `UserMediaLibrary` + migration
-2. [ ] Types partagés `external-services.ts`
-3. [ ] Module Trakt.tv (OAuth + sync)
-4. [ ] Module AniList (OAuth + GraphQL)
-5. [ ] Page `/profile/connections`
-6. [ ] Module Recommandations (scoring + exclusion)
-7. [ ] Badges "Déjà vu" sur cartes
+### Phase 6 - Intégrations Externes (Feedback Testeurs) ✅
+1. [x] Schema Prisma `UserMediaLibrary` + migration
+2. [x] Types partagés `external-services.ts`
+3. [x] Module Trakt.tv (OAuth + sync)
+4. [x] Module AniList (OAuth + GraphQL)
+5. [x] Page `/connections`
+6. [x] Module Recommandations (scoring + exclusion)
+7. [x] Badges "Déjà vu" sur cartes
 
 ### Phase 2 - Infrastructure (Après Phase 6)
 1. [ ] Email System (Resend) - 15h
