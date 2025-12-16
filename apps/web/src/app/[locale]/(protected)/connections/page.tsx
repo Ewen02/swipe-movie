@@ -8,6 +8,7 @@ import { Button } from "@swipe-movie/ui"
 import { ConnectionCard } from "@/components/connections/ConnectionCard"
 import { useConnections } from "@/hooks/useConnections"
 import { Footer } from "@/components/layout/Footer"
+import { BackgroundOrbs } from "@/components/layout/BackgroundOrbs"
 import { fadeInUp, staggerContainer } from "@/lib/animations"
 
 export default function ConnectionsPage() {
@@ -17,8 +18,7 @@ export default function ConnectionsPage() {
   return (
     <div className="min-h-screen bg-background overflow-hidden flex flex-col">
       {/* Background orbs */}
-      <div className="fixed top-20 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10" />
-      <div className="fixed bottom-20 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl -z-10" />
+      <BackgroundOrbs />
 
       <div className="flex-1 container mx-auto px-4 py-8 md:py-12 relative z-10">
         <motion.div

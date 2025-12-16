@@ -3,10 +3,11 @@
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import { Crown, CreditCard, BarChart3, Settings, Loader2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, Button, Progress } from '@swipe-movie/ui';
+import { Button, Progress } from '@swipe-movie/ui';
 import { useSubscription } from '@/hooks/useSubscription';
 import { ManageSubscriptionButton } from '@/components/subscription';
 import { Footer } from '@/components/layout/Footer';
+import { BackgroundOrbs } from '@/components/layout/BackgroundOrbs';
 import { useRouter } from 'next/navigation';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 
@@ -35,8 +36,7 @@ export default function SubscriptionDashboardPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Background orbs */}
-      <div className="fixed top-20 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10" />
-      <div className="fixed bottom-20 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl -z-10" />
+      <BackgroundOrbs />
 
       <div className="flex-1 container mx-auto px-4 py-8 md:py-12">
         <motion.div
@@ -59,131 +59,142 @@ export default function SubscriptionDashboardPage() {
 
           {/* Current Plan Card */}
           <motion.div variants={fadeInUp}>
-            <Card className="relative overflow-hidden">
-              {isPaid && (
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/20 to-transparent rounded-bl-full" />
-              )}
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <CreditCard className="w-5 h-5" />
-                  {t('currentPlan')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {planDisplay.icon}
-                    <span className={`text-2xl font-bold ${planDisplay.color}`}>
-                      {planDisplay.name}
-                    </span>
-                  </div>
-                  {isPaid && subscription?.periodEnd && (
-                    <div className="text-sm text-muted-foreground">
-                      {t('renewsOn', {
-                        date: new Date(subscription.periodEnd).toLocaleDateString(),
-                      })}
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-accent/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+                <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
+                <div className="p-6">
+                  <h3 className="flex items-center gap-2 text-lg font-semibold mb-6">
+                    <CreditCard className="w-5 h-5" />
+                    {t('currentPlan')}
+                  </h3>
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        {planDisplay.icon}
+                        <span className={`text-2xl font-bold ${planDisplay.color}`}>
+                          {planDisplay.name}
+                        </span>
+                      </div>
+                      {isPaid && subscription?.periodEnd && (
+                        <div className="text-sm text-muted-foreground">
+                          {t('renewsOn', {
+                            date: new Date(subscription.periodEnd).toLocaleDateString(),
+                          })}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
 
-                <div className="flex gap-4">
-                  {isPaid ? (
-                    <ManageSubscriptionButton variant="outline" />
-                  ) : (
-                    <Button onClick={() => router.push('/pricing')} className="gap-2">
-                      <Crown className="w-4 h-4" />
-                      {t('upgrade')}
-                    </Button>
-                  )}
+                    <div className="flex gap-4">
+                      {isPaid ? (
+                        <ManageSubscriptionButton variant="outline" />
+                      ) : (
+                        <Button onClick={() => router.push('/pricing')} className="gap-2">
+                          <Crown className="w-4 h-4" />
+                          {t('upgrade')}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </motion.div>
 
           {/* Usage Stats */}
           <motion.div variants={fadeInUp}>
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="w-5 h-5" />
-                  {t('usage.title')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Rooms Usage */}
-                <UsageStat
-                  label={t('usage.rooms')}
-                  current={usage.activeRooms}
-                  limit={limits.maxRooms}
-                  unlimited={limits.maxRooms === -1}
-                />
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+                <div className="h-1 bg-gradient-to-r from-blue-500 to-cyan-500" />
+                <div className="p-6">
+                  <h3 className="flex items-center gap-2 text-lg font-semibold mb-6">
+                    <BarChart3 className="w-5 h-5" />
+                    {t('usage.title')}
+                  </h3>
+                  <div className="space-y-6">
+                    {/* Rooms Usage */}
+                    <UsageStat
+                      label={t('usage.rooms')}
+                      current={usage.activeRooms}
+                      limit={limits.maxRooms}
+                      unlimited={limits.maxRooms === -1}
+                    />
 
-                {/* Swipes Usage */}
-                <UsageStat
-                  label={t('usage.swipesPerRoom')}
-                  current={usage.maxSwipesInRoom}
-                  limit={limits.maxSwipes}
-                  unlimited={limits.maxSwipes === -1}
-                />
+                    {/* Swipes Usage */}
+                    <UsageStat
+                      label={t('usage.swipesPerRoom')}
+                      current={usage.maxSwipesInRoom}
+                      limit={limits.maxSwipes}
+                      unlimited={limits.maxSwipes === -1}
+                    />
 
-                {/* Participants */}
-                <UsageStat
-                  label={t('usage.participantsPerRoom')}
-                  current={usage.maxParticipantsInRoom}
-                  limit={limits.maxParticipants}
-                  unlimited={limits.maxParticipants === -1}
-                />
-              </CardContent>
-            </Card>
+                    {/* Participants */}
+                    <UsageStat
+                      label={t('usage.participantsPerRoom')}
+                      current={usage.maxParticipantsInRoom}
+                      limit={limits.maxParticipants}
+                      unlimited={limits.maxParticipants === -1}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </motion.div>
 
           {/* Features Access */}
           <motion.div variants={fadeInUp}>
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('features.title')}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <FeatureItem
-                    label={t('features.advancedFilters')}
-                    enabled={limits.hasAdvancedFilters}
-                  />
-                  <FeatureItem
-                    label={t('features.emailNotifications')}
-                    enabled={limits.hasEmailNotifications}
-                  />
-                  <FeatureItem
-                    label={t('features.apiAccess')}
-                    enabled={limits.hasApiAccess}
-                  />
-                  <FeatureItem
-                    label={t('features.roomExpiry', {
-                      days: limits.roomExpiryDays === -1 ? t('features.unlimited') : limits.roomExpiryDays,
-                    })}
-                    enabled={true}
-                  />
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+                <div className="h-1 bg-gradient-to-r from-purple-500 to-pink-500" />
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold mb-6">{t('features.title')}</h3>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <FeatureItem
+                      label={t('features.advancedFilters')}
+                      enabled={limits.hasAdvancedFilters}
+                    />
+                    <FeatureItem
+                      label={t('features.emailNotifications')}
+                      enabled={limits.hasEmailNotifications}
+                    />
+                    <FeatureItem
+                      label={t('features.apiAccess')}
+                      enabled={limits.hasApiAccess}
+                    />
+                    <FeatureItem
+                      label={t('features.roomExpiry', {
+                        days: limits.roomExpiryDays === -1 ? t('features.unlimited') : limits.roomExpiryDays,
+                      })}
+                      enabled={true}
+                    />
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </motion.div>
 
           {/* Upgrade CTA for free users */}
           {!isPaid && (
             <motion.div variants={fadeInUp}>
-              <Card className="bg-gradient-to-br from-primary/10 to-accent/10 border-primary/20">
-                <CardContent className="py-8 text-center space-y-4">
-                  <Crown className="w-12 h-12 mx-auto text-primary" />
-                  <h3 className="text-xl font-semibold">{t('upgradeCta.title')}</h3>
-                  <p className="text-muted-foreground max-w-md mx-auto">
-                    {t('upgradeCta.description')}
-                  </p>
-                  <Button onClick={() => router.push('/pricing')} size="lg" className="gap-2">
-                    <Crown className="w-4 h-4" />
-                    {t('upgradeCta.button')}
-                  </Button>
-                </CardContent>
-              </Card>
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 to-accent/30 rounded-3xl blur-xl opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative bg-gradient-to-br from-primary/10 to-accent/10 backdrop-blur-xl border border-primary/20 rounded-3xl overflow-hidden">
+                  <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
+                  <div className="py-8 px-6 text-center space-y-4">
+                    <Crown className="w-12 h-12 mx-auto text-primary" />
+                    <h3 className="text-xl font-semibold">{t('upgradeCta.title')}</h3>
+                    <p className="text-muted-foreground max-w-md mx-auto">
+                      {t('upgradeCta.description')}
+                    </p>
+                    <Button onClick={() => router.push('/pricing')} size="lg" className="gap-2">
+                      <Crown className="w-4 h-4" />
+                      {t('upgradeCta.button')}
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           )}
         </motion.div>
