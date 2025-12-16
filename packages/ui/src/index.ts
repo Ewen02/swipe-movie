@@ -21,7 +21,7 @@ export { VoteCountBadge } from './atoms/vote-count-badge';
 export { AgreementBadge } from './atoms/agreement-badge';
 export { ReleaseDateBadge } from './atoms/release-date-badge';
 
-// Liquid Glass Components
+// Liquid Glass Components (iOS 26 Style)
 export {
   GlassCard,
   GlassCardHeader,
@@ -42,6 +42,15 @@ export {
   glassBadgeVariants,
   type GlassBadgeProps,
 } from './atoms/glass-badge';
+export {
+  GlassInput,
+  GlassTextarea,
+  glassInputVariants,
+  glassTextareaVariants,
+  type GlassInputProps,
+  type GlassTextareaProps,
+} from './atoms/glass-input';
+export { LiquidGlassFilters } from './atoms/glass-svg-filters';
 
 // =============================================================================
 // MOLECULES - Combinations of atoms

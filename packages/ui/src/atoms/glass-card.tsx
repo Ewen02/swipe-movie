@@ -10,29 +10,31 @@ const glassCardVariants = cva(
   {
     variants: {
       variant: {
-        default: "glass",
+        default: "glass glass-shine",
         subtle: "glass-subtle",
-        intense: "glass-intense",
-        colored: "glass glass-glow",
+        intense: "glass-intense glass-shine",
+        colored: "glass glass-glow glass-shine",
+        refract: "glass glass-refract glass-shine",
+        specular: "glass glass-specular glass-shine",
       },
       size: {
         sm: "p-4",
         md: "p-6",
         lg: "p-8",
       },
-      shine: {
-        true: "glass-shine",
+      edgeGlow: {
+        true: "glass-edge-glow",
         false: "",
       },
       hover: {
-        true: "hover:scale-[1.02] hover:shadow-xl cursor-pointer",
+        true: "hover:scale-[1.02] hover:brightness-110 cursor-pointer transition-transform",
         false: "",
       },
     },
     defaultVariants: {
       variant: "default",
       size: "md",
-      shine: true,
+      edgeGlow: false,
       hover: false,
     },
   }
@@ -53,7 +55,7 @@ const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
       className,
       variant,
       size,
-      shine,
+      edgeGlow,
       hover,
       shimmer = false,
       breathe = false,
@@ -68,7 +70,7 @@ const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
       <motion.div
         ref={ref}
         className={cn(
-          glassCardVariants({ variant, size, shine, hover }),
+          glassCardVariants({ variant, size, edgeGlow, hover }),
           shimmer && "glass-shimmer",
           breathe && "glass-breathe",
           className

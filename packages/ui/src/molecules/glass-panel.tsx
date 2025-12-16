@@ -65,55 +65,53 @@ const GlassPanel = React.forwardRef<HTMLDivElement, GlassPanelProps>(
         {showBlobs && (
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <motion.div
-              className="absolute w-64 h-64 rounded-full blur-3xl liquid-blob"
+              className="absolute w-64 h-64 rounded-full blur-3xl opacity-60"
               style={{
                 background: blobColors[0],
                 top: "10%",
                 left: "10%",
               }}
               animate={{
-                x: [0, 30, -20, 0],
-                y: [0, -30, 20, 0],
+                x: [0, 15, -10, 0],
+                y: [0, -15, 10, 0],
               }}
               transition={{
-                duration: 10,
+                duration: 20,
                 repeat: Infinity,
                 ease: "easeInOut",
               }}
             />
             <motion.div
-              className="absolute w-48 h-48 rounded-full blur-3xl liquid-blob"
+              className="absolute w-48 h-48 rounded-full blur-3xl opacity-60"
               style={{
                 background: blobColors[1],
                 top: "60%",
                 right: "10%",
-                animationDelay: "2s",
               }}
               animate={{
-                x: [0, -40, 30, 0],
-                y: [0, 20, -40, 0],
+                x: [0, -20, 15, 0],
+                y: [0, 10, -20, 0],
               }}
               transition={{
-                duration: 12,
+                duration: 24,
                 repeat: Infinity,
                 ease: "easeInOut",
                 delay: 2,
               }}
             />
             <motion.div
-              className="absolute w-56 h-56 rounded-full blur-3xl liquid-blob"
+              className="absolute w-56 h-56 rounded-full blur-3xl opacity-60"
               style={{
                 background: blobColors[2],
                 bottom: "20%",
                 left: "30%",
-                animationDelay: "4s",
               }}
               animate={{
-                x: [0, 20, -30, 0],
-                y: [0, -20, 30, 0],
+                x: [0, 10, -15, 0],
+                y: [0, -10, 15, 0],
               }}
               transition={{
-                duration: 14,
+                duration: 28,
                 repeat: Infinity,
                 ease: "easeInOut",
                 delay: 4,
