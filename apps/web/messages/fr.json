@@ -115,6 +115,7 @@
     "join": "Rejoindre une room",
     "empty": "Aucune room active",
     "emptyDescription": "Créez votre première room pour commencer à swiper des films avec vos amis !",
+    "roomsCount": "{count, plural, =1 {# room active} other {# rooms actives}}",
     "active": "Rooms actives",
     "myActiveRooms": "Mes rooms actives",
     "members": "{count} membres",
@@ -133,6 +134,12 @@
       "total": "Total de rooms",
       "matches": "Matches trouvés",
       "swipesToday": "Swipes aujourd'hui"
+    },
+    "filters": {
+      "all": "Toutes",
+      "movie": "Films",
+      "tv": "Séries",
+      "recent": "Récentes"
     },
     "emptyState": {
       "title": "Aucune room active",
