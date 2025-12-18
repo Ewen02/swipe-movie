@@ -1,5 +1,6 @@
 "use client"
 
+import { memo } from "react"
 import { useTranslations } from "next-intl"
 import { motion } from "framer-motion"
 import { Button } from "@swipe-movie/ui"
@@ -14,7 +15,7 @@ interface RoomStatsHeaderProps {
   onJoinRoom: () => void
 }
 
-export function RoomStatsHeader({
+export const RoomStatsHeader = memo(function RoomStatsHeader({
   totalRooms,
   totalMatches = 0,
   totalSwipesToday = 0,
@@ -33,7 +34,7 @@ export function RoomStatsHeader({
       {/* Glow effect on hover */}
       <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-xl opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
 
-      <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+      <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
         {/* Top gradient bar */}
         <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
 
@@ -144,7 +145,7 @@ export function RoomStatsHeader({
               <Button
                 size="lg"
                 variant="outline"
-                className="w-full border-2 border-white/20 hover:bg-white/5 hover:border-accent text-lg py-6"
+                className="w-full border-2 border-border hover:bg-foreground/5 hover:border-accent text-lg py-6"
                 onClick={onJoinRoom}
               >
                 <Users className="w-5 h-5 mr-2" />
@@ -156,4 +157,4 @@ export function RoomStatsHeader({
       </div>
     </motion.div>
   )
-}
+})

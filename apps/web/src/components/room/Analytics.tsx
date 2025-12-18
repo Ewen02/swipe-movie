@@ -106,7 +106,7 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
       {/* Overview Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="relative group">
-          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-2xl p-4">
+          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-2xl p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground">Total Swipes</p>
@@ -123,7 +123,7 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
         </div>
 
         <div className="relative group">
-          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-2xl p-4">
+          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-2xl p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground">Taux de Like</p>
@@ -133,7 +133,7 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
                 <ThumbsUp className="w-5 h-5 text-green-400" />
               </div>
             </div>
-            <div className="mt-2 h-1.5 bg-white/10 rounded-full overflow-hidden">
+            <div className="mt-2 h-1.5 bg-foreground/10 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full transition-all"
                 style={{ width: `${analytics.overview.likePercentage}%` }}
@@ -143,7 +143,7 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
         </div>
 
         <div className="relative group">
-          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-2xl p-4">
+          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-2xl p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground">Matches</p>
@@ -160,7 +160,7 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
         </div>
 
         <div className="relative group">
-          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-2xl p-4">
+          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-2xl p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground">Membres actifs</p>
@@ -180,7 +180,7 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
       {/* Member Activity */}
       <div className="relative group">
         <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+        <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
           <div className="h-1 bg-gradient-to-r from-purple-500 to-pink-500" />
           <div className="p-5">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -192,7 +192,7 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
               {analytics.memberActivity.map((member, idx) => (
                 <div
                   key={member.userId}
-                  className="relative bg-white/5 hover:bg-white/10 rounded-xl p-4 transition-colors"
+                  className="relative bg-foreground/5 hover:bg-foreground/10 rounded-xl p-4 transition-colors"
                 >
                   <div className="flex items-center gap-4">
                     {/* Avatar placeholder */}
@@ -209,7 +209,7 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
                       </div>
 
                       {/* Progress bar */}
-                      <div className="h-1.5 bg-white/10 rounded-full overflow-hidden mb-2">
+                      <div className="h-1.5 bg-foreground/10 rounded-full overflow-hidden mb-2">
                         <div
                           className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full transition-all"
                           style={{ width: `${member.likePercentage}%` }}
@@ -242,7 +242,7 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
       {likedMovies.length > 0 && (
         <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
             <div className="h-1 bg-gradient-to-r from-green-500 to-emerald-500" />
             <div className="p-5">
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -257,13 +257,14 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
 
                   return (
                     <div key={stat.movieId} className="group/card">
-                      <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-white/5">
+                      <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-foreground/5">
                         <Image
                           src={movie.posterUrl || movie.backdropUrl}
                           alt={movie.title}
                           fill
                           className="object-cover transition-transform duration-300 group-hover/card:scale-105"
                           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                          loading="lazy"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
@@ -293,7 +294,7 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
       {dislikedMovies.length > 0 && (
         <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-red-500/10 to-rose-500/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
             <div className="h-1 bg-gradient-to-r from-red-500 to-rose-500" />
             <div className="p-5">
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -308,13 +309,14 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
 
                   return (
                     <div key={stat.movieId} className="group/card">
-                      <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-white/5 opacity-70 hover:opacity-100 transition-opacity">
+                      <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-foreground/5 opacity-70 hover:opacity-100 transition-opacity">
                         <Image
                           src={movie.posterUrl || movie.backdropUrl}
                           alt={movie.title}
                           fill
                           className="object-cover grayscale transition-transform duration-300 group-hover/card:scale-105"
                           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                          loading="lazy"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
@@ -343,7 +345,7 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
       {/* Daily Activity (Last 7 days) */}
       <div className="relative group">
         <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+        <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
           <div className="h-1 bg-gradient-to-r from-blue-500 to-cyan-500" />
           <div className="p-5">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -359,7 +361,7 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
                 return (
                   <div
                     key={day.date}
-                    className="flex items-center gap-4 bg-white/5 hover:bg-white/10 rounded-xl p-3 transition-colors"
+                    className="flex items-center gap-4 bg-foreground/5 hover:bg-foreground/10 rounded-xl p-3 transition-colors"
                   >
                     <div className="w-20 text-sm text-muted-foreground shrink-0">
                       {new Date(day.date).toLocaleDateString("fr-FR", {
@@ -369,7 +371,7 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
                     </div>
 
                     <div className="flex-1">
-                      <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                      <div className="h-2 bg-foreground/10 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all"
                           style={{ width: `${percentage}%` }}

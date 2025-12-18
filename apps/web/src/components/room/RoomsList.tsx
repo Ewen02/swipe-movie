@@ -21,7 +21,7 @@ export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
     return (
       <div className="relative group">
         <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-lg opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
-        <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border-2 border-dashed border-white/20 rounded-3xl overflow-hidden">
+        <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border-2 border-dashed border-border rounded-3xl overflow-hidden">
           <div className="p-12 text-center">
             <div className="mb-6">
               <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 mb-4">
@@ -71,7 +71,7 @@ export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
             {/* Hover glow */}
             <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
 
-            <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden group-hover:border-primary/40 transition-all duration-300">
+            <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden group-hover:border-primary/40 transition-all duration-300">
               {/* Top accent bar */}
               <div className={`h-1 ${
                 room.type === "movie"
@@ -118,7 +118,7 @@ export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
                         <Heart className={`w-3.5 h-3.5 ${(room.matchCount || 0) > 0 ? "fill-pink-400" : ""}`} />
                         <span>{room.matchCount || 0}</span>
                       </div>
-                      <Badge variant="outline" className="font-mono text-[10px] px-1.5 py-0 border-white/20 text-muted-foreground">
+                      <Badge variant="outline" className="font-mono text-[10px] px-1.5 py-0 border-border text-muted-foreground">
                         {room.code}
                       </Badge>
                     </div>
@@ -126,8 +126,8 @@ export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
                 </div>
 
                 {/* Details row */}
-                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground mb-4 pb-4 border-b border-white/10">
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-white/5 border-white/10">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground mb-4 pb-4 border-b border-border">
+                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-foreground/5 border-border">
                     {room.type === "movie" ? t('card.movies') : t('card.series')}
                   </Badge>
                   {room.minRating && room.minRating > 0 && (
@@ -157,7 +157,7 @@ export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
                     roomName={room.name || t('card.unnamed')}
                     variant="outline"
                     size="sm"
-                    className="flex-1 border-white/20 hover:bg-white/5 text-xs h-9"
+                    className="flex-1 border-border hover:bg-foreground/5 text-xs h-9"
                   />
                   <motion.div
                     className="flex-1"

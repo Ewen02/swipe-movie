@@ -1,5 +1,6 @@
 "use client"
 
+import { memo } from "react"
 import { motion } from "framer-motion"
 import { Film, Heart, History, BarChart3, Users } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -25,7 +26,7 @@ const tabs = [
   { id: "members", icon: Users },
 ]
 
-export function BottomTabNav({
+export const BottomTabNav = memo(function BottomTabNav({
   currentTab,
   onTabChange,
   matchCount = 0,
@@ -34,7 +35,7 @@ export function BottomTabNav({
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 sm:hidden">
       {/* Gradient blur background */}
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/95 to-background/80 backdrop-blur-lg border-t border-white/10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/95 to-background/80 backdrop-blur-lg border-t border-border" />
 
       <div className="relative flex items-center justify-around px-2 py-2 pb-safe">
         {tabs.map((tab) => {
@@ -108,4 +109,4 @@ export function BottomTabNav({
       </div>
     </nav>
   )
-}
+})

@@ -186,7 +186,7 @@ export function CreateRoomStepper({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-background/98 to-background/95 backdrop-blur-xl border border-white/10">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-background/98 to-background/95 backdrop-blur-xl border border-border">
         <DialogHeader className="space-y-3">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
@@ -229,7 +229,7 @@ export function CreateRoomStepper({
         </div>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between mt-6 pt-4 border-t border-white/10">
+        <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
           <Button
             type="button"
             variant="ghost"

@@ -110,7 +110,7 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilt
     return (
       <div className="relative group">
         <div className="absolute -inset-1 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border-2 border-dashed border-white/20 rounded-3xl">
+        <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border-2 border-dashed border-border rounded-3xl">
           <div className="text-center py-16 px-6">
             <div className="text-6xl mb-4">🎬</div>
             <h3 className="text-xl font-semibold mb-2">
@@ -183,7 +183,7 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilt
       {otherMatches.length > 0 && (
         <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
             <div className="h-1 bg-gradient-to-r from-green-500 to-emerald-500" />
             <div className="p-5">
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -200,13 +200,14 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilt
                     className="group/card cursor-pointer"
                     onClick={() => match.movie && handleShowDetails(match.movie.id)}
                   >
-                    <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-white/5">
+                    <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-foreground/5">
                       <Image
                         src={match.movie!.posterUrl || match.movie!.backdropUrl}
                         alt={match.movie!.title}
                         fill
                         className="object-cover transition-transform duration-300 group-hover/card:scale-105"
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        loading="lazy"
                       />
                       {/* Gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />

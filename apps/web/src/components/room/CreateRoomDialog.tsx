@@ -67,7 +67,7 @@ export function CreateRoomDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-background/98 to-background/95 backdrop-blur-xl border border-white/10">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-background/98 to-background/95 backdrop-blur-xl border border-border">
         <DialogHeader className="space-y-3">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
@@ -203,7 +203,7 @@ export function CreateRoomDialog({
 
             {/* Filtres avancés - Section repliable */}
             <div className={`relative rounded-2xl border transition-all ${
-              showAdvancedFilters ? "border-primary/30 bg-gradient-to-br from-primary/10 to-accent/5" : "border-white/10 bg-gradient-to-br from-background/50 to-background/30"
+              showAdvancedFilters ? "border-primary/30 bg-gradient-to-br from-primary/10 to-accent/5" : "border-border bg-gradient-to-br from-background/50 to-background/30"
             }`}>
               <div className="p-5">
                 <button

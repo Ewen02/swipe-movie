@@ -92,7 +92,7 @@ export function ShareRoomButton({
           <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-cyan-500/30 rounded-3xl blur-xl" />
 
           {/* Main content */}
-          <div className="relative bg-gradient-to-br from-background/95 to-background/90 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden">
+          <div className="relative bg-gradient-to-br from-background/95 to-background/90 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
             {/* Gradient accent bar */}
             <div className="h-1.5 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500" />
 
@@ -130,7 +130,7 @@ export function ShareRoomButton({
                 </div>
                 <div className="flex gap-2">
                   <div
-                    className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl font-mono text-sm truncate cursor-pointer hover:bg-white/10 transition-colors"
+                    className="flex-1 px-4 py-3 bg-foreground/5 border border-border rounded-xl font-mono text-sm truncate cursor-pointer hover:bg-foreground/10 transition-colors"
                     onClick={handleCopyLink}
                   >
                     {roomUrl}
@@ -141,7 +141,7 @@ export function ShareRoomButton({
                       "shrink-0 w-12 h-12 flex items-center justify-center rounded-xl border transition-all",
                       copiedLink
                         ? "bg-green-500/20 border-green-500/50 text-green-400"
-                        : "bg-white/5 border-white/10 hover:bg-white/10 text-muted-foreground hover:text-foreground"
+                        : "bg-foreground/5 border-border hover:bg-foreground/10 text-muted-foreground hover:text-foreground"
                     )}
                     aria-label={copiedLink ? "Lien copié" : "Copier le lien de la room"}
                   >
@@ -162,7 +162,7 @@ export function ShareRoomButton({
                 </div>
                 <div className="flex gap-2">
                   <div
-                    className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl font-mono text-lg font-bold text-center uppercase tracking-[0.3em] cursor-pointer hover:bg-white/10 transition-colors"
+                    className="flex-1 px-4 py-3 bg-foreground/5 border border-border rounded-xl font-mono text-lg font-bold text-center uppercase tracking-[0.3em] cursor-pointer hover:bg-foreground/10 transition-colors"
                     onClick={handleCopyCode}
                   >
                     {roomCode}
@@ -173,7 +173,7 @@ export function ShareRoomButton({
                       "shrink-0 w-12 h-12 flex items-center justify-center rounded-xl border transition-all",
                       copiedCode
                         ? "bg-green-500/20 border-green-500/50 text-green-400"
-                        : "bg-white/5 border-white/10 hover:bg-white/10 text-muted-foreground hover:text-foreground"
+                        : "bg-foreground/5 border-border hover:bg-foreground/10 text-muted-foreground hover:text-foreground"
                     )}
                     aria-label={copiedCode ? "Code copié" : "Copier le code de la room"}
                   >
@@ -192,7 +192,7 @@ export function ShareRoomButton({
               {/* QR Code Toggle */}
               <button
                 onClick={() => setShowQR(!showQR)}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium transition-colors"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-foreground/5 hover:bg-foreground/10 border border-border rounded-xl text-sm font-medium transition-colors"
               >
                 <QrCode className="w-4 h-4" />
                 {showQR ? "Masquer" : "Afficher"} le QR Code

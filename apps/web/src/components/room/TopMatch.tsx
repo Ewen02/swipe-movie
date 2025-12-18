@@ -1,5 +1,6 @@
 "use client"
 
+import { memo } from "react"
 import Image from "next/image"
 import { Card, CardContent, Badge } from "@swipe-movie/ui"
 import { Trophy } from "lucide-react"
@@ -17,7 +18,7 @@ interface TopMatchProps {
   onShowDetails?: () => void
 }
 
-export function TopMatch({ match, movie, totalMembers, roomFilters, onShowDetails }: TopMatchProps) {
+export const TopMatch = memo(function TopMatch({ match, movie, totalMembers, roomFilters, onShowDetails }: TopMatchProps) {
   const agreementPercentage = Math.round((match.voteCount / totalMembers) * 100)
 
   return (
@@ -25,7 +26,7 @@ export function TopMatch({ match, movie, totalMembers, roomFilters, onShowDetail
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Trophy className="w-6 h-6 text-yellow-500" />
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h3 className="text-2xl font-bold text-foreground">
             TOP MATCH
           </h3>
         </div>
@@ -64,7 +65,7 @@ export function TopMatch({ match, movie, totalMembers, roomFilters, onShowDetail
             {/* Movie Details */}
             <div className="p-6 space-y-4 flex flex-col justify-center">
               <div>
-                <h4 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                <h4 className="text-3xl font-bold text-foreground mb-2">
                   {movie.title}
                 </h4>
                 {movie.releaseDate && (
@@ -97,7 +98,7 @@ export function TopMatch({ match, movie, totalMembers, roomFilters, onShowDetail
               </div>
 
               {movie.overview && (
-                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed line-clamp-4">
+                <p className="text-muted-foreground text-sm leading-relaxed line-clamp-4">
                   {movie.overview}
                 </p>
               )}
@@ -107,4 +108,4 @@ export function TopMatch({ match, movie, totalMembers, roomFilters, onShowDetail
       </Card>
     </div>
   )
-}
+})
