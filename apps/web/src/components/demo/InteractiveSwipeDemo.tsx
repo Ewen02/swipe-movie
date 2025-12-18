@@ -119,7 +119,7 @@ function SwipeCard({ movie, onSwipe, isTop, exitDirection }: SwipeCardProps) {
       whileTap={isTop ? { scale: 1.02 } : undefined}
       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
     >
-      <Card className="h-full overflow-hidden border-2 border-white/10 bg-background/90 backdrop-blur-sm shadow-2xl">
+      <Card className="h-full overflow-hidden border-2 border-border bg-background/90 backdrop-blur-sm shadow-2xl">
         {/* Movie Poster Area */}
         <div className={`relative h-48 bg-gradient-to-br ${movie.gradient} flex items-center justify-center`}>
           <span className="text-7xl">{movie.poster}</span>

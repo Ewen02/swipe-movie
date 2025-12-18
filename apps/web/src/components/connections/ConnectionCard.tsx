@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { useTranslations } from "next-intl"
 import { useSWRConfig } from "swr"
 import {
@@ -12,7 +12,7 @@ import {
   Button,
   Badge,
 } from "@swipe-movie/ui"
-import { RefreshCw, Check, X, Loader2 } from "lucide-react"
+import { RefreshCw, Check, X, Loader2, Clock } from "lucide-react"
 import { ExternalConnection, SyncResult } from "@swipe-movie/types"
 import {
   getAuthUrl,
@@ -21,6 +21,21 @@ import {
   ExternalProvider,
 } from "@/lib/api/external-services"
 import { getConnectionKey } from "@/hooks/useConnections"
+
+function formatRelativeTime(dateString: string): string {
+  const date = new Date(dateString)
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffMins = Math.floor(diffMs / (1000 * 60))
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+
+  if (diffMins < 1) return "A l'instant"
+  if (diffMins < 60) return `Il y a ${diffMins} min`
+  if (diffHours < 24) return `Il y a ${diffHours}h`
+  if (diffDays < 7) return `Il y a ${diffDays}j`
+  return date.toLocaleDateString("fr-FR", { day: "numeric", month: "short" })
+}
 
 interface ConnectionCardProps {
   provider: ExternalProvider
@@ -120,11 +135,19 @@ export function ConnectionCard({
           </div>
         ) : isConnected ? (
           <div className="space-y-4">
-            {status?.username && (
-              <p className="text-sm text-muted-foreground">
-                @{status.username}
-              </p>
-            )}
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+              {status?.username && (
+                <p className="text-sm text-muted-foreground">
+                  @{status.username}
+                </p>
+              )}
+              {status?.lastSync && (
+                <p className="flex items-center gap-1.5 text-xs text-muted-foreground/70">
+                  <Clock className="h-3 w-3" />
+                  {t("lastSync")}: {formatRelativeTime(status.lastSync)}
+                </p>
+              )}
+            </div>
 
             {syncResult && (
               <div className="rounded-md bg-muted/50 p-3 text-sm">

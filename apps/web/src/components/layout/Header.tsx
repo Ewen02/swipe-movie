@@ -26,7 +26,7 @@ import {
 } from "@swipe-movie/ui"
 import { ThemeToggle } from "@/components/layout/ThemeToggle"
 import { LanguageSelector } from "@/components/language-selector"
-import { User, LogOut, Film, CreditCard, Menu, X, Settings, Globe, Link2 } from "lucide-react"
+import { User, LogOut, Film, CreditCard, Menu, X, Settings, Globe, Link2, Library } from "lucide-react"
 
 export function Header() {
   const { data: session, isPending } = useSession()
@@ -74,7 +74,7 @@ export function Header() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
-        className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60"
+        className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60"
       >
         <div className="container mx-auto px-4 py-3">
           <nav className="flex items-center justify-between" aria-label="Main navigation">
@@ -146,6 +146,12 @@ export function Header() {
                         {t('nav.connections')}
                       </Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/library" className="cursor-pointer">
+                        <Library className="mr-2 h-4 w-4" />
+                        {t('nav.library')}
+                      </Link>
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       className="cursor-pointer text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 focus:bg-red-500/10"
@@ -199,6 +205,12 @@ export function Header() {
                       <Link href="/connections" className="cursor-pointer">
                         <Link2 className="mr-2 h-4 w-4" />
                         {t('nav.connections')}
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/library" className="cursor-pointer">
+                        <Library className="mr-2 h-4 w-4" />
+                        {t('nav.library')}
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -270,11 +282,11 @@ export function Header() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed top-0 right-0 z-50 h-full w-72 bg-background border-l border-white/10 shadow-2xl sm:hidden"
+              className="fixed top-0 right-0 z-50 h-full w-72 bg-background border-l border-border shadow-2xl sm:hidden"
             >
               <div className="flex flex-col h-full">
                 {/* Menu Header */}
-                <div className="flex items-center justify-between p-4 border-b border-white/10">
+                <div className="flex items-center justify-between p-4 border-b border-border">
                   <span className="font-semibold text-lg">{t('common.menu')}</span>
                   <Button
                     variant="ghost"
@@ -295,7 +307,7 @@ export function Header() {
                     </p>
 
                     {/* Language */}
-                    <div className="flex items-center justify-between px-2 py-2 rounded-lg bg-white/5">
+                    <div className="flex items-center justify-between px-2 py-2 rounded-lg bg-foreground/5">
                       <div className="flex items-center gap-3">
                         <Globe className="h-4 w-4 text-muted-foreground" />
                         <span className="text-sm">{t('common.language')}</span>
@@ -304,7 +316,7 @@ export function Header() {
                     </div>
 
                     {/* Theme */}
-                    <div className="flex items-center justify-between px-2 py-2 rounded-lg bg-white/5">
+                    <div className="flex items-center justify-between px-2 py-2 rounded-lg bg-foreground/5">
                       <div className="flex items-center gap-3">
                         <Settings className="h-4 w-4 text-muted-foreground" />
                         <span className="text-sm">{t('common.theme')}</span>
@@ -323,7 +335,7 @@ export function Header() {
                       <Link
                         href="/rooms"
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-white/5 transition-colors"
+                        className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-foreground/5 transition-colors"
                       >
                         <Film className="h-5 w-5 text-primary" />
                         <span>{t('nav.rooms')}</span>
@@ -332,7 +344,7 @@ export function Header() {
                       <Link
                         href="/dashboard/subscription"
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-white/5 transition-colors"
+                        className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-foreground/5 transition-colors"
                       >
                         <CreditCard className="h-5 w-5 text-accent" />
                         <span>{t('nav.subscription')}</span>
@@ -341,10 +353,19 @@ export function Header() {
                       <Link
                         href="/connections"
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-white/5 transition-colors"
+                        className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-foreground/5 transition-colors"
                       >
                         <Link2 className="h-5 w-5 text-purple-500" />
                         <span>{t('nav.connections')}</span>
+                      </Link>
+
+                      <Link
+                        href="/library"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-foreground/5 transition-colors"
+                      >
+                        <Library className="h-5 w-5 text-emerald-500" />
+                        <span>{t('nav.library')}</span>
                       </Link>
                     </div>
                   )}
@@ -352,7 +373,7 @@ export function Header() {
 
                 {/* Menu Footer - Sign Out */}
                 {session?.user && (
-                  <div className="p-4 border-t border-white/10">
+                  <div className="p-4 border-t border-border">
                     <Button
                       variant="outline"
                       className="w-full justify-start gap-3 text-red-500 border-red-500/30 hover:bg-red-500/10 hover:text-red-400"

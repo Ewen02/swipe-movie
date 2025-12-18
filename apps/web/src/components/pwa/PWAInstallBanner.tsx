@@ -46,14 +46,14 @@ export function PWAInstallBanner() {
           <div className="bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl p-4 shadow-2xl">
             <button
               onClick={handleDismiss}
-              className="absolute top-2 right-2 p-1 rounded-full hover:bg-white/20 transition-colors"
+              className="absolute top-2 right-2 p-1 rounded-full hover:bg-foreground/20 transition-colors"
               aria-label="Fermer"
             >
               <X className="w-4 h-4 text-white" />
             </button>
 
             <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-foreground/20 flex items-center justify-center">
                 <Download className="w-6 h-6 text-white" />
               </div>
 
@@ -90,7 +90,7 @@ export function PWAInstallBanner() {
                       onClick={handleDismiss}
                       size="sm"
                       variant="ghost"
-                      className="text-white hover:bg-white/20"
+                      className="text-white hover:bg-foreground/20"
                     >
                       Plus tard
                     </Button>

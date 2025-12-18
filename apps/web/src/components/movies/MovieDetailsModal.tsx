@@ -109,7 +109,7 @@ export function MovieDetailsModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-2xl w-[95vw] max-h-[90vh] overflow-hidden p-0 gap-0 bg-background/95 backdrop-blur-xl border-white/10"
+        className="max-w-2xl w-[95vw] max-h-[90vh] overflow-hidden p-0 gap-0 bg-background/95 backdrop-blur-xl border-border"
         aria-describedby="movie-details-description"
       >
         {/* Loading State */}
@@ -275,7 +275,7 @@ export function MovieDetailsModal({
                         href={getProviderUrl(provider.id)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary/50 transition-all group"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-foreground/5 border border-border hover:bg-foreground/10 hover:border-primary/50 transition-all group"
                       >
                         {provider.logoPath && (
                           <div className="relative w-8 h-8 rounded-md overflow-hidden">
@@ -333,7 +333,7 @@ export function MovieDetailsModal({
               {(movie.budget > 0 || movie.revenue > 0) && (
                 <div className="grid grid-cols-2 gap-3">
                   {movie.budget > 0 && (
-                    <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+                    <div className="p-3 rounded-lg bg-foreground/5 border border-border">
                       <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
                         <DollarSign className="w-3.5 h-3.5" />
                         Budget
@@ -342,7 +342,7 @@ export function MovieDetailsModal({
                     </div>
                   )}
                   {movie.revenue > 0 && (
-                    <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+                    <div className="p-3 rounded-lg bg-foreground/5 border border-border">
                       <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
                         <DollarSign className="w-3.5 h-3.5" />
                         Box Office
@@ -388,7 +388,7 @@ export function MovieDetailsModal({
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="text-white hover:bg-white/10"
+                      className="text-white hover:bg-foreground/10"
                       onClick={() => setShowTrailer(false)}
                     >
                       <X className="w-5 h-5" />

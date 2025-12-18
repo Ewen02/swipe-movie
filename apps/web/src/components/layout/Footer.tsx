@@ -4,7 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { motion } from "framer-motion"
-import { Heart, Film, Github, Twitter } from "lucide-react"
+import { Heart, Film, Github, Twitter, Cookie } from "lucide-react"
 
 export function Footer() {
   const t = useTranslations()
@@ -27,7 +27,7 @@ export function Footer() {
       <div className="container mx-auto px-4 py-16 relative z-10">
         <div className="max-w-6xl mx-auto">
           {/* Main footer content */}
-          <div className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+          <div className="relative bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
             {/* Top gradient bar */}
             <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
 
@@ -63,7 +63,7 @@ export function Footer() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.1 }}
                 >
-                  {footerLinks.map((link, index) => (
+                  {footerLinks.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
@@ -76,6 +76,18 @@ export function Footer() {
                       />
                     </Link>
                   ))}
+                  {/* Cookie consent link */}
+                  <button
+                    onClick={() => window.dispatchEvent(new CustomEvent("open-cookie-consent"))}
+                    className="group relative text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+                  >
+                    <Cookie className="w-3.5 h-3.5" />
+                    <span>{t('nav.cookies')}</span>
+                    <motion.span
+                      className="absolute -bottom-1 left-0 w-0 h-px bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300"
+                      initial={false}
+                    />
+                  </button>
                 </motion.div>
 
                 {/* Social & copyright */}
@@ -89,7 +101,7 @@ export function Footer() {
                   <div className="flex items-center justify-center md:justify-end gap-3 mb-4">
                     <motion.a
                       href="#"
-                      className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-white/10 hover:border-white/20 transition-colors"
+                      className="w-10 h-10 rounded-xl bg-foreground/5 border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-foreground/10 hover:border-border transition-colors"
                       whileHover={{ scale: 1.1, y: -2 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -97,7 +109,7 @@ export function Footer() {
                     </motion.a>
                     <motion.a
                       href="#"
-                      className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-white/10 hover:border-white/20 transition-colors"
+                      className="w-10 h-10 rounded-xl bg-foreground/5 border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-foreground/10 hover:border-border transition-colors"
                       whileHover={{ scale: 1.1, y: -2 }}
                       whileTap={{ scale: 0.95 }}
                     >

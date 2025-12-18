@@ -101,7 +101,7 @@ export function PublicHeader({ variant = "back", isAuthenticated = false }: Publ
                     <Button
                       variant="outline"
                       size="default"
-                      className="border-white/20 hover:bg-white/5 hover:border-white/30"
+                      className="border-border hover:bg-foreground/5 hover:border-white/30"
                     >
                       <ArrowLeft className="mr-2 h-4 w-4" />
                       {t('common.back')}
