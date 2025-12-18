@@ -19,6 +19,18 @@ const nextConfig = {
         pathname: '/t/p/**',
       },
     ],
+    // Optimize image formats (AVIF is smaller than WebP)
+    formats: ['image/avif', 'image/webp'] as ('image/avif' | 'image/webp')[],
+    // Device sizes for responsive images
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    // Image sizes for srcset
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // Minimize layout shift
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
+  },
+  experimental: {
+    // Enable optimistic client cache for faster navigation
+    optimisticClientCache: true,
   },
   async headers() {
     return [

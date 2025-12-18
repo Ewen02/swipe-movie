@@ -20,7 +20,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "build": "prisma db push --schema=../../packages/database/prisma/schema.prisma --skip-generate && next build --turbopack",
     "start": "next start",
     "lint": "eslint",
     "test": "jest --watch",
