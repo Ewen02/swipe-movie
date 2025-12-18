@@ -31,6 +31,14 @@ model User {
   image            String?
   roles            String[]           @default([])
   stripeCustomerId String?            @unique
+
+  // User preferences (onboarding)
+  watchProviders      Int[]     @default([])
+  watchRegion         String    @default("FR")
+  favoriteGenreIds    Int[]     @default([])
+  onboardingStep      Int       @default(0) // 0=not started, 1=providers, 2=genres, 3=swipes, 4=completed
+  onboardingCompleted Boolean   @default(false)
+
   members          RoomMember[]
   swipes           Swipe[]
   subscriptions    Subscription[]
@@ -68,6 +76,7 @@ model Account {
   scope                 String?
   idToken               String?
   password              String?
+  lastSyncAt            DateTime?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -146,6 +155,8 @@ model Swipe {
   @@index([roomId])
   @@index([userId])
   @@index([roomId, movieId])
+  @@index([roomId, createdAt]) // For analytics daily activity queries
+  @@index([userId, createdAt]) // For user stats today queries
 }
 
 model Match {
@@ -169,9 +180,9 @@ model UserMediaLibrary {
   userId     String
   tmdbId     String
   mediaType  String    // 'movie' | 'tv'
-  status     String    // 'watched' | 'watchlist' | 'rated'
+  status     String    // 'watched' | 'watchlist' | 'rated' | 'liked' | 'disliked'
   rating     Float?
-  source     String    // 'trakt' | 'anilist' | 'manual'
+  source     String    // 'trakt' | 'anilist' | 'manual' | 'onboarding' | 'discover'
   externalId String?
   watchedAt  DateTime?
   importedAt DateTime  @default(now())
