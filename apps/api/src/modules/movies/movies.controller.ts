@@ -205,6 +205,33 @@ export class MoviesController {
     return this.moviesService.getAllWatchProviders(region);
   }
 
+  @ApiOperation({ summary: 'Search for movies or TV shows' })
+  @ApiOkResponse({ type: [MovieBasicDto] })
+  @ApiQuery({
+    name: 'query',
+    required: true,
+    description: 'Search query',
+  })
+  @ApiQuery({
+    name: 'type',
+    required: false,
+    enum: ['movie', 'tv'],
+    description: 'Type of content (defaults to movie)',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number (defaults to 1)',
+  })
+  @Get('search')
+  searchMovies(
+    @Query('query') query: string,
+    @Query('type') type?: string,
+    @Query('page', new ParseIntPipe({ optional: true })) page?: number,
+  ) {
+    return this.moviesService.searchMovies(query, type as 'movie' | 'tv', page);
+  }
+
   @ApiOperation({ summary: 'Get movie or TV show details' })
   @ApiOkResponse({ type: MovieDetailsDto })
   @ApiQuery({

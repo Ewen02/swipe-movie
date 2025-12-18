@@ -400,9 +400,19 @@ export class RecommendationsService {
     // Sort by recommendation score (descending)
     scoredMovies.sort((a, b) => b.recommendationScore - a.recommendationScore);
 
+    // Filter out movies where ALL members have watched
+    const filteredMovies = scoredMovies.filter((movie) => {
+      const watchedByCount = watchedCountMap.get(movie.id.toString()) || 0;
+      return watchedByCount < memberCount;
+    });
+
+    this.logger.debug(
+      `Filtered ${scoredMovies.length - filteredMovies.length} movies watched by all ${memberCount} members`,
+    );
+
     // Log top recommendations for debugging
-    if (scoredMovies.length > 0) {
-      const top3 = scoredMovies.slice(0, 3).map((m) => ({
+    if (filteredMovies.length > 0) {
+      const top3 = filteredMovies.slice(0, 3).map((m) => ({
         title: m.title,
         score: m.recommendationScore,
         breakdown: m.scoreBreakdown,
@@ -411,9 +421,9 @@ export class RecommendationsService {
     }
 
     // Cache the results
-    await this.cacheManager.set(cacheKey, scoredMovies, RECOMMENDATIONS_CACHE_TTL);
+    await this.cacheManager.set(cacheKey, filteredMovies, RECOMMENDATIONS_CACHE_TTL);
 
-    return scoredMovies;
+    return filteredMovies;
   }
 
   /**

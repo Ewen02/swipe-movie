@@ -25,8 +25,8 @@ export type { MovieFilters } from '@swipe-movie/types';
 const CACHE_TTL = {
   MOVIE_DETAILS: 24 * 60 * 60 * 1000, // 24 hours
   GENRES: 7 * 24 * 60 * 60 * 1000, // 7 days
-  DISCOVER: 6 * 60 * 60 * 1000, // 6 hours (increased from 1h)
-  WATCH_PROVIDERS: 7 * 24 * 60 * 60 * 1000, // 7 days (increased from 24h)
+  DISCOVER: 12 * 60 * 60 * 1000, // 12 hours (increased from 6h)
+  WATCH_PROVIDERS: 7 * 24 * 60 * 60 * 1000, // 7 days
 } as const;
 
 @Injectable()
@@ -180,9 +180,20 @@ export class MoviesService {
     return result;
   }
 
-  async getPopularMovies(page = 1): Promise<MovieBasicDto[]> {
-    const url = `/movie/popular?language=${TMDB_DEFAULT_LANG}&page=${page}`;
-    const json = await this.tmdb.fetchJson<TMDbPopularResponse>(url);
+  async getPopularMovies(page = 1, region = 'FR'): Promise<MovieBasicDto[]> {
+    // Use discover endpoint with watch providers filter to exclude cinema-only releases
+    const DEFAULT_PROVIDERS = [8, 119, 337, 350, 531, 381, 283, 56, 1899, 1796];
+    const params = new URLSearchParams({
+      language: TMDB_DEFAULT_LANG,
+      page: page.toString(),
+      sort_by: 'popularity.desc',
+      with_watch_providers: DEFAULT_PROVIDERS.join('|'),
+      watch_region: region,
+      'vote_count.gte': '100', // Only movies with enough votes
+    });
+
+    const url = `/discover/movie?${params.toString()}`;
+    const json = await this.tmdb.fetchJson<TMDbDiscoverResponse>(url);
     return (json.results ?? []).map((movie) => this.mapToMovieSummary(movie));
   }
 
@@ -245,12 +256,16 @@ export class MoviesService {
     if (filters?.runtimeMax) {
       params.append('with_runtime.lte', filters.runtimeMax.toString());
     }
-    if (filters?.watchProviders && filters.watchProviders.length > 0) {
-      params.append('with_watch_providers', filters.watchProviders.join('|'));
-      // TMDB requires watch_region when filtering by providers
-      // Default to FR if not specified
-      params.append('watch_region', filters.watchRegion || 'FR');
-    }
+    // Always filter by watch providers to exclude cinema-only releases
+    // If no providers specified, use popular streaming services in France
+    const DEFAULT_PROVIDERS = [8, 119, 337, 350, 531, 381, 283, 56, 1899, 1796]; // Netflix, Prime, Disney+, Apple TV+, Paramount+, Canal+, Crunchyroll, OCS, Max, OCS
+    const providers = filters?.watchProviders && filters.watchProviders.length > 0
+      ? filters.watchProviders
+      : DEFAULT_PROVIDERS;
+
+    params.append('with_watch_providers', providers.join('|'));
+    // TMDB requires watch_region when filtering by providers
+    params.append('watch_region', filters?.watchRegion || 'FR');
     if (filters?.originalLanguage) {
       params.append('with_original_language', filters.originalLanguage);
     }
@@ -459,6 +474,51 @@ export class MoviesService {
       console.error(`Failed to fetch watch providers for ${region}:`, error);
       return [];
     }
+  }
+
+  /**
+   * Search for movies or TV shows by query
+   */
+  async searchMovies(
+    query: string,
+    type: 'movie' | 'tv' = 'movie',
+    page = 1,
+  ): Promise<MovieBasicDto[]> {
+    const mediaType = type === 'tv' ? 'tv' : 'movie';
+
+    // Generate cache key based on all parameters
+    const cacheKey = this.generateCacheKey('tmdb:search', {
+      query,
+      type,
+      page,
+    });
+
+    // Try to get from cache
+    const cached = await this.cacheManager.get<MovieBasicDto[]>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    // Build query parameters
+    const params = new URLSearchParams({
+      language: TMDB_DEFAULT_LANG,
+      query: query,
+      page: page.toString(),
+      include_adult: 'false',
+    });
+
+    const url = `/search/${mediaType}?${params.toString()}`;
+
+    // Fetch from TMDb API
+    const json = await this.tmdb.fetchJson<TMDbDiscoverResponse>(url);
+    const result = (json.results ?? []).map((movie) =>
+      this.mapToMovieSummary(movie),
+    );
+
+    // Store in cache (shorter TTL for search results)
+    await this.cacheManager.set(cacheKey, result, CACHE_TTL.DISCOVER);
+
+    return result;
   }
 
   /**

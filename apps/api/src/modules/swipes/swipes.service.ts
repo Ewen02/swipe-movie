@@ -262,96 +262,100 @@ export class SwipesService {
       throw new ForbiddenException('You are not a member of this room');
     }
 
-    // Get all swipes for this room
-    const swipes = await this.prisma.swipe.findMany({
-      where: { roomId },
-      select: {
-        id: true,
-        userId: true,
-        movieId: true,
-        value: true,
-        createdAt: true,
-        user: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    // Use parallel queries with aggregations for better performance
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    // Get all matches for this room
-    const matches = await this.prisma.match.findMany({
-      where: { roomId },
-      select: {
-        id: true,
-        movieId: true,
-        createdAt: true,
-      },
-    });
+    const [
+      // Aggregated overview stats
+      overviewStats,
+      // Total matches count
+      totalMatches,
+      // Member activity aggregated by userId and value
+      memberStats,
+      // Movie stats aggregated by movieId and value
+      movieStats,
+      // Recent swipes for daily activity (only last 7 days)
+      recentSwipes,
+    ] = await Promise.all([
+      // Overview: group by value to get likes/dislikes counts
+      this.prisma.swipe.groupBy({
+        by: ['value'],
+        where: { roomId },
+        _count: { id: true },
+      }),
+      // Matches count
+      this.prisma.match.count({ where: { roomId } }),
+      // Member activity: group by userId and value
+      this.prisma.swipe.groupBy({
+        by: ['userId', 'value'],
+        where: { roomId },
+        _count: { id: true },
+      }),
+      // Movie stats: group by movieId and value
+      this.prisma.swipe.groupBy({
+        by: ['movieId', 'value'],
+        where: { roomId },
+        _count: { id: true },
+      }),
+      // Only fetch recent swipes for daily activity calculation
+      this.prisma.swipe.findMany({
+        where: { roomId, createdAt: { gte: sevenDaysAgo } },
+        select: { createdAt: true, value: true },
+        orderBy: { createdAt: 'desc' },
+      }),
+    ]);
 
-    // Calculate statistics
-    const totalSwipes = swipes.length;
-    const totalLikes = swipes.filter((s) => s.value === true).length;
-    const totalDislikes = swipes.filter((s) => s.value === false).length;
-    const totalMatches = matches.length;
+    // Calculate overview from aggregated data
+    const totalLikes = overviewStats.find(s => s.value === true)?._count.id || 0;
+    const totalDislikes = overviewStats.find(s => s.value === false)?._count.id || 0;
+    const totalSwipes = totalLikes + totalDislikes;
 
-    // Member activity
+    // Build member activity from aggregated stats
     const memberActivity = room.members.map((member) => {
-      const memberSwipes = swipes.filter((s) => s.userId === member.user.id);
-      const memberLikes = memberSwipes.filter((s) => s.value === true).length;
-      const memberDislikes = memberSwipes.filter(
-        (s) => s.value === false,
-      ).length;
+      const userStats = memberStats.filter(s => s.userId === member.user.id);
+      const memberLikes = userStats.find(s => s.value === true)?._count.id || 0;
+      const memberDislikes = userStats.find(s => s.value === false)?._count.id || 0;
+      const memberTotalSwipes = memberLikes + memberDislikes;
 
       return {
         userId: member.user.id,
         userName: member.user.name,
-        totalSwipes: memberSwipes.length,
+        totalSwipes: memberTotalSwipes,
         likes: memberLikes,
         dislikes: memberDislikes,
         likePercentage:
-          memberSwipes.length > 0
-            ? Math.round((memberLikes / memberSwipes.length) * 100)
+          memberTotalSwipes > 0
+            ? Math.round((memberLikes / memberTotalSwipes) * 100)
             : 0,
       };
     });
 
-    // Most liked/disliked movies (top 5)
-    const movieStats = swipes.reduce(
-      (acc, swipe) => {
-        if (!acc[swipe.movieId]) {
-          acc[swipe.movieId] = { likes: 0, dislikes: 0, movieId: swipe.movieId };
-        }
-        if (swipe.value) {
-          acc[swipe.movieId].likes++;
-        } else {
-          acc[swipe.movieId].dislikes++;
-        }
-        return acc;
-      },
-      {} as Record<string, { likes: number; dislikes: number; movieId: string }>,
-    );
+    // Build movie stats map from aggregated data
+    const movieStatsMap = new Map<string, { likes: number; dislikes: number }>();
+    movieStats.forEach(stat => {
+      if (!movieStatsMap.has(stat.movieId)) {
+        movieStatsMap.set(stat.movieId, { likes: 0, dislikes: 0 });
+      }
+      const stats = movieStatsMap.get(stat.movieId)!;
+      if (stat.value) {
+        stats.likes = stat._count.id;
+      } else {
+        stats.dislikes = stat._count.id;
+      }
+    });
 
-    const mostLiked = Object.values(movieStats)
+    const mostLiked = Array.from(movieStatsMap.entries())
+      .map(([movieId, stats]) => ({ movieId, likes: stats.likes }))
       .sort((a, b) => b.likes - a.likes)
-      .slice(0, 5)
-      .map((m) => ({ movieId: m.movieId, likes: m.likes }));
+      .slice(0, 5);
 
-    const mostDisliked = Object.values(movieStats)
+    const mostDisliked = Array.from(movieStatsMap.entries())
+      .map(([movieId, stats]) => ({ movieId, dislikes: stats.dislikes }))
       .sort((a, b) => b.dislikes - a.dislikes)
-      .slice(0, 5)
-      .map((m) => ({ movieId: m.movieId, dislikes: m.dislikes }));
+      .slice(0, 5);
 
-    // Activity over time (last 7 days)
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-    const recentSwipes = swipes.filter(
-      (s) => s.createdAt >= sevenDaysAgo,
-    );
-
+    // Calculate daily activity from recent swipes (client-side for simplicity)
     const dailyActivity = Array.from({ length: 7 }, (_, i) => {
       const date = new Date();
       date.setDate(date.getDate() - (6 - i));
@@ -410,41 +414,43 @@ export class SwipesService {
       };
     }
 
-    // Get all swipes for this user across all their rooms
-    const swipes = await this.prisma.swipe.findMany({
-      where: {
-        userId,
-        roomId: { in: roomIds },
-      },
-      select: {
-        id: true,
-        createdAt: true,
-      },
-    });
-
-    // Get all matches in the user's rooms
-    const matches = await this.prisma.match.findMany({
-      where: {
-        roomId: { in: roomIds },
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    // Calculate swipes today
+    // Calculate today's date range
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const totalSwipesToday = swipes.filter((swipe) => {
-      const swipeDate = new Date(swipe.createdAt);
-      swipeDate.setHours(0, 0, 0, 0);
-      return swipeDate.getTime() === today.getTime();
-    }).length;
+    // Use parallel count queries instead of fetching all data
+    const [totalSwipes, totalSwipesToday, totalMatches] = await Promise.all([
+      // Total swipes count
+      this.prisma.swipe.count({
+        where: {
+          userId,
+          roomId: { in: roomIds },
+        },
+      }),
+      // Swipes today count
+      this.prisma.swipe.count({
+        where: {
+          userId,
+          roomId: { in: roomIds },
+          createdAt: {
+            gte: today,
+            lt: tomorrow,
+          },
+        },
+      }),
+      // Total matches in user's rooms
+      this.prisma.match.count({
+        where: {
+          roomId: { in: roomIds },
+        },
+      }),
+    ]);
 
     return {
-      totalMatches: matches.length,
-      totalSwipes: swipes.length,
+      totalMatches,
+      totalSwipes,
       totalSwipesToday,
     };
   }
