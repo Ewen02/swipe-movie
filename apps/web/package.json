@@ -81,6 +81,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@playwright/test": "^1.56.1",
+    "prisma": "^6.8.2",
     "@serwist/webpack-plugin": "^9.2.3",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
