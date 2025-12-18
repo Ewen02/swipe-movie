@@ -54,6 +54,14 @@ export async function PUT(input: string, init: RequestInit = {}) {
   return apiFetch(input, { ...init, method: "PUT" })
 }
 
+export async function PATCH(input: string, init: RequestInit = {}) {
+  return apiFetch(input, {
+    ...init,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...(init.headers || {}) },
+  })
+}
+
 export async function DELETE(input: string, init: RequestInit = {}) {
   return apiFetch(input, { ...init, method: "DELETE" })
 }

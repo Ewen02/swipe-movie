@@ -96,3 +96,19 @@ export async function getRoomByCodeServer(code: string) {
     return null
   }
 }
+
+/**
+ * Get user preferences from server-side
+ * Used for checking onboarding status
+ */
+export async function getUserPreferencesServer() {
+  try {
+    const response = await serverGET("/users/me/preferences", { revalidate: 0 }) // No cache for user preferences
+    if (!response.ok) {
+      return null
+    }
+    return await response.json()
+  } catch {
+    return null
+  }
+}
