@@ -48,7 +48,7 @@ export default function LandingPage() {
               <div className="absolute -top-10 -left-10 w-32 h-32 bg-primary/20 rounded-full blur-2xl hidden md:block" />
               <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-accent/20 rounded-full blur-2xl hidden md:block" />
 
-              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
                 {/* Top gradient bar */}
                 <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
 
@@ -131,7 +131,7 @@ export default function LandingPage() {
                       <div className="relative w-72 h-96 mx-auto">
                         {/* Background cards */}
                         <motion.div
-                          className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-red-500/10 rounded-2xl border border-white/10"
+                          className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-red-500/10 rounded-2xl border border-border"
                           style={{ transform: "rotate(8deg) translateX(30px)" }}
                           animate={{ rotate: [8, 10, 8] }}
                           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -141,7 +141,7 @@ export default function LandingPage() {
                           </div>
                         </motion.div>
                         <motion.div
-                          className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-2xl border border-white/10"
+                          className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-2xl border border-border"
                           style={{ transform: "rotate(-5deg) translateX(-20px)" }}
                           animate={{ rotate: [-5, -7, -5] }}
                           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
@@ -152,7 +152,7 @@ export default function LandingPage() {
                         </motion.div>
                         {/* Front card */}
                         <motion.div
-                          className="absolute inset-0 bg-gradient-to-br from-background to-muted rounded-2xl border border-white/20 shadow-2xl overflow-hidden"
+                          className="absolute inset-0 bg-gradient-to-br from-background to-muted rounded-2xl border border-border shadow-2xl overflow-hidden"
                           whileHover={{ scale: 1.02 }}
                         >
                           <div className="h-2/3 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
@@ -183,7 +183,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-5xl mx-auto">
-            <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+            <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
               <div className="h-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-500" />
               <div className="p-8 md:p-12">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -267,7 +267,7 @@ export default function LandingPage() {
                     {/* Decorative orb */}
                     <div className={`absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br ${item.color} rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity`} />
 
-                    <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden h-full">
+                    <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden h-full">
                       <div className={`h-1 bg-gradient-to-r ${item.color}`} />
                       <div className="p-8">
                         <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br ${item.color} rounded-2xl mb-6 shadow-lg`}>
@@ -303,7 +303,7 @@ export default function LandingPage() {
               <div className="absolute -top-10 -left-10 w-32 h-32 bg-primary/20 rounded-full blur-2xl hidden md:block" />
               <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-green-500/20 rounded-full blur-2xl hidden md:block" />
 
-              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
                 <div className="h-1 bg-gradient-to-r from-primary via-green-500 to-accent" />
 
                 <div className="p-8 md:p-16">
@@ -353,7 +353,7 @@ export default function LandingPage() {
                     <ScrollReveal direction="right" delay={0.2}>
                       <div className="relative">
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-green-500/20 rounded-3xl blur-2xl" />
-                        <div className="relative bg-background/50 backdrop-blur-sm rounded-3xl p-4 border border-white/10">
+                        <div className="relative bg-background/50 backdrop-blur-sm rounded-3xl p-4 border border-border">
                           <InteractiveSwipeDemo />
                         </div>
                       </div>
@@ -401,7 +401,7 @@ export default function LandingPage() {
                   >
                     <div className={`absolute -inset-1 bg-gradient-to-r ${feature.color} rounded-3xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-500`} />
 
-                    <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+                    <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
                       <div className={`h-1 bg-gradient-to-r ${feature.color}`} />
                       <div className="p-8">
                         <div className="flex gap-5">
@@ -477,7 +477,7 @@ export default function LandingPage() {
                   >
                     <div className="absolute -inset-1 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-3xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
 
-                    <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden h-full">
+                    <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden h-full">
                       <div className="h-1 bg-gradient-to-r from-yellow-500 to-orange-500" />
                       <div className="p-8">
                         <div className="flex items-center gap-1 mb-4">
@@ -490,7 +490,7 @@ export default function LandingPage() {
                           "{testimonial.content}"
                         </p>
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-2xl border border-white/10">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-2xl border border-border">
                             {testimonial.avatar}
                           </div>
                           <div>
@@ -528,7 +528,7 @@ export default function LandingPage() {
                   >
                     <div className={`absolute -inset-1 bg-gradient-to-r ${badge.color} rounded-2xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-500`} />
 
-                    <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden">
+                    <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-2xl overflow-hidden">
                       <div className={`h-1 bg-gradient-to-r ${badge.color}`} />
                       <div className="p-6 text-center">
                         <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br ${badge.color} mb-4 shadow-lg`}>
@@ -558,7 +558,7 @@ export default function LandingPage() {
                 <div className="absolute -top-20 -left-20 w-40 h-40 bg-primary/20 rounded-full blur-3xl" />
                 <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-accent/20 rounded-full blur-3xl" />
 
-                <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+                <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
                   <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
 
                   <div className="p-8 md:p-16">
@@ -635,21 +635,21 @@ export default function LandingPage() {
                           <div className="relative w-64 h-80 mx-auto">
                             {/* Background card */}
                             <motion.div
-                              className="absolute inset-0 bg-gradient-to-br from-accent/20 to-accent/10 rounded-2xl border border-white/10"
+                              className="absolute inset-0 bg-gradient-to-br from-accent/20 to-accent/10 rounded-2xl border border-border"
                               style={{ transform: "rotate(6deg) translateX(20px)" }}
                               animate={{ rotate: [6, 8, 6] }}
                               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                             />
                             {/* Middle card */}
                             <motion.div
-                              className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/10 rounded-2xl border border-white/10"
+                              className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/10 rounded-2xl border border-border"
                               style={{ transform: "rotate(-3deg) translateX(-10px)" }}
                               animate={{ rotate: [-3, -5, -3] }}
                               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
                             />
                             {/* Front card */}
                             <motion.div
-                              className="absolute inset-0 bg-gradient-to-br from-background to-muted rounded-2xl border border-white/20 shadow-2xl flex flex-col items-center justify-center p-6"
+                              className="absolute inset-0 bg-gradient-to-br from-background to-muted rounded-2xl border border-border shadow-2xl flex flex-col items-center justify-center p-6"
                               whileHover={{ scale: 1.02 }}
                             >
                               <div className="text-6xl mb-4">🎬</div>

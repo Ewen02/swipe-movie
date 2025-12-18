@@ -70,7 +70,7 @@ export default function SubscriptionSuccessPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8"
+              className="bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-2xl p-6 mb-8"
             >
               <h2 className="font-semibold mb-4">Fonctionnalités débloquées</h2>
               <ul className="space-y-2 text-sm text-muted-foreground">

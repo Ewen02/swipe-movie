@@ -6,14 +6,20 @@ import { motion } from "framer-motion"
 import { ArrowLeft, Tv, BookOpen, Link2 } from "lucide-react"
 import { Button } from "@swipe-movie/ui"
 import { ConnectionCard } from "@/components/connections/ConnectionCard"
+import { TextImport } from "@/components/import/TextImport"
 import { useConnections } from "@/hooks/useConnections"
 import { Footer } from "@/components/layout/Footer"
 import { BackgroundOrbs } from "@/components/layout/BackgroundOrbs"
 import { fadeInUp, staggerContainer } from "@/lib/animations"
+import { ConnectionsPageSkeleton } from "./ConnectionsPageSkeleton"
 
 export default function ConnectionsPage() {
   const t = useTranslations("connections")
-  const { trakt, anilist } = useConnections()
+  const { trakt, anilist, isLoading } = useConnections()
+
+  if (isLoading && !trakt.status && !anilist.status) {
+    return <ConnectionsPageSkeleton />
+  }
 
   return (
     <div className="min-h-screen bg-background overflow-hidden flex flex-col">
@@ -30,7 +36,7 @@ export default function ConnectionsPage() {
           {/* Header */}
           <motion.div className="mb-8" variants={fadeInUp}>
             <Link href="/rooms">
-              <Button variant="ghost" size="sm" className="mb-4 -ml-2 hover:bg-white/5">
+              <Button variant="ghost" size="sm" className="mb-4 -ml-2 hover:bg-foreground/5">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 {t("backToRooms")}
               </Button>
@@ -58,6 +64,11 @@ export default function ConnectionsPage() {
               isLoading={anilist.isLoading}
               icon={<BookOpen className="h-5 w-5 text-primary" />}
             />
+          </motion.div>
+
+          {/* Text Import Section */}
+          <motion.div className="mt-6" variants={fadeInUp}>
+            <TextImport />
           </motion.div>
 
           {/* Info Section */}

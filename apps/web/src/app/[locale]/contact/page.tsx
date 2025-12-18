@@ -56,7 +56,7 @@ export default function ContactPage() {
               transition={{ delay: 0.1 }}
             >
               <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-3xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
-              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
                 <div className="h-1 bg-gradient-to-r from-blue-500 to-cyan-500" />
                 <div className="p-8">
                   <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl shadow-lg mb-4">
@@ -84,7 +84,7 @@ export default function ContactPage() {
               transition={{ delay: 0.2 }}
             >
               <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
-              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
                 <div className="h-1 bg-gradient-to-r from-purple-500 to-pink-500" />
                 <div className="p-8">
                   <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-lg mb-4">
@@ -116,7 +116,7 @@ export default function ContactPage() {
             transition={{ delay: 0.3 }}
           >
             <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-lg opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
-            <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+            <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
               <div className="h-1 bg-gradient-to-r from-primary to-accent" />
               <div className="p-8">
                 <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
@@ -152,7 +152,7 @@ export default function ContactPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+            <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
               <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
               <div className="p-12 text-center">
                 <h2 className="text-3xl font-bold mb-4">{t('cta.title')}</h2>

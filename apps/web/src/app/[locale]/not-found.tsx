@@ -30,7 +30,7 @@ export default function NotFoundPage() {
         <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-accent/20 rounded-full blur-2xl hidden md:block" />
 
         {/* Card */}
-        <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+        <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
           {/* Top gradient bar */}
           <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
 
@@ -73,7 +73,7 @@ export default function NotFoundPage() {
               <Button
                 variant="outline"
                 size="lg"
-                className="flex-1 border-white/20 hover:bg-white/5"
+                className="flex-1 border-border hover:bg-foreground/5"
                 asChild
               >
                 <Link href="/">

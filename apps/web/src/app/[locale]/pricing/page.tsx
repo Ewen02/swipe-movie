@@ -114,7 +114,7 @@ export default function PricingPage() {
             </p>
 
             {/* Billing Period Toggle */}
-            <div className="inline-flex items-center gap-3 p-1.5 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-full">
+            <div className="inline-flex items-center gap-3 p-1.5 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-full">
               <button
                 onClick={() => setBillingPeriod('monthly')}
                 className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
@@ -176,13 +176,13 @@ export default function PricingPage() {
 
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-lg opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
-              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden p-6">
+              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden p-6">
                 <Accordion type="single" collapsible className="space-y-4">
                   {faqs.map((faq, index) => (
                     <AccordionItem
                       key={index}
                       value={`item-${index}`}
-                      className="border-b border-white/10 last:border-0"
+                      className="border-b border-border last:border-0"
                     >
                       <AccordionTrigger className="text-left font-semibold hover:text-primary transition-colors">
                         {faq.question}

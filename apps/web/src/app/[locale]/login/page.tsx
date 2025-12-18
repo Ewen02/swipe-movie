@@ -193,7 +193,7 @@ function LoginPageContent() {
               <div className="relative w-80 h-96 mx-auto">
                 {/* Background cards */}
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-red-500/10 rounded-2xl border border-white/10 backdrop-blur-sm"
+                  className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-red-500/10 rounded-2xl border border-border backdrop-blur-sm"
                   style={{ transform: "rotate(8deg) translateX(30px)" }}
                   animate={{
                     rotate: [8, 10, 8],
@@ -211,7 +211,7 @@ function LoginPageContent() {
                 </motion.div>
 
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-2xl border border-white/10 backdrop-blur-sm"
+                  className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-2xl border border-border backdrop-blur-sm"
                   style={{ transform: "rotate(-5deg) translateX(-20px)" }}
                   animate={{
                     rotate: [-5, -7, -5],
@@ -231,7 +231,7 @@ function LoginPageContent() {
 
                 {/* Front card */}
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl overflow-hidden"
+                  className="absolute inset-0 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl rounded-2xl border border-border shadow-2xl overflow-hidden"
                   whileHover={{ scale: 1.02 }}
                 >
                   <div className="h-2/3 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">

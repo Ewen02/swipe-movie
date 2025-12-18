@@ -234,7 +234,7 @@ function RoomPageContent() {
           transition={{ duration: 0.5 }}
         >
           <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-lg opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
-          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+          <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
             <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
             <div className="p-8 text-center">
               <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg mb-6">
@@ -242,7 +242,7 @@ function RoomPageContent() {
               </div>
               <h1 className="text-2xl font-bold mb-2">{room.name || t('unnamedRoom')}</h1>
               <div className="flex items-center justify-center gap-2 mb-6">
-                <Badge variant="secondary" className="text-sm bg-white/10 border-white/20">
+                <Badge variant="secondary" className="text-sm bg-foreground/10 border-border">
                   {room.type === 'movie' ? t('moviesType') : t('tvShowsType')}
                 </Badge>
                 <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -308,7 +308,7 @@ function RoomPageContent() {
           >
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-accent/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
                 <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
                 <div className="p-5">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -332,7 +332,7 @@ function RoomPageContent() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 w-full sm:w-auto">
-                      <Badge className="bg-white/10 text-foreground border-white/20 shrink-0">
+                      <Badge className="bg-foreground/10 text-foreground border-border shrink-0">
                         {room.type === 'movie' ? t('moviesType') : t('tvShowsType')}
                       </Badge>
                       <ShareRoomButton
@@ -351,7 +351,7 @@ function RoomPageContent() {
 
           {/* Desktop Tabs */}
           <div className="hidden sm:block mb-6">
-            <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-2xl p-1.5">
+            <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-2xl p-1.5">
               <div className="grid grid-cols-5 gap-1.5">
                 {TABS.map((tab) => {
                   const Icon = tab.icon
@@ -364,7 +364,7 @@ function RoomPageContent() {
                         relative flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl font-medium text-sm transition-all duration-200
                         ${isActive
                           ? `bg-gradient-to-r ${tab.gradient} text-white shadow-lg`
-                          : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-foreground/5'
                         }
                       `}
                     >
@@ -392,9 +392,9 @@ function RoomPageContent() {
                       <MovieCardSkeleton />
                     </div>
                     <div className="flex justify-center gap-6">
-                      <div className="rounded-full w-14 h-14 bg-white/10 animate-pulse" />
-                      <div className="rounded-full w-12 h-12 bg-white/10 animate-pulse" />
-                      <div className="rounded-full w-14 h-14 bg-white/10 animate-pulse" />
+                      <div className="rounded-full w-14 h-14 bg-foreground/10 animate-pulse" />
+                      <div className="rounded-full w-12 h-12 bg-foreground/10 animate-pulse" />
+                      <div className="rounded-full w-14 h-14 bg-foreground/10 animate-pulse" />
                     </div>
                   </div>
                 ) : movies.length > 0 ? (
@@ -410,7 +410,7 @@ function RoomPageContent() {
                 ) : (
                   <div className="relative group">
                     <div className="absolute -inset-1 bg-gradient-to-r from-pink-500/20 to-rose-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border-2 border-dashed border-white/20 rounded-3xl">
+                    <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border-2 border-dashed border-border rounded-3xl">
                       <div className="text-center py-16 px-6">
                         <div className="text-6xl mb-4">🎬</div>
                         <h3 className="text-xl font-semibold mb-2">
@@ -471,7 +471,7 @@ function RoomPageContent() {
               <div className="space-y-6">
                 {/* Stats Summary */}
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-2xl p-4">
+                  <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-2xl p-4">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-xs text-muted-foreground">Membres</p>
@@ -486,7 +486,7 @@ function RoomPageContent() {
                     </p>
                   </div>
 
-                  <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-2xl p-4">
+                  <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-2xl p-4">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-xs text-muted-foreground">Capacité</p>
@@ -496,7 +496,7 @@ function RoomPageContent() {
                         <UserPlus className="w-5 h-5 text-amber-400" />
                       </div>
                     </div>
-                    <div className="mt-2 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                    <div className="mt-2 h-1.5 bg-foreground/10 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all"
                         style={{ width: `${(room.members.length / 10) * 100}%` }}
@@ -508,7 +508,7 @@ function RoomPageContent() {
                 {/* Members List */}
                 <div className="relative group">
                   <div className="absolute -inset-1 bg-gradient-to-r from-orange-500/10 to-amber-500/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+                  <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
                     <div className="h-1 bg-gradient-to-r from-orange-500 to-amber-500" />
                     <div className="p-5">
                       <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -523,7 +523,7 @@ function RoomPageContent() {
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: idx * 0.05 }}
-                            className="flex items-center gap-4 p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"
+                            className="flex items-center gap-4 p-4 bg-foreground/5 rounded-xl hover:bg-foreground/10 transition-colors"
                           >
                             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white font-bold text-lg shadow-lg shrink-0">
                               {(member.name ?? "?")[0].toUpperCase()}
@@ -546,7 +546,7 @@ function RoomPageContent() {
                       </div>
 
                       {/* Invite Section */}
-                      <div className="mt-6 pt-4 border-t border-white/10">
+                      <div className="mt-6 pt-4 border-t border-border">
                         <p className="text-sm text-muted-foreground mb-3">
                           Invitez vos amis à rejoindre cette room
                         </p>

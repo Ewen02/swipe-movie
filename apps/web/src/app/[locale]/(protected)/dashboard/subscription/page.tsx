@@ -61,7 +61,7 @@ export default function SubscriptionDashboardPage() {
           <motion.div variants={fadeInUp}>
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-accent/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
                 <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
                 <div className="p-6">
                   <h3 className="flex items-center gap-2 text-lg font-semibold mb-6">
@@ -105,7 +105,7 @@ export default function SubscriptionDashboardPage() {
           <motion.div variants={fadeInUp}>
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
                 <div className="h-1 bg-gradient-to-r from-blue-500 to-cyan-500" />
                 <div className="p-6">
                   <h3 className="flex items-center gap-2 text-lg font-semibold mb-6">
@@ -146,7 +146,7 @@ export default function SubscriptionDashboardPage() {
           <motion.div variants={fadeInUp}>
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
                 <div className="h-1 bg-gradient-to-r from-purple-500 to-pink-500" />
                 <div className="p-6">
                   <h3 className="text-lg font-semibold mb-6">{t('features.title')}</h3>

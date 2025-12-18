@@ -156,7 +156,7 @@ function RoomsPageContent() {
             <Button
               variant="outline"
               onClick={() => setShowJoinDialog(true)}
-              className="border-white/20 hover:bg-white/5"
+              className="border-border hover:bg-foreground/5"
             >
               <Users className="w-4 h-4 mr-2" />
               {t('join')}
@@ -193,7 +193,7 @@ function RoomsPageContent() {
                       flex items-center gap-2
                       ${isActive
                         ? "text-white shadow-lg"
-                        : "text-muted-foreground hover:text-foreground bg-white/5 hover:bg-white/10 border border-white/10"
+                        : "text-muted-foreground hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-border"
                       }
                     `}
                   >
@@ -209,7 +209,7 @@ function RoomsPageContent() {
                       {t(`filters.${filter.id}`)}
                       <span className={`
                         text-xs px-1.5 py-0.5 rounded-md
-                        ${isActive ? "bg-white/20" : "bg-white/10"}
+                        ${isActive ? "bg-foreground/20" : "bg-foreground/10"}
                       `}>
                         {count}
                       </span>
@@ -266,7 +266,7 @@ function RoomsPageContent() {
               size="sm"
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="border-white/20 hover:bg-white/5 disabled:opacity-30"
+              className="border-border hover:bg-foreground/5 disabled:opacity-30"
             >
               <ChevronLeft className="w-4 h-4" />
             </Button>
@@ -294,7 +294,7 @@ function RoomsPageContent() {
                       w-8 h-8 rounded-lg text-sm font-medium transition-all
                       ${page === currentPage
                         ? "bg-gradient-to-r from-primary to-accent text-white shadow-lg"
-                        : "text-muted-foreground hover:text-foreground hover:bg-white/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-foreground/10"
                       }
                     `}
                   >
@@ -309,7 +309,7 @@ function RoomsPageContent() {
               size="sm"
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="border-white/20 hover:bg-white/5 disabled:opacity-30"
+              className="border-border hover:bg-foreground/5 disabled:opacity-30"
             >
               <ChevronRight className="w-4 h-4" />
             </Button>
@@ -319,7 +319,7 @@ function RoomsPageContent() {
         {/* Stats en bas - discret */}
         {rooms.length > 0 && (
           <motion.div
-            className="mt-12 pt-8 border-t border-white/10"
+            className="mt-12 pt-8 border-t border-border"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
