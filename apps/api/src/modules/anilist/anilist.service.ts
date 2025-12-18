@@ -1,4 +1,4 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../infra/prisma.service';
 import {
@@ -16,6 +16,7 @@ import {
   GET_USER_ANIME_LIST,
   ANILIST_STATUS_MAP,
 } from './anilist.queries';
+import { RecommendationsService } from '../recommendations/recommendations.service';
 
 @Injectable()
 export class AniListService {
@@ -27,6 +28,8 @@ export class AniListService {
   constructor(
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
+    @Inject(forwardRef(() => RecommendationsService))
+    private readonly recommendationsService: RecommendationsService,
   ) {
     this.clientId = this.configService.get<string>('ANILIST_CLIENT_ID') || '';
     this.clientSecret =
@@ -227,6 +230,7 @@ export class AniListService {
       username:
         account.accountId !== 'anilist' ? account.accountId : undefined,
       expiresAt: account.accessTokenExpiresAt?.toISOString(),
+      lastSync: account.lastSyncAt?.toISOString(),
     };
   }
 
@@ -279,7 +283,7 @@ export class AniListService {
     };
 
     try {
-      // Get user info and update account
+      // Get user info and update account with lastSyncAt
       const user = await this.getCurrentUser(accessToken);
       await this.prisma.account.updateMany({
         where: {
@@ -288,6 +292,7 @@ export class AniListService {
         },
         data: {
           accountId: user.name,
+          lastSyncAt: new Date(),
         },
       });
 
@@ -352,12 +357,31 @@ export class AniListService {
       this.logger.log(
         `AniList sync completed for user ${userId}: ${result.imported} items, ${result.skipped} skipped`,
       );
+
+      // Invalidate recommendations cache for all rooms where user is a member
+      await this.invalidateUserRoomsRecommendationsCache(userId);
     } catch (error) {
       this.logger.error(`AniList sync failed for user ${userId}`, error);
       throw error;
     }
 
     return result;
+  }
+
+  /**
+   * Invalidate recommendations cache for all rooms where user is a member
+   */
+  private async invalidateUserRoomsRecommendationsCache(userId: string): Promise<void> {
+    const userRooms = await this.prisma.roomMember.findMany({
+      where: { userId },
+      select: { roomId: true },
+    });
+
+    for (const { roomId } of userRooms) {
+      await this.recommendationsService.invalidateRoomRecommendationsCache(roomId);
+    }
+
+    this.logger.debug(`Invalidated recommendations cache for ${userRooms.length} rooms after AniList sync`);
   }
 
   /**

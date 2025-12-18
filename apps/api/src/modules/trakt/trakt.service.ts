@@ -1,4 +1,4 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../infra/prisma.service';
 import {
@@ -13,6 +13,7 @@ import {
   ExternalProviders,
   MediaLibraryStatus,
 } from '@swipe-movie/types';
+import { RecommendationsService } from '../recommendations/recommendations.service';
 
 @Injectable()
 export class TraktService {
@@ -24,6 +25,8 @@ export class TraktService {
   constructor(
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
+    @Inject(forwardRef(() => RecommendationsService))
+    private readonly recommendationsService: RecommendationsService,
   ) {
     this.clientId = this.configService.get<string>('TRAKT_CLIENT_ID') || '';
     this.clientSecret =
@@ -290,6 +293,7 @@ export class TraktService {
       connected: true,
       username: account.accountId !== 'trakt' ? account.accountId : undefined,
       expiresAt: account.accessTokenExpiresAt?.toISOString(),
+      lastSync: account.lastSyncAt?.toISOString(),
     };
   }
 
@@ -310,7 +314,7 @@ export class TraktService {
     };
 
     try {
-      // Get user info and update account
+      // Get user info and update account with lastSyncAt
       const user = await this.getCurrentUser(tokens.accessToken);
       await this.prisma.account.updateMany({
         where: {
@@ -319,6 +323,7 @@ export class TraktService {
         },
         data: {
           accountId: user.username,
+          lastSyncAt: new Date(),
         },
       });
 
@@ -407,12 +412,31 @@ export class TraktService {
       this.logger.log(
         `Trakt sync completed for user ${userId}: ${result.imported} items`,
       );
+
+      // Invalidate recommendations cache for all rooms where user is a member
+      await this.invalidateUserRoomsRecommendationsCache(userId);
     } catch (error) {
       this.logger.error(`Trakt sync failed for user ${userId}`, error);
       throw error;
     }
 
     return result;
+  }
+
+  /**
+   * Invalidate recommendations cache for all rooms where user is a member
+   */
+  private async invalidateUserRoomsRecommendationsCache(userId: string): Promise<void> {
+    const userRooms = await this.prisma.roomMember.findMany({
+      where: { userId },
+      select: { roomId: true },
+    });
+
+    for (const { roomId } of userRooms) {
+      await this.recommendationsService.invalidateRoomRecommendationsCache(roomId);
+    }
+
+    this.logger.debug(`Invalidated recommendations cache for ${userRooms.length} rooms after Trakt sync`);
   }
 
   /**
