@@ -12,22 +12,22 @@ export function MovieCardSkeleton() {
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent p-6">
             {/* Badges skeleton */}
             <div className="flex items-center gap-3 mb-2">
-              <Skeleton className="h-6 w-16 rounded-full bg-white/20" />
-              <Skeleton className="h-6 w-16 rounded-full bg-white/20" />
-              <Skeleton className="h-8 w-8 rounded-md bg-white/20" />
+              <Skeleton className="h-6 w-16 rounded-full bg-foreground/20" />
+              <Skeleton className="h-6 w-16 rounded-full bg-foreground/20" />
+              <Skeleton className="h-8 w-8 rounded-md bg-foreground/20" />
             </div>
 
             {/* Title skeleton */}
             <div className="flex items-start justify-between gap-3 mb-2">
-              <Skeleton className="h-8 w-3/4 bg-white/20" />
-              <Skeleton className="h-10 w-10 rounded-md bg-white/20" />
+              <Skeleton className="h-8 w-3/4 bg-foreground/20" />
+              <Skeleton className="h-10 w-10 rounded-md bg-foreground/20" />
             </div>
 
             {/* Description skeleton */}
             <div className="space-y-2">
-              <Skeleton className="h-4 w-full bg-white/20" />
-              <Skeleton className="h-4 w-5/6 bg-white/20" />
-              <Skeleton className="h-4 w-4/6 bg-white/20" />
+              <Skeleton className="h-4 w-full bg-foreground/20" />
+              <Skeleton className="h-4 w-5/6 bg-foreground/20" />
+              <Skeleton className="h-4 w-4/6 bg-foreground/20" />
             </div>
           </div>
         </div>
