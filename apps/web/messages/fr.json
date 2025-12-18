@@ -37,10 +37,12 @@
     "settings": "Paramètres",
     "subscription": "Abonnement",
     "connections": "Connexions",
+    "library": "Bibliotheque",
     "about": "À propos",
     "contact": "Contact",
     "privacy": "Confidentialité",
-    "terms": "Conditions"
+    "terms": "Conditions",
+    "cookies": "Gérer mes cookies"
   },
   "landing": {
     "title": "Swipe Movie",
@@ -228,7 +230,32 @@
     "limitReached": "Limite de swipes atteinte",
     "limitReachedDescription": "Vous avez atteint la limite de swipes pour cette room. Passez à un plan supérieur pour continuer.",
     "swipeError": "Erreur lors du swipe",
-    "swipeErrorDescription": "Une erreur est survenue lors de l'enregistrement de votre choix."
+    "swipeErrorDescription": "Une erreur est survenue lors de l'enregistrement de votre choix.",
+    "sidebar": {
+      "session": "Session",
+      "moviesViewed": "Films vus",
+      "liked": "Likés",
+      "likeRate": "Taux like",
+      "tip": "Astuce",
+      "shortcuts": "Raccourcis",
+      "nope": "Nope",
+      "recentlyLiked": "Récemment likés",
+      "noLikesYet": "Aucun like pour le moment",
+      "swipeRightToLike": "Swipez vers la droite pour liker",
+      "toDiscover": "À découvrir",
+      "moviesInPile": "films dans la pile",
+      "moviesRemaining": "{count} films restants",
+      "swiped": "{count} swipés",
+      "percentLiked": "{percent}% likés",
+      "keyboardHint": "← → pour swiper • Ctrl+Z annuler",
+      "tips": {
+        "swipeFast": "Swipez vite pour une sortie dynamique",
+        "keyboard": "← → au clavier pour swiper",
+        "undoTip": "Ctrl+Z pour annuler le dernier swipe",
+        "matches": "Les matchs apparaissent quand tous likent",
+        "learning": "Plus vous swipez, mieux on vous connait"
+      }
+    }
   },
   "match": {
     "title": "C'est un match !",
@@ -739,6 +766,70 @@
       },
       "notNow": "Pas maintenant",
       "viewPlans": "Voir les forfaits"
+    }
+  },
+  "gdpr": {
+    "banner": {
+      "message": "Nous utilisons des cookies pour améliorer votre expérience. En continuant, vous acceptez notre politique de confidentialité.",
+      "learnMore": "En savoir plus",
+      "acceptAll": "Tout accepter",
+      "rejectAll": "Refuser",
+      "customize": "Personnaliser",
+      "preferencesTitle": "Préférences des cookies",
+      "savePreferences": "Enregistrer"
+    },
+    "cookies": {
+      "required": "Requis",
+      "necessary": {
+        "title": "Cookies essentiels",
+        "description": "Nécessaires au fonctionnement du site (connexion, sécurité)"
+      },
+      "analytics": {
+        "title": "Cookies analytiques",
+        "description": "Nous aident à comprendre comment vous utilisez le site"
+      },
+      "marketing": {
+        "title": "Cookies marketing",
+        "description": "Utilisés pour vous montrer des publicités pertinentes"
+      }
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérez votre compte et vos préférences",
+    "backToRooms": "Retour aux rooms",
+    "profile": {
+      "title": "Profil",
+      "email": "Adresse email",
+      "name": "Nom d'affichage",
+      "notSet": "Non défini",
+      "createdAt": "Membre depuis"
+    },
+    "data": {
+      "title": "Données & Confidentialité",
+      "description": "Conformément au RGPD, vous pouvez exporter ou supprimer vos données à tout moment.",
+      "exportButton": "Exporter mes données",
+      "exporting": "Export en cours...",
+      "exportSuccess": "Export réussi",
+      "exportSuccessDescription": "Vos données ont été téléchargées.",
+      "exportError": "Erreur d'export",
+      "exportErrorDescription": "Impossible d'exporter vos données. Réessayez plus tard.",
+      "exportInfo": "L'export inclut votre profil, vos swipes, vos matchs et vos préférences."
+    },
+    "danger": {
+      "title": "Zone de danger",
+      "description": "Ces actions sont irréversibles. Procédez avec précaution.",
+      "logout": "Se déconnecter",
+      "deleteButton": "Supprimer mon compte",
+      "deleteDialogTitle": "Supprimer définitivement votre compte ?",
+      "deleteDialogDescription": "Cette action est irréversible. Toutes vos données seront supprimées : profil, swipes, matchs, et abonnement.",
+      "cancel": "Annuler",
+      "confirmDelete": "Oui, supprimer mon compte",
+      "deleting": "Suppression...",
+      "deleteSuccess": "Compte supprimé",
+      "deleteSuccessDescription": "Votre compte a été supprimé avec succès.",
+      "deleteError": "Erreur de suppression",
+      "deleteErrorDescription": "Impossible de supprimer votre compte. Réessayez plus tard."
     }
   }
 }

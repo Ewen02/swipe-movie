@@ -37,10 +37,12 @@
     "settings": "Settings",
     "subscription": "Subscription",
     "connections": "Connections",
+    "library": "Library",
     "about": "About",
     "contact": "Contact",
     "privacy": "Privacy",
-    "terms": "Terms"
+    "terms": "Terms",
+    "cookies": "Manage cookies"
   },
   "landing": {
     "title": "Swipe Movie",
@@ -228,7 +230,32 @@
     "limitReached": "Swipe limit reached",
     "limitReachedDescription": "You have reached the swipe limit for this room. Upgrade your plan to continue.",
     "swipeError": "Swipe error",
-    "swipeErrorDescription": "An error occurred while saving your choice."
+    "swipeErrorDescription": "An error occurred while saving your choice.",
+    "sidebar": {
+      "session": "Session",
+      "moviesViewed": "Movies viewed",
+      "liked": "Liked",
+      "likeRate": "Like rate",
+      "tip": "Tip",
+      "shortcuts": "Shortcuts",
+      "nope": "Nope",
+      "recentlyLiked": "Recently liked",
+      "noLikesYet": "No likes yet",
+      "swipeRightToLike": "Swipe right to like",
+      "toDiscover": "To discover",
+      "moviesInPile": "movies in pile",
+      "moviesRemaining": "{count} movies remaining",
+      "swiped": "{count} swiped",
+      "percentLiked": "{percent}% liked",
+      "keyboardHint": "← → to swipe • Ctrl+Z undo",
+      "tips": {
+        "swipeFast": "Swipe fast for a dynamic exit",
+        "keyboard": "← → on keyboard to swipe",
+        "undoTip": "Ctrl+Z to undo last swipe",
+        "matches": "Matches appear when everyone likes",
+        "learning": "The more you swipe, the better we know you"
+      }
+    }
   },
   "match": {
     "title": "It's a match!",
@@ -739,6 +766,70 @@
       },
       "notNow": "Not now",
       "viewPlans": "View Plans"
+    }
+  },
+  "gdpr": {
+    "banner": {
+      "message": "We use cookies to enhance your experience. By continuing, you accept our privacy policy.",
+      "learnMore": "Learn more",
+      "acceptAll": "Accept all",
+      "rejectAll": "Reject",
+      "customize": "Customize",
+      "preferencesTitle": "Cookie preferences",
+      "savePreferences": "Save"
+    },
+    "cookies": {
+      "required": "Required",
+      "necessary": {
+        "title": "Essential cookies",
+        "description": "Required for the site to function (login, security)"
+      },
+      "analytics": {
+        "title": "Analytics cookies",
+        "description": "Help us understand how you use the site"
+      },
+      "marketing": {
+        "title": "Marketing cookies",
+        "description": "Used to show you relevant ads"
+      }
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account and preferences",
+    "backToRooms": "Back to rooms",
+    "profile": {
+      "title": "Profile",
+      "email": "Email address",
+      "name": "Display name",
+      "notSet": "Not set",
+      "createdAt": "Member since"
+    },
+    "data": {
+      "title": "Data & Privacy",
+      "description": "In accordance with GDPR, you can export or delete your data at any time.",
+      "exportButton": "Export my data",
+      "exporting": "Exporting...",
+      "exportSuccess": "Export successful",
+      "exportSuccessDescription": "Your data has been downloaded.",
+      "exportError": "Export error",
+      "exportErrorDescription": "Unable to export your data. Please try again later.",
+      "exportInfo": "Export includes your profile, swipes, matches, and preferences."
+    },
+    "danger": {
+      "title": "Danger zone",
+      "description": "These actions are irreversible. Proceed with caution.",
+      "logout": "Log out",
+      "deleteButton": "Delete my account",
+      "deleteDialogTitle": "Permanently delete your account?",
+      "deleteDialogDescription": "This action is irreversible. All your data will be deleted: profile, swipes, matches, and subscription.",
+      "cancel": "Cancel",
+      "confirmDelete": "Yes, delete my account",
+      "deleting": "Deleting...",
+      "deleteSuccess": "Account deleted",
+      "deleteSuccessDescription": "Your account has been successfully deleted.",
+      "deleteError": "Deletion error",
+      "deleteErrorDescription": "Unable to delete your account. Please try again later."
     }
   }
 }
