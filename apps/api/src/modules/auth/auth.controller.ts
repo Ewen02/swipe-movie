@@ -10,6 +10,7 @@ import { ApiTags, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../../infra/prisma.service';
 import { ThrottleStrict } from '../../common/decorators/throttle.decorator';
+import { NestEmailService } from '../email/email.service';
 
 import { OauthUpsertDto, LoginOauthDto } from './dtos';
 
@@ -22,6 +23,7 @@ export class AuthController {
   constructor(
     private readonly auth: AuthService,
     private readonly prisma: PrismaService,
+    private readonly emailService: NestEmailService,
   ) {}
 
   @ApiOperation({ summary: 'Upsert user from OAuth provider' })
@@ -35,12 +37,32 @@ export class AuthController {
     }
 
     try {
+      // Check if user already exists
+      const existingUser = await this.prisma.user.findUnique({
+        where: { email: dto.email },
+      });
+
+      const isNewUser = !existingUser;
+
       await this.prisma.user.upsert({
         where: { email: dto.email },
         update: { name: dto.name },
         create: { email: dto.email, name: dto.name },
       });
       this.logger.log(`User upserted successfully: ${dto.email}`);
+
+      // Send welcome email for new users (fire-and-forget)
+      if (isNewUser) {
+        this.emailService
+          .sendWelcomeEmail(dto.email, dto.name)
+          .catch((err) =>
+            this.logger.error(
+              `Failed to send welcome email to ${dto.email}`,
+              err,
+            ),
+          );
+      }
+
       return { ok: true };
     } catch (error) {
       this.logger.error(`Failed to upsert user: ${dto.email}`, error);

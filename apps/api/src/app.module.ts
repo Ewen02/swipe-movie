@@ -12,6 +12,8 @@ import { CacheConfigModule } from './modules/cache/cache.module';
 import { TraktModule } from './modules/trakt/trakt.module';
 import { AniListModule } from './modules/anilist/anilist.module';
 import { RecommendationsModule } from './modules/recommendations/recommendations.module';
+import { UsersModule } from './modules/users/users.module';
+import { EmailModule } from './modules/email/email.module';
 import { HttpsRedirectMiddleware } from './common/middleware/https-redirect.middleware';
 
 @Module({
@@ -45,6 +47,8 @@ import { HttpsRedirectMiddleware } from './common/middleware/https-redirect.midd
     TraktModule,
     AniListModule,
     RecommendationsModule,
+    UsersModule,
+    EmailModule,
   ],
   providers: [
     {

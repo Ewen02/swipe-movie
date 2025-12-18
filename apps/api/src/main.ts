@@ -2,6 +2,7 @@ import '../instrument'; // Must be first import
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
+import compression from 'compression';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
@@ -9,6 +10,9 @@ import { SentryExceptionFilter } from './common/filters';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Enable gzip compression for all responses
+  app.use(compression());
 
   // Apply global exception filters
   // SentryExceptionFilter catches all exceptions and sends to Sentry
