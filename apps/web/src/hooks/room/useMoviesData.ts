@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { useSession } from "@/lib/auth-client"
 import { getMoviesByGenre, getBatchWatchProviders, getRecommendedMoviesForRoom, MovieFilters } from "@/lib/api/movies"
 import { shuffleWithSeed } from "@/lib/utils"
@@ -37,11 +37,25 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
   const [emptyPagesCount, setEmptyPagesCount] = useState(0)
   const [lastLoadedPage, setLastLoadedPage] = useState(0)
 
+  // Track if initial load has been done for this room
+  const initialLoadDoneRef = useRef<string | null>(null)
+
   // Initial load when room is ready AND swipes are loaded
   useEffect(() => {
     if (!room) return
     if (!swipesLoaded) return // Wait for swipes to be loaded first
     if (room.genreId !== null && room.genreId !== undefined) {
+      // Create a unique key for this room + swipes combination
+      const loadKey = `${room.id}-${swipedMovieIds.size}`
+
+      // Skip if we already loaded for this exact combination
+      if (initialLoadDoneRef.current === loadKey) {
+        return
+      }
+
+      console.log(`[useMoviesData] Initial load - room: ${room.id}, swipes: ${swipedMovieIds.size}`)
+      initialLoadDoneRef.current = loadKey
+
       // Reset pagination state when room changes
       setMovies([]) // Clear movies to show skeleton during reload
       setEmptyPagesCount(0)
@@ -50,7 +64,7 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
       setCurrentPage(1)
       loadMovies(room.genreId, room.type as 'movie' | 'tv', 1, false, room, swipedMovieIds)
     }
-  }, [room?.id, room?.members?.length, swipesLoaded])
+  }, [room?.id, room?.members?.length, swipesLoaded, swipedMovieIds.size])
 
   const loadMovies = useCallback(async (
     genreId: number,

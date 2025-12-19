@@ -55,8 +55,9 @@ export function useRoomData({ code }: UseRoomDataProps): UseRoomDataReturn {
     room?.id ? `/api/swipes/me/${room.id}` : null,
     () => swipesFetcher(room!.id),
     {
-      dedupingInterval: 60 * 1000, // 1 min cache for swipes
-      revalidateOnFocus: false,
+      dedupingInterval: 5 * 1000, // 5 sec cache - swipes need to be fresh
+      revalidateOnFocus: true, // Reload swipes when tab regains focus
+      revalidateOnMount: true, // Always fetch fresh swipes on mount
     }
   )
 
