@@ -48,66 +48,132 @@
     "title": "Swipe Movie",
     "subtitle": "Find your next movie to watch with friends",
     "hero": {
-      "title": "Decide as a group which movie to watch",
+      "badge": "Free & no sign-up to join",
+      "title": "Swipe, Match, Watch ",
+      "titleHighlight": "Together.",
       "subtitle": "No more endless debates! Swipe, match and watch together in seconds.",
       "ctaAuth": "Go to my rooms",
-      "cta": "Get started for free",
-      "demo": "Watch demo"
-    },
-    "demoCards": {
-      "pass": {
-        "title": "Pass",
-        "description": "Swipe left if the movie doesn't interest you"
-      },
-      "discover": {
-        "title": "Discover",
-        "description": "Thousands of movies to browse together"
-      },
-      "match": {
-        "title": "Match",
-        "description": "Swipe right to like and create a match"
+      "cta": "Create my free room",
+      "demo": "Watch demo",
+      "trust": {
+        "free": "100% free",
+        "ready": "Ready in 30 seconds",
+        "noCard": "No credit card"
       }
+    },
+    "stats": {
+      "movies": "Available movies",
+      "platforms": "Platforms",
+      "decide": "To decide",
+      "free": "Free"
     },
     "howItWorks": {
-      "title": "How does it work?",
+      "badge": "Simple as hello",
+      "title": "How does it ",
+      "titleHighlight": "work?",
       "subtitle": "Three simple steps to find your perfect movie",
+      "step": "Step",
       "step1": {
         "title": "Create a room",
-        "description": "In seconds, create a room and share the code with your friends"
+        "description": "Choose your filters: genre, platform, minimum rating..."
       },
       "step2": {
-        "title": "Swipe together",
-        "description": "Everyone swipes the movies they're interested in real-time"
+        "title": "Invite your friends",
+        "description": "Share the code. No account needed to join!"
       },
       "step3": {
-        "title": "Find the perfect match",
-        "description": "The algorithm automatically finds movies everyone loves"
+        "title": "Swipe & match",
+        "description": "When everyone likes the same movie: it's a match!"
       }
     },
+    "demo": {
+      "badge": "Interactive demo",
+      "title": "Try ",
+      "titleHighlight": "the experience",
+      "subtitle": "Drag the cards to discover how swiping works. It's exactly like in the app!",
+      "right": "Right = I love it",
+      "left": "Left = Not for me",
+      "match": "Match = Everyone liked it!"
+    },
     "features": {
-      "title": "Everything you need",
-      "subtitle": "Features designed for an optimal experience",
-      "realtime": {
-        "title": "Real-time sync",
-        "description": "See your friends' choices instantly with WebSocket"
+      "badge": "Features",
+      "title": "Why ",
+      "titleHighlight": "Swipe Movie?",
+      "subtitle": "The app that turns chaos into consensus",
+      "noFights": {
+        "title": "No more fights",
+        "description": "\"You always choose!\" Never again. Everyone votes, no one is frustrated."
       },
-      "filters": {
-        "title": "Advanced filters",
-        "description": "Genre, rating, year, streaming platform and more"
-      },
-      "smart": {
-        "title": "Smart algorithm",
-        "description": "Automatically finds movies everyone will love"
+      "fast": {
+        "title": "2 minutes flat",
+        "description": "No more scrolling for 30 minutes. Filter, swipe, find THE perfect movie."
       },
       "platforms": {
-        "title": "All platforms",
-        "description": "Netflix, Prime Video, Disney+ and many more"
+        "title": "All your platforms",
+        "description": "Netflix, Disney+, Prime, Canal+... We only show what YOU can watch."
+      },
+      "addictive": {
+        "title": "Addictive (but useful)",
+        "description": "The swipe interface makes choosing fun. Your friends will love participating!"
+      }
+    },
+    "testimonials": {
+      "badge": "Testimonials",
+      "title": "They ",
+      "titleHighlight": "love it",
+      "subtitle": "Join thousands of satisfied users",
+      "items": {
+        "marie": {
+          "name": "Marie L.",
+          "role": "Flatshare of 4",
+          "content": "No more endless debates! We find a movie in 2 minutes now. It's become our Friday night ritual."
+        },
+        "thomas": {
+          "name": "Thomas D.",
+          "role": "Family father",
+          "content": "Perfect for family movie nights. The kids love swiping and we always end up finding a movie everyone enjoys."
+        },
+        "sophie": {
+          "name": "Sophie M.",
+          "role": "Movie buff",
+          "content": "I discovered so many movies I would never have watched! The filters are super precise and the catalog is huge."
+        }
+      }
+    },
+    "badges": {
+      "free": {
+        "title": "100% Free",
+        "subtitle": "No hidden fees"
+      },
+      "ready": {
+        "title": "Ready in 30s",
+        "subtitle": "Ultra-fast setup"
+      },
+      "mobile": {
+        "title": "Mobile-first",
+        "subtitle": "Touch optimized"
+      },
+      "google": {
+        "title": "Google Sign-in",
+        "subtitle": "1-click connection"
       }
     },
     "cta": {
-      "title": "Ready to get started?",
-      "subtitle": "Create your first room in seconds",
-      "button": "Get started for free"
+      "badge": "Ready in 30 seconds",
+      "title": "Your next ",
+      "titleHighlight": "movie night",
+      "titleEnd": " starts here",
+      "subtitleAuth": "Create a new room and invite your friends to vote for the perfect movie.",
+      "subtitle": "Join thousands of users who said goodbye to endless debates.",
+      "buttonAuth": "Create a room",
+      "button": "Get started for free",
+      "trust": {
+        "free": "100% free",
+        "noCard": "No credit card"
+      },
+      "matchFound": "Match found!",
+      "matchSubtitle": "Everyone liked it",
+      "itsAMatch": "It's a match!"
     }
   },
   "rooms": {

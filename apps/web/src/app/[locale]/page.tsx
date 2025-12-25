@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { Button } from "@swipe-movie/ui"
@@ -63,7 +62,7 @@ export default function LandingPage() {
                         transition={{ delay: 0.2 }}
                       >
                         <Sparkles className="w-4 h-4" />
-                        Gratuit & sans inscription pour rejoindre
+                        {t('hero.badge')}
                       </motion.div>
 
                       <motion.h1
@@ -72,8 +71,8 @@ export default function LandingPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
                       >
-                        <span className="text-foreground">Swipe, Match, Watch </span>
-                        <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Together.</span>
+                        <span className="text-foreground">{t('hero.title')}</span>
+                        <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{t('hero.titleHighlight')}</span>
                       </motion.h1>
 
                       <motion.p
@@ -82,7 +81,7 @@ export default function LandingPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
                       >
-                        Fini les débats interminables ! Swipez, matchez et regardez ensemble en quelques secondes.
+                        {t('hero.subtitle')}
                       </motion.p>
 
                       <motion.div
@@ -94,7 +93,7 @@ export default function LandingPage() {
                         <Link href={isAuthenticated ? "/rooms" : "/login"}>
                           <ShimmerEffect delay={3}>
                             <Button size="lg" className="text-lg px-8 py-7 shadow-xl shadow-primary/25 w-full sm:w-auto">
-                              {isAuthenticated ? t('hero.ctaAuth') : "Créer ma room gratuite"}
+                              {isAuthenticated ? t('hero.ctaAuth') : t('hero.cta')}
                               <ArrowRight className="ml-2 h-5 w-5" />
                             </Button>
                           </ShimmerEffect>
@@ -108,16 +107,18 @@ export default function LandingPage() {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.6 }}
                       >
-                        {[
-                          { icon: CheckCircle2, text: "100% gratuit" },
-                          { icon: Clock, text: "Prêt en 30 secondes" },
-                          { icon: Shield, text: "Sans carte bancaire" },
-                        ].map((item, i) => (
-                          <span key={i} className="flex items-center gap-2">
-                            <item.icon className="w-4 h-4 text-green-500" />
-                            {item.text}
-                          </span>
-                        ))}
+                        <span className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-green-500" />
+                          {t('hero.trust.free')}
+                        </span>
+                        <span className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-green-500" />
+                          {t('hero.trust.ready')}
+                        </span>
+                        <span className="flex items-center gap-2">
+                          <Shield className="w-4 h-4 text-green-500" />
+                          {t('hero.trust.noCard')}
+                        </span>
                       </motion.div>
                     </div>
 
@@ -188,10 +189,10 @@ export default function LandingPage() {
               <div className="p-8 md:p-12">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                   {[
-                    { value: 10000, suffix: "+", label: "Films disponibles", color: "text-green-500" },
-                    { value: 50, suffix: "+", label: "Plateformes", color: "text-blue-500" },
-                    { value: 30, suffix: "s", label: "Pour décider", color: "text-purple-500" },
-                    { value: 100, suffix: "%", label: "Gratuit", color: "text-orange-500" },
+                    { value: 10000, suffix: "+", label: t('stats.movies'), color: "text-green-500" },
+                    { value: 50, suffix: "+", label: t('stats.platforms'), color: "text-blue-500" },
+                    { value: 30, suffix: "s", label: t('stats.decide'), color: "text-purple-500" },
+                    { value: 100, suffix: "%", label: t('stats.free'), color: "text-orange-500" },
                   ].map((stat, index) => (
                     <ScrollReveal key={index} delay={index * 0.1}>
                       <div className="text-center">
@@ -222,13 +223,13 @@ export default function LandingPage() {
                 className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-medium mb-6"
               >
                 <Zap className="w-4 h-4" />
-                Simple comme bonjour
+                {t('howItWorks.badge')}
               </motion.div>
               <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                <span className="text-foreground">Comment ça </span>
-                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">marche ?</span>
+                <span className="text-foreground">{t('howItWorks.title')}</span>
+                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{t('howItWorks.titleHighlight')}</span>
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Trois étapes simples pour trouver votre film parfait</p>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t('howItWorks.subtitle')}</p>
             </ScrollReveal>
 
             <div className="grid md:grid-cols-3 gap-8">
@@ -236,24 +237,24 @@ export default function LandingPage() {
                 {
                   step: "1",
                   icon: Film,
-                  title: "Créez une room",
-                  desc: "Choisissez vos filtres : genre, plateforme, note minimum...",
+                  title: t('howItWorks.step1.title'),
+                  desc: t('howItWorks.step1.description'),
                   color: "from-primary to-accent",
                   delay: 0
                 },
                 {
                   step: "2",
                   icon: Users,
-                  title: "Invitez vos amis",
-                  desc: "Partagez le code. Pas besoin de compte pour rejoindre !",
+                  title: t('howItWorks.step2.title'),
+                  desc: t('howItWorks.step2.description'),
                   color: "from-blue-500 to-cyan-500",
                   delay: 0.15
                 },
                 {
                   step: "3",
                   icon: Heart,
-                  title: "Swipez & matchez",
-                  desc: "Quand tout le monde like le même film : c'est un match !",
+                  title: t('howItWorks.step3.title'),
+                  desc: t('howItWorks.step3.description'),
                   color: "from-green-500 to-emerald-500",
                   delay: 0.3
                 },
@@ -275,7 +276,7 @@ export default function LandingPage() {
                         </div>
                         <div className="flex items-center gap-3 mb-4">
                           <span className={`text-sm font-bold px-3 py-1 rounded-full bg-gradient-to-r ${item.color} text-white`}>
-                            Étape {item.step}
+                            {t('howItWorks.step')} {item.step}
                           </span>
                         </div>
                         <h3 className="text-2xl font-bold mb-3">{item.title}</h3>
@@ -315,22 +316,22 @@ export default function LandingPage() {
                           className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 rounded-full text-green-500 text-sm font-medium mb-6"
                         >
                           <Play className="w-4 h-4" />
-                          Démo interactive
+                          {t('demo.badge')}
                         </motion.div>
 
                         <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                          <span className="text-foreground">Testez </span>
-                          <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">l'expérience</span>
+                          <span className="text-foreground">{t('demo.title')}</span>
+                          <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{t('demo.titleHighlight')}</span>
                         </h2>
                         <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                          Glissez les cartes pour découvrir comment fonctionne le swipe. C'est exactement comme dans l'app !
+                          {t('demo.subtitle')}
                         </p>
 
                         <div className="space-y-4">
                           {[
-                            { icon: Heart, text: "Droite = J'adore", color: "text-green-500 bg-green-500/10" },
-                            { icon: X, text: "Gauche = Pas pour moi", color: "text-red-500 bg-red-500/10" },
-                            { icon: Sparkles, text: "Match = Tout le monde a liké !", color: "text-primary bg-primary/10" },
+                            { icon: Heart, text: t('demo.right'), color: "text-green-500 bg-green-500/10" },
+                            { icon: X, text: t('demo.left'), color: "text-red-500 bg-red-500/10" },
+                            { icon: Sparkles, text: t('demo.match'), color: "text-primary bg-primary/10" },
                           ].map((item, i) => (
                             <motion.div
                               key={i}
@@ -377,21 +378,21 @@ export default function LandingPage() {
                 className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-full text-accent text-sm font-medium mb-6"
               >
                 <Zap className="w-4 h-4" />
-                Fonctionnalités
+                {t('features.badge')}
               </motion.div>
               <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                <span className="text-foreground">Pourquoi </span>
-                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Swipe Movie ?</span>
+                <span className="text-foreground">{t('features.title')}</span>
+                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{t('features.titleHighlight')}</span>
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">L'application qui transforme le chaos en consensus</p>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t('features.subtitle')}</p>
             </ScrollReveal>
 
             <div className="grid md:grid-cols-2 gap-6">
               {[
-                { icon: Users, title: "Fini les disputes", desc: "\"C'est toujours toi qui choisis !\" Plus jamais. Tout le monde vote, personne n'est frustré.", color: "from-blue-500 to-cyan-500", delay: 0 },
-                { icon: Zap, title: "2 minutes chrono", desc: "Plus besoin de scroller 30 minutes. Filtrez, swipez, trouvez LE film parfait.", color: "from-yellow-500 to-orange-500", delay: 0.1 },
-                { icon: Globe, title: "Toutes vos plateformes", desc: "Netflix, Disney+, Prime, Canal+... On ne montre que ce que VOUS pouvez regarder.", color: "from-purple-500 to-pink-500", delay: 0.2 },
-                { icon: Heart, title: "Addictif (mais utile)", desc: "L'interface swipe rend le choix fun. Vos amis vont adorer participer !", color: "from-red-500 to-pink-500", delay: 0.3 },
+                { icon: Users, title: t('features.noFights.title'), desc: t('features.noFights.description'), color: "from-blue-500 to-cyan-500", delay: 0 },
+                { icon: Zap, title: t('features.fast.title'), desc: t('features.fast.description'), color: "from-yellow-500 to-orange-500", delay: 0.1 },
+                { icon: Globe, title: t('features.platforms.title'), desc: t('features.platforms.description'), color: "from-purple-500 to-pink-500", delay: 0.2 },
+                { icon: Heart, title: t('features.addictive.title'), desc: t('features.addictive.description'), color: "from-red-500 to-pink-500", delay: 0.3 },
               ].map((feature, index) => (
                 <ScrollReveal key={index} delay={feature.delay}>
                   <motion.div
@@ -436,35 +437,35 @@ export default function LandingPage() {
                 className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500/10 rounded-full text-yellow-500 text-sm font-medium mb-6"
               >
                 <Star className="w-4 h-4 fill-yellow-500" />
-                Témoignages
+                {t('testimonials.badge')}
               </motion.div>
               <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                <span className="text-foreground">Ils </span>
-                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">adorent</span>
+                <span className="text-foreground">{t('testimonials.title')}</span>
+                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{t('testimonials.titleHighlight')}</span>
               </h2>
-              <p className="text-lg text-muted-foreground">Rejoignez des milliers d'utilisateurs satisfaits</p>
+              <p className="text-lg text-muted-foreground">{t('testimonials.subtitle')}</p>
             </ScrollReveal>
 
             <div className="grid md:grid-cols-3 gap-6">
               {[
                 {
-                  name: "Marie L.",
-                  role: "Colocation de 4",
-                  content: "Fini les débats interminables ! On trouve un film en 2 minutes maintenant. C'est devenu notre rituel du vendredi soir.",
+                  name: t('testimonials.items.marie.name'),
+                  role: t('testimonials.items.marie.role'),
+                  content: t('testimonials.items.marie.content'),
                   avatar: "👩‍🦰",
                   delay: 0,
                 },
                 {
-                  name: "Thomas D.",
-                  role: "Père de famille",
-                  content: "Parfait pour les soirées en famille. Les enfants adorent swiper et on finit toujours par trouver un film qui plaît à tout le monde.",
+                  name: t('testimonials.items.thomas.name'),
+                  role: t('testimonials.items.thomas.role'),
+                  content: t('testimonials.items.thomas.content'),
                   avatar: "👨",
                   delay: 0.1,
                 },
                 {
-                  name: "Sophie M.",
-                  role: "Cinéphile",
-                  content: "J'ai découvert plein de films que je n'aurais jamais regardés ! Les filtres sont super précis et le catalogue est énorme.",
+                  name: t('testimonials.items.sophie.name'),
+                  role: t('testimonials.items.sophie.role'),
+                  content: t('testimonials.items.sophie.content'),
                   avatar: "👩",
                   delay: 0.2,
                 },
@@ -487,7 +488,7 @@ export default function LandingPage() {
                         </div>
                         <Quote className="w-8 h-8 text-primary/20 mb-3" />
                         <p className="text-muted-foreground mb-6 leading-relaxed">
-                          "{testimonial.content}"
+                          &quot;{testimonial.content}&quot;
                         </p>
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-2xl border border-border">
@@ -515,10 +516,10 @@ export default function LandingPage() {
           <div className="max-w-5xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[
-                { icon: Shield, text: "100% Gratuit", subtext: "Sans frais cachés", color: "from-green-500 to-emerald-500" },
-                { icon: Clock, text: "Prêt en 30s", subtext: "Setup ultra-rapide", color: "from-blue-500 to-cyan-500" },
-                { icon: Smartphone, text: "Mobile-first", subtext: "Optimisé tactile", color: "from-purple-500 to-pink-500" },
-                { icon: Users, text: "Google Sign-in", subtext: "Connexion 1-clic", color: "from-orange-500 to-red-500" },
+                { icon: Shield, text: t('badges.free.title'), subtext: t('badges.free.subtitle'), color: "from-green-500 to-emerald-500" },
+                { icon: Clock, text: t('badges.ready.title'), subtext: t('badges.ready.subtitle'), color: "from-blue-500 to-cyan-500" },
+                { icon: Smartphone, text: t('badges.mobile.title'), subtext: t('badges.mobile.subtitle'), color: "from-purple-500 to-pink-500" },
+                { icon: Users, text: t('badges.google.title'), subtext: t('badges.google.subtitle'), color: "from-orange-500 to-red-500" },
               ].map((badge, index) => (
                 <ScrollReveal key={index} delay={index * 0.08}>
                   <motion.div
@@ -572,19 +573,17 @@ export default function LandingPage() {
                           transition={{ delay: 0.1 }}
                         >
                           <Sparkles className="w-4 h-4" />
-                          Prêt en 30 secondes
+                          {t('cta.badge')}
                         </motion.div>
 
                         <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                          <span className="text-foreground">Votre prochaine </span>
-                          <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">soirée ciné</span>
-                          <span className="text-foreground"> commence ici</span>
+                          <span className="text-foreground">{t('cta.title')}</span>
+                          <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{t('cta.titleHighlight')}</span>
+                          <span className="text-foreground">{t('cta.titleEnd')}</span>
                         </h2>
 
                         <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                          {isAuthenticated
-                            ? "Créez une nouvelle room et invitez vos amis à voter pour le film parfait."
-                            : "Rejoignez des milliers d'utilisateurs qui ont dit adieu aux débats interminables."}
+                          {isAuthenticated ? t('cta.subtitleAuth') : t('cta.subtitle')}
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
@@ -595,7 +594,7 @@ export default function LandingPage() {
                             >
                               <ShimmerEffect delay={3}>
                                 <Button size="lg" className="text-lg px-8 py-7 shadow-xl shadow-primary/25 w-full sm:w-auto">
-                                  {isAuthenticated ? "Créer une room" : "Commencer gratuitement"}
+                                  {isAuthenticated ? t('cta.buttonAuth') : t('cta.button')}
                                   <ArrowRight className="ml-2 h-5 w-5" />
                                 </Button>
                               </ShimmerEffect>
@@ -605,21 +604,24 @@ export default function LandingPage() {
 
                         {/* Trust indicators */}
                         <div className="mt-8 flex flex-wrap gap-4 justify-center md:justify-start text-sm text-muted-foreground">
-                          {[
-                            { icon: Shield, text: "100% gratuit" },
-                            { icon: CheckCircle2, text: "Sans carte bancaire" },
-                          ].map((item, i) => (
-                            <motion.span
-                              key={i}
-                              className="flex items-center gap-2"
-                              initial={{ opacity: 0, y: 10 }}
-                              whileInView={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.3 + i * 0.1 }}
-                            >
-                              <item.icon className="w-4 h-4 text-green-500" />
-                              {item.text}
-                            </motion.span>
-                          ))}
+                          <motion.span
+                            className="flex items-center gap-2"
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                          >
+                            <Shield className="w-4 h-4 text-green-500" />
+                            {t('cta.trust.free')}
+                          </motion.span>
+                          <motion.span
+                            className="flex items-center gap-2"
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 }}
+                          >
+                            <CheckCircle2 className="w-4 h-4 text-green-500" />
+                            {t('cta.trust.noCard')}
+                          </motion.span>
                         </div>
                       </div>
 
@@ -654,8 +656,8 @@ export default function LandingPage() {
                             >
                               <div className="text-6xl mb-4">🎬</div>
                               <div className="text-center">
-                                <p className="font-bold text-lg">Match trouvé !</p>
-                                <p className="text-sm text-muted-foreground">Tout le monde a liké</p>
+                                <p className="font-bold text-lg">{t('cta.matchFound')}</p>
+                                <p className="text-sm text-muted-foreground">{t('cta.matchSubtitle')}</p>
                               </div>
                               <motion.div
                                 className="mt-4 flex items-center gap-2 px-4 py-2 bg-green-500/20 rounded-full"
@@ -663,7 +665,7 @@ export default function LandingPage() {
                                 transition={{ duration: 2, repeat: Infinity }}
                               >
                                 <Heart className="w-4 h-4 text-green-500 fill-green-500" />
-                                <span className="text-green-500 text-sm font-medium">C'est un match !</span>
+                                <span className="text-green-500 text-sm font-medium">{t('cta.itsAMatch')}</span>
                               </motion.div>
                             </motion.div>
                           </div>

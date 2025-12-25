@@ -48,66 +48,132 @@
     "title": "Swipe Movie",
     "subtitle": "Trouvez votre prochain film à regarder entre amis",
     "hero": {
-      "title": "Décidez en groupe quel film regarder",
-      "subtitle": "Fini les débats sans fin ! Swipez, matchez et regardez ensemble en quelques secondes.",
+      "badge": "Gratuit & sans inscription pour rejoindre",
+      "title": "Swipe, Match, Watch ",
+      "titleHighlight": "Together.",
+      "subtitle": "Fini les débats interminables ! Swipez, matchez et regardez ensemble en quelques secondes.",
       "ctaAuth": "Accéder à mes rooms",
-      "cta": "Commencer gratuitement",
-      "demo": "Voir la démo"
-    },
-    "demoCards": {
-      "pass": {
-        "title": "Passer",
-        "description": "Swipez à gauche si le film ne vous intéresse pas"
-      },
-      "discover": {
-        "title": "Découvrir",
-        "description": "Des milliers de films à parcourir ensemble"
-      },
-      "match": {
-        "title": "Matcher",
-        "description": "Swipez à droite pour aimer et créer un match"
+      "cta": "Créer ma room gratuite",
+      "demo": "Voir la démo",
+      "trust": {
+        "free": "100% gratuit",
+        "ready": "Prêt en 30 secondes",
+        "noCard": "Sans carte bancaire"
       }
+    },
+    "stats": {
+      "movies": "Films disponibles",
+      "platforms": "Plateformes",
+      "decide": "Pour décider",
+      "free": "Gratuit"
     },
     "howItWorks": {
-      "title": "Comment ça marche ?",
+      "badge": "Simple comme bonjour",
+      "title": "Comment ça ",
+      "titleHighlight": "marche ?",
       "subtitle": "Trois étapes simples pour trouver votre film parfait",
+      "step": "Étape",
       "step1": {
         "title": "Créez une room",
-        "description": "En quelques secondes, créez une room et partagez le code avec vos amis"
+        "description": "Choisissez vos filtres : genre, plateforme, note minimum..."
       },
       "step2": {
-        "title": "Swipez ensemble",
-        "description": "Chacun swipe les films qui l'intéressent en temps réel"
+        "title": "Invitez vos amis",
+        "description": "Partagez le code. Pas besoin de compte pour rejoindre !"
       },
       "step3": {
-        "title": "Trouvez le match parfait",
-        "description": "L'algorithme trouve automatiquement les films que tout le monde aime"
+        "title": "Swipez & matchez",
+        "description": "Quand tout le monde like le même film : c'est un match !"
       }
     },
+    "demo": {
+      "badge": "Démo interactive",
+      "title": "Testez ",
+      "titleHighlight": "l'expérience",
+      "subtitle": "Glissez les cartes pour découvrir comment fonctionne le swipe. C'est exactement comme dans l'app !",
+      "right": "Droite = J'adore",
+      "left": "Gauche = Pas pour moi",
+      "match": "Match = Tout le monde a liké !"
+    },
     "features": {
-      "title": "Tout ce qu'il vous faut",
-      "subtitle": "Des fonctionnalités pensées pour une expérience optimale",
-      "realtime": {
-        "title": "Synchronisation temps réel",
-        "description": "Voyez les choix de vos amis instantanément grâce à WebSocket"
+      "badge": "Fonctionnalités",
+      "title": "Pourquoi ",
+      "titleHighlight": "Swipe Movie ?",
+      "subtitle": "L'application qui transforme le chaos en consensus",
+      "noFights": {
+        "title": "Fini les disputes",
+        "description": "\"C'est toujours toi qui choisis !\" Plus jamais. Tout le monde vote, personne n'est frustré."
       },
-      "filters": {
-        "title": "Filtres avancés",
-        "description": "Genre, note, année, plateforme de streaming et plus encore"
-      },
-      "smart": {
-        "title": "Algorithme intelligent",
-        "description": "Trouve automatiquement les films qui plaisent à tout le monde"
+      "fast": {
+        "title": "2 minutes chrono",
+        "description": "Plus besoin de scroller 30 minutes. Filtrez, swipez, trouvez LE film parfait."
       },
       "platforms": {
-        "title": "Toutes les plateformes",
-        "description": "Netflix, Prime Video, Disney+ et bien d'autres"
+        "title": "Toutes vos plateformes",
+        "description": "Netflix, Disney+, Prime, Canal+... On ne montre que ce que VOUS pouvez regarder."
+      },
+      "addictive": {
+        "title": "Addictif (mais utile)",
+        "description": "L'interface swipe rend le choix fun. Vos amis vont adorer participer !"
+      }
+    },
+    "testimonials": {
+      "badge": "Témoignages",
+      "title": "Ils ",
+      "titleHighlight": "adorent",
+      "subtitle": "Rejoignez des milliers d'utilisateurs satisfaits",
+      "items": {
+        "marie": {
+          "name": "Marie L.",
+          "role": "Colocation de 4",
+          "content": "Fini les débats interminables ! On trouve un film en 2 minutes maintenant. C'est devenu notre rituel du vendredi soir."
+        },
+        "thomas": {
+          "name": "Thomas D.",
+          "role": "Père de famille",
+          "content": "Parfait pour les soirées en famille. Les enfants adorent swiper et on finit toujours par trouver un film qui plaît à tout le monde."
+        },
+        "sophie": {
+          "name": "Sophie M.",
+          "role": "Cinéphile",
+          "content": "J'ai découvert plein de films que je n'aurais jamais regardés ! Les filtres sont super précis et le catalogue est énorme."
+        }
+      }
+    },
+    "badges": {
+      "free": {
+        "title": "100% Gratuit",
+        "subtitle": "Sans frais cachés"
+      },
+      "ready": {
+        "title": "Prêt en 30s",
+        "subtitle": "Setup ultra-rapide"
+      },
+      "mobile": {
+        "title": "Mobile-first",
+        "subtitle": "Optimisé tactile"
+      },
+      "google": {
+        "title": "Google Sign-in",
+        "subtitle": "Connexion 1-clic"
       }
     },
     "cta": {
-      "title": "Prêt à commencer ?",
-      "subtitle": "Créez votre première room en quelques secondes",
-      "button": "Commencer gratuitement"
+      "badge": "Prêt en 30 secondes",
+      "title": "Votre prochaine ",
+      "titleHighlight": "soirée ciné",
+      "titleEnd": " commence ici",
+      "subtitleAuth": "Créez une nouvelle room et invitez vos amis à voter pour le film parfait.",
+      "subtitle": "Rejoignez des milliers d'utilisateurs qui ont dit adieu aux débats interminables.",
+      "buttonAuth": "Créer une room",
+      "button": "Commencer gratuitement",
+      "trust": {
+        "free": "100% gratuit",
+        "noCard": "Sans carte bancaire"
+      },
+      "matchFound": "Match trouvé !",
+      "matchSubtitle": "Tout le monde a liké",
+      "itsAMatch": "C'est un match !"
     }
   },
   "rooms": {
