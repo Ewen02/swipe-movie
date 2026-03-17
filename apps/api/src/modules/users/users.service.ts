@@ -1,4 +1,6 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { MediaType, MediaStatus, MediaSource } from '../../common/constants/media';
+import type { Prisma } from '@prisma/client';
 import { PrismaService } from '../../infra/prisma.service';
 import { UpdateUserPreferencesDto, UserPreferencesDto, OnboardingSwipeDto } from './dtos/user-preferences.dto';
 import { LibraryItemDto, LibraryResponseDto, LibraryQueryDto } from './dtos/library.dto';
@@ -67,24 +69,25 @@ export class UsersService {
     userId: string,
     swipe: OnboardingSwipeDto,
   ): Promise<void> {
-    const source = swipe.source || 'onboarding';
+    const source = (swipe.source || 'onboarding') as MediaSource;
+    const mediaType = swipe.mediaType as MediaType;
     await this.prisma.userMediaLibrary.upsert({
       where: {
         userId_tmdbId_mediaType: {
           userId,
           tmdbId: swipe.tmdbId,
-          mediaType: swipe.mediaType,
+          mediaType,
         },
       },
       create: {
         userId,
         tmdbId: swipe.tmdbId,
-        mediaType: swipe.mediaType,
-        status: swipe.liked ? 'liked' : 'disliked',
+        mediaType,
+        status: swipe.liked ? MediaStatus.liked : MediaStatus.disliked,
         source,
       },
       update: {
-        status: swipe.liked ? 'liked' : 'disliked',
+        status: swipe.liked ? MediaStatus.liked : MediaStatus.disliked,
         source,
       },
     });
@@ -95,24 +98,25 @@ export class UsersService {
     swipes: OnboardingSwipeDto[],
   ): Promise<{ saved: number }> {
     const operations = swipes.map((swipe) => {
-      const source = swipe.source || 'onboarding';
+      const source = (swipe.source || 'onboarding') as MediaSource;
+      const mediaType = swipe.mediaType as MediaType;
       // For manual imports, use 'watchlist' status. For swipes, use liked/disliked
-      const status = source === 'manual'
-        ? 'watchlist'
-        : (swipe.liked ? 'liked' : 'disliked');
+      const status: MediaStatus = source === 'manual'
+        ? MediaStatus.watchlist
+        : (swipe.liked ? MediaStatus.liked : MediaStatus.disliked);
 
       return this.prisma.userMediaLibrary.upsert({
         where: {
           userId_tmdbId_mediaType: {
             userId,
             tmdbId: swipe.tmdbId,
-            mediaType: swipe.mediaType,
+            mediaType,
           },
         },
         create: {
           userId,
           tmdbId: swipe.tmdbId,
-          mediaType: swipe.mediaType,
+          mediaType,
           status,
           source,
         },
@@ -160,14 +164,14 @@ export class UsersService {
     const limit = query.limit || 20;
     const skip = (page - 1) * limit;
 
-    const where: any = { userId };
+    const where: Prisma.UserMediaLibraryWhereInput = { userId };
 
     if (query.status) {
-      where.status = query.status;
+      where.status = query.status as MediaStatus;
     }
 
     if (query.source) {
-      where.source = query.source;
+      where.source = query.source as MediaSource;
     }
 
     const [items, total] = await Promise.all([
@@ -193,7 +197,7 @@ export class UsersService {
       items: items.map((item) => ({
         id: item.id,
         tmdbId: item.tmdbId,
-        mediaType: item.mediaType as 'movie' | 'tv',
+        mediaType: item.mediaType,
         status: item.status,
         source: item.source,
         rating: item.rating ?? undefined,
@@ -208,7 +212,7 @@ export class UsersService {
   async updateLibraryItemStatus(
     userId: string,
     itemId: string,
-    status: string,
+    status: MediaStatus,
   ): Promise<LibraryItemDto> {
     // First check if the item exists and belongs to the user
     const item = await this.prisma.userMediaLibrary.findUnique({
@@ -240,7 +244,7 @@ export class UsersService {
     return {
       id: updated.id,
       tmdbId: updated.tmdbId,
-      mediaType: updated.mediaType as 'movie' | 'tv',
+      mediaType: updated.mediaType,
       status: updated.status,
       source: updated.source,
       rating: updated.rating ?? undefined,
@@ -270,7 +274,7 @@ export class UsersService {
   async deleteLibraryItemByTmdbId(
     userId: string,
     tmdbId: string,
-    mediaType: string = 'movie',
+    mediaType: MediaType = MediaType.movie,
   ): Promise<void> {
     const item = await this.prisma.userMediaLibrary.findUnique({
       where: {
@@ -296,24 +300,31 @@ export class UsersService {
     byStatus: Record<string, number>;
     bySource: Record<string, number>;
   }> {
-    const items = await this.prisma.userMediaLibrary.findMany({
-      where: { userId },
-      select: { status: true, source: true },
-    });
+    const [total, statusGroups, sourceGroups] = await Promise.all([
+      this.prisma.userMediaLibrary.count({ where: { userId } }),
+      this.prisma.userMediaLibrary.groupBy({
+        by: ['status'],
+        where: { userId },
+        _count: true,
+      }),
+      this.prisma.userMediaLibrary.groupBy({
+        by: ['source'],
+        where: { userId },
+        _count: true,
+      }),
+    ]);
 
     const byStatus: Record<string, number> = {};
-    const bySource: Record<string, number> = {};
-
-    for (const item of items) {
-      byStatus[item.status] = (byStatus[item.status] || 0) + 1;
-      bySource[item.source] = (bySource[item.source] || 0) + 1;
+    for (const group of statusGroups) {
+      byStatus[group.status] = group._count;
     }
 
-    return {
-      total: items.length,
-      byStatus,
-      bySource,
-    };
+    const bySource: Record<string, number> = {};
+    for (const group of sourceGroups) {
+      bySource[group.source] = group._count;
+    }
+
+    return { total, byStatus, bySource };
   }
 
   /**

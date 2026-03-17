@@ -1,5 +1,6 @@
 import { Injectable, Logger, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { MediaType, MediaStatus, MediaSource } from '../../common/constants/media';
 import { PrismaService } from '../../infra/prisma.service';
 import {
   TraktConfig,
@@ -11,7 +12,6 @@ import {
   ExternalConnection,
   SyncResult,
   ExternalProviders,
-  MediaLibraryStatus,
 } from '@swipe-movie/types';
 import { RecommendationsService } from '../recommendations/recommendations.service';
 
@@ -335,8 +335,8 @@ export class TraktService {
             await this.upsertMediaLibrary(
               userId,
               item.movie.ids.tmdb.toString(),
-              'movie',
-              MediaLibraryStatus.WATCHED,
+              MediaType.movie,
+              MediaStatus.watched,
               undefined,
               item.last_watched_at,
             );
@@ -355,8 +355,8 @@ export class TraktService {
             await this.upsertMediaLibrary(
               userId,
               item.show.ids.tmdb.toString(),
-              'tv',
-              MediaLibraryStatus.WATCHED,
+              MediaType.tv,
+              MediaStatus.watched,
               undefined,
               item.last_watched_at,
             );
@@ -377,8 +377,8 @@ export class TraktService {
             await this.upsertMediaLibrary(
               userId,
               tmdbId.toString(),
-              item.type === 'movie' ? 'movie' : 'tv',
-              MediaLibraryStatus.WATCHLIST,
+              item.type === 'movie' ? MediaType.movie : MediaType.tv,
+              MediaStatus.watchlist,
             );
             result.imported++;
           } catch {
@@ -397,8 +397,8 @@ export class TraktService {
             await this.upsertMediaLibrary(
               userId,
               tmdbId.toString(),
-              item.type === 'movie' ? 'movie' : 'tv',
-              MediaLibraryStatus.RATED,
+              item.type === 'movie' ? MediaType.movie : MediaType.tv,
+              MediaStatus.rated,
               item.rating,
               item.rated_at,
             );
@@ -445,8 +445,8 @@ export class TraktService {
   private async upsertMediaLibrary(
     userId: string,
     tmdbId: string,
-    mediaType: 'movie' | 'tv',
-    status: string,
+    mediaType: MediaType,
+    status: MediaStatus,
     rating?: number,
     watchedAt?: string,
   ): Promise<void> {
@@ -462,7 +462,7 @@ export class TraktService {
         status,
         rating,
         watchedAt: watchedAt ? new Date(watchedAt) : undefined,
-        source: ExternalProviders.TRAKT,
+        source: MediaSource.trakt,
       },
       create: {
         userId,
@@ -471,7 +471,7 @@ export class TraktService {
         status,
         rating,
         watchedAt: watchedAt ? new Date(watchedAt) : undefined,
-        source: ExternalProviders.TRAKT,
+        source: MediaSource.trakt,
       },
     });
   }
@@ -492,7 +492,7 @@ export class TraktService {
     await this.prisma.userMediaLibrary.deleteMany({
       where: {
         userId,
-        source: ExternalProviders.TRAKT,
+        source: MediaSource.trakt,
       },
     });
   }

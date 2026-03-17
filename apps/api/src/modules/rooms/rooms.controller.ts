@@ -104,8 +104,8 @@ export class RoomsController {
   })
   @ApiNotFoundResponse({ description: 'Room not found' })
   @Get('code/:code')
-  getByCode(@Param('code') roomCode: string) {
-    return this.service.getByCode(roomCode);
+  getByCode(@UserId() userId: string, @Param('code') roomCode: string) {
+    return this.service.getByCode(roomCode, userId);
   }
 
   @ApiOperation({ summary: 'Get room details by id' })
@@ -115,8 +115,8 @@ export class RoomsController {
   })
   @ApiNotFoundResponse({ description: 'Room not found' })
   @Get('id/:id')
-  getById(@Param('id') roomId: string) {
-    return this.service.getById(roomId);
+  getById(@UserId() userId: string, @Param('id') roomId: string) {
+    return this.service.getById(roomId, userId);
   }
 
   @ApiOperation({ summary: 'Get room members' })
@@ -125,14 +125,14 @@ export class RoomsController {
     type: RoomMembersResponseDto,
   })
   @Get('id/:id/members')
-  members(@Param('id') roomId: string) {
-    return this.service.members(roomId);
+  members(@UserId() userId: string, @Param('id') roomId: string) {
+    return this.service.members(roomId, userId);
   }
 
   @ApiOperation({ summary: 'Get all swipes in a room' })
   @ApiOkResponse({ description: 'List of swipes', type: [ResponseSwipeDto] })
   @Get('id/:id/swipes')
-  swipes(@Param('id') roomId: string) {
-    return this.swipesService.findByRoom(roomId);
+  swipes(@UserId() userId: string, @Param('id') roomId: string) {
+    return this.swipesService.findByRoom(roomId, userId);
   }
 }

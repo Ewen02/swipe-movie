@@ -137,7 +137,7 @@ export class MoviesController {
   })
   @Get('batch/details')
   getBatchMovieDetails(@Query('ids') ids: string) {
-    const movieIds = ids.split(',').map((id) => parseInt(id.trim(), 10));
+    const movieIds = ids.split(',').map((id) => parseInt(id.trim(), 10)).slice(0, 50);
     return this.moviesService.getBatchMovieDetails(movieIds);
   }
 

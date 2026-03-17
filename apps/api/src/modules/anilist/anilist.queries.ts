@@ -1,5 +1,7 @@
 // GraphQL queries for AniList API
 
+import { MediaStatus } from '../../common/constants/media';
+
 export const GET_CURRENT_USER = `
   query {
     Viewer {
@@ -86,11 +88,11 @@ export const GET_USER_MANGA_LIST = `
 `;
 
 // AniList status to our status mapping
-export const ANILIST_STATUS_MAP: Record<string, string> = {
-  COMPLETED: 'watched',
-  WATCHING: 'watchlist',
-  PLANNING: 'watchlist',
-  PAUSED: 'watchlist',
-  DROPPED: 'watched',
-  REPEATING: 'watched',
+export const ANILIST_STATUS_MAP: Record<string, MediaStatus> = {
+  COMPLETED: MediaStatus.watched,
+  WATCHING: MediaStatus.watchlist,
+  PLANNING: MediaStatus.watchlist,
+  PAUSED: MediaStatus.watchlist,
+  DROPPED: MediaStatus.watched,
+  REPEATING: MediaStatus.watched,
 };

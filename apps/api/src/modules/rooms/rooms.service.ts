@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Injectable,
   HttpException,
@@ -9,6 +8,8 @@ import {
   Inject,
   forwardRef,
 } from '@nestjs/common';
+import type { Room } from '@prisma/client';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import { PrismaService } from '../../infra/prisma.service';
@@ -31,6 +32,8 @@ import {
 import { RoomType, type RoomTypeValue, CacheTTL } from '@swipe-movie/types';
 
 import { generateRoomCode } from '../../common/utils/code';
+
+const ROOM_EXPIRATION_MS = 24 * 60 * 60 * 1000;
 
 @Injectable()
 export class RoomsService {
@@ -62,10 +65,10 @@ export class RoomsService {
    * Maps a room object to a response DTO with optional fields
    */
   private mapToRoomResponse<T extends RoomJoinResponseDto | RoomWithMembersResponseDto>(
-    room: any,
+    room: Partial<Room> & Pick<Room, 'id' | 'name' | 'code' | 'genreId' | 'type' | 'createdBy' | 'createdAt' | 'watchProviders' | 'watchRegion'>,
     members?: Array<{ user: { id: string; name: string | null } }>,
   ): T {
-    const response: any = {
+    const response: Record<string, unknown> = {
       id: room.id,
       name: room.name,
       code: room.code,
@@ -317,7 +320,23 @@ export class RoomsService {
     return { ok: true };
   }
 
-  async members(roomId: string): Promise<RoomMembersResponseDto> {
+  /**
+   * Verify that a user is a member of a room, throw ForbiddenException if not
+   */
+  private async verifyMembership(roomId: string, userId: string): Promise<void> {
+    const membership = await this.prisma.roomMember.findUnique({
+      where: { roomId_userId: { roomId, userId } },
+    });
+    if (!membership) {
+      throw new ForbiddenException('You are not a member of this room');
+    }
+  }
+
+  async members(roomId: string, userId?: string): Promise<RoomMembersResponseDto> {
+    if (userId) {
+      await this.verifyMembership(roomId, userId);
+    }
+
     const roomMember = await this.prisma.roomMember.findMany({
       where: { roomId },
       include: { user: true },
@@ -327,7 +346,11 @@ export class RoomsService {
     } as RoomMembersResponseDto;
   }
 
-  async getById(roomId: string): Promise<RoomWithMembersResponseDto> {
+  async getById(roomId: string, userId?: string): Promise<RoomWithMembersResponseDto> {
+    if (userId) {
+      await this.verifyMembership(roomId, userId);
+    }
+
     const [room, roomMembers] = await this.prisma.$transaction([
       this.prisma.room.findUnique({
         where: { id: roomId },
@@ -362,13 +385,15 @@ export class RoomsService {
     return this.mapToRoomResponse<RoomWithMembersResponseDto>(room, roomMembers);
   }
 
-  async getByCode(code: string): Promise<RoomWithMembersResponseDto> {
+  async getByCode(code: string, userId?: string): Promise<RoomWithMembersResponseDto> {
     const cacheKey = `rooms:code:${code}`;
 
-    // Try to get from cache
-    const cached = await this.cacheManager.get<RoomWithMembersResponseDto>(cacheKey);
-    if (cached) {
-      return cached;
+    // Try to get from cache (skip cache when membership check is needed)
+    if (!userId) {
+      const cached = await this.cacheManager.get<RoomWithMembersResponseDto>(cacheKey);
+      if (cached) {
+        return cached;
+      }
     }
 
     const room = await this.prisma.room.findUnique({
@@ -397,6 +422,14 @@ export class RoomsService {
       throw new NotFoundException('Room not found');
     }
 
+    // Verify membership if userId is provided
+    if (userId) {
+      const isMember = room.members.some((m) => m.userId === userId);
+      if (!isMember) {
+        throw new ForbiddenException('You are not a member of this room');
+      }
+    }
+
     const result = this.mapToRoomResponse<RoomWithMembersResponseDto>(room, room.members);
 
     // Store in cache
@@ -409,7 +442,6 @@ export class RoomsService {
     userId: string,
     pagination?: PaginationQueryDto,
   ): Promise<PaginatedResponseDto<MemberRoomsResponseDto['rooms'][0]> | MemberRoomsResponseDto> {
-    await this.expireOldRooms();
 
     const where = { members: { some: { userId } } };
 
@@ -544,8 +576,9 @@ export class RoomsService {
     return result;
   }
 
-  private async expireOldRooms() {
-    const expirationDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  @Cron(CronExpression.EVERY_HOUR)
+  async expireOldRooms() {
+    const expirationDate = new Date(Date.now() - ROOM_EXPIRATION_MS);
     const result = await this.prisma.room.updateMany({
       where: { deletedAt: null, createdAt: { lt: expirationDate } },
       data: { deletedAt: new Date() },

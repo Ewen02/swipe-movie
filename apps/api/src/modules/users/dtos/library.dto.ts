@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional } from 'class-validator';
+import { MediaStatus } from '../../../common/constants/media';
 
 export class LibraryItemDto {
   @ApiProperty()
@@ -9,7 +10,7 @@ export class LibraryItemDto {
   tmdbId!: string;
 
   @ApiProperty({ enum: ['movie', 'tv'] })
-  mediaType!: 'movie' | 'tv';
+  mediaType!: string;
 
   @ApiProperty({ enum: ['watched', 'watchlist', 'rated', 'liked', 'disliked'] })
   status!: string;
@@ -39,9 +40,9 @@ export class LibraryResponseDto {
 }
 
 export class UpdateLibraryItemDto {
-  @ApiProperty({ enum: ['watched', 'watchlist', 'liked', 'disliked'] })
-  @IsEnum(['watched', 'watchlist', 'liked', 'disliked'])
-  status!: 'watched' | 'watchlist' | 'liked' | 'disliked';
+  @ApiProperty({ enum: MediaStatus })
+  @IsEnum(MediaStatus)
+  status!: MediaStatus;
 }
 
 export class LibraryQueryDto {

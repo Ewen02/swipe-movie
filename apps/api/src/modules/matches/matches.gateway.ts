@@ -8,9 +8,11 @@ import {
   MessageBody,
   ConnectedSocket,
 } from '@nestjs/websockets';
-import { Logger } from '@nestjs/common';
+import { Logger, OnModuleDestroy } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { ConfigService } from '@nestjs/config';
+import { SkipThrottle } from '@nestjs/throttler';
+import { AuthService } from '../auth/auth.service';
 import { MatchBaseDto } from './dtos/match.dto';
 import {
   SocketEvents,
@@ -19,15 +21,16 @@ import {
   SocketMatch,
 } from '@swipe-movie/types';
 
+@SkipThrottle()
 @WebSocketGateway({
   cors: {
-    origin: (origin, callback) => {
-      const configService = new ConfigService();
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
       const allowedOrigins = [
-        configService.get<string>('WEB_ORIGIN'),
-        configService.get<string>('API_ORIGIN'),
+        process.env.WEB_ORIGIN,
+        process.env.API_ORIGIN,
       ].filter(Boolean);
 
+      // Allow requests without Origin header (WebSocket upgrades, server-side calls)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -36,7 +39,7 @@ import {
     },
     credentials: true,
   },
-  namespace: '/matches',
+  namespace: '/ws',
   pingTimeout: SocketConfig.PING_TIMEOUT,
   pingInterval: SocketConfig.PING_INTERVAL,
   connectTimeout: 45000, // 45 seconds
@@ -44,7 +47,7 @@ import {
   transports: ['websocket', 'polling'],
 })
 export class MatchesGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect, OnModuleDestroy
 {
   @WebSocketServer()
   server!: Server;
@@ -52,8 +55,20 @@ export class MatchesGateway
   private readonly logger = new Logger(MatchesGateway.name);
   private readonly connectedClients = new Map<
     string,
-    { rooms: Set<string>; connectedAt: Date }
+    { rooms: Set<string>; connectedAt: Date; userId?: string }
   >();
+  private metricsInterval: ReturnType<typeof setInterval> | null = null;
+
+  constructor(
+    private readonly authService: AuthService,
+  ) {}
+
+  onModuleDestroy() {
+    if (this.metricsInterval) {
+      clearInterval(this.metricsInterval);
+      this.metricsInterval = null;
+    }
+  }
 
   afterInit(server: Server) {
     this.logger.log('WebSocket Gateway initialized');
@@ -61,7 +76,7 @@ export class MatchesGateway
     // Ensure server is fully initialized before starting metrics
     if (this.server && this.server.sockets) {
       // Monitor server metrics every 5 minutes
-      setInterval(() => {
+      this.metricsInterval = setInterval(() => {
         this.logServerMetrics();
       }, 5 * 60 * 1000);
 
@@ -72,16 +87,39 @@ export class MatchesGateway
   }
 
   handleConnection(client: Socket) {
+    // Authenticate via JWT token if provided
+    const token =
+      client.handshake.auth?.token ||
+      client.handshake.headers?.authorization?.replace('Bearer ', '');
+
+    let userId: string | undefined;
+
+    if (token) {
+      const user = this.authService.verifyToken(token);
+      if (user) {
+        userId = user.id;
+      }
+    }
+
+    // Fall back to email header from handshake (browser clients)
+    if (!userId) {
+      const email = client.handshake.auth?.email || client.handshake.headers?.['x-user-email'];
+      if (email) {
+        userId = email as string; // Used for logging only
+      }
+    }
+
     const clientIp =
       client.handshake.headers['x-forwarded-for'] || client.handshake.address;
 
     this.logger.log(
-      `Client connected: ${client.id} from ${clientIp} (transport: ${client.conn.transport.name})`,
+      `Client connected: ${client.id}${userId ? ` (user: ${userId})` : ''} from ${clientIp} (transport: ${client.conn.transport.name})`,
     );
 
     this.connectedClients.set(client.id, {
       rooms: new Set(),
       connectedAt: new Date(),
+      userId,
     });
 
     // Send welcome message

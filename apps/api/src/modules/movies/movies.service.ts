@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import * as crypto from 'crypto';
@@ -31,6 +31,8 @@ const CACHE_TTL = {
 
 @Injectable()
 export class MoviesService {
+  private readonly logger = new Logger(MoviesService.name);
+
   constructor(
     private readonly tmdb: TmdbService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
@@ -270,6 +272,11 @@ export class MoviesService {
       params.append('with_original_language', filters.originalLanguage);
     }
 
+    // Exclude cinema-only releases: only include Digital (4), Physical (5), TV (6)
+    if (mediaType === 'movie') {
+      params.append('with_release_type', '4|5|6');
+    }
+
     const url = `/discover/${mediaType}?${params.toString()}`;
 
     // Fetch from TMDb API
@@ -369,7 +376,7 @@ export class MoviesService {
 
       return result;
     } catch (error) {
-      console.error(
+      this.logger.error(
         `Failed to fetch watch providers for ${mediaType} ${movieId}:`,
         error,
       );
@@ -471,7 +478,7 @@ export class MoviesService {
 
       return providers;
     } catch (error) {
-      console.error(`Failed to fetch watch providers for ${region}:`, error);
+      this.logger.error(`Failed to fetch watch providers for ${region}:`, error);
       return [];
     }
   }

@@ -1,5 +1,6 @@
 import { Injectable, Logger, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { MediaType, MediaStatus, MediaSource } from '../../common/constants/media';
 import { PrismaService } from '../../infra/prisma.service';
 import {
   AniListConfig,
@@ -9,7 +10,6 @@ import {
   ExternalConnection,
   SyncResult,
   ExternalProviders,
-  MediaLibraryStatus,
 } from '@swipe-movie/types';
 import {
   GET_CURRENT_USER,
@@ -303,7 +303,7 @@ export class AniListService {
       for (const list of animeList.lists) {
         for (const entry of list.entries) {
           const media = entry.media;
-          const status = ANILIST_STATUS_MAP[entry.status] || 'watchlist';
+          const status = (ANILIST_STATUS_MAP[entry.status] || 'watchlist') as MediaStatus;
 
           // Try to find TMDB ID
           // First, try using MyAnimeList ID if available (more reliable)
@@ -341,7 +341,7 @@ export class AniListService {
             await this.upsertMediaLibrary(
               userId,
               tmdbId,
-              'tv', // Anime is typically TV in TMDB
+              MediaType.tv, // Anime is typically TV in TMDB
               status,
               rating,
               watchedAt?.toISOString(),
@@ -390,8 +390,8 @@ export class AniListService {
   private async upsertMediaLibrary(
     userId: string,
     tmdbId: string,
-    mediaType: 'movie' | 'tv',
-    status: string,
+    mediaType: MediaType,
+    status: MediaStatus,
     rating?: number,
     watchedAt?: string,
     externalId?: string,
@@ -408,7 +408,7 @@ export class AniListService {
         status,
         rating,
         watchedAt: watchedAt ? new Date(watchedAt) : undefined,
-        source: ExternalProviders.ANILIST,
+        source: MediaSource.anilist,
         externalId,
       },
       create: {
@@ -418,7 +418,7 @@ export class AniListService {
         status,
         rating,
         watchedAt: watchedAt ? new Date(watchedAt) : undefined,
-        source: ExternalProviders.ANILIST,
+        source: MediaSource.anilist,
         externalId,
       },
     });
@@ -440,7 +440,7 @@ export class AniListService {
     await this.prisma.userMediaLibrary.deleteMany({
       where: {
         userId,
-        source: ExternalProviders.ANILIST,
+        source: MediaSource.anilist,
       },
     });
   }

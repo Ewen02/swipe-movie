@@ -1,4 +1,5 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { MediaType } from '../../common/constants/media';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UserId } from '../../common/decorators/user.decorator';
 import { RecommendationsService, RecommendedMovie } from './recommendations.service';
@@ -36,7 +37,7 @@ export class RecommendationsController {
     }
 
     const memberIds = room.members.map((m: { userId: string }) => m.userId);
-    const type = room.type === 'TV' ? 'tv' : 'movie';
+    const type: MediaType = room.type === 'TV' ? MediaType.tv : MediaType.movie;
 
     // Build filters from room settings
     const filters = {
@@ -98,7 +99,7 @@ export class RecommendationsController {
     @Param('tmdbId') tmdbId: string,
     @Query('type') type: string = 'movie',
   ) {
-    const mediaType = type === 'tv' ? 'tv' : 'movie';
+    const mediaType: MediaType = type === 'tv' ? MediaType.tv : MediaType.movie;
     const statusMap = await this.recommendationsService.getBatchMovieStatus(
       userId,
       [tmdbId],
@@ -124,7 +125,7 @@ export class RecommendationsController {
     @Query('type') type: string = 'movie',
   ) {
     const tmdbIds = ids.split(',').filter(Boolean);
-    const mediaType = type === 'tv' ? 'tv' : 'movie';
+    const mediaType: MediaType = type === 'tv' ? MediaType.tv : MediaType.movie;
     const statusMap = await this.recommendationsService.getBatchMovieStatus(
       userId,
       tmdbIds,

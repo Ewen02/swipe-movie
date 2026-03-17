@@ -1,6 +1,5 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
-import { PrismaService } from '../../infra/prisma.service';
 import { SwipesService } from './swipes.service';
 import { SwipesController } from './swipes.controller';
 import { MatchesModule } from '../matches/matches.module';
@@ -9,7 +8,7 @@ import { RecommendationsModule } from '../recommendations/recommendations.module
 
 @Module({
   controllers: [SwipesController],
-  providers: [SwipesService, PrismaService],
+  providers: [SwipesService],
   exports: [SwipesService],
   imports: [
     MatchesModule,

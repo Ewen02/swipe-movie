@@ -8,6 +8,8 @@ import { RecommendationsService } from '../recommendations/recommendations.servi
 
 import { ResponseSwipeDto, ResponseCreateSwipeDto } from './dtos';
 
+const ACTIVITY_LOOKBACK_DAYS = 7;
+
 // Cache TTL constants (in milliseconds)
 const CACHE_TTL = {
   USER_SWIPES_IN_ROOM: 2 * 60 * 1000, // 2 minutes
@@ -116,7 +118,7 @@ export class SwipesService {
     return { ...swipe, matchCreated: !!match };
   }
 
-  async findByRoom(roomId: string): Promise<ResponseSwipeDto[]> {
+  async findByRoom(roomId: string, userId?: string): Promise<ResponseSwipeDto[]> {
     const room = await this.prisma.room.findUnique({
       where: { id: roomId },
       select: { id: true },
@@ -125,6 +127,17 @@ export class SwipesService {
     if (!room) {
       throw new NotFoundException('Room not found');
     }
+
+    // Verify membership if userId is provided
+    if (userId) {
+      const membership = await this.prisma.roomMember.findUnique({
+        where: { roomId_userId: { roomId, userId } },
+      });
+      if (!membership) {
+        throw new ForbiddenException('You are not a member of this room');
+      }
+    }
+
     return this.prisma.swipe.findMany({
       where: { roomId },
     });
@@ -263,8 +276,7 @@ export class SwipesService {
     }
 
     // Use parallel queries with aggregations for better performance
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const sevenDaysAgo = new Date(Date.now() - ACTIVITY_LOOKBACK_DAYS * 86400000);
 
     const [
       // Aggregated overview stats

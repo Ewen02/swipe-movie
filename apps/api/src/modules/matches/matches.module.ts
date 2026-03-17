@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
-import { PrismaService } from '../../infra/prisma.service';
 import { MatchesService } from './matches.service';
 import { MatchesController } from './matches.controller';
 import { MatchesGateway } from './matches.gateway';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   controllers: [MatchesController],
-  providers: [MatchesService, MatchesGateway, PrismaService],
+  providers: [MatchesService, MatchesGateway],
   exports: [MatchesService, MatchesGateway],
-  imports: [CacheModule.register()],
+  imports: [CacheModule.register(), AuthModule],
 })
 export class MatchesModule {}

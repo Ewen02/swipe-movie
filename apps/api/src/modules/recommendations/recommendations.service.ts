@@ -1,6 +1,7 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
+import { MediaType, MediaStatus } from '../../common/constants/media';
 import { PrismaService } from '../../infra/prisma.service';
 import { MoviesService } from '../movies/movies.service';
 import type {
@@ -100,13 +101,13 @@ export class RecommendationsService {
    */
   async getWatchedByUsers(
     userIds: string[],
-    mediaType: 'movie' | 'tv' = 'movie',
+    mediaType: string = "movie",
   ): Promise<Set<string>> {
     const entries = await this.prisma.userMediaLibrary.findMany({
       where: {
         userId: { in: userIds },
         mediaType,
-        status: 'watched',
+        status: MediaStatus.watched,
       },
       select: { tmdbId: true },
     });
@@ -119,13 +120,13 @@ export class RecommendationsService {
    */
   async getWatchlistByUsers(
     userIds: string[],
-    mediaType: 'movie' | 'tv' = 'movie',
+    mediaType: string = "movie",
   ): Promise<Map<string, number>> {
     const entries = await this.prisma.userMediaLibrary.findMany({
       where: {
         userId: { in: userIds },
         mediaType,
-        status: 'watchlist',
+        status: MediaStatus.watchlist,
       },
       select: { tmdbId: true },
     });
@@ -145,7 +146,7 @@ export class RecommendationsService {
    */
   async getCommonWatchlist(
     userIds: string[],
-    mediaType: 'movie' | 'tv' = 'movie',
+    mediaType: string = "movie",
   ): Promise<Set<string>> {
     if (userIds.length === 0) return new Set();
 
@@ -263,7 +264,7 @@ export class RecommendationsService {
   private async getUserRatingsForMovies(
     userIds: string[],
     tmdbIds: string[],
-    mediaType: 'movie' | 'tv',
+    mediaType: string,
   ): Promise<Map<string, number>> {
     const ratings = await this.prisma.userMediaLibrary.findMany({
       where: {
@@ -303,14 +304,14 @@ export class RecommendationsService {
   private async getWatchedCountByMovie(
     userIds: string[],
     tmdbIds: string[],
-    mediaType: 'movie' | 'tv',
+    mediaType: string,
   ): Promise<Map<string, number>> {
     const entries = await this.prisma.userMediaLibrary.findMany({
       where: {
         userId: { in: userIds },
         tmdbId: { in: tmdbIds },
         mediaType,
-        status: 'watched',
+        status: MediaStatus.watched,
       },
       select: { tmdbId: true },
     });
@@ -432,14 +433,14 @@ export class RecommendationsService {
   async isMovieWatchedByUser(
     userId: string,
     tmdbId: string,
-    mediaType: 'movie' | 'tv' = 'movie',
+    mediaType: string = "movie",
   ): Promise<boolean> {
     const entry = await this.prisma.userMediaLibrary.findFirst({
       where: {
         userId,
         tmdbId,
         mediaType,
-        status: 'watched',
+        status: MediaStatus.watched,
       },
     });
 
@@ -454,10 +455,10 @@ export class RecommendationsService {
   ): Promise<{ watched: number; watchlist: number }> {
     const [watchedCount, watchlistCount] = await Promise.all([
       this.prisma.userMediaLibrary.count({
-        where: { userId, status: 'watched' },
+        where: { userId, status: MediaStatus.watched },
       }),
       this.prisma.userMediaLibrary.count({
-        where: { userId, status: 'watchlist' },
+        where: { userId, status: MediaStatus.watchlist },
       }),
     ]);
 
@@ -473,7 +474,7 @@ export class RecommendationsService {
   async getBatchMovieStatus(
     userId: string,
     tmdbIds: string[],
-    mediaType: 'movie' | 'tv' = 'movie',
+    mediaType: string = "movie",
   ): Promise<Map<string, UserMediaStatus>> {
     const entries = await this.prisma.userMediaLibrary.findMany({
       where: {

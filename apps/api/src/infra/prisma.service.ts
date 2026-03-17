@@ -13,6 +13,7 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   private readonly logger = new Logger(PrismaService.name);
+  private healthCheckInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor(private configService: ConfigService) {
     const isProduction = configService.get('NODE_ENV') === 'production';
@@ -42,17 +43,14 @@ export class PrismaService
 
       this.logger.log('Database connected successfully');
 
-      // Log slow queries in development
-      if (this.configService.get('NODE_ENV') !== 'production') {
-        this.$on('query' as never, (e: any) => {
-          if (e.duration > 1000) {
-            // Log queries slower than 1 second
-            this.logger.warn(
-              `Slow query detected (${e.duration}ms): ${e.query}`,
-            );
-          }
-        });
-      }
+      // Log slow queries in all environments
+      this.$on('query' as never, (e: any) => {
+        if (e.duration > 1000) {
+          this.logger.warn(
+            `Slow query detected (${e.duration}ms): ${e.query}`,
+          );
+        }
+      });
 
       // Health check interval
       this.startHealthCheck();
@@ -63,6 +61,10 @@ export class PrismaService
   }
 
   async onModuleDestroy() {
+    if (this.healthCheckInterval) {
+      clearInterval(this.healthCheckInterval);
+      this.healthCheckInterval = null;
+    }
     this.logger.log('Disconnecting from database...');
     await this.$disconnect();
     this.logger.log('Database disconnected');
@@ -72,7 +74,7 @@ export class PrismaService
    * Periodic health check to ensure database connection is alive
    */
   private startHealthCheck() {
-    setInterval(async () => {
+    this.healthCheckInterval = setInterval(async () => {
       try {
         await this.$queryRaw`SELECT 1`;
       } catch (error) {

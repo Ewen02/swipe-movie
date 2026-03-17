@@ -14,6 +14,7 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiOkResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { MediaType } from '../../common/constants/media';
 import { UsersService } from './users.service';
 import {
   UserPreferencesDto,
@@ -136,7 +137,7 @@ export class UsersController {
     await this.usersService.deleteLibraryItemByTmdbId(
       req.user.sub,
       tmdbId,
-      mediaType || 'movie',
+      (mediaType || 'movie') as MediaType,
     );
     return { success: true };
   }

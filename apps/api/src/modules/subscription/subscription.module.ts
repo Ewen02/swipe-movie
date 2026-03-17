@@ -5,7 +5,6 @@ import { SubscriptionController } from './subscription.controller';
 import { StripeService } from './stripe.service';
 import { StripeWebhookController } from './stripe-webhook.controller';
 import { SubscriptionGuard } from './guards/subscription.guard';
-import { PrismaService } from '../../infra/prisma.service';
 import { AuthModule } from '../auth/auth.module';
 
 /**
@@ -23,7 +22,6 @@ import { AuthModule } from '../auth/auth.module';
   imports: [AuthModule, ConfigModule],
   controllers: [SubscriptionController, StripeWebhookController],
   providers: [
-    PrismaService,
     SubscriptionService,
     StripeService,
     SubscriptionGuard,
