@@ -15,6 +15,10 @@ interface UseMatchNotificationsReturn {
   setRefreshMatches: React.Dispatch<React.SetStateAction<number>>
   handleMatchAnimationComplete: () => void
   triggerMatchAnimation: (movie: MovieBasic) => void
+  userJoined: { roomId: string; user: { id: string; name: string | null }; timestamp: string } | null
+  resetUserJoined: () => void
+  userLeft: { roomId: string; userId: string; timestamp: string } | null
+  resetUserLeft: () => void
 }
 
 export function useMatchNotifications({ roomId }: UseMatchNotificationsProps): UseMatchNotificationsReturn {
@@ -25,7 +29,7 @@ export function useMatchNotifications({ roomId }: UseMatchNotificationsProps): U
   const lastProcessedMatchId = useRef<string | null>(null)
 
   // WebSocket connection for real-time match notifications
-  const { newMatch, resetNewMatch, deletedMatchMovieId, resetDeletedMatch } = useRoomSocket(roomId)
+  const { newMatch, resetNewMatch, deletedMatchMovieId, resetDeletedMatch, userJoined, resetUserJoined, userLeft, resetUserLeft } = useRoomSocket(roomId)
 
   // Handle new match from WebSocket
   useEffect(() => {
@@ -98,5 +102,9 @@ export function useMatchNotifications({ roomId }: UseMatchNotificationsProps): U
     setRefreshMatches,
     handleMatchAnimationComplete,
     triggerMatchAnimation,
+    userJoined,
+    resetUserJoined,
+    userLeft,
+    resetUserLeft,
   }
 }

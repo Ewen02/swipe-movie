@@ -26,10 +26,12 @@ import {
 } from "@swipe-movie/ui"
 import { ThemeToggle } from "@/components/layout/ThemeToggle"
 import { LanguageSelector } from "@/components/language-selector"
-import { User, LogOut, Film, CreditCard, Menu, X, Settings, Globe, Link2, Library } from "lucide-react"
+import { User, LogOut, Film, CreditCard, Menu, X, Settings, Globe, Link2, Library, Shield } from "lucide-react"
+import { useIsAdmin } from "@/hooks/useIsAdmin"
 
 export function Header() {
   const { data: session, isPending } = useSession()
+  const { isAdmin } = useIsAdmin()
   const [showSignOutDialog, setShowSignOutDialog] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -152,6 +154,17 @@ export function Header() {
                         {t('nav.library')}
                       </Link>
                     </DropdownMenuItem>
+                    {isAdmin && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin" className="cursor-pointer">
+                            <Shield className="mr-2 h-4 w-4" />
+                            Admin
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       className="cursor-pointer text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 focus:bg-red-500/10"
@@ -213,6 +226,17 @@ export function Header() {
                         {t('nav.library')}
                       </Link>
                     </DropdownMenuItem>
+                    {isAdmin && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin" className="cursor-pointer">
+                            <Shield className="mr-2 h-4 w-4" />
+                            Admin
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       className="cursor-pointer text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 focus:bg-red-500/10"
@@ -367,6 +391,17 @@ export function Header() {
                         <Library className="h-5 w-5 text-emerald-500" />
                         <span>{t('nav.library')}</span>
                       </Link>
+
+                      {isAdmin && (
+                        <Link
+                          href="/admin"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-foreground/5 transition-colors"
+                        >
+                          <Shield className="h-5 w-5 text-primary" />
+                          <span>Admin</span>
+                        </Link>
+                      )}
                     </div>
                   )}
                 </div>

@@ -55,9 +55,10 @@ export function useRoomData({ code }: UseRoomDataProps): UseRoomDataReturn {
     room?.id ? `/api/swipes/me/${room.id}` : null,
     () => swipesFetcher(room!.id),
     {
-      dedupingInterval: 5 * 1000, // 5 sec cache - swipes need to be fresh
-      revalidateOnFocus: true, // Reload swipes when tab regains focus
-      revalidateOnMount: true, // Always fetch fresh swipes on mount
+      dedupingInterval: 30 * 1000, // 30 sec cache - avoid frequent revalidation
+      revalidateOnFocus: false, // Don't revalidate on tab focus (causes flicker)
+      revalidateOnMount: true, // Fetch fresh swipes on initial mount
+      revalidateOnReconnect: false,
     }
   )
 
@@ -80,12 +81,16 @@ export function useRoomData({ code }: UseRoomDataProps): UseRoomDataReturn {
     })
   }, [swipedMovieIds])
 
-  // Reset local state when server data updates
+  // Sync local state when server data catches up to optimistic updates
   useEffect(() => {
-    if (swipes) {
+    if (!swipes || localSwipedIds === null) return
+    // Only reset if server data includes all local optimistic ids
+    const serverIds = new Set(swipes.map(s => s.movieId))
+    const allIncluded = [...localSwipedIds].every(id => serverIds.has(id))
+    if (allIncluded) {
       setLocalSwipedIds(null)
     }
-  }, [swipes])
+  }, [swipes, localSwipedIds])
 
   const reloadSwipes = useCallback(async () => {
     setLocalSwipedIds(null)

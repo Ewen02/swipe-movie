@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { Badge, Button } from "@swipe-movie/ui"
 import { Heart, Users, Compass, Loader2, Settings2, Undo2, EyeOff, Eye } from "lucide-react"
+import { captureEvent } from "@/components/providers/PostHogProvider"
 import { useUserPreferences } from "@/hooks/useUserPreferences"
 import { useGenres } from "@/hooks/useGenres"
 import { useUserLibrary } from "@/hooks/useUserLibrary"
@@ -29,11 +30,11 @@ const HIDE_LIBRARY_KEY = "discover-hide-library"
 export default function DiscoverPage() {
   const router = useRouter()
   const { toast } = useToast()
-  const { preferences, isLoading: prefsLoading } = useUserPreferences()
+  const { preferences, isLoading: prefsLoading, error: prefsError } = useUserPreferences()
   const { genres } = useGenres()
 
   // Load user library for filtering
-  const { items: libraryItems, isLoading: libraryLoading } = useUserLibrary({ limit: 1000 })
+  const { items: libraryItems, isLoading: libraryLoading, error: libraryError } = useUserLibrary({ limit: 1000 })
 
   const [movies, setMovies] = useState<MovieBasic[]>([])
   const [loading, setLoading] = useState(true)
@@ -48,9 +49,13 @@ export default function DiscoverPage() {
 
   // Load hide library preference from localStorage
   useEffect(() => {
-    const stored = localStorage.getItem(HIDE_LIBRARY_KEY)
-    if (stored !== null) {
-      setHideLibrary(stored === "true")
+    try {
+      const stored = localStorage.getItem(HIDE_LIBRARY_KEY)
+      if (stored !== null) {
+        setHideLibrary(stored === "true")
+      }
+    } catch {
+      // localStorage may be unavailable (e.g. private browsing)
     }
   }, [])
 
@@ -72,7 +77,11 @@ export default function DiscoverPage() {
   // Handle hide library toggle change
   const handleHideLibraryChange = useCallback((checked: boolean) => {
     setHideLibrary(checked)
-    localStorage.setItem(HIDE_LIBRARY_KEY, String(checked))
+    try {
+      localStorage.setItem(HIDE_LIBRARY_KEY, String(checked))
+    } catch {
+      // localStorage may be unavailable (e.g. private browsing)
+    }
   }, [])
 
   // Load movies based on user preferences
@@ -92,7 +101,7 @@ export default function DiscoverPage() {
               Math.floor(Math.random() * preferences.favoriteGenreIds.length)
             ]
 
-          newMovies = await getMoviesByGenre(randomGenreId, "movie", page, {
+          newMovies = await getMoviesByGenre(randomGenreId!, "movie", page, {
             watchProviders: preferences.watchProviders,
             watchRegion: preferences.watchRegion || "FR",
           })
@@ -159,6 +168,7 @@ export default function DiscoverPage() {
       if (liked) {
         setLikedCount((prev) => prev + 1)
       }
+      captureEvent("discover_swipe", { direction, movieId: movieIdStr })
 
       // Save to backend
       try {
@@ -227,6 +237,22 @@ export default function DiscoverPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <BackgroundOrbs />
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  if (prefsError || libraryError) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <BackgroundOrbs />
+        <div className="text-center space-y-4">
+          <p className="text-destructive font-medium">
+            {prefsError || libraryError}
+          </p>
+          <Button onClick={() => window.location.reload()} variant="outline">
+            Reessayer
+          </Button>
+        </div>
       </div>
     )
   }

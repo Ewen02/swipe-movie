@@ -35,13 +35,17 @@ export function usePWAInstall() {
     setIsIOS(isIOSDevice)
 
     // Check if user dismissed recently (within 7 days)
-    const dismissed = localStorage.getItem("pwa-install-dismissed")
-    if (dismissed) {
-      const dismissedTime = parseInt(dismissed, 10)
-      const sevenDays = 7 * 24 * 60 * 60 * 1000
-      if (Date.now() - dismissedTime < sevenDays) {
-        setIsDismissed(true)
+    try {
+      const dismissed = localStorage.getItem("pwa-install-dismissed")
+      if (dismissed) {
+        const dismissedTime = parseInt(dismissed, 10)
+        const sevenDays = 7 * 24 * 60 * 60 * 1000
+        if (Date.now() - dismissedTime < sevenDays) {
+          setIsDismissed(true)
+        }
       }
+    } catch {
+      // localStorage may be unavailable (e.g. private browsing)
     }
 
     // Listen for the beforeinstallprompt event
@@ -90,8 +94,10 @@ export function usePWAInstall() {
     setIsInstallable(false)
     setIsDismissed(true)
     // Store dismissal in localStorage to not show again for a while
-    if (typeof localStorage !== "undefined") {
+    try {
       localStorage.setItem("pwa-install-dismissed", Date.now().toString())
+    } catch {
+      // localStorage may be unavailable (e.g. private browsing)
     }
   }, [])
 

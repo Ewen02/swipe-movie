@@ -28,6 +28,12 @@ async function serverApiFetch(input: string, init: ServerFetchOptions = {}) {
     reqHeaders.set("X-User-Email", userEmail)
   }
 
+  // Add internal API secret for server-to-server authentication
+  const internalSecret = process.env.INTERNAL_API_SECRET
+  if (internalSecret) {
+    reqHeaders.set("X-Internal-Secret", internalSecret)
+  }
+
   const { revalidate = 60, ...fetchInit } = init
 
   // Add cache configuration for Next.js

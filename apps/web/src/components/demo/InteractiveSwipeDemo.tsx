@@ -202,6 +202,7 @@ export function InteractiveSwipeDemo({ className = '' }: InteractiveSwipeDemoPro
     setTimeout(() => {
       setMovies(prev => {
         const [first, ...rest] = prev;
+        if (!first) return prev;
         return [...rest, first];
       });
       setExitDirection(null);

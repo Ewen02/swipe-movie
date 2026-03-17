@@ -1,0 +1,8 @@
+export { HeroSection } from "./HeroSection"
+export { StatsSection } from "./StatsSection"
+export { HowItWorksSection } from "./HowItWorksSection"
+export { DemoSection } from "./DemoSection"
+export { FeaturesSection } from "./FeaturesSection"
+export { TestimonialsSection } from "./TestimonialsSection"
+export { TrustBadges } from "./TrustBadges"
+export { FinalCTA } from "./FinalCTA"

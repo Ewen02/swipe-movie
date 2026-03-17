@@ -41,30 +41,39 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
   const initialLoadDoneRef = useRef<string | null>(null)
 
   // Initial load when room is ready AND swipes are loaded
+  // Uses swipedMovieIds.size to detect when swipes actually arrive (not just swipesLoaded flag)
+  // initialLoadDoneRef prevents re-execution after initial load is complete with swipes
+  const hasSwipes = swipedMovieIds.size > 0
+
   useEffect(() => {
     if (!room) return
     if (!swipesLoaded) return // Wait for swipes to be loaded first
     if (room.genreId !== null && room.genreId !== undefined) {
-      // Create a unique key for this room + swipes combination
-      const loadKey = `${room.id}-${swipedMovieIds.size}`
+      // Key includes whether swipes have been loaded to avoid loading with empty filter
+      const loadKey = `${room.id}-${hasSwipes ? 'with-swipes' : 'no-swipes'}`
 
-      // Skip if we already loaded for this exact combination
+      // Skip if we already loaded for this exact state
       if (initialLoadDoneRef.current === loadKey) {
+        return
+      }
+
+      // If we already loaded with swipes, don't reload without them
+      if (initialLoadDoneRef.current?.startsWith(`${room.id}-with-swipes`)) {
         return
       }
 
       console.log(`[useMoviesData] Initial load - room: ${room.id}, swipes: ${swipedMovieIds.size}`)
       initialLoadDoneRef.current = loadKey
 
-      // Reset pagination state when room changes
-      setMovies([]) // Clear movies to show skeleton during reload
+      // Reset pagination state
+      setMovies([])
       setEmptyPagesCount(0)
       setHasMoreMovies(true)
       setLastLoadedPage(0)
       setCurrentPage(1)
       loadMovies(room.genreId, room.type as 'movie' | 'tv', 1, false, room, swipedMovieIds)
     }
-  }, [room?.id, room?.members?.length, swipesLoaded, swipedMovieIds.size])
+  }, [room?.id, room?.members?.length, swipesLoaded, hasSwipes])
 
   const loadMovies = useCallback(async (
     genreId: number,
@@ -164,8 +173,8 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
           setEmptyPagesCount(prev => {
             const newCount = prev + 1
             console.log(`[useMoviesData] Empty page ${page}, count: ${newCount}`)
-            // Stop after 10 consecutive empty pages OR TMDB limit
-            if (newCount >= 10 || page >= 500) {
+            // Stop after 20 consecutive empty pages OR TMDB limit
+            if (newCount >= 20 || page >= 500) {
               console.log(`[useMoviesData] Stopping after ${newCount} empty pages or page limit`)
               setHasMoreMovies(false)
             }

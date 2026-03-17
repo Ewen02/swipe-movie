@@ -109,15 +109,15 @@ const FortuneWheel = React.forwardRef<HTMLDivElement, FortuneWheelProps>(
       })
 
       setRotation(finalRotation)
-      setSelectedItem(items[winnerIndex])
+      setSelectedItem(items[winnerIndex]!)
       setIsSpinning(false)
 
       // Call callbacks
       if (onSelect) {
-        onSelect(items[winnerIndex])
+        onSelect(items[winnerIndex]!)
       }
       if (onSpinEnd) {
-        onSpinEnd(items[winnerIndex])
+        onSpinEnd(items[winnerIndex]!)
       }
     }, [isSpinning, items, rotation, controls, onSelect, onSpinEnd])
 

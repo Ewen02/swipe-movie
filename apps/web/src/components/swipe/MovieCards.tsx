@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { motion } from "framer-motion"
 import { Badge } from "@swipe-movie/ui"
 import { Heart, Star, Calendar, Sparkles, Zap, Target, TrendingUp, Lightbulb } from "lucide-react"
@@ -41,7 +41,7 @@ export function MovieCards({
   const loadingMoreRef = useRef(false)
 
   // Sidebar translations
-  const sidebarTranslations: SidebarTranslations = {
+  const sidebarTranslations: SidebarTranslations = useMemo(() => ({
     session: t("sidebar.session"),
     moviesViewed: t("sidebar.moviesViewed"),
     liked: t("sidebar.liked"),
@@ -54,7 +54,7 @@ export function MovieCards({
     swipeRightToLike: t("sidebar.swipeRightToLike"),
     toDiscover: t("sidebar.toDiscover"),
     moviesInPile: t("sidebar.moviesInPile"),
-  }
+  }), [t])
 
   // Tips for the sidebar (translated)
   const swipeTips: SwipeTip[] = [
@@ -70,9 +70,8 @@ export function MovieCards({
     const validMovies = movies.filter(Boolean)
     console.log(`[MovieCards] Received ${validMovies.length} movies`)
     setCurrentCards(validMovies)
-    if (validMovies.length > 3) {
-      loadingMoreRef.current = false
-    }
+    // Always reset so next load can be triggered
+    loadingMoreRef.current = false
   }, [movies])
 
   // Rotate tips every 5 seconds

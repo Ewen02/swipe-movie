@@ -23,7 +23,7 @@ export default function SubscriptionDashboardPage() {
   const { subscription, plan, limits, usage, loading, isPaid } = useSubscription();
   const router = useRouter();
 
-  const planDisplay = PLAN_DISPLAY[plan] || PLAN_DISPLAY.free;
+  const planDisplay = PLAN_DISPLAY[plan] ?? PLAN_DISPLAY.free!;
 
   if (loading) {
     return (

@@ -89,7 +89,7 @@ export const MovieCard = memo(function MovieCard({
         id: Date.now() + i,
         x: Math.random() * 150 - 75,
         y: Math.random() * 150 - 75,
-        color: ["#22c55e", "#10b981", "#34d399", "#6ee7b7", "#fbbf24", "#f59e0b"][Math.floor(Math.random() * 6)],
+        color: ["#22c55e", "#10b981", "#34d399", "#6ee7b7", "#fbbf24", "#f59e0b"][Math.floor(Math.random() * 6)]!,
         delay: Math.random() * 0.15,
       }))
       setParticles(newParticles)

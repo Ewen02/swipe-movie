@@ -54,7 +54,7 @@ export function UpgradeModal({
     },
   };
 
-  const message = featureMessages[feature] || featureMessages.rooms;
+  const message = featureMessages[feature] ?? featureMessages.rooms!;
 
   return (
     <Dialog open={open} onOpenChange={onClose}>

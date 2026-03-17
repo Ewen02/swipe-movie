@@ -197,7 +197,7 @@ export function Analytics({ roomId, mediaType = "movie" }: AnalyticsProps) {
                   <div className="flex items-center gap-4">
                     {/* Avatar placeholder */}
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center text-sm font-medium">
-                      {(member.userName || "U")[0].toUpperCase()}
+                      {(member.userName || "U")[0]!.toUpperCase()}
                     </div>
 
                     <div className="flex-1 min-w-0">

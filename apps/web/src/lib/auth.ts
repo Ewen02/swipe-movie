@@ -111,7 +111,12 @@ export const auth = betterAuth({
               `${process.env.NEXT_PUBLIC_API_URL}/auth/oauth-upsert`,
               {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                  "Content-Type": "application/json",
+                  ...(process.env.INTERNAL_API_SECRET && {
+                    "X-Internal-Secret": process.env.INTERNAL_API_SECRET,
+                  }),
+                },
                 body: JSON.stringify({
                   email: user.email,
                   name: user.name ?? user.email?.split('@')[0] ?? 'User'

@@ -46,16 +46,6 @@ export function useRoomSocket(roomId: string | null): UseRoomSocketReturn {
     }
   }, [])
 
-  const calculateReconnectDelay = useCallback((attemptCount: number): number => {
-    // Exponential backoff with jitter
-    const exponentialDelay = Math.min(
-      SocketConfig.RECONNECT_DELAY_BASE * Math.pow(2, attemptCount),
-      SocketConfig.RECONNECT_DELAY_MAX
-    )
-    const jitter = Math.random() * 1000
-    return exponentialDelay + jitter
-  }, [])
-
   const joinRoom = useCallback((socket: Socket, room: string) => {
     if (!hasJoinedRoomRef.current) {
       socket.emit("joinRoom", room)
@@ -72,9 +62,14 @@ export function useRoomSocket(roomId: string | null): UseRoomSocketReturn {
     let isMounted = true
     hasJoinedRoomRef.current = false
 
-    // Create socket connection with resilience options
-    const socket = io(`${process.env.NEXT_PUBLIC_API_URL}/matches`, {
-      transports: ["websocket", "polling"],
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+    const socketUrl = `${apiUrl}/ws`
+    console.log(`[WebSocket] Connecting to ${socketUrl} for room ${roomId}`)
+
+    // Create socket connection
+    // Use polling first for handshake, then upgrade to websocket
+    const socket = io(socketUrl, {
+      transports: ["polling", "websocket"],
       withCredentials: true,
       reconnection: true,
       reconnectionAttempts: SocketConfig.MAX_RECONNECT_ATTEMPTS,
@@ -158,10 +153,10 @@ export function useRoomSocket(roomId: string | null): UseRoomSocketReturn {
     })
 
     // Connection error
-    socket.on("connect_error", (error) => {
+    socket.on("connect_error", (error: any) => {
       if (!isMounted) return
 
-      console.error("[WebSocket] Connection error:", error.message)
+      console.error("[WebSocket] Connection error:", error.message, "| type:", error.type, "| description:", error.description, "| context:", JSON.stringify({ url: socketUrl, transport: socket.io?.engine?.transport?.name }))
       setIsConnected(false)
       setConnectionState("error")
     })
@@ -219,7 +214,7 @@ export function useRoomSocket(roomId: string | null): UseRoomSocketReturn {
 
       hasJoinedRoomRef.current = false
     }
-  }, [roomId, joinRoom, clearReconnectTimeout, calculateReconnectDelay])
+  }, [roomId, joinRoom, clearReconnectTimeout])
 
   const resetNewMatch = useCallback(() => {
     setNewMatch(null)

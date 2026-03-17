@@ -118,12 +118,12 @@ export function OnboardingTutorial({ onComplete, onSkip }: OnboardingTutorialPro
               transition={{ duration: 0.3 }}
               className="text-center py-8"
             >
-              {steps[currentStep].icon}
+              {steps[currentStep]!.icon}
               <h2 className="text-3xl font-bold mb-4">
-                {steps[currentStep].title}
+                {steps[currentStep]!.title}
               </h2>
               <p className="text-lg text-muted-foreground max-w-md mx-auto">
-                {steps[currentStep].description}
+                {steps[currentStep]!.description}
               </p>
             </motion.div>
           </AnimatePresence>

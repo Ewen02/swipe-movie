@@ -55,7 +55,7 @@ export function DemoDialog({ open, onOpenChange }: DemoDialogProps) {
   const [showMatch, setShowMatch] = useState(false)
   const [direction, setDirection] = useState<"left" | "right" | null>(null)
 
-  const currentMovie = DEMO_MOVIES[currentIndex]
+  const currentMovie = DEMO_MOVIES[currentIndex]!
 
   const handleSwipe = (liked: boolean) => {
     setDirection(liked ? "right" : "left")

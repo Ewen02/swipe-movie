@@ -8,6 +8,7 @@ import { StepProviders, StepGenres, StepSwipe, StepComplete } from "./components
 import { useUserPreferences } from "@/hooks/useUserPreferences"
 import type { OnboardingSwipe } from "@/lib/api/users"
 import { OnboardingPageSkeleton } from "./OnboardingPageSkeleton"
+import { captureEvent } from "@/components/providers/PostHogProvider"
 
 const STEPS = [
   { id: "providers", title: "Plateformes" },
@@ -45,6 +46,8 @@ export default function OnboardingPage() {
       // If already completed, redirect to rooms
       if (preferences.onboardingCompleted) {
         router.replace("/rooms")
+      } else {
+        captureEvent("onboarding_started", { step: preferences.onboardingStep || 0 })
       }
     }
   }, [preferences, router, isDebugMode])
@@ -96,6 +99,7 @@ export default function OnboardingPage() {
     setIsSaving(true)
     try {
       await complete()
+      captureEvent("onboarding_completed", { nextAction: "create_room" })
       router.push("/rooms?create=true")
     } catch (error) {
       console.error("Failed to complete onboarding:", error)
@@ -108,6 +112,7 @@ export default function OnboardingPage() {
     setIsSaving(true)
     try {
       await complete()
+      captureEvent("onboarding_completed", { nextAction: "discover" })
       router.push("/discover")
     } catch (error) {
       console.error("Failed to complete onboarding:", error)
@@ -120,6 +125,7 @@ export default function OnboardingPage() {
     setIsSaving(true)
     try {
       await complete()
+      captureEvent("onboarding_completed", { nextAction: "import" })
       router.push("/connections")
     } catch (error) {
       console.error("Failed to complete onboarding:", error)

@@ -72,7 +72,7 @@ export function TextImport() {
 
     // Search movies one by one
     for (let i = 0; i < queries.length; i++) {
-      const query = queries[i]
+      const query = queries[i]!
       const result = await searchMovie(query)
 
       setMovies((prev) => {

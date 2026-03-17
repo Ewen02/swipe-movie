@@ -11,6 +11,7 @@ import {
   Button,
 } from "@swipe-movie/ui"
 import { Sparkles, Loader2, ArrowLeft, ArrowRight, Check } from "lucide-react"
+import { captureEvent } from "@/components/providers/PostHogProvider"
 import { StepIndicator } from "./StepIndicator"
 import { StepTypeAndProviders } from "./StepTypeAndProviders"
 import { StepPersonalization } from "./StepPersonalization"
@@ -19,6 +20,7 @@ import { StepConfirmation } from "./StepConfirmation"
 import { CreateRoomValues } from "@/schemas/rooms"
 import type { MovieGenre, MovieWatchProvider } from "@/schemas/movies"
 import { getAllWatchProviders } from "@/lib/api/movies"
+import { useUserPreferences } from "@/hooks/useUserPreferences"
 
 const STEPS = [
   { title: "Essentiel", description: "Type et plateformes" },
@@ -42,6 +44,7 @@ export function CreateRoomStepper({
   genres,
   loading,
 }: CreateRoomStepperProps) {
+  const { preferences } = useUserPreferences()
   const [currentStep, setCurrentStep] = useState(0)
   const [providers, setProviders] = useState<MovieWatchProvider[]>([])
 
@@ -72,9 +75,14 @@ export function CreateRoomStepper({
     }
   }, [open])
 
-  // Reset form when dialog closes
+  // Reset form when dialog closes, pre-fill providers from user preferences when it opens
   useEffect(() => {
-    if (!open) {
+    if (open) {
+      // Pre-fill watch providers from user's onboarding preferences
+      if (preferences?.watchProviders && preferences.watchProviders.length > 0) {
+        setWatchProviders(preferences.watchProviders)
+      }
+    } else {
       setCurrentStep(0)
       setType("movie")
       setWatchProviders([])
@@ -87,7 +95,7 @@ export function CreateRoomStepper({
       setRuntimeMax(undefined)
       setOriginalLanguage(undefined)
     }
-  }, [open])
+  }, [open, preferences?.watchProviders])
 
   const handleNext = () => {
     if (currentStep < STEPS.length - 1) {
@@ -116,6 +124,7 @@ export function CreateRoomStepper({
       originalLanguage,
     }
     await onSubmit(roomData)
+    captureEvent("room_created", { type, genreId })
   }
 
   const renderStep = () => {
@@ -195,7 +204,7 @@ export function CreateRoomStepper({
             <div>
               <DialogTitle className="text-2xl">Creer une room</DialogTitle>
               <DialogDescription className="text-base">
-                {STEPS[currentStep].description}
+                {STEPS[currentStep]!.description}
               </DialogDescription>
             </div>
           </div>
