@@ -53,6 +53,39 @@ const nextConfig = {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin'
           },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains; preload'
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://us-assets.i.posthog.com https://eu-assets.i.posthog.com https://va.vercel-scripts.com",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob: https://image.tmdb.org https://lh3.googleusercontent.com",
+              "font-src 'self'",
+              "connect-src 'self' " + [
+                process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
+                'https://www.google-analytics.com',
+                'https://*.google-analytics.com',
+                'https://*.ingest.sentry.io',
+                'wss://*.ingest.sentry.io',
+                'https://us.i.posthog.com',
+                'https://eu.i.posthog.com',
+                'https://us-assets.i.posthog.com',
+                'https://eu-assets.i.posthog.com',
+                'https://app.posthog.com',
+              ].join(' '),
+              "frame-ancestors 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join('; ')
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()'
+          },
         ],
       },
     ];

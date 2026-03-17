@@ -262,6 +262,11 @@
     "connecting": "Connecting...",
     "roomMembers": "Room members",
     "unknownUser": "Unknown user",
+    "members": {
+      "joined": "{name} joined the room",
+      "left": "A member left the room",
+      "someone": "Someone"
+    },
     "moviesType": "🎬 Movies",
     "tvShowsType": "📺 TV Shows",
     "tabs": {
