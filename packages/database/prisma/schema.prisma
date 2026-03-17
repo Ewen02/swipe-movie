@@ -122,6 +122,7 @@ model Room {
 
   members   RoomMember[]
   matches   Match[]
+  swipes    Swipe[]
   createdBy String
   createdAt DateTime     @default(now())
   updatedAt DateTime     @default(now()) @updatedAt
@@ -135,10 +136,11 @@ model RoomMember {
   id     String @id @default(cuid())
   roomId String
   userId String
-  room   Room   @relation(fields: [roomId], references: [id])
-  user   User   @relation(fields: [userId], references: [id])
+  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([roomId, userId])
+  @@index([userId])
 }
 
 model Swipe {
@@ -149,6 +151,7 @@ model Swipe {
   value     Boolean
   createdAt DateTime @default(now())
 
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id])
 
   @@unique([roomId, userId, movieId], name: "userId_roomId_movieId")
@@ -164,11 +167,12 @@ model Match {
   roomId    String
   movieId   String
   createdAt DateTime @default(now())
-  room      Room     @relation(fields: [roomId], references: [id])
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   @@unique([roomId, movieId])
   @@index([roomId])
   @@index([createdAt])
+  @@index([movieId])
 }
 
 // ==========================================
@@ -179,10 +183,10 @@ model UserMediaLibrary {
   id         String    @id @default(cuid())
   userId     String
   tmdbId     String
-  mediaType  String    // 'movie' | 'tv'
-  status     String    // 'watched' | 'watchlist' | 'rated' | 'liked' | 'disliked'
+  mediaType  String
+  status     String
   rating     Float?
-  source     String    // 'trakt' | 'anilist' | 'manual' | 'onboarding' | 'discover'
+  source     String
   externalId String?
   watchedAt  DateTime?
   importedAt DateTime  @default(now())

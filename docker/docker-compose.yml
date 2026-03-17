@@ -1,19 +1,46 @@
+name: swipe-movie
+
 services:
   db:
     image: postgres:16
+    container_name: swipe-movie-db
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: swipe
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_DB: ${DB_NAME:-swipe}
     ports: ["5432:5432"]
     volumes:
       - dbdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - app-network
+
   redis:
     image: redis:7
+    container_name: swipe-movie-redis
     ports: ["6379:6379"]
     command: redis-server --appendonly yes --save 60 1000 --save 300 100 --save 900 1
     volumes:
       - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - app-network
+
 volumes:
   dbdata:
   redisdata:
+
+networks:
+  app-network:
+    driver: bridge
