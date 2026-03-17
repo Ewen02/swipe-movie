@@ -68,7 +68,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build API
-        run: cd apps/api && pnpm run build
+        run: pnpm run build:api
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_API }}
 
