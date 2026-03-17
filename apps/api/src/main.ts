@@ -50,24 +50,28 @@ async function bootstrap() {
     }),
   );
 
-  const config = new DocumentBuilder()
-    .setTitle('Swipe Movie API')
-    .setDescription('Endpoints REST du backend')
-    .setVersion('1.0.0')
-    .addBearerAuth() // Authorization: Bearer <token>
-    .addServer(process.env.API_ORIGIN ?? 'http://localhost:3001', 'Local API')
-    .build();
+  // Only enable Swagger in non-production environments
+  if (process.env.NODE_ENV !== 'production') {
+    const config = new DocumentBuilder()
+      .setTitle('Swipe Movie API')
+      .setDescription('Endpoints REST du backend')
+      .setVersion('1.0.0')
+      .addBearerAuth()
+      .addServer(process.env.API_ORIGIN ?? 'http://localhost:3001', 'Local API')
+      .build();
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('docs', app, document);
+
+    Logger.log(
+      `📖 Swagger is running on: ${process.env.API_ORIGIN}/docs`,
+      'Bootstrap',
+    );
+  }
 
   await app.listen(process.env.PORT || 3001);
   Logger.log(
     `🚀 Application is running on: ${process.env.API_ORIGIN}`,
-    'Bootstrap',
-  );
-  Logger.log(
-    `📖 Swagger is running on: ${process.env.API_ORIGIN}/docs`,
     'Bootstrap',
   );
 }

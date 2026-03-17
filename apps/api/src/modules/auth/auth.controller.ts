@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Post,
+  UseGuards,
   UnauthorizedException,
   BadRequestException,
   Logger,
@@ -11,12 +12,14 @@ import { AuthService } from './auth.service';
 import { PrismaService } from '../../infra/prisma.service';
 import { ThrottleStrict } from '../../common/decorators/throttle.decorator';
 import { NestEmailService } from '../email/email.service';
+import { InternalApiGuard } from '../../common/guards/internal-api.guard';
 
 import { OauthUpsertDto, LoginOauthDto } from './dtos';
 
 @ApiTags('Auth')
 @Controller('auth')
 @ThrottleStrict() // Apply strict rate limiting to all auth endpoints
+@UseGuards(InternalApiGuard) // All auth endpoints require internal API secret
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 

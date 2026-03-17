@@ -5,7 +5,6 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { EmailHeaderStrategy } from './email-header.strategy';
-import { PrismaService } from '../../infra/prisma.service';
 
 @Module({
   imports: [
@@ -16,14 +15,14 @@ import { PrismaService } from '../../infra/prisma.service';
       useFactory: (config: ConfigService): JwtModuleOptions => ({
         secret: config.getOrThrow<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: '7d',
+          expiresIn: '1h',
           issuer: 'swipe-movie-api',
           audience: 'swipe-movie-web',
         },
       }),
     }),
   ],
-  providers: [AuthService, JwtStrategy, EmailHeaderStrategy, PrismaService],
+  providers: [AuthService, JwtStrategy, EmailHeaderStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })

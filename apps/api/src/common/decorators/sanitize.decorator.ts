@@ -1,8 +1,9 @@
 import { Transform } from 'class-transformer';
+import * as he from 'he';
 
 /**
- * Sanitize string input by trimming whitespace and removing HTML tags
- * Prevents XSS attacks through user input
+ * Sanitize string input by trimming whitespace and encoding HTML entities.
+ * Uses the 'he' library for proper HTML entity encoding instead of regex-based stripping.
  */
 export function Sanitize() {
   return Transform(({ value }) => {
@@ -11,11 +12,8 @@ export function Sanitize() {
     // Trim whitespace
     let sanitized = value.trim();
 
-    // Remove HTML tags (basic XSS protection)
-    sanitized = sanitized.replace(/<[^>]*>/g, '');
-
-    // Remove potentially dangerous characters
-    sanitized = sanitized.replace(/[<>'"]/g, '');
+    // Encode HTML entities to prevent XSS (converts <, >, &, ", ' to safe entities)
+    sanitized = he.encode(sanitized, { useNamedReferences: true });
 
     return sanitized;
   });

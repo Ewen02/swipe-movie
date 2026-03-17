@@ -1,5 +1,6 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './modules/auth/auth.module';
@@ -14,11 +15,17 @@ import { AniListModule } from './modules/anilist/anilist.module';
 import { RecommendationsModule } from './modules/recommendations/recommendations.module';
 import { UsersModule } from './modules/users/users.module';
 import { EmailModule } from './modules/email/email.module';
+import { AdminModule } from './modules/admin/admin.module';
+import { HealthController } from './modules/health/health.controller';
 import { HttpsRedirectMiddleware } from './common/middleware/https-redirect.middleware';
+import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
+import { PrismaModule } from './infra/prisma.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
+    PrismaModule,
     CacheConfigModule,
     // Rate limiting: 100 requêtes par minute par IP
     ThrottlerModule.forRoot([
@@ -49,7 +56,9 @@ import { HttpsRedirectMiddleware } from './common/middleware/https-redirect.midd
     RecommendationsModule,
     UsersModule,
     EmailModule,
+    AdminModule,
   ],
+  controllers: [HealthController],
   providers: [
     {
       provide: APP_GUARD,
@@ -59,6 +68,10 @@ import { HttpsRedirectMiddleware } from './common/middleware/https-redirect.midd
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(HttpsRedirectMiddleware).forRoutes('*');
+    consumer
+      .apply(HttpsRedirectMiddleware)
+      .forRoutes('*')
+      .apply(RequestLoggerMiddleware)
+      .forRoutes('*');
   }
 }

@@ -24,6 +24,9 @@ RUN npm run build --workspace=apps/api
 # Production stage
 FROM node:20-alpine
 
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && adduser -S nestjs -u 1001
+
 WORKDIR /app
 
 # Copy package files
@@ -42,6 +45,10 @@ WORKDIR /app/apps/api
 
 # Generate Prisma Client in production stage
 RUN npx prisma generate
+
+# Set ownership and switch to non-root user
+RUN chown -R nestjs:nodejs /app
+USER nestjs
 
 # Expose port
 EXPOSE 3001
