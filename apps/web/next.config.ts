@@ -76,10 +76,12 @@ const nextConfig = {
                 'https://us-assets.i.posthog.com',
                 'https://eu-assets.i.posthog.com',
                 'https://app.posthog.com',
+                'https://accounts.google.com',
+                'https://oauth2.googleapis.com',
               ].join(' '),
               "frame-ancestors 'none'",
               "base-uri 'self'",
-              "form-action 'self'",
+              "form-action 'self' https://accounts.google.com",
             ].join('; ')
           },
           {

@@ -16,8 +16,10 @@ function LoginPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const callbackUrl = searchParams?.get("callbackUrl") || "/rooms"
+  const rawCallback = searchParams?.get("callbackUrl") || "/rooms"
+  const callbackUrl = rawCallback.startsWith("/") ? rawCallback : "/rooms"
 
   useEffect(() => {
     if (session) {
@@ -27,6 +29,7 @@ function LoginPageContent() {
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true)
+    setError(null)
     try {
       await signIn.social({
         provider: "google",
@@ -34,6 +37,7 @@ function LoginPageContent() {
       })
     } catch (error) {
       console.error("Sign in error:", error)
+      setError("La connexion a échoué. Réessaie ou contacte le support.")
       setIsLoading(false)
     }
   }
@@ -133,6 +137,10 @@ function LoginPageContent() {
                   )}
                 </Button>
               </motion.div>
+
+              {error && (
+                <p className="text-sm text-red-500 mt-3 text-center">{error}</p>
+              )}
 
               {/* Trust badges */}
               <div className="mt-6 flex flex-wrap gap-4 text-sm">
