@@ -91,7 +91,7 @@ export function HeroSection({
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.5 }}
                     >
-                      <Link href={isAuthenticated ? "/rooms" : "/login"}>
+                      <Link href={isAuthenticated ? "/rooms" : "/try"}>
                         <ShimmerEffect delay={3}>
                           <Button size="lg" className="text-lg px-8 py-7 shadow-xl shadow-primary/25 w-full sm:w-auto">
                             {isAuthenticated ? ctaAuth : cta}

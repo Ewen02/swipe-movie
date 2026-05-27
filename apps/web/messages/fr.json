@@ -902,5 +902,23 @@
       "deleteError": "Erreur de suppression",
       "deleteErrorDescription": "Impossible de supprimer votre compte. Réessayez plus tard."
     }
+  },
+  "trial": {
+    "banner": "Mode essai — {remaining} swipes restants",
+    "bannerCta": "Créer un compte",
+    "matchTitle": "C'est un Match !",
+    "matchSubtitle": "Vous aimez tous les deux ce film",
+    "loginWall": {
+      "matchTitle": "Match trouvé ! 🎉",
+      "matchDescription": "Crée ton compte gratuit pour garder tes matchs et inviter encore plus d'amis.",
+      "limitTitle": "Tu kiffes le concept ?",
+      "limitDescription": "Inscris-toi gratuitement pour débloquer des swipes illimités et créer tes propres rooms.",
+      "cta": "Continuer avec Google",
+      "dismiss": "Peut-être plus tard"
+    },
+    "invite": "Invite un ami",
+    "inviteDescription": "Partage ce lien pour swiper à deux",
+    "swipeCount": "{count}/{total} swipes",
+    "loading": "Chargement..."
   }
 }

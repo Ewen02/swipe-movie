@@ -215,7 +215,7 @@ export default async function PlatformPage({ params }: { params: Promise<Params>
           { label: name },
         ]}
         ctaLabel={t.cta}
-        ctaHref={`/${locale}/login?callbackUrl=/rooms`}
+        ctaHref={`/${locale}/try`}
         facets={facets}
       />
     </>

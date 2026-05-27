@@ -205,7 +205,7 @@ export default async function PlatformGenrePage({ params }: { params: Promise<Pa
           { label: genreName },
         ]}
         ctaLabel={t.cta}
-        ctaHref={`/${locale}/login?callbackUrl=/rooms`}
+        ctaHref={`/${locale}/try`}
       />
     </>
   );

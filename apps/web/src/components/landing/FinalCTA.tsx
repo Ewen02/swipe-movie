@@ -78,7 +78,7 @@ export function FinalCTA({
                       </p>
 
                       <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                        <Link href={isAuthenticated ? "/rooms" : "/login"}>
+                        <Link href={isAuthenticated ? "/rooms" : "/try"}>
                           <motion.div
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}

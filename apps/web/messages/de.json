@@ -902,5 +902,23 @@
       "deleteError": "Deletion error",
       "deleteErrorDescription": "Unable to delete your account. Please try again later."
     }
+  },
+  "trial": {
+    "banner": "Testmodus — {remaining} Swipes ubrig",
+    "bannerCta": "Konto erstellen",
+    "matchTitle": "Es ist ein Match!",
+    "matchSubtitle": "Ihr mogt beide diesen Film",
+    "loginWall": {
+      "matchTitle": "Match gefunden! 🎉",
+      "matchDescription": "Erstelle dein kostenloses Konto, um deine Matches zu behalten und noch mehr Freunde einzuladen.",
+      "limitTitle": "Gefallt dir das Konzept?",
+      "limitDescription": "Registriere dich kostenlos, um unbegrenzte Swipes freizuschalten und eigene Rooms zu erstellen.",
+      "cta": "Weiter mit Google",
+      "dismiss": "Vielleicht spater"
+    },
+    "invite": "Freund einladen",
+    "inviteDescription": "Teile diesen Link, um zusammen zu swipen",
+    "swipeCount": "{count}/{total} Swipes",
+    "loading": "Wird geladen..."
   }
 }

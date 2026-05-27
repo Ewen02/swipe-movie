@@ -165,7 +165,7 @@ export default async function FilmsHubPage({ params }: { params: Promise<Params>
           </h1>
           <p className="text-muted-foreground max-w-3xl leading-relaxed">{t.intro}</p>
           <Link
-            href={`/${locale}/login?callbackUrl=/rooms`}
+            href={`/${locale}/try`}
             className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-semibold text-white shadow-lg hover:opacity-90 transition"
           >
             {t.cta}

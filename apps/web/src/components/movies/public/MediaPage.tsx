@@ -64,7 +64,7 @@ export function MediaPage({ movie, stats, locale, type, labels }: Props) {
           director: labels.director,
           runtime: labels.runtime,
           cta: labels.cta,
-          ctaHref: `/${locale}/login?callbackUrl=/rooms`,
+          ctaHref: `/${locale}/try`,
         }}
       />
 
