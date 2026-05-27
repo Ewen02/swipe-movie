@@ -1,0 +1,906 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "viewMore": "View more",
+    "viewLess": "View less",
+    "menu": "Menu",
+    "language": "Language",
+    "theme": "Theme",
+    "navigation": "Navigation"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "signInWith": "Sign in with {provider}",
+    "signOutConfirm": "Sign out?",
+    "signOutDescription": "Are you sure you want to sign out? You will need to sign in again to access your rooms.",
+    "welcome": "Welcome",
+    "welcomeBack": "Welcome back"
+  },
+  "nav": {
+    "home": "Home",
+    "rooms": "My Rooms",
+    "profile": "Profile",
+    "settings": "Settings",
+    "subscription": "Subscription",
+    "connections": "Connections",
+    "library": "Library",
+    "about": "About",
+    "contact": "Contact",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "cookies": "Manage cookies"
+  },
+  "landing": {
+    "title": "Swipe Movie",
+    "subtitle": "Find your next movie to watch with friends",
+    "hero": {
+      "badge": "Free & no sign-up to join",
+      "title": "Swipe, Match, Watch ",
+      "titleHighlight": "Together.",
+      "subtitle": "No more endless debates! Swipe, match and watch together in seconds.",
+      "ctaAuth": "Go to my rooms",
+      "cta": "Create my free room",
+      "demo": "Watch demo",
+      "trust": {
+        "free": "100% free",
+        "ready": "Ready in 30 seconds",
+        "noCard": "No credit card"
+      }
+    },
+    "stats": {
+      "movies": "Available movies",
+      "platforms": "Platforms",
+      "decide": "To decide",
+      "free": "Free"
+    },
+    "howItWorks": {
+      "badge": "Simple as hello",
+      "title": "How does it ",
+      "titleHighlight": "work?",
+      "subtitle": "Three simple steps to find your perfect movie",
+      "step": "Step",
+      "step1": {
+        "title": "Create a room",
+        "description": "Choose your filters: genre, platform, minimum rating..."
+      },
+      "step2": {
+        "title": "Invite your friends",
+        "description": "Share the code. No account needed to join!"
+      },
+      "step3": {
+        "title": "Swipe & match",
+        "description": "When everyone likes the same movie: it's a match!"
+      }
+    },
+    "demo": {
+      "badge": "Interactive demo",
+      "title": "Try ",
+      "titleHighlight": "the experience",
+      "subtitle": "Drag the cards to discover how swiping works. It's exactly like in the app!",
+      "right": "Right = I love it",
+      "left": "Left = Not for me",
+      "match": "Match = Everyone liked it!"
+    },
+    "features": {
+      "badge": "Features",
+      "title": "Why ",
+      "titleHighlight": "Swipe Movie?",
+      "subtitle": "The app that turns chaos into consensus",
+      "noFights": {
+        "title": "No more fights",
+        "description": "\"You always choose!\" Never again. Everyone votes, no one is frustrated."
+      },
+      "fast": {
+        "title": "2 minutes flat",
+        "description": "No more scrolling for 30 minutes. Filter, swipe, find THE perfect movie."
+      },
+      "platforms": {
+        "title": "All your platforms",
+        "description": "Netflix, Disney+, Prime, Canal+... We only show what YOU can watch."
+      },
+      "addictive": {
+        "title": "Addictive (but useful)",
+        "description": "The swipe interface makes choosing fun. Your friends will love participating!"
+      }
+    },
+    "testimonials": {
+      "badge": "Testimonials",
+      "title": "They ",
+      "titleHighlight": "love it",
+      "subtitle": "Join thousands of satisfied users",
+      "items": {
+        "marie": {
+          "name": "Marie L.",
+          "role": "Flatshare of 4",
+          "content": "No more endless debates! We find a movie in 2 minutes now. It's become our Friday night ritual."
+        },
+        "thomas": {
+          "name": "Thomas D.",
+          "role": "Family father",
+          "content": "Perfect for family movie nights. The kids love swiping and we always end up finding a movie everyone enjoys."
+        },
+        "sophie": {
+          "name": "Sophie M.",
+          "role": "Movie buff",
+          "content": "I discovered so many movies I would never have watched! The filters are super precise and the catalog is huge."
+        }
+      }
+    },
+    "badges": {
+      "free": {
+        "title": "100% Free",
+        "subtitle": "No hidden fees"
+      },
+      "ready": {
+        "title": "Ready in 30s",
+        "subtitle": "Ultra-fast setup"
+      },
+      "mobile": {
+        "title": "Mobile-first",
+        "subtitle": "Touch optimized"
+      },
+      "google": {
+        "title": "Google Sign-in",
+        "subtitle": "1-click connection"
+      }
+    },
+    "cta": {
+      "badge": "Ready in 30 seconds",
+      "title": "Your next ",
+      "titleHighlight": "movie night",
+      "titleEnd": " starts here",
+      "subtitleAuth": "Create a new room and invite your friends to vote for the perfect movie.",
+      "subtitle": "Join thousands of users who said goodbye to endless debates.",
+      "buttonAuth": "Create a room",
+      "button": "Get started for free",
+      "trust": {
+        "free": "100% free",
+        "noCard": "No credit card"
+      },
+      "matchFound": "Match found!",
+      "matchSubtitle": "Everyone liked it",
+      "itsAMatch": "It's a match!"
+    }
+  },
+  "rooms": {
+    "title": "My Rooms",
+    "yourRooms": "Your movie rooms",
+    "create": "Create a room",
+    "join": "Join a room",
+    "empty": "No active rooms",
+    "emptyDescription": "Create your first room to start swiping movies with your friends!",
+    "roomsCount": "{count, plural, =1 {# active room} other {# active rooms}}",
+    "active": "Active rooms",
+    "myActiveRooms": "My active rooms",
+    "members": "{count} members",
+    "membersCount": "{count}/{max} members",
+    "new": "New",
+    "access": "Access",
+    "share": "Share",
+    "code": "Code",
+    "errorUnknown": "Unknown error",
+    "retry": "Retry",
+    "type": {
+      "movie": "Movies",
+      "tv": "TV Shows"
+    },
+    "stats": {
+      "total": "Total rooms",
+      "matches": "Matches found",
+      "swipesToday": "Swipes today"
+    },
+    "filters": {
+      "all": "All",
+      "movie": "Movies",
+      "tv": "Series",
+      "recent": "Recent"
+    },
+    "emptyState": {
+      "title": "No active rooms",
+      "description": "Create your first room to start swiping movies with your friends!"
+    },
+    "card": {
+      "unnamed": "Unnamed room",
+      "new": "New",
+      "movies": "Movies",
+      "series": "Series",
+      "filtered": "Filtered",
+      "access": "Access"
+    }
+  },
+  "room": {
+    "name": "Room name",
+    "namePlaceholder": "My movie room",
+    "code": "Room code",
+    "codePlaceholder": "ABC123",
+    "selectType": "Select type",
+    "movies": "Movies",
+    "tvShows": "TV Shows",
+    "genre": "Genre",
+    "genrePlaceholder": "Choose a genre",
+    "rating": "Minimum rating",
+    "year": "Year",
+    "yearMin": "Min year",
+    "yearMax": "Max year",
+    "runtime": "Runtime",
+    "runtimeMin": "Min",
+    "runtimeMax": "Max",
+    "providers": "Platforms",
+    "language": "Language",
+    "advancedFilters": "Advanced filters",
+    "creating": "Creating...",
+    "joining": "Connecting...",
+    "full": "Room full",
+    "fullDescription": "This room is full ({current}/{max} members). Ask the room creator to increase the capacity or create your own room!",
+    "notFound": "Room not found",
+    "error": "Error",
+    "errorLoading": "Unable to load room",
+    "unnamedRoom": "Unnamed room",
+    "membersCount": "{count}/{max} members",
+    "welcomeTitle": "Welcome!",
+    "welcomeDescription": "You have successfully joined the room.",
+    "roomFullTitle": "Room full",
+    "roomFullDescription": "This room is full ({current}/{max} members). Ask the room creator to increase the capacity or create your own room!",
+    "joinErrorTitle": "Error",
+    "joinErrorDescription": "Unable to join the room. Please try again.",
+    "joinRoomDescription": "Join this room to swipe and find matches with your friends!",
+    "joiningButton": "Join room",
+    "connecting": "Connecting...",
+    "roomMembers": "Room members",
+    "unknownUser": "Unknown user",
+    "members": {
+      "joined": "{name} joined the room",
+      "left": "A member left the room",
+      "someone": "Someone"
+    },
+    "moviesType": "🎬 Movies",
+    "tvShowsType": "📺 TV Shows",
+    "tabs": {
+      "swipe": "Swipe",
+      "matches": "Matches",
+      "history": "History",
+      "stats": "Stats",
+      "members": "Members",
+      "swipeAriaLabel": "Swipe on movies",
+      "matchesAriaLabel": "View matches",
+      "historyAriaLabel": "View swipe history",
+      "statsAriaLabel": "View statistics",
+      "membersAriaLabel": "View room members",
+      "navigationAriaLabel": "Room navigation"
+    }
+  },
+  "swipe": {
+    "like": "Like",
+    "dislike": "Pass",
+    "undo": "Undo",
+    "details": "Details",
+    "noMovies": "No movies available",
+    "noMoviesDescription": "All movies have already been viewed. Try changing the room filters.",
+    "noGenre": "Incomplete room configuration",
+    "noGenreDescription": "This room has no configured genre. Ask the creator to configure a genre to start swiping!",
+    "allSwiped": "No more movies available!",
+    "allSwipedDescription": "You've swiped all available movies with these filters! Try broadening your criteria.",
+    "loading": "Loading movies...",
+    "rating": "Rating",
+    "votes": "{count} votes",
+    "releaseDate": "Release",
+    "limitReached": "Swipe limit reached",
+    "limitReachedDescription": "You have reached the swipe limit for this room. Upgrade your plan to continue.",
+    "swipeError": "Swipe error",
+    "swipeErrorDescription": "An error occurred while saving your choice.",
+    "sidebar": {
+      "session": "Session",
+      "moviesViewed": "Movies viewed",
+      "liked": "Liked",
+      "likeRate": "Like rate",
+      "tip": "Tip",
+      "shortcuts": "Shortcuts",
+      "nope": "Nope",
+      "recentlyLiked": "Recently liked",
+      "noLikesYet": "No likes yet",
+      "swipeRightToLike": "Swipe right to like",
+      "toDiscover": "To discover",
+      "moviesInPile": "movies in pile",
+      "moviesRemaining": "{count} movies remaining",
+      "swiped": "{count} swiped",
+      "percentLiked": "{percent}% liked",
+      "keyboardHint": "← → to swipe • Ctrl+Z undo",
+      "tips": {
+        "swipeFast": "Swipe fast for a dynamic exit",
+        "keyboard": "← → on keyboard to swipe",
+        "undoTip": "Ctrl+Z to undo last swipe",
+        "matches": "Matches appear when everyone likes",
+        "learning": "The more you swipe, the better we know you"
+      }
+    }
+  },
+  "match": {
+    "title": "It's a match!",
+    "newMatch": "New Match!",
+    "description": "A movie has been matched by the group!",
+    "noMatches": "No matches yet",
+    "noMatchesDescription": "Keep swiping to find a movie everyone loves!",
+    "topMatch": "Top Match",
+    "otherMatches": "Other Matches ({count})",
+    "agreement": "{percent}% agreement",
+    "watchOn": "Watch on",
+    "tmdb": "View on TMDb",
+    "share": "Share"
+  },
+  "error": {
+    "title": "An error occurred",
+    "description": "We're sorry, something went wrong",
+    "retry": "Retry",
+    "home": "Home",
+    "back": "Back",
+    "details": "Error details",
+    "notFound": "Page not found",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Access forbidden",
+    "404": {
+      "badge": "Page not found",
+      "title": "Page not found",
+      "description": "The page you're looking for doesn't exist or has been moved."
+    },
+    "500": {
+      "badge": "Server error",
+      "title": "An error occurred",
+      "description": "We're sorry, something went wrong."
+    }
+  },
+  "footer": {
+    "madeWith": "Made with",
+    "by": "by",
+    "rights": "All rights reserved"
+  },
+  "about": {
+    "title": "About Swipe Movie",
+    "mission": {
+      "title": "Our mission",
+      "p1": "Swipe Movie was born from a simple observation: choosing a movie to watch as a group is often a source of endless debate. How many times have you spent 30 minutes looking for a movie, only to give up and watch the same series for the umpteenth time?",
+      "p2": "Our mission is to make this decision quick, democratic and fun. Thanks to our swipe system inspired by dating apps, each group member can express their preferences, and our algorithm automatically finds the movie that everyone will love."
+    },
+    "howItWorks": {
+      "title": "How it works",
+      "step1Title": "1. Create a room",
+      "step1Desc": "Configure your preferences: movie genre, streaming platform, minimum rating, duration... Filters apply to all room members.",
+      "step2Title": "2. Invite your friends",
+      "step2Desc": "Share the room code with your friends, family or colleagues. No need for everyone to be connected at the same time!",
+      "step3Title": "3. Swipe",
+      "step3Desc": "Everyone swipes on their own. Right if the movie interests you, left otherwise. As soon as all members have liked the same movie: it's a match! 🎉"
+    },
+    "catalog": {
+      "title": "Movie catalog",
+      "description": "We use The Movie Database (TMDb), which contains millions of movies and series. Information is updated regularly to offer you the latest releases and timeless classics."
+    },
+    "free": {
+      "title": "Free and ad-free",
+      "description": "Swipe Movie is 100% free and contains no ads. No credit card required, no hidden subscription. Our goal is to save you time, not money."
+    },
+    "cta": {
+      "title": "Ready to simplify your movie nights?",
+      "button": "Get started for free"
+    }
+  },
+  "contact": {
+    "title": "Contact us",
+    "description": "Have a question, suggestion or problem? We're here to help!",
+    "email": {
+      "title": "Email",
+      "description": "For any general questions or support"
+    },
+    "github": {
+      "title": "GitHub",
+      "description": "Report a bug or suggest an improvement",
+      "link": "Open an issue"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": "Is Swipe Movie really free?",
+      "a1": "Yes, 100% free with no ads. No hidden fees, no subscription.",
+      "q2": "How do I invite friends to a room?",
+      "a2": "After creating a room, you'll receive a unique code. Share this code with your friends, and they can join the room from the homepage by clicking \"Join a room\".",
+      "q3": "Do we need to be online at the same time to swipe?",
+      "a3": "No! Each member can swipe at their own pace. As soon as all members have liked the same movie, you'll receive a match notification.",
+      "q4": "Where does the movie information come from?",
+      "a4": "We use The Movie Database (TMDb), a collaborative database with millions of movies and TV shows. Information is regularly updated.",
+      "q5": "Is my personal data secure?",
+      "a5": "Absolutely. We only collect strictly necessary information (name and email via Google OAuth). Check out our",
+      "privacyLink": "privacy policy",
+      "a5End": "for more details."
+    },
+    "cta": {
+      "title": "Didn't find your answer?",
+      "description": "Feel free to contact us by email, we'll get back to you as soon as possible.",
+      "button": "Contact us"
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdate": "Last updated: November 14, 2025",
+    "commitment": {
+      "title": "Our Commitment",
+      "p1": "At Swipe Movie, we take your privacy seriously. This privacy policy explains what data we collect, why we collect it, and how we use it.",
+      "p2": "Our fundamental principle: we only collect data strictly necessary for the application to function, and we never sell it to third parties."
+    },
+    "dataCollected": {
+      "title": "Data Collected",
+      "account": {
+        "title": "1. Account Information",
+        "intro": "When you sign in with Google OAuth, we collect:",
+        "items": ["Your name", "Your email address", "Your Google profile picture (if available)"]
+      },
+      "usage": {
+        "title": "2. Usage Data",
+        "intro": "To make the application work, we store:",
+        "items": ["The rooms you create or join", "Your swipes (like/dislike on movies)", "The matches detected in your rooms"]
+      },
+      "technical": {
+        "title": "3. Technical Data",
+        "intro": "To improve user experience, we collect via Vercel Analytics:",
+        "items": ["Pages visited (anonymized)", "Time spent on the application", "Country of origin (for general statistics)"]
+      }
+    },
+    "dataUsage": {
+      "title": "How We Use Your Data",
+      "service": {
+        "title": "Provide the service:",
+        "description": "your account data allows us to identify you, your swipes allow us to find matches with other members of your rooms."
+      },
+      "improve": {
+        "title": "Improve the application:",
+        "description": "usage data helps us understand which features are used and which need improvement."
+      },
+      "communication": {
+        "title": "Communication:",
+        "description": "we may send you email notifications about your account (matches, room invitations, etc.)."
+      }
+    },
+    "security": {
+      "title": "Data Security",
+      "intro": "We implement technical and organizational security measures to protect your data:",
+      "items": ["Secure connection via HTTPS", "Authentication via Google OAuth 2.0", "Database hosted on secure servers (Neon PostgreSQL)", "Encrypted sessions and secure authentication tokens", "No password storage (delegated to Google)"]
+    },
+    "rights": {
+      "title": "Your Rights (GDPR)",
+      "intro": "In accordance with the General Data Protection Regulation (GDPR), you have the following rights:",
+      "access": {
+        "title": "Right of access:",
+        "description": "you can request a copy of all your personal data"
+      },
+      "rectification": {
+        "title": "Right to rectification:",
+        "description": "you can modify your account information"
+      },
+      "erasure": {
+        "title": "Right to erasure:",
+        "description": "you can request complete deletion of your account and data"
+      },
+      "portability": {
+        "title": "Right to portability:",
+        "description": "you can retrieve your data in a usable format"
+      },
+      "contact": "To exercise these rights, contact us at"
+    },
+    "sharing": {
+      "title": "Sharing Data with Third Parties",
+      "intro": "We never sell your personal data. We only share certain data with:",
+      "google": "for OAuth authentication",
+      "vercel": "application hosting and anonymized analytics",
+      "railway": "backend API hosting",
+      "neon": "PostgreSQL database hosting",
+      "tmdb": "to retrieve movie information"
+    },
+    "cookies": {
+      "title": "Cookies",
+      "intro": "We use cookies strictly necessary for the application to function:",
+      "items": ["Session cookie for authentication (required)", "Theme preference cookie (dark/light mode)"],
+      "noTracking": "We do not use advertising or third-party tracking cookies."
+    },
+    "changes": {
+      "title": "Changes to This Policy",
+      "description": "We may update this privacy policy from time to time. The last update date is shown at the top of this page. In case of significant changes, we will inform you by email."
+    },
+    "contactSection": {
+      "title": "Contact",
+      "description": "For any questions regarding this privacy policy or your personal data, contact us at"
+    }
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdate": "Last updated: November 14, 2025",
+    "acceptance": {
+      "title": "1. Acceptance of Terms",
+      "p1": "By using Swipe Movie, you agree to be bound by these Terms of Service. If you do not accept these terms, please do not use our service.",
+      "p2": "We reserve the right to modify these Terms at any time. Changes will take effect immediately after publication on this page. Your continued use of the service after the publication of changes constitutes your acceptance of those changes."
+    },
+    "description": {
+      "title": "2. Service Description",
+      "intro": "Swipe Movie is a free web application that allows users to:",
+      "items": [
+        "Create \"rooms\" to choose movies as a group",
+        "Invite other users to join their rooms",
+        "Swipe on movies to express their preferences",
+        "Discover \"matches\" when all room members like the same movie"
+      ],
+      "outro": "The service uses data from The Movie Database (TMDb) to provide movie information."
+    },
+    "allowedUse": {
+      "title": "3. Permitted Use",
+      "intro": "You are permitted to:",
+      "items": [
+        "Use Swipe Movie for personal and non-commercial purposes",
+        "Create an account with your Google information",
+        "Create and join rooms",
+        "Swipe on movies and see your matches",
+        "Share your room codes with friends"
+      ]
+    },
+    "prohibitedUse": {
+      "title": "4. Prohibited Use",
+      "intro": "It is strictly prohibited to:",
+      "items": [
+        "Use the service for commercial purposes without written authorization",
+        "Create fake accounts or impersonate others",
+        "Attempt to hack, compromise, or disrupt the service",
+        "Use bots, scripts, or automated tools",
+        "Extract or scrape data from the service",
+        "Post illegal, offensive, or inappropriate content",
+        "Use the service to send spam or unsolicited content"
+      ]
+    },
+    "accounts": {
+      "title": "5. User Accounts",
+      "intro": "To use Swipe Movie, you must create an account by signing in with Google OAuth. You are responsible for:",
+      "items": [
+        "Maintaining the security of your Google account",
+        "All activities performed from your account",
+        "Immediately notifying us of any unauthorized use of your account"
+      ],
+      "outro": "We reserve the right to suspend or delete your account if we suspect a violation of these Terms."
+    },
+    "intellectualProperty": {
+      "title": "6. Intellectual Property",
+      "p1": "Swipe Movie and all its contents (logo, design, code, etc.) are protected by intellectual property laws.",
+      "p2": "Movie information (posters, synopses, ratings, etc.) is provided by The Movie Database (TMDb) and is subject to their own terms of use.",
+      "p3": "You retain all rights to the data you create in the application (your rooms, your swipes, etc.)."
+    },
+    "liability": {
+      "title": "7. Limitation of Liability",
+      "intro": "Swipe Movie is provided \"as is\" without warranty of any kind. We do not guarantee that:",
+      "items": [
+        "The service will always be available or uninterrupted",
+        "Movie information is accurate or up to date",
+        "The service will be free from errors or bugs"
+      ],
+      "outro": "Under no circumstances will Swipe Movie be liable for direct, indirect, incidental, or consequential damages resulting from the use or inability to use the service."
+    },
+    "termination": {
+      "title": "8. Termination",
+      "p1": "You may stop using the service and delete your account at any time by contacting us at",
+      "p2": "We reserve the right to suspend or terminate your access to the service at any time, without notice, if we believe you have violated these Terms."
+    },
+    "law": {
+      "title": "9. Applicable Law",
+      "description": "These Terms are governed by French law. Any dispute relating to the interpretation or execution of these Terms will be submitted to the competent French courts."
+    },
+    "contactSection": {
+      "title": "10. Contact",
+      "description": "For any questions regarding these Terms of Service, contact us at"
+    },
+    "entireAgreement": {
+      "title": "11. Entire Agreement",
+      "description": "These Terms, along with our",
+      "privacyLink": "Privacy Policy",
+      "descriptionEnd": "constitute the entire agreement between you and Swipe Movie regarding the use of the service."
+    }
+  },
+  "login": {
+    "loading": "Loading...",
+    "hero": {
+      "title": "Welcome to Swipe Movie",
+      "subtitle": "Finally decide which movie to watch as a group, without endless debate!"
+    },
+    "features": {
+      "createRoom": {
+        "title": "Create a room in 30 seconds",
+        "description": "Choose your criteria, invite your friends and swipe together"
+      },
+      "catalog": {
+        "title": "Thousands of movies and series",
+        "description": "Complete catalog with filters by genre, platform, year..."
+      },
+      "matches": {
+        "title": "Real-time matches",
+        "description": "Instant notification as soon as you have a match!"
+      }
+    },
+    "card": {
+      "title": "Sign In",
+      "subtitle": "Sign in to create your first room",
+      "googleButton": "Continue with Google",
+      "connecting": "Signing in...",
+      "free": "100% free",
+      "noCard": "No credit card required",
+      "terms": "By signing in, you agree to our",
+      "termsLink": "Terms of Service",
+      "and": "and our",
+      "privacyLink": "Privacy Policy"
+    }
+  },
+  "preview": {
+    "title": "🎬 Cinema Theme Preview",
+    "card": {
+      "title": "Movie Card",
+      "description": "Discover your new \"cinema\" palette"
+    },
+    "badges": {
+      "accent": "Accent",
+      "primary": "Primary",
+      "secondary": "Secondary"
+    },
+    "buttons": {
+      "primary": "Primary",
+      "destructive": "Destructive"
+    }
+  },
+  "onboarding": {
+    "step1": {
+      "title": "Create a room in 30 seconds",
+      "description": "Choose a name, select your filters (genre, platform, rating) and invite your friends!"
+    },
+    "step2": {
+      "title": "Invite your friends",
+      "description": "Share the room code with your roommates, family or friends. Everyone can join easily!"
+    },
+    "step3": {
+      "title": "Swipe together",
+      "description": "Everyone swipes on their own, just like Tinder. ❤️ to like, ❌ to pass."
+    },
+    "step4": {
+      "title": "Automatic match!",
+      "description": "As soon as everyone likes the same movie, it's a match! No more debate, time for popcorn 🍿"
+    },
+    "next": "Next",
+    "previous": "Previous",
+    "skip": "Skip tutorial",
+    "finish": "Let's go!"
+  },
+  "pricing": {
+    "title": "Choose Your Plan",
+    "subtitle": "Start for free, upgrade when you need more features",
+    "free": {
+      "description": "Perfect to get started",
+      "features": {
+        "rooms": "3 rooms max",
+        "participants": "4 participants per room",
+        "swipes": "20 swipes per room",
+        "expiry": "Rooms expire after 7 days",
+        "filters": "Advanced filters",
+        "email": "Email notifications"
+      },
+      "cta": "Get Started"
+    },
+    "starter": {
+      "description": "For regular users",
+      "features": {
+        "rooms": "Unlimited rooms",
+        "participants": "8 participants per room",
+        "swipes": "50 swipes per room",
+        "expiry": "30-day room expiry",
+        "email": "Email notifications",
+        "filters": "Advanced filters"
+      },
+      "cta": "Choose Starter"
+    },
+    "pro": {
+      "description": "Best for power users",
+      "badge": "Most Popular",
+      "features": {
+        "unlimited": "Unlimited rooms",
+        "participants": "Unlimited participants",
+        "swipes": "Unlimited swipes",
+        "noExpiry": "Rooms never expire",
+        "filters": "Advanced filters",
+        "email": "Email notifications"
+      },
+      "cta": "Choose Pro"
+    },
+    "team": {
+      "description": "For teams and organizations",
+      "features": {
+        "accounts": "5 team accounts",
+        "everything": "Everything in Pro",
+        "api": "API access",
+        "whitelabel": "White-label options",
+        "support": "Priority support",
+        "analytics": "Advanced analytics"
+      },
+      "cta": "Choose Team"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": {
+        "question": "Can I cancel my subscription at any time?",
+        "answer": "Yes, you can cancel your subscription at any time from your account settings. You'll keep access to premium features until the end of your billing period."
+      },
+      "q2": {
+        "question": "What happens to my rooms if I downgrade?",
+        "answer": "Your existing rooms will remain accessible, but you won't be able to create new rooms that exceed your plan's limits. Older rooms may expire based on your new plan's retention period."
+      },
+      "q3": {
+        "question": "Is my payment information secure?",
+        "answer": "Yes, we use Stripe for payment processing, which is PCI-DSS compliant and trusted by millions of businesses worldwide. We never store your credit card information on our servers."
+      }
+    }
+  },
+  "dashboard": {
+    "subscription": {
+      "title": "My Subscription",
+      "subtitle": "Manage your subscription and view your usage",
+      "backToRooms": "Back to rooms",
+      "currentPlan": "Current Plan",
+      "renewsOn": "Renews on {date}",
+      "upgrade": "Upgrade",
+      "usage": {
+        "title": "Usage",
+        "rooms": "Active rooms",
+        "swipesPerRoom": "Swipes per room",
+        "participantsPerRoom": "Participants per room",
+        "unlimited": "Unlimited"
+      },
+      "features": {
+        "title": "Features",
+        "advancedFilters": "Advanced filters",
+        "emailNotifications": "Email notifications",
+        "apiAccess": "API access",
+        "roomExpiry": "Room expiry: {days} days",
+        "unlimited": "unlimited"
+      },
+      "upgradeCta": {
+        "title": "Unlock more features",
+        "description": "Upgrade to a higher plan for unlimited rooms, more participants, and advanced filters.",
+        "button": "View plans"
+      }
+    }
+  },
+  "connections": {
+    "title": "Connected Services",
+    "subtitle": "Connect your accounts to improve recommendations",
+    "backToRooms": "Back to rooms",
+    "connected": "Connected",
+    "disconnected": "Not connected",
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "sync": "Sync",
+    "syncing": "Syncing...",
+    "lastSync": "Last sync",
+    "syncSuccess": "Sync successful",
+    "syncError": "Sync error",
+    "connectSuccess": "Account connected",
+    "connectError": "Connection error",
+    "disconnectSuccess": "Account disconnected",
+    "disconnectError": "Disconnection error",
+    "imported": "{count} items imported",
+    "trakt": {
+      "name": "Trakt",
+      "description": "Sync your watched movies and TV shows history"
+    },
+    "anilist": {
+      "name": "AniList",
+      "description": "Import your anime library"
+    }
+  },
+  "subscription": {
+    "upgrade": {
+      "rooms": {
+        "title": "Room Limit Reached",
+        "description": "You've reached the maximum of {limit} rooms on the FREE plan. Upgrade to create unlimited rooms and enjoy more features!"
+      },
+      "participants": {
+        "title": "Participant Limit Reached",
+        "description": "You've reached the maximum of {limit} participants per room on the FREE plan. Upgrade for more participants!"
+      },
+      "swipes": {
+        "title": "Swipe Limit Reached",
+        "description": "You've used all {limit} swipes in this room. Upgrade for unlimited swipes!"
+      },
+      "filters": {
+        "title": "Advanced Filters Locked",
+        "description": "Advanced filters are only available on PRO and TEAM plans. Upgrade to unlock powerful filtering options!"
+      },
+      "currentPlan": "Your current plan",
+      "recommended": "Recommended upgrade",
+      "benefits": {
+        "title": "What you'll get:",
+        "unlimitedRooms": "Unlimited rooms",
+        "unlimitedParticipants": "Unlimited participants",
+        "unlimitedSwipes": "Unlimited swipes",
+        "moreParticipants": "More participants per room",
+        "noExpiry": "Rooms never expire",
+        "advancedFilters": "Advanced filtering options",
+        "betterMatches": "Better movie matches"
+      },
+      "notNow": "Not now",
+      "viewPlans": "View Plans"
+    }
+  },
+  "gdpr": {
+    "banner": {
+      "message": "We use cookies to enhance your experience. By continuing, you accept our privacy policy.",
+      "learnMore": "Learn more",
+      "acceptAll": "Accept all",
+      "rejectAll": "Reject",
+      "customize": "Customize",
+      "preferencesTitle": "Cookie preferences",
+      "savePreferences": "Save"
+    },
+    "cookies": {
+      "required": "Required",
+      "necessary": {
+        "title": "Essential cookies",
+        "description": "Required for the site to function (login, security)"
+      },
+      "analytics": {
+        "title": "Analytics cookies",
+        "description": "Help us understand how you use the site"
+      },
+      "marketing": {
+        "title": "Marketing cookies",
+        "description": "Used to show you relevant ads"
+      }
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account and preferences",
+    "backToRooms": "Back to rooms",
+    "profile": {
+      "title": "Profile",
+      "email": "Email address",
+      "name": "Display name",
+      "notSet": "Not set",
+      "createdAt": "Member since"
+    },
+    "data": {
+      "title": "Data & Privacy",
+      "description": "In accordance with GDPR, you can export or delete your data at any time.",
+      "exportButton": "Export my data",
+      "exporting": "Exporting...",
+      "exportSuccess": "Export successful",
+      "exportSuccessDescription": "Your data has been downloaded.",
+      "exportError": "Export error",
+      "exportErrorDescription": "Unable to export your data. Please try again later.",
+      "exportInfo": "Export includes your profile, swipes, matches, and preferences."
+    },
+    "danger": {
+      "title": "Danger zone",
+      "description": "These actions are irreversible. Proceed with caution.",
+      "logout": "Log out",
+      "deleteButton": "Delete my account",
+      "deleteDialogTitle": "Permanently delete your account?",
+      "deleteDialogDescription": "This action is irreversible. All your data will be deleted: profile, swipes, matches, and subscription.",
+      "cancel": "Cancel",
+      "confirmDelete": "Yes, delete my account",
+      "deleting": "Deleting...",
+      "deleteSuccess": "Account deleted",
+      "deleteSuccessDescription": "Your account has been successfully deleted.",
+      "deleteError": "Deletion error",
+      "deleteErrorDescription": "Unable to delete your account. Please try again later."
+    }
+  }
+}
