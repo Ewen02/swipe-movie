@@ -86,6 +86,7 @@ function TrialPageContent() {
       } finally {
         const roomCode = trialInfo!.roomCode
         clearTrialData()
+        try { localStorage.removeItem(`trial-swipe-count-${roomCode}`) } catch { /* ignore */ }
         router.replace(`/${locale}/rooms/${roomCode}`)
       }
     }

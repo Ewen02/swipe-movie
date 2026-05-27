@@ -189,7 +189,9 @@ export function ShareRoomButton({
                   </button>
                 </div>
                 <p className="text-xs text-muted-foreground text-center">
-                  Tes amis peuvent rejoindre avec ce code depuis l'accueil
+                  {defaultOpen
+                    ? "Partage ce lien pour swiper ensemble"
+                    : "Tes amis peuvent rejoindre avec ce code depuis l'accueil"}
                 </p>
               </div>
 

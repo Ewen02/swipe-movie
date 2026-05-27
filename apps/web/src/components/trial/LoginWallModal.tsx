@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl'
 import { signIn } from '@/lib/auth-client'
 import { Sparkles, Heart } from 'lucide-react'
 import { Button } from '@swipe-movie/ui'
+import type { MovieBasic } from '@/schemas/movies'
 
 interface LoginWallModalProps {
   show: boolean
@@ -13,6 +14,7 @@ interface LoginWallModalProps {
   isHardBlock: boolean
   locale: string
   onDismiss: () => void
+  likedMovies?: MovieBasic[]
 }
 
 export function LoginWallModal({
@@ -21,6 +23,7 @@ export function LoginWallModal({
   isHardBlock,
   locale,
   onDismiss,
+  likedMovies,
 }: LoginWallModalProps) {
   const t = useTranslations('trial.loginWall')
   const [isLoading, setIsLoading] = useState(false)
@@ -110,6 +113,36 @@ export function LoginWallModal({
                 {isMatch ? t('matchDescription') : t('limitDescription')}
               </motion.p>
             </div>
+
+            {/* Liked movies FOMO row */}
+            {likedMovies && likedMovies.length > 0 && (
+              <div className="px-6 pb-2">
+                <motion.div
+                  initial={{ y: 10, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.45 }}
+                >
+                  <p className="text-xs text-muted-foreground mb-2 text-center font-medium">
+                    Tu risques de les perdre
+                  </p>
+                  <div className="flex gap-2 overflow-x-auto pb-2 justify-center">
+                    {likedMovies.slice(0, 5).map((movie) => (
+                      <div
+                        key={movie.id}
+                        className="shrink-0 w-16 h-24 rounded-lg overflow-hidden border border-border/50 shadow-sm"
+                      >
+                        <img
+                          src={movie.posterUrl}
+                          alt={movie.title}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              </div>
+            )}
 
             {/* Actions */}
             <div className="px-6 pb-6 space-y-3">

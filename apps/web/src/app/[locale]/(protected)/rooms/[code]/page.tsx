@@ -22,8 +22,12 @@ import { JoinRoomScreen } from "@/components/room/JoinRoomScreen"
 import { RoomHeader } from "@/components/room/RoomHeader"
 import { RoomTabs } from "@/components/room/RoomTabs"
 import { TrialBanner } from "@/components/trial/TrialBanner"
+import { TrialHeader } from "@/components/trial/TrialHeader"
 import { LoginWallModal } from "@/components/trial/LoginWallModal"
+import { TrialRecap } from "@/components/trial/TrialRecap"
 import { useLoginWall } from "@/hooks/trial/useLoginWall"
+import { clearTrialData } from "@/lib/trial"
+import { useRouter } from "next/navigation"
 
 // Lazy load heavy components that are not always visible
 const MovieDetailsModal = lazy(() => import("@/components/movies/MovieDetailsModal").then(m => ({ default: m.MovieDetailsModal })))
@@ -41,9 +45,28 @@ function RoomPageContent() {
   const [joiningRoom, setJoiningRoom] = useState(false)
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null)
   const [showMovieDetails, setShowMovieDetails] = useState(false)
-  const [trialSwipeCount, setTrialSwipeCount] = useState(0)
+  const [trialSwipeCount, setTrialSwipeCount] = useState(() => {
+    if (typeof window === 'undefined') return 0
+    try {
+      const saved = localStorage.getItem(`trial-swipe-count-${code}`)
+      return saved ? parseInt(saved, 10) : 0
+    } catch {
+      return 0
+    }
+  })
   const [trialHasMatch, setTrialHasMatch] = useState(false)
+  const [trialLikedMovies, setTrialLikedMovies] = useState<MovieBasic[]>([])
+  const router = useRouter()
   const locale = (params as unknown as { locale?: string })?.locale ?? "fr"
+  // Persist trial swipe count to localStorage
+  useEffect(() => {
+    if (isTrial && trialSwipeCount > 0) {
+      try {
+        localStorage.setItem(`trial-swipe-count-${code}`, trialSwipeCount.toString())
+      } catch { /* ignore */ }
+    }
+  }, [isTrial, trialSwipeCount, code])
+
   const { shouldShow: showTrialWall, trigger: trialTrigger, dismiss: trialDismiss, isHardBlock: trialHardBlock } = useLoginWall(trialSwipeCount, trialHasMatch)
 
   const {
@@ -128,6 +151,9 @@ function RoomPageContent() {
       captureEvent("swipe", { direction, movieId: movieIdStr, roomId: room.id })
       if (isTrial) {
         setTrialSwipeCount(prev => prev + 1)
+        if (direction === "right") {
+          setTrialLikedMovies(prev => [...prev, movie])
+        }
         captureEvent("trial_swipe", { movieId: movieIdStr, direction, swipeNumber: trialSwipeCount + 1 })
       }
       if (result.matchCreated) {
@@ -281,8 +307,27 @@ function RoomPageContent() {
     )
   }
 
+  // Show TrialRecap when the hard swipe limit is reached
+  if (isTrial && trialSwipeCount >= 25) {
+    return (
+      <TrialRecap
+        likedMovies={trialLikedMovies}
+        locale={locale}
+        onSignUp={() => {}}
+        onRetry={() => {
+          clearTrialData()
+          router.push(`/${locale}/try`)
+        }}
+      />
+    )
+  }
+
   return (
     <>
+      {isTrial && (
+        <TrialHeader locale={locale} roomCode={code} />
+      )}
+
       {isTrial && (
         <TrialBanner remaining={Math.max(0, 25 - trialSwipeCount)} locale={locale} />
       )}
@@ -294,6 +339,7 @@ function RoomPageContent() {
           isHardBlock={trialHardBlock}
           locale={locale}
           onDismiss={trialDismiss}
+          likedMovies={trialLikedMovies}
         />
       )}
 

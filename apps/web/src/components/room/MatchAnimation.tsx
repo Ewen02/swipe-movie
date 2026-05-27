@@ -66,7 +66,7 @@ export function MatchAnimation({ show, movie, onComplete }: MatchAnimationProps)
 
       // Haptic feedback for match celebration
       if (typeof window !== "undefined" && "vibrate" in navigator) {
-        navigator.vibrate([50, 30, 50, 30, 100])
+        navigator.vibrate([50, 30, 80, 30, 100])
       }
 
       const timer = setTimeout(onComplete, 3500)
