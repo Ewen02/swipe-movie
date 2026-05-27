@@ -30,6 +30,15 @@ const nextConfig = {
   async headers() {
     return [
       {
+        source: '/embed/:path*',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'ALLOWALL',
+          },
+        ],
+      },
+      {
         source: '/:path*',
         headers: [
           {
