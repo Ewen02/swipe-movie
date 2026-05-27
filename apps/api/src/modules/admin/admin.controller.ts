@@ -24,6 +24,13 @@ export class AdminController {
     return this.adminService.getGlobalStats();
   }
 
+  @Get('trial-stats')
+  @ApiOperation({ summary: 'Get trial/ghost user metrics' })
+  getTrialStats(@User('email') email: string) {
+    this.logger.log(`${email} accessed GET /admin/trial-stats`);
+    return this.adminService.getTrialStats();
+  }
+
   @Get('retention')
   @ApiOperation({ summary: 'Get retention cohorts (J1/J7/J30)' })
   getRetention(@User('email') email: string) {

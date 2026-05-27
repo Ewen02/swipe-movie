@@ -332,6 +332,62 @@ export class AdminService {
     return subsResult;
   }
 
+  async getTrialStats() {
+    const cacheKey = 'admin:trial-stats';
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) return cached;
+
+    const now = new Date();
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+    const ghostUserIds = await this.prisma.user.findMany({
+      where: { isGuest: true },
+      select: { id: true },
+    });
+    const ghostIds = ghostUserIds.map((u) => u.id);
+
+    const [activeGhosts, totalGhosts, totalGhostsExpired, ghostSwipes, ghostRoomIds] =
+      await Promise.all([
+        this.prisma.user.count({
+          where: { isGuest: true, createdAt: { gte: oneDayAgo } },
+        }),
+        this.prisma.user.count({ where: { isGuest: true } }),
+        this.prisma.user.count({
+          where: { isGuest: true, createdAt: { lt: oneDayAgo } },
+        }),
+        ghostIds.length > 0
+          ? this.prisma.swipe.count({
+              where: { userId: { in: ghostIds } },
+            })
+          : Promise.resolve(0),
+        ghostIds.length > 0
+          ? this.prisma.room
+              .findMany({
+                where: { createdBy: { in: ghostIds }, deletedAt: null },
+                select: { id: true },
+              })
+              .then((rooms) => rooms.map((r) => r.id))
+          : Promise.resolve([] as string[]),
+      ]);
+
+    const ghostMatches =
+      ghostRoomIds.length > 0
+        ? await this.prisma.match.count({
+            where: { roomId: { in: ghostRoomIds } },
+          })
+        : 0;
+
+    const trialResult = {
+      activeGhosts,
+      totalGhosts,
+      totalGhostsExpired,
+      ghostSwipes,
+      ghostMatches,
+    };
+    await this.cacheManager.set(cacheKey, trialResult, ADMIN_CACHE_TTL);
+    return trialResult;
+  }
+
   async getTopMatches(limit = 10) {
     const cacheKey = `admin:top-matches:${limit}`;
     const cached = await this.cacheManager.get(cacheKey);
@@ -353,4 +409,5 @@ export class AdminService {
     await this.cacheManager.set(cacheKey, topMatchesResult, ADMIN_CACHE_TTL);
     return topMatchesResult;
   }
+
 }
