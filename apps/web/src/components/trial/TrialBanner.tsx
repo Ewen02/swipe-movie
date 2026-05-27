@@ -13,15 +13,18 @@ export function TrialBanner({ remaining, locale }: TrialBannerProps) {
   const t = useTranslations('trial')
 
   return (
-    <div className="w-full bg-primary/10 border-b border-primary/20 px-4 py-2.5">
-      <div className="flex items-center justify-between max-w-lg mx-auto">
-        <div className="flex items-center gap-2 text-sm text-primary">
-          <Sparkles className="w-4 h-4" />
-          <span className="font-medium">{t('banner', { remaining })}</span>
+    <div className="pointer-events-auto absolute left-1/2 top-4 z-50 -translate-x-1/2">
+      <div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/60 px-4 py-2 shadow-lg backdrop-blur-xl">
+        <div className="flex items-center gap-1.5 text-xs text-white/70">
+          <Sparkles className="h-3.5 w-3.5 text-primary" />
+          <span className="font-medium">
+            Mode essai&nbsp;&middot;&nbsp;{remaining} swipes
+          </span>
         </div>
+        <div className="h-3 w-px bg-white/20" />
         <Link
           href={`/${locale}/login?callbackUrl=/${locale}/rooms`}
-          className="text-xs font-semibold text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
+          className="text-xs font-semibold text-primary transition-colors hover:text-primary/80"
         >
           {t('bannerCta')}
         </Link>

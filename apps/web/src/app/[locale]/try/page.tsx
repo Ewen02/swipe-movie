@@ -1,125 +1,150 @@
-'use client'
+"use client"
 
-import { useEffect, useState, useCallback, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
-import { useParams } from 'next/navigation'
-import { AnimatePresence } from 'framer-motion'
-import { Film } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useEffect, useState, useCallback, Suspense } from "react"
+import { useSearchParams, useParams } from "next/navigation"
+import { Film } from "lucide-react"
+import { useTranslations } from "next-intl"
 import {
   isTrialActive,
   getTrialData,
   startTrial,
+  trialApiFetch,
   type TrialData,
-} from '@/lib/trial'
-import { useTrialSwipe } from '@/hooks/trial/useTrialSwipe'
-import { useLoginWall } from '@/hooks/trial/useLoginWall'
-import { TrialBanner } from '@/components/trial/TrialBanner'
-import { TrialSwipeCard, TrialSwipeButtons } from '@/components/trial/TrialSwipeCard'
-import { TrialMatchAnimation } from '@/components/trial/TrialMatchAnimation'
-import { LoginWallModal } from '@/components/trial/LoginWallModal'
+} from "@/lib/trial"
+import { useLoginWall } from "@/hooks/trial/useLoginWall"
+import { TrialBanner } from "@/components/trial/TrialBanner"
+import { TrialMatchAnimation } from "@/components/trial/TrialMatchAnimation"
+import { LoginWallModal } from "@/components/trial/LoginWallModal"
+import { MovieCards } from "@/components/swipe/MovieCards"
+import type { MovieBasic } from "@/schemas/movies"
 
 const TOTAL_SWIPES = 15
 
 function TrialPageContent() {
-  const t = useTranslations('trial')
+  const t = useTranslations("trial")
   const params = useParams()
   const searchParams = useSearchParams()
-  const locale = (params?.locale as string) || 'fr'
+  const locale = (params?.locale as string) || "fr"
 
   const [trialData, setTrialData] = useState<TrialData | null>(null)
   const [isInitializing, setIsInitializing] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [exitDirection, setExitDirection] = useState<'left' | 'right' | null>(null)
-  const [isAnimating, setIsAnimating] = useState(false)
+  const [movies, setMovies] = useState<MovieBasic[]>([])
+  const [roomId, setRoomId] = useState<string | null>(null)
+  const [swipeCount, setSwipeCount] = useState(0)
+  const [hasMatch, setHasMatch] = useState(false)
   const [showMatch, setShowMatch] = useState(false)
+  const [latestMatchMovie, setLatestMatchMovie] = useState<MovieBasic | null>(null)
+  const [moviesPage, setMoviesPage] = useState(1)
+
+  // Login wall
+  const { shouldShow: showLoginWall, trigger, dismiss, isHardBlock } = useLoginWall(
+    swipeCount,
+    hasMatch,
+  )
 
   // Initialize trial session
   useEffect(() => {
     async function init() {
       try {
+        let data: TrialData
         if (isTrialActive()) {
           const existing = getTrialData()
           if (existing) {
-            setTrialData(existing)
-            setIsInitializing(false)
-            return
+            data = existing
+          } else {
+            data = await createTrial()
           }
+        } else {
+          data = await createTrial()
         }
 
-        // Start a new trial
-        const genreParam = searchParams?.get('genre')
-        const genreId = genreParam ? parseInt(genreParam, 10) : undefined
-
-        const data = await startTrial({
-          genreId: genreId && !isNaN(genreId) ? genreId : undefined,
-        })
         setTrialData(data)
+
+        // Fetch room ID from room code
+        const roomRes = await trialApiFetch(`/rooms/code/${data.roomCode}`)
+        if (roomRes.ok) {
+          const room = await roomRes.json()
+          setRoomId(room.id)
+        }
+
+        // Fetch initial movies
+        await loadMovies(1)
       } catch (err) {
-        console.error('[TrialPage] Failed to start trial:', err)
-        setError('Failed to start trial. Please try again.')
+        console.error("[TrialPage] Failed to start trial:", err)
+        setError("Failed to start trial. Please try again.")
       } finally {
         setIsInitializing(false)
       }
     }
 
+    async function createTrial(): Promise<TrialData> {
+      const genreParam = searchParams?.get("genre")
+      const genreId = genreParam ? parseInt(genreParam, 10) : undefined
+      return startTrial({
+        genreId: genreId && !isNaN(genreId) ? genreId : undefined,
+      })
+    }
+
     init()
   }, [searchParams])
 
-  // Swipe hook
-  const {
-    movies,
-    currentIndex,
-    matches,
-    swipeCount,
-    isLoading,
-    swipe,
-    latestMatch,
-    clearLatestMatch,
-  } = useTrialSwipe(
-    trialData?.roomCode || '',
-    trialData?.token || '',
+  async function loadMovies(page: number) {
+    try {
+      const res = await trialApiFetch(`/movies/popular?page=${page}`)
+      if (res.ok) {
+        const data = await res.json()
+        if (Array.isArray(data)) {
+          setMovies((prev) => {
+            const existingIds = new Set(prev.map((m) => m.id))
+            const newMovies = data.filter((m: MovieBasic) => !existingIds.has(m.id))
+            return [...prev, ...newMovies]
+          })
+        }
+      }
+    } catch {
+      // Silently fail — movies will show empty state
+    }
+  }
+
+  const handleSwipe = useCallback(
+    async (movie: MovieBasic, direction: "left" | "right") => {
+      if (!roomId || swipeCount >= TOTAL_SWIPES) return
+
+      const value = direction === "right"
+      setSwipeCount((prev) => prev + 1)
+
+      try {
+        const res = await trialApiFetch("/swipes", {
+          method: "POST",
+          body: JSON.stringify({ roomId, movieId: String(movie.id), value }),
+        })
+
+        if (res.ok) {
+          const data = await res.json()
+          if (data.matchCreated) {
+            setHasMatch(true)
+            setLatestMatchMovie(movie)
+            setShowMatch(true)
+          }
+        }
+      } catch {
+        // Swipe failed silently — the card is already gone visually
+      }
+    },
+    [roomId, swipeCount],
   )
 
-  // Login wall
-  const { shouldShow: showLoginWall, trigger, dismiss, isHardBlock } = useLoginWall(
-    swipeCount,
-    matches.length > 0,
-  )
+  const handleEmpty = useCallback(() => {
+    const nextPage = moviesPage + 1
+    setMoviesPage(nextPage)
+    loadMovies(nextPage)
+  }, [moviesPage])
 
-  // Handle match animation completion
   const handleMatchComplete = useCallback(() => {
     setShowMatch(false)
-    clearLatestMatch()
-    // The login wall will show automatically via useLoginWall
-  }, [clearLatestMatch])
-
-  // Show match animation when a new match arrives
-  useEffect(() => {
-    if (latestMatch) {
-      setShowMatch(true)
-    }
-  }, [latestMatch])
-
-  // Handle swipe
-  const handleSwipe = useCallback(
-    (value: boolean) => {
-      if (isAnimating || swipeCount >= TOTAL_SWIPES) return
-      const currentMovie = movies[currentIndex]
-      if (!currentMovie) return
-
-      setIsAnimating(true)
-      setExitDirection(value ? 'right' : 'left')
-
-      // Wait for exit animation
-      setTimeout(() => {
-        swipe(currentMovie.id, value)
-        setExitDirection(null)
-        setIsAnimating(false)
-      }, 400)
-    },
-    [isAnimating, movies, currentIndex, swipe, swipeCount],
-  )
+    setLatestMatchMovie(null)
+  }, [])
 
   // Loading state
   if (isInitializing || (!trialData && !error)) {
@@ -127,7 +152,7 @@ function TrialPageContent() {
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="text-center">
           <Film className="w-12 h-12 mx-auto mb-4 animate-pulse text-primary" />
-          <p className="text-muted-foreground">{t('loading')}</p>
+          <p className="text-muted-foreground">{t("loading")}</p>
         </div>
       </div>
     )
@@ -152,94 +177,26 @@ function TrialPageContent() {
   }
 
   const remaining = Math.max(0, TOTAL_SWIPES - swipeCount)
-  const visibleMovies = movies.slice(currentIndex, currentIndex + 3)
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Top banner */}
       <TrialBanner remaining={remaining} locale={locale} />
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-6">
-        {/* Swipe counter */}
-        <div className="mb-4 text-center">
-          <p className="text-sm font-medium text-muted-foreground">
-            {t('swipeCount', { count: swipeCount, total: TOTAL_SWIPES })}
-          </p>
-          {/* Progress bar */}
-          <div className="w-48 h-1.5 bg-muted rounded-full mt-2 mx-auto overflow-hidden">
-            <div
-              className="h-full bg-primary rounded-full transition-all duration-500"
-              style={{ width: `${(swipeCount / TOTAL_SWIPES) * 100}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Card stack */}
-        {isLoading ? (
-          <div className="w-80 h-[480px] flex items-center justify-center">
-            <div className="text-center">
-              <Film className="w-10 h-10 mx-auto mb-3 animate-pulse text-primary" />
-              <p className="text-sm text-muted-foreground">{t('loading')}</p>
-            </div>
-          </div>
-        ) : visibleMovies.length > 0 ? (
-          <>
-            {/* Glow effect */}
-            <div className="relative">
-              <div className="absolute inset-0 -z-10">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/15 rounded-full blur-3xl" />
-              </div>
-
-              {/* Cards container */}
-              <div className="relative w-80 h-[480px]">
-                <AnimatePresence mode="popLayout">
-                  {visibleMovies.map((movie, index) => (
-                    <TrialSwipeCard
-                      key={movie.id}
-                      movie={movie}
-                      onSwipe={handleSwipe}
-                      isTop={index === 0}
-                      exitDirection={index === 0 ? exitDirection : null}
-                    />
-                  ))}
-                </AnimatePresence>
-              </div>
-            </div>
-
-            {/* Action buttons */}
-            <div className="mt-6">
-              <TrialSwipeButtons
-                onSwipe={handleSwipe}
-                disabled={isAnimating || swipeCount >= TOTAL_SWIPES}
-              />
-            </div>
-
-            {/* Instruction */}
-            <p className="text-center text-xs text-muted-foreground mt-4">
-              Glissez la carte ou utilisez les boutons
-            </p>
-          </>
-        ) : (
-          <div className="w-80 h-[480px] flex items-center justify-center">
-            <div className="text-center">
-              <Film className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">
-                Plus de films disponibles
-              </p>
-            </div>
-          </div>
-        )}
+      <div className="flex-1 flex flex-col items-center justify-center px-4 pt-16 pb-6">
+        <MovieCards
+          movies={movies}
+          onSwipe={handleSwipe}
+          onEmpty={handleEmpty}
+          isLoading={movies.length === 0}
+        />
       </div>
 
-      {/* Match animation */}
       <TrialMatchAnimation
         show={showMatch}
-        movie={latestMatch}
+        movie={latestMatchMovie}
         onComplete={handleMatchComplete}
       />
 
-      {/* Login wall modal */}
       <LoginWallModal
         show={showLoginWall && !showMatch}
         trigger={trigger}
