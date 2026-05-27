@@ -123,6 +123,11 @@ model Room {
   watchRegion      String? @default("FR")
   originalLanguage String?
 
+  // Recurring room settings
+  isRecurring       Boolean   @default(false)
+  lastResetAt       DateTime?
+  recurringInterval String?   @default("monthly") // "weekly", "monthly", or null
+
   members   RoomMember[]
   matches   Match[]
   swipes    Swipe[]
