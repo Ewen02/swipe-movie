@@ -1,950 +1,950 @@
 {
   "common": {
-    "loading": "Loading...",
-    "error": "An error occurred",
-    "cancel": "Cancel",
-    "confirm": "Confirm",
-    "save": "Save",
-    "delete": "Delete",
-    "edit": "Edit",
-    "close": "Close",
-    "back": "Back",
-    "next": "Next",
-    "previous": "Previous",
-    "search": "Search",
-    "filter": "Filter",
-    "sort": "Sort",
-    "viewMore": "View more",
-    "viewLess": "View less",
-    "menu": "Menu",
-    "language": "Language",
-    "theme": "Theme",
+    "loading": "Laden...",
+    "error": "Ein Fehler ist aufgetreten",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "close": "Schließen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "sort": "Sortieren",
+    "viewMore": "Mehr anzeigen",
+    "viewLess": "Weniger anzeigen",
+    "menu": "Menü",
+    "language": "Sprache",
+    "theme": "Design",
     "navigation": "Navigation"
   },
   "auth": {
-    "signIn": "Sign in",
-    "signOut": "Sign out",
-    "signInWith": "Sign in with {provider}",
-    "signOutConfirm": "Sign out?",
-    "signOutDescription": "Are you sure you want to sign out? You will need to sign in again to access your rooms.",
-    "welcome": "Welcome",
-    "welcomeBack": "Welcome back"
+    "signIn": "Anmelden",
+    "signOut": "Abmelden",
+    "signInWith": "Anmelden mit {provider}",
+    "signOutConfirm": "Abmelden?",
+    "signOutDescription": "Bist du sicher, dass du dich abmelden willst? Du musst dich erneut anmelden, um auf deine Räume zuzugreifen.",
+    "welcome": "Willkommen",
+    "welcomeBack": "Willkommen zurück"
   },
   "nav": {
-    "home": "Home",
-    "rooms": "My Rooms",
-    "profile": "Profile",
-    "settings": "Settings",
-    "subscription": "Subscription",
-    "connections": "Connections",
-    "library": "Library",
-    "about": "About",
-    "contact": "Contact",
-    "privacy": "Privacy",
-    "terms": "Terms",
-    "cookies": "Manage cookies"
+    "home": "Startseite",
+    "rooms": "Meine Räume",
+    "profile": "Profil",
+    "settings": "Einstellungen",
+    "subscription": "Abonnement",
+    "connections": "Verbindungen",
+    "library": "Bibliothek",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "privacy": "Datenschutz",
+    "terms": "AGB",
+    "cookies": "Cookies verwalten"
   },
   "landing": {
     "title": "Swipe Movie",
-    "subtitle": "Find your next movie to watch with friends",
+    "subtitle": "Finde deinen nächsten Film für einen Abend mit Freunden",
     "hero": {
-      "badge": "Free & no sign-up to join",
+      "badge": "Kostenlos & ohne Anmeldung mitmachen",
       "title": "Swipe, Match, Watch ",
       "titleHighlight": "Together.",
-      "subtitle": "No more endless debates! Swipe, match and watch together in seconds.",
-      "ctaAuth": "Go to my rooms",
-      "cta": "Create my free room",
-      "demo": "Watch demo",
+      "subtitle": "Schluss mit endlosen Diskussionen! Swipe, matche und schau gemeinsam in Sekunden.",
+      "ctaAuth": "Zu meinen Räumen",
+      "cta": "Meinen kostenlosen Raum erstellen",
+      "demo": "Demo ansehen",
       "trust": {
-        "free": "100% free",
-        "ready": "Ready in 30 seconds",
-        "noCard": "No credit card"
+        "free": "100% kostenlos",
+        "ready": "Fertig in 30 Sekunden",
+        "noCard": "Keine Kreditkarte"
       }
     },
     "stats": {
-      "movies": "Available movies",
-      "platforms": "Platforms",
-      "decide": "To decide",
-      "free": "Free"
+      "movies": "Verfügbare Filme",
+      "platforms": "Plattformen",
+      "decide": "Zum Entscheiden",
+      "free": "Kostenlos"
     },
     "howItWorks": {
-      "badge": "Simple as hello",
-      "title": "How does it ",
-      "titleHighlight": "work?",
-      "subtitle": "Three simple steps to find your perfect movie",
-      "step": "Step",
+      "badge": "Kinderleicht",
+      "title": "Wie ",
+      "titleHighlight": "funktioniert's?",
+      "subtitle": "Drei einfache Schritte, um deinen perfekten Film zu finden",
+      "step": "Schritt",
       "step1": {
-        "title": "Create a room",
-        "description": "Choose your filters: genre, platform, minimum rating..."
+        "title": "Erstelle einen Raum",
+        "description": "Wähle deine Filter: Genre, Plattform, Mindestbewertung..."
       },
       "step2": {
-        "title": "Invite your friends",
-        "description": "Share the code. No account needed to join!"
+        "title": "Lade deine Freunde ein",
+        "description": "Teile den Code. Kein Konto nötig zum Mitmachen!"
       },
       "step3": {
-        "title": "Swipe & match",
-        "description": "When everyone likes the same movie: it's a match!"
+        "title": "Swipe & matche",
+        "description": "Wenn allen derselbe Film gefällt: Das ist ein Match!"
       }
     },
     "demo": {
-      "badge": "Interactive demo",
-      "title": "Try ",
-      "titleHighlight": "the experience",
-      "subtitle": "Drag the cards to discover how swiping works. It's exactly like in the app!",
-      "right": "Right = I love it",
-      "left": "Left = Not for me",
-      "match": "Match = Everyone liked it!"
+      "badge": "Interaktive Demo",
+      "title": "Probier ",
+      "titleHighlight": "es aus",
+      "subtitle": "Ziehe die Karten, um zu entdecken, wie das Swipen funktioniert. Genau wie in der App!",
+      "right": "Rechts = Ich liebe es",
+      "left": "Links = Nicht mein Ding",
+      "match": "Match = Allen hat's gefallen!"
     },
     "features": {
       "badge": "Features",
-      "title": "Why ",
+      "title": "Warum ",
       "titleHighlight": "Swipe Movie?",
-      "subtitle": "The app that turns chaos into consensus",
+      "subtitle": "Die App, die Chaos in Konsens verwandelt",
       "noFights": {
-        "title": "No more fights",
-        "description": "\"You always choose!\" Never again. Everyone votes, no one is frustrated."
+        "title": "Schluss mit dem Streit",
+        "description": "\"Du wählst immer aus!\" Nie wieder. Alle stimmen ab, niemand ist frustriert."
       },
       "fast": {
-        "title": "2 minutes flat",
-        "description": "No more scrolling for 30 minutes. Filter, swipe, find THE perfect movie."
+        "title": "2 Minuten, fertig",
+        "description": "Kein 30-minütiges Scrollen mehr. Filtern, swipen, DEN perfekten Film finden."
       },
       "platforms": {
-        "title": "All your platforms",
-        "description": "Netflix, Disney+, Prime, Canal+... We only show what YOU can watch."
+        "title": "All deine Plattformen",
+        "description": "Netflix, Disney+, Prime, Canal+... Wir zeigen nur, was DU schauen kannst."
       },
       "addictive": {
-        "title": "Addictive (but useful)",
-        "description": "The swipe interface makes choosing fun. Your friends will love participating!"
+        "title": "Süchtig machend (aber nützlich)",
+        "description": "Die Swipe-Oberfläche macht die Auswahl zum Spaß. Deine Freunde werden es lieben mitzumachen!"
       }
     },
     "testimonials": {
-      "badge": "Testimonials",
-      "title": "They ",
-      "titleHighlight": "love it",
-      "subtitle": "Join thousands of satisfied users",
+      "badge": "Erfahrungsberichte",
+      "title": "Sie ",
+      "titleHighlight": "lieben es",
+      "subtitle": "Schließ dich Tausenden zufriedener Nutzer an",
       "items": {
         "marie": {
           "name": "Marie L.",
-          "role": "Flatshare of 4",
-          "content": "No more endless debates! We find a movie in 2 minutes now. It's become our Friday night ritual."
+          "role": "4er-WG",
+          "content": "Schluss mit endlosen Diskussionen! Wir finden jetzt in 2 Minuten einen Film. Das ist unser Freitagabend-Ritual geworden."
         },
         "thomas": {
           "name": "Thomas D.",
-          "role": "Family father",
-          "content": "Perfect for family movie nights. The kids love swiping and we always end up finding a movie everyone enjoys."
+          "role": "Familienvater",
+          "content": "Perfekt für den Familienfilmabend. Die Kinder lieben das Swipen und am Ende finden wir immer einen Film, der allen gefällt."
         },
         "sophie": {
           "name": "Sophie M.",
-          "role": "Movie buff",
-          "content": "I discovered so many movies I would never have watched! The filters are super precise and the catalog is huge."
+          "role": "Cineastin",
+          "content": "Ich habe so viele Filme entdeckt, die ich nie geschaut hätte! Die Filter sind super genau und der Katalog ist riesig."
         }
       }
     },
     "badges": {
       "free": {
-        "title": "100% Free",
-        "subtitle": "No hidden fees"
+        "title": "100% Kostenlos",
+        "subtitle": "Keine versteckten Kosten"
       },
       "ready": {
-        "title": "Ready in 30s",
-        "subtitle": "Ultra-fast setup"
+        "title": "Fertig in 30s",
+        "subtitle": "Blitzschnelles Setup"
       },
       "mobile": {
         "title": "Mobile-first",
-        "subtitle": "Touch optimized"
+        "subtitle": "Touch-optimiert"
       },
       "google": {
         "title": "Google Sign-in",
-        "subtitle": "1-click connection"
+        "subtitle": "1-Klick-Anmeldung"
       }
     },
     "cta": {
-      "badge": "Ready in 30 seconds",
-      "title": "Your next ",
-      "titleHighlight": "movie night",
-      "titleEnd": " starts here",
-      "subtitleAuth": "Create a new room and invite your friends to vote for the perfect movie.",
-      "subtitle": "Join thousands of users who said goodbye to endless debates.",
-      "buttonAuth": "Create a room",
-      "button": "Get started for free",
+      "badge": "Fertig in 30 Sekunden",
+      "title": "Dein nächster ",
+      "titleHighlight": "Filmabend",
+      "titleEnd": " beginnt hier",
+      "subtitleAuth": "Erstelle einen neuen Raum und lade deine Freunde ein, für den perfekten Film abzustimmen.",
+      "subtitle": "Schließ dich Tausenden Nutzern an, die endlose Diskussionen hinter sich gelassen haben.",
+      "buttonAuth": "Raum erstellen",
+      "button": "Kostenlos starten",
       "trust": {
-        "free": "100% free",
-        "noCard": "No credit card"
+        "free": "100% kostenlos",
+        "noCard": "Keine Kreditkarte"
       },
-      "matchFound": "Match found!",
-      "matchSubtitle": "Everyone liked it",
-      "itsAMatch": "It's a match!"
+      "matchFound": "Match gefunden!",
+      "matchSubtitle": "Allen hat's gefallen",
+      "itsAMatch": "Es ist ein Match!"
     }
   },
   "rooms": {
-    "title": "My Rooms",
-    "yourRooms": "Your movie rooms",
-    "create": "Create a room",
-    "join": "Join a room",
-    "empty": "No active rooms",
-    "emptyDescription": "Create your first room to start swiping movies with your friends!",
-    "roomsCount": "{count, plural, =1 {# active room} other {# active rooms}}",
-    "active": "Active rooms",
-    "myActiveRooms": "My active rooms",
-    "members": "{count} members",
-    "membersCount": "{count}/{max} members",
-    "new": "New",
-    "access": "Access",
-    "share": "Share",
+    "title": "Meine Räume",
+    "yourRooms": "Deine Filmräume",
+    "create": "Raum erstellen",
+    "join": "Raum beitreten",
+    "empty": "Keine aktiven Räume",
+    "emptyDescription": "Erstelle deinen ersten Raum, um mit Freunden Filme zu swipen!",
+    "roomsCount": "{count, plural, =1 {# aktiver Raum} other {# aktive Räume}}",
+    "active": "Aktive Räume",
+    "myActiveRooms": "Meine aktiven Räume",
+    "members": "{count} Mitglieder",
+    "membersCount": "{count}/{max} Mitglieder",
+    "new": "Neu",
+    "access": "Öffnen",
+    "share": "Teilen",
     "code": "Code",
-    "errorUnknown": "Unknown error",
-    "retry": "Retry",
+    "errorUnknown": "Unbekannter Fehler",
+    "retry": "Erneut versuchen",
     "type": {
-      "movie": "Movies",
-      "tv": "TV Shows"
+      "movie": "Filme",
+      "tv": "Serien"
     },
     "stats": {
-      "total": "Total rooms",
-      "matches": "Matches found",
-      "swipesToday": "Swipes today"
+      "total": "Räume gesamt",
+      "matches": "Matches gefunden",
+      "swipesToday": "Swipes heute"
     },
     "filters": {
-      "all": "All",
-      "movie": "Movies",
-      "tv": "Series",
-      "recent": "Recent"
+      "all": "Alle",
+      "movie": "Filme",
+      "tv": "Serien",
+      "recent": "Neueste"
     },
     "emptyState": {
-      "title": "No active rooms",
-      "description": "Create your first room to start swiping movies with your friends!"
+      "title": "Keine aktiven Räume",
+      "description": "Erstelle deinen ersten Raum, um mit Freunden Filme zu swipen!"
     },
     "card": {
-      "unnamed": "Unnamed room",
-      "new": "New",
-      "movies": "Movies",
-      "series": "Series",
-      "filtered": "Filtered",
-      "access": "Access"
+      "unnamed": "Raum ohne Namen",
+      "new": "Neu",
+      "movies": "Filme",
+      "series": "Serien",
+      "filtered": "Gefiltert",
+      "access": "Öffnen"
     }
   },
   "room": {
-    "name": "Room name",
-    "namePlaceholder": "My movie room",
-    "code": "Room code",
+    "name": "Raumname",
+    "namePlaceholder": "Mein Filmraum",
+    "code": "Raumcode",
     "codePlaceholder": "ABC123",
-    "selectType": "Select type",
-    "movies": "Movies",
-    "tvShows": "TV Shows",
+    "selectType": "Typ auswählen",
+    "movies": "Filme",
+    "tvShows": "Serien",
     "genre": "Genre",
-    "genrePlaceholder": "Choose a genre",
-    "rating": "Minimum rating",
-    "year": "Year",
-    "yearMin": "Min year",
-    "yearMax": "Max year",
-    "runtime": "Runtime",
+    "genrePlaceholder": "Wähle ein Genre",
+    "rating": "Mindestbewertung",
+    "year": "Jahr",
+    "yearMin": "Jahr min",
+    "yearMax": "Jahr max",
+    "runtime": "Laufzeit",
     "runtimeMin": "Min",
     "runtimeMax": "Max",
-    "providers": "Platforms",
-    "language": "Language",
-    "advancedFilters": "Advanced filters",
-    "creating": "Creating...",
-    "joining": "Connecting...",
-    "full": "Room full",
-    "fullDescription": "This room is full ({current}/{max} members). Ask the room creator to increase the capacity or create your own room!",
-    "notFound": "Room not found",
-    "error": "Error",
-    "errorLoading": "Unable to load room",
-    "unnamedRoom": "Unnamed room",
-    "membersCount": "{count}/{max} members",
-    "welcomeTitle": "Welcome!",
-    "welcomeDescription": "You have successfully joined the room.",
-    "roomFullTitle": "Room full",
-    "roomFullDescription": "This room is full ({current}/{max} members). Ask the room creator to increase the capacity or create your own room!",
-    "joinErrorTitle": "Error",
-    "joinErrorDescription": "Unable to join the room. Please try again.",
-    "joinRoomDescription": "Join this room to swipe and find matches with your friends!",
-    "joiningButton": "Join room",
-    "connecting": "Connecting...",
-    "roomMembers": "Room members",
-    "unknownUser": "Unknown user",
+    "providers": "Plattformen",
+    "language": "Sprache",
+    "advancedFilters": "Erweiterte Filter",
+    "creating": "Wird erstellt...",
+    "joining": "Verbinden...",
+    "full": "Raum voll",
+    "fullDescription": "Dieser Raum ist voll ({current}/{max} Mitglieder). Bitte den Ersteller, die Kapazität zu erhöhen, oder erstelle deinen eigenen Raum!",
+    "notFound": "Raum nicht gefunden",
+    "error": "Fehler",
+    "errorLoading": "Raum konnte nicht geladen werden",
+    "unnamedRoom": "Raum ohne Namen",
+    "membersCount": "{count}/{max} Mitglieder",
+    "welcomeTitle": "Willkommen!",
+    "welcomeDescription": "Du bist dem Raum erfolgreich beigetreten.",
+    "roomFullTitle": "Raum voll",
+    "roomFullDescription": "Dieser Raum ist voll ({current}/{max} Mitglieder). Bitte den Ersteller, die Kapazität zu erhöhen, oder erstelle deinen eigenen Raum!",
+    "joinErrorTitle": "Fehler",
+    "joinErrorDescription": "Dem Raum konnte nicht beigetreten werden. Bitte versuch es erneut.",
+    "joinRoomDescription": "Tritt diesem Raum bei, um zu swipen und Matches mit deinen Freunden zu finden!",
+    "joiningButton": "Raum beitreten",
+    "connecting": "Verbinden...",
+    "roomMembers": "Raummitglieder",
+    "unknownUser": "Unbekannter Nutzer",
     "members": {
-      "joined": "{name} joined the room",
-      "left": "A member left the room",
-      "someone": "Someone"
+      "joined": "{name} ist dem Raum beigetreten",
+      "left": "Ein Mitglied hat den Raum verlassen",
+      "someone": "Jemand"
     },
-    "moviesType": "🎬 Movies",
-    "tvShowsType": "📺 TV Shows",
+    "moviesType": "🎬 Filme",
+    "tvShowsType": "📺 Serien",
     "tabs": {
-      "swipe": "Swipe",
+      "swipe": "Swipen",
       "matches": "Matches",
-      "history": "History",
-      "stats": "Stats",
-      "members": "Members",
-      "swipeAriaLabel": "Swipe on movies",
-      "matchesAriaLabel": "View matches",
-      "historyAriaLabel": "View swipe history",
-      "statsAriaLabel": "View statistics",
-      "membersAriaLabel": "View room members",
-      "navigationAriaLabel": "Room navigation"
+      "history": "Verlauf",
+      "stats": "Statistiken",
+      "members": "Mitglieder",
+      "swipeAriaLabel": "Filme swipen",
+      "matchesAriaLabel": "Matches ansehen",
+      "historyAriaLabel": "Swipe-Verlauf ansehen",
+      "statsAriaLabel": "Statistiken ansehen",
+      "membersAriaLabel": "Raummitglieder ansehen",
+      "navigationAriaLabel": "Raum-Navigation"
     }
   },
   "swipe": {
-    "like": "Like",
-    "dislike": "Pass",
-    "undo": "Undo",
+    "like": "Gefällt mir",
+    "dislike": "Weiter",
+    "undo": "Rückgängig",
     "details": "Details",
-    "noMovies": "No movies available",
-    "noMoviesDescription": "All movies have already been viewed. Try changing the room filters.",
-    "noGenre": "Incomplete room configuration",
-    "noGenreDescription": "This room has no configured genre. Ask the creator to configure a genre to start swiping!",
-    "allSwiped": "No more movies available!",
-    "allSwipedDescription": "You've swiped all available movies with these filters! Try broadening your criteria.",
-    "loading": "Loading movies...",
-    "rating": "Rating",
-    "votes": "{count} votes",
-    "releaseDate": "Release",
-    "limitReached": "Swipe limit reached",
-    "limitReachedDescription": "You have reached the swipe limit for this room. Upgrade your plan to continue.",
-    "swipeError": "Swipe error",
-    "swipeErrorDescription": "An error occurred while saving your choice.",
+    "noMovies": "Keine Filme verfügbar",
+    "noMoviesDescription": "Alle Filme wurden bereits angesehen. Versuch die Raumfilter zu ändern.",
+    "noGenre": "Unvollständige Raumkonfiguration",
+    "noGenreDescription": "Dieser Raum hat kein eingestelltes Genre. Bitte den Ersteller, ein Genre festzulegen, damit es losgehen kann!",
+    "allSwiped": "Keine weiteren Filme verfügbar!",
+    "allSwipedDescription": "Du hast alle verfügbaren Filme mit diesen Filtern geswipt! Versuch deine Kriterien zu erweitern.",
+    "loading": "Filme werden geladen...",
+    "rating": "Bewertung",
+    "votes": "{count} Stimmen",
+    "releaseDate": "Erschienen",
+    "limitReached": "Swipe-Limit erreicht",
+    "limitReachedDescription": "Du hast das Swipe-Limit für diesen Raum erreicht. Upgrade deinen Plan, um weiterzumachen.",
+    "swipeError": "Swipe-Fehler",
+    "swipeErrorDescription": "Beim Speichern deiner Auswahl ist ein Fehler aufgetreten.",
     "sidebar": {
-      "session": "Session",
-      "moviesViewed": "Movies viewed",
-      "liked": "Liked",
-      "likeRate": "Like rate",
-      "tip": "Tip",
-      "shortcuts": "Shortcuts",
+      "session": "Sitzung",
+      "moviesViewed": "Gesehene Filme",
+      "liked": "Geliked",
+      "likeRate": "Like-Rate",
+      "tip": "Tipp",
+      "shortcuts": "Tastenkürzel",
       "nope": "Nope",
-      "recentlyLiked": "Recently liked",
-      "noLikesYet": "No likes yet",
-      "swipeRightToLike": "Swipe right to like",
-      "toDiscover": "To discover",
-      "moviesInPile": "movies in pile",
-      "moviesRemaining": "{count} movies remaining",
-      "swiped": "{count} swiped",
-      "percentLiked": "{percent}% liked",
-      "keyboardHint": "← → to swipe • Ctrl+Z undo",
+      "recentlyLiked": "Kürzlich geliked",
+      "noLikesYet": "Noch keine Likes",
+      "swipeRightToLike": "Nach rechts swipen zum Liken",
+      "toDiscover": "Zu entdecken",
+      "moviesInPile": "Filme im Stapel",
+      "moviesRemaining": "{count} Filme übrig",
+      "swiped": "{count} geswipt",
+      "percentLiked": "{percent}% geliked",
+      "keyboardHint": "← → zum Swipen • Strg+Z rückgängig",
       "tips": {
-        "swipeFast": "Swipe fast for a dynamic exit",
-        "keyboard": "← → on keyboard to swipe",
-        "undoTip": "Ctrl+Z to undo last swipe",
-        "matches": "Matches appear when everyone likes",
-        "learning": "The more you swipe, the better we know you"
+        "swipeFast": "Schnell swipen für einen dynamischen Effekt",
+        "keyboard": "← → auf der Tastatur zum Swipen",
+        "undoTip": "Strg+Z für den letzten Swipe rückgängig",
+        "matches": "Matches erscheinen, wenn alle liken",
+        "learning": "Je mehr du swipst, desto besser kennen wir dich"
       }
     }
   },
   "match": {
-    "title": "It's a match!",
-    "newMatch": "New Match!",
-    "description": "A movie has been matched by the group!",
-    "noMatches": "No matches yet",
-    "noMatchesDescription": "Keep swiping to find a movie everyone loves!",
+    "title": "Es ist ein Match!",
+    "newMatch": "Neuer Match!",
+    "description": "Die Gruppe hat einen Film gematcht!",
+    "noMatches": "Noch keine Matches",
+    "noMatchesDescription": "Swipe weiter, um einen Film zu finden, den alle mögen!",
     "topMatch": "Top Match",
-    "otherMatches": "Other Matches ({count})",
-    "agreement": "{percent}% agreement",
-    "watchOn": "Watch on",
-    "tmdb": "View on TMDb",
-    "share": "Share"
+    "otherMatches": "Weitere Matches ({count})",
+    "agreement": "{percent}% Übereinstimmung",
+    "watchOn": "Ansehen auf",
+    "tmdb": "Auf TMDb ansehen",
+    "share": "Teilen"
   },
   "error": {
-    "title": "An error occurred",
-    "description": "We're sorry, something went wrong",
-    "retry": "Retry",
-    "home": "Home",
-    "back": "Back",
-    "details": "Error details",
-    "notFound": "Page not found",
-    "unauthorized": "Unauthorized",
-    "forbidden": "Access forbidden",
+    "title": "Ein Fehler ist aufgetreten",
+    "description": "Es tut uns leid, etwas ist schiefgelaufen",
+    "retry": "Erneut versuchen",
+    "home": "Startseite",
+    "back": "Zurück",
+    "details": "Fehlerdetails",
+    "notFound": "Seite nicht gefunden",
+    "unauthorized": "Nicht autorisiert",
+    "forbidden": "Zugriff verweigert",
     "404": {
-      "badge": "Page not found",
-      "title": "Page not found",
-      "description": "The page you're looking for doesn't exist or has been moved."
+      "badge": "Seite nicht gefunden",
+      "title": "Seite nicht gefunden",
+      "description": "Die Seite, die du suchst, existiert nicht oder wurde verschoben."
     },
     "500": {
-      "badge": "Server error",
-      "title": "An error occurred",
-      "description": "We're sorry, something went wrong."
+      "badge": "Serverfehler",
+      "title": "Ein Fehler ist aufgetreten",
+      "description": "Es tut uns leid, etwas ist schiefgelaufen."
     }
   },
   "footer": {
-    "madeWith": "Made with",
-    "by": "by",
-    "rights": "All rights reserved"
+    "madeWith": "Gemacht mit",
+    "by": "von",
+    "rights": "Alle Rechte vorbehalten"
   },
   "about": {
-    "title": "About Swipe Movie",
+    "title": "Über Swipe Movie",
     "mission": {
-      "title": "Our mission",
-      "p1": "Swipe Movie was born from a simple observation: choosing a movie to watch as a group is often a source of endless debate. How many times have you spent 30 minutes looking for a movie, only to give up and watch the same series for the umpteenth time?",
-      "p2": "Our mission is to make this decision quick, democratic and fun. Thanks to our swipe system inspired by dating apps, each group member can express their preferences, and our algorithm automatically finds the movie that everyone will love."
+      "title": "Unsere Mission",
+      "p1": "Swipe Movie entstand aus einer einfachen Beobachtung: Einen Film zum gemeinsamen Schauen auszuwählen, endet oft in endlosen Diskussionen. Wie oft hast du 30 Minuten nach einem Film gesucht, nur um aufzugeben und zum x-ten Mal dieselbe Serie zu schauen?",
+      "p2": "Unsere Mission ist es, diese Entscheidung schnell, demokratisch und spaßig zu machen. Dank unseres Swipe-Systems, inspiriert von Dating-Apps, kann jedes Gruppenmitglied seine Vorlieben ausdrücken, und unser Algorithmus findet automatisch den Film, der allen gefällt."
     },
     "howItWorks": {
-      "title": "How it works",
-      "step1Title": "1. Create a room",
-      "step1Desc": "Configure your preferences: movie genre, streaming platform, minimum rating, duration... Filters apply to all room members.",
-      "step2Title": "2. Invite your friends",
-      "step2Desc": "Share the room code with your friends, family or colleagues. No need for everyone to be connected at the same time!",
-      "step3Title": "3. Swipe",
-      "step3Desc": "Everyone swipes on their own. Right if the movie interests you, left otherwise. As soon as all members have liked the same movie: it's a match! 🎉"
+      "title": "So funktioniert's",
+      "step1Title": "1. Erstelle einen Raum",
+      "step1Desc": "Stelle deine Präferenzen ein: Filmgenre, Streaming-Plattform, Mindestbewertung, Dauer... Die Filter gelten für alle Mitglieder des Raums.",
+      "step2Title": "2. Lade deine Freunde ein",
+      "step2Desc": "Teile den Raumcode mit deinen Freunden, deiner Familie oder Kollegen. Nicht alle müssen gleichzeitig online sein!",
+      "step3Title": "3. Swipen",
+      "step3Desc": "Jeder swipt für sich. Nach rechts, wenn der Film dich interessiert, nach links, wenn nicht. Sobald alle Mitglieder denselben Film geliked haben: Das ist ein Match! 🎉"
     },
     "catalog": {
-      "title": "Movie catalog",
-      "description": "We use The Movie Database (TMDb), which contains millions of movies and series. Information is updated regularly to offer you the latest releases and timeless classics."
+      "title": "Filmkatalog",
+      "description": "Wir nutzen The Movie Database (TMDb), die Millionen von Filmen und Serien enthält. Die Informationen werden regelmäßig aktualisiert, um dir die neuesten Veröffentlichungen und zeitlose Klassiker zu bieten."
     },
     "free": {
-      "title": "Free and ad-free",
-      "description": "Swipe Movie is 100% free and contains no ads. No credit card required, no hidden subscription. Our goal is to save you time, not money."
+      "title": "Kostenlos und werbefrei",
+      "description": "Swipe Movie ist 100% kostenlos und enthält keine Werbung. Keine Kreditkarte nötig, kein verstecktes Abo. Unser Ziel ist es, dir Zeit zu sparen, nicht Geld."
     },
     "cta": {
-      "title": "Ready to simplify your movie nights?",
-      "button": "Get started for free"
+      "title": "Bereit, deine Filmabende zu vereinfachen?",
+      "button": "Kostenlos starten"
     }
   },
   "contact": {
-    "title": "Contact us",
-    "description": "Have a question, suggestion or problem? We're here to help!",
+    "title": "Kontaktiere uns",
+    "description": "Eine Frage, ein Vorschlag oder ein Problem? Wir helfen dir gerne!",
     "email": {
-      "title": "Email",
-      "description": "For any general questions or support"
+      "title": "E-Mail",
+      "description": "Für allgemeine Fragen oder Support"
     },
     "github": {
       "title": "GitHub",
-      "description": "Report a bug or suggest an improvement",
-      "link": "Open an issue"
+      "description": "Melde einen Bug oder schlage eine Verbesserung vor",
+      "link": "Issue erstellen"
     },
     "faq": {
-      "title": "Frequently Asked Questions",
-      "q1": "Is Swipe Movie really free?",
-      "a1": "Yes, 100% free with no ads. No hidden fees, no subscription.",
-      "q2": "How do I invite friends to a room?",
-      "a2": "After creating a room, you'll receive a unique code. Share this code with your friends, and they can join the room from the homepage by clicking \"Join a room\".",
-      "q3": "Do we need to be online at the same time to swipe?",
-      "a3": "No! Each member can swipe at their own pace. As soon as all members have liked the same movie, you'll receive a match notification.",
-      "q4": "Where does the movie information come from?",
-      "a4": "We use The Movie Database (TMDb), a collaborative database with millions of movies and TV shows. Information is regularly updated.",
-      "q5": "Is my personal data secure?",
-      "a5": "Absolutely. We only collect strictly necessary information (name and email via Google OAuth). Check out our",
-      "privacyLink": "privacy policy",
-      "a5End": "for more details."
+      "title": "Häufig gestellte Fragen",
+      "q1": "Ist Swipe Movie wirklich kostenlos?",
+      "a1": "Ja, 100% kostenlos und ohne Werbung. Keine versteckten Kosten, kein Abo.",
+      "q2": "Wie lade ich Freunde in einen Raum ein?",
+      "a2": "Nach dem Erstellen eines Raums erhältst du einen einzigartigen Code. Teile diesen Code mit deinen Freunden – sie können dem Raum über die Startseite mit \"Raum beitreten\" beitreten.",
+      "q3": "Muss man gleichzeitig online sein, um zu swipen?",
+      "a3": "Nein! Jedes Mitglied kann in seinem eigenen Tempo swipen. Sobald alle Mitglieder denselben Film geliked haben, bekommst du eine Match-Benachrichtigung.",
+      "q4": "Woher kommen die Filminformationen?",
+      "a4": "Wir nutzen The Movie Database (TMDb), eine kollaborative Datenbank mit Millionen von Filmen und Serien. Die Informationen werden regelmäßig aktualisiert.",
+      "q5": "Sind meine persönlichen Daten sicher?",
+      "a5": "Absolut. Wir sammeln nur die unbedingt notwendigen Informationen (Name und E-Mail über Google OAuth). Schau dir unsere",
+      "privacyLink": "Datenschutzerklärung",
+      "a5End": "für weitere Details an."
     },
     "cta": {
-      "title": "Didn't find your answer?",
-      "description": "Feel free to contact us by email, we'll get back to you as soon as possible.",
-      "button": "Contact us"
+      "title": "Keine Antwort gefunden?",
+      "description": "Kontaktiere uns gerne per E-Mail, wir antworten dir so schnell wie möglich.",
+      "button": "Uns kontaktieren"
     }
   },
   "privacy": {
-    "title": "Privacy Policy",
-    "lastUpdate": "Last updated: November 14, 2025",
+    "title": "Datenschutzerklärung",
+    "lastUpdate": "Letzte Aktualisierung: 14. November 2025",
     "commitment": {
-      "title": "Our Commitment",
-      "p1": "At Swipe Movie, we take your privacy seriously. This privacy policy explains what data we collect, why we collect it, and how we use it.",
-      "p2": "Our fundamental principle: we only collect data strictly necessary for the application to function, and we never sell it to third parties."
+      "title": "Unser Versprechen",
+      "p1": "Bei Swipe Movie nehmen wir deinen Datenschutz ernst. Diese Datenschutzerklärung erklärt, welche Daten wir erheben, warum wir sie erheben und wie wir sie nutzen.",
+      "p2": "Unser Grundprinzip: Wir erheben nur die Daten, die für das Funktionieren der Anwendung unbedingt notwendig sind, und verkaufen sie niemals an Dritte."
     },
     "dataCollected": {
-      "title": "Data Collected",
+      "title": "Erhobene Daten",
       "account": {
-        "title": "1. Account Information",
-        "intro": "When you sign in with Google OAuth, we collect:",
+        "title": "1. Kontoinformationen",
+        "intro": "Wenn du dich mit Google OAuth anmeldest, erheben wir:",
         "items": [
-          "Your name",
-          "Your email address",
-          "Your Google profile picture (if available)"
+          "Deinen Namen",
+          "Deine E-Mail-Adresse",
+          "Dein Google-Profilbild (falls verfügbar)"
         ]
       },
       "usage": {
-        "title": "2. Usage Data",
-        "intro": "To make the application work, we store:",
+        "title": "2. Nutzungsdaten",
+        "intro": "Damit die Anwendung funktioniert, speichern wir:",
         "items": [
-          "The rooms you create or join",
-          "Your swipes (like/dislike on movies)",
-          "The matches detected in your rooms"
+          "Die Räume, die du erstellst oder denen du beitrittst",
+          "Deine Swipes (Like/Dislike bei Filmen)",
+          "Die in deinen Räumen erkannten Matches"
         ]
       },
       "technical": {
-        "title": "3. Technical Data",
-        "intro": "To improve user experience, we collect via Vercel Analytics:",
+        "title": "3. Technische Daten",
+        "intro": "Zur Verbesserung der Nutzererfahrung erheben wir über Vercel Analytics:",
         "items": [
-          "Pages visited (anonymized)",
-          "Time spent on the application",
-          "Country of origin (for general statistics)"
+          "Besuchte Seiten (anonymisiert)",
+          "Verweildauer in der Anwendung",
+          "Herkunftsland (für allgemeine Statistiken)"
         ]
       }
     },
     "dataUsage": {
-      "title": "How We Use Your Data",
+      "title": "Wie wir deine Daten nutzen",
       "service": {
-        "title": "Provide the service:",
-        "description": "your account data allows us to identify you, your swipes allow us to find matches with other members of your rooms."
+        "title": "Bereitstellung des Dienstes:",
+        "description": "Deine Kontodaten ermöglichen es uns, dich zu identifizieren. Deine Swipes ermöglichen es uns, Matches mit anderen Mitgliedern deiner Räume zu finden."
       },
       "improve": {
-        "title": "Improve the application:",
-        "description": "usage data helps us understand which features are used and which need improvement."
+        "title": "Verbesserung der Anwendung:",
+        "description": "Nutzungsdaten helfen uns zu verstehen, welche Funktionen genutzt werden und welche verbessert werden müssen."
       },
       "communication": {
-        "title": "Communication:",
-        "description": "we may send you email notifications about your account (matches, room invitations, etc.)."
+        "title": "Kommunikation:",
+        "description": "Wir können dir E-Mail-Benachrichtigungen zu deinem Konto senden (Matches, Raumeinladungen usw.)."
       }
     },
     "security": {
-      "title": "Data Security",
-      "intro": "We implement technical and organizational security measures to protect your data:",
+      "title": "Datensicherheit",
+      "intro": "Wir setzen technische und organisatorische Sicherheitsmaßnahmen zum Schutz deiner Daten ein:",
       "items": [
-        "Secure connection via HTTPS",
-        "Authentication via Google OAuth 2.0",
-        "Database hosted on secure servers (Neon PostgreSQL)",
-        "Encrypted sessions and secure authentication tokens",
-        "No password storage (delegated to Google)"
+        "Sichere Verbindung über HTTPS",
+        "Authentifizierung über Google OAuth 2.0",
+        "Datenbank auf sicheren Servern gehostet (Neon PostgreSQL)",
+        "Verschlüsselte Sitzungen und sichere Authentifizierungs-Tokens",
+        "Keine Passwortspeicherung (an Google delegiert)"
       ]
     },
     "rights": {
-      "title": "Your Rights (GDPR)",
-      "intro": "In accordance with the General Data Protection Regulation (GDPR), you have the following rights:",
+      "title": "Deine Rechte (DSGVO)",
+      "intro": "Gemäß der Datenschutz-Grundverordnung (DSGVO) hast du folgende Rechte:",
       "access": {
-        "title": "Right of access:",
-        "description": "you can request a copy of all your personal data"
+        "title": "Recht auf Auskunft:",
+        "description": "Du kannst eine Kopie aller deiner personenbezogenen Daten anfordern"
       },
       "rectification": {
-        "title": "Right to rectification:",
-        "description": "you can modify your account information"
+        "title": "Recht auf Berichtigung:",
+        "description": "Du kannst deine Kontoinformationen ändern"
       },
       "erasure": {
-        "title": "Right to erasure:",
-        "description": "you can request complete deletion of your account and data"
+        "title": "Recht auf Löschung:",
+        "description": "Du kannst die vollständige Löschung deines Kontos und deiner Daten verlangen"
       },
       "portability": {
-        "title": "Right to portability:",
-        "description": "you can retrieve your data in a usable format"
+        "title": "Recht auf Datenübertragbarkeit:",
+        "description": "Du kannst deine Daten in einem nutzbaren Format abrufen"
       },
-      "contact": "To exercise these rights, contact us at"
+      "contact": "Um diese Rechte auszuüben, kontaktiere uns unter"
     },
     "sharing": {
-      "title": "Sharing Data with Third Parties",
-      "intro": "We never sell your personal data. We only share certain data with:",
-      "google": "for OAuth authentication",
-      "vercel": "application hosting and anonymized analytics",
-      "railway": "backend API hosting",
-      "neon": "PostgreSQL database hosting",
-      "tmdb": "to retrieve movie information"
+      "title": "Datenweitergabe an Dritte",
+      "intro": "Wir verkaufen niemals deine persönlichen Daten. Wir teilen bestimmte Daten nur mit:",
+      "google": "für die OAuth-Authentifizierung",
+      "vercel": "Anwendungs-Hosting und anonymisierte Analysen",
+      "railway": "Backend-API-Hosting",
+      "neon": "PostgreSQL-Datenbank-Hosting",
+      "tmdb": "zum Abrufen von Filminformationen"
     },
     "cookies": {
       "title": "Cookies",
-      "intro": "We use cookies strictly necessary for the application to function:",
+      "intro": "Wir verwenden ausschließlich für das Funktionieren der Anwendung notwendige Cookies:",
       "items": [
-        "Session cookie for authentication (required)",
-        "Theme preference cookie (dark/light mode)"
+        "Sitzungs-Cookie für die Authentifizierung (erforderlich)",
+        "Cookie für Theme-Präferenz (Dark/Light-Modus)"
       ],
-      "noTracking": "We do not use advertising or third-party tracking cookies."
+      "noTracking": "Wir verwenden keine Werbe- oder Tracking-Cookies von Drittanbietern."
     },
     "changes": {
-      "title": "Changes to This Policy",
-      "description": "We may update this privacy policy from time to time. The last update date is shown at the top of this page. In case of significant changes, we will inform you by email."
+      "title": "Änderungen dieser Richtlinie",
+      "description": "Wir können diese Datenschutzerklärung von Zeit zu Zeit aktualisieren. Das Datum der letzten Aktualisierung steht oben auf dieser Seite. Bei wesentlichen Änderungen informieren wir dich per E-Mail."
     },
     "contactSection": {
-      "title": "Contact",
-      "description": "For any questions regarding this privacy policy or your personal data, contact us at"
+      "title": "Kontakt",
+      "description": "Bei Fragen zu dieser Datenschutzerklärung oder deinen persönlichen Daten kontaktiere uns unter"
     }
   },
   "terms": {
-    "title": "Terms of Service",
-    "lastUpdate": "Last updated: November 14, 2025",
+    "title": "Nutzungsbedingungen",
+    "lastUpdate": "Letzte Aktualisierung: 14. November 2025",
     "acceptance": {
-      "title": "1. Acceptance of Terms",
-      "p1": "By using Swipe Movie, you agree to be bound by these Terms of Service. If you do not accept these terms, please do not use our service.",
-      "p2": "We reserve the right to modify these Terms at any time. Changes will take effect immediately after publication on this page. Your continued use of the service after the publication of changes constitutes your acceptance of those changes."
+      "title": "1. Annahme der Bedingungen",
+      "p1": "Durch die Nutzung von Swipe Movie erklärst du dich mit diesen Nutzungsbedingungen einverstanden. Wenn du diese Bedingungen nicht akzeptierst, nutze unseren Dienst bitte nicht.",
+      "p2": "Wir behalten uns das Recht vor, diese Bedingungen jederzeit zu ändern. Änderungen treten sofort nach Veröffentlichung auf dieser Seite in Kraft. Deine fortgesetzte Nutzung des Dienstes nach Veröffentlichung von Änderungen gilt als Zustimmung zu diesen Änderungen."
     },
     "description": {
-      "title": "2. Service Description",
-      "intro": "Swipe Movie is a free web application that allows users to:",
+      "title": "2. Dienstbeschreibung",
+      "intro": "Swipe Movie ist eine kostenlose Webanwendung, die es Nutzern ermöglicht:",
       "items": [
-        "Create \"rooms\" to choose movies as a group",
-        "Invite other users to join their rooms",
-        "Swipe on movies to express their preferences",
-        "Discover \"matches\" when all room members like the same movie"
+        "\"Räume\" zu erstellen, um gemeinsam Filme auszuwählen",
+        "Andere Nutzer einzuladen, ihren Räumen beizutreten",
+        "Filme zu swipen, um ihre Vorlieben auszudrücken",
+        "\"Matches\" zu entdecken, wenn allen Raummitgliedern derselbe Film gefällt"
       ],
-      "outro": "The service uses data from The Movie Database (TMDb) to provide movie information."
+      "outro": "Der Dienst nutzt Daten von The Movie Database (TMDb), um Filminformationen bereitzustellen."
     },
     "allowedUse": {
-      "title": "3. Permitted Use",
-      "intro": "You are permitted to:",
+      "title": "3. Erlaubte Nutzung",
+      "intro": "Du darfst:",
       "items": [
-        "Use Swipe Movie for personal and non-commercial purposes",
-        "Create an account with your Google information",
-        "Create and join rooms",
-        "Swipe on movies and see your matches",
-        "Share your room codes with friends"
+        "Swipe Movie für persönliche und nicht-kommerzielle Zwecke nutzen",
+        "Ein Konto mit deinen Google-Informationen erstellen",
+        "Räume erstellen und beitreten",
+        "Filme swipen und deine Matches sehen",
+        "Deine Raumcodes mit Freunden teilen"
       ]
     },
     "prohibitedUse": {
-      "title": "4. Prohibited Use",
-      "intro": "It is strictly prohibited to:",
+      "title": "4. Verbotene Nutzung",
+      "intro": "Es ist ausdrücklich verboten:",
       "items": [
-        "Use the service for commercial purposes without written authorization",
-        "Create fake accounts or impersonate others",
-        "Attempt to hack, compromise, or disrupt the service",
-        "Use bots, scripts, or automated tools",
-        "Extract or scrape data from the service",
-        "Post illegal, offensive, or inappropriate content",
-        "Use the service to send spam or unsolicited content"
+        "Den Dienst ohne schriftliche Genehmigung für kommerzielle Zwecke zu nutzen",
+        "Fake-Konten zu erstellen oder sich als andere auszugeben",
+        "Zu versuchen, den Dienst zu hacken, zu kompromittieren oder zu stören",
+        "Bots, Skripte oder automatisierte Tools zu verwenden",
+        "Daten aus dem Dienst zu extrahieren oder zu scrapen",
+        "Illegale, beleidigende oder unangemessene Inhalte zu veröffentlichen",
+        "Den Dienst zum Versenden von Spam oder unerwünschten Inhalten zu nutzen"
       ]
     },
     "accounts": {
-      "title": "5. User Accounts",
-      "intro": "To use Swipe Movie, you must create an account by signing in with Google OAuth. You are responsible for:",
+      "title": "5. Nutzerkonten",
+      "intro": "Um Swipe Movie zu nutzen, musst du ein Konto erstellen, indem du dich mit Google OAuth anmeldest. Du bist verantwortlich für:",
       "items": [
-        "Maintaining the security of your Google account",
-        "All activities performed from your account",
-        "Immediately notifying us of any unauthorized use of your account"
+        "Die Sicherheit deines Google-Kontos",
+        "Alle Aktivitäten, die über dein Konto durchgeführt werden",
+        "Uns unverzüglich über jede unbefugte Nutzung deines Kontos zu informieren"
       ],
-      "outro": "We reserve the right to suspend or delete your account if we suspect a violation of these Terms."
+      "outro": "Wir behalten uns das Recht vor, dein Konto zu sperren oder zu löschen, wenn wir einen Verstoß gegen diese Bedingungen vermuten."
     },
     "intellectualProperty": {
-      "title": "6. Intellectual Property",
-      "p1": "Swipe Movie and all its contents (logo, design, code, etc.) are protected by intellectual property laws.",
-      "p2": "Movie information (posters, synopses, ratings, etc.) is provided by The Movie Database (TMDb) and is subject to their own terms of use.",
-      "p3": "You retain all rights to the data you create in the application (your rooms, your swipes, etc.)."
+      "title": "6. Geistiges Eigentum",
+      "p1": "Swipe Movie und alle Inhalte (Logo, Design, Code usw.) sind durch Gesetze zum geistigen Eigentum geschützt.",
+      "p2": "Filminformationen (Poster, Zusammenfassungen, Bewertungen usw.) werden von The Movie Database (TMDb) bereitgestellt und unterliegen deren eigenen Nutzungsbedingungen.",
+      "p3": "Du behältst alle Rechte an den Daten, die du in der Anwendung erstellst (deine Räume, deine Swipes usw.)."
     },
     "liability": {
-      "title": "7. Limitation of Liability",
-      "intro": "Swipe Movie is provided \"as is\" without warranty of any kind. We do not guarantee that:",
+      "title": "7. Haftungsbeschränkung",
+      "intro": "Swipe Movie wird \"wie besehen\" ohne jegliche Garantie bereitgestellt. Wir garantieren nicht, dass:",
       "items": [
-        "The service will always be available or uninterrupted",
-        "Movie information is accurate or up to date",
-        "The service will be free from errors or bugs"
+        "Der Dienst immer verfügbar oder unterbrechungsfrei sein wird",
+        "Die Filminformationen genau oder aktuell sind",
+        "Der Dienst frei von Fehlern oder Bugs sein wird"
       ],
-      "outro": "Under no circumstances will Swipe Movie be liable for direct, indirect, incidental, or consequential damages resulting from the use or inability to use the service."
+      "outro": "In keinem Fall haftet Swipe Movie für direkte, indirekte, beiläufige oder Folgeschäden, die sich aus der Nutzung oder der Unfähigkeit zur Nutzung des Dienstes ergeben."
     },
     "termination": {
-      "title": "8. Termination",
-      "p1": "You may stop using the service and delete your account at any time by contacting us at",
-      "p2": "We reserve the right to suspend or terminate your access to the service at any time, without notice, if we believe you have violated these Terms."
+      "title": "8. Kündigung",
+      "p1": "Du kannst die Nutzung des Dienstes jederzeit einstellen und dein Konto löschen, indem du uns kontaktierst unter",
+      "p2": "Wir behalten uns das Recht vor, deinen Zugang zum Dienst jederzeit und ohne Vorankündigung zu sperren oder zu beenden, wenn wir der Meinung sind, dass du gegen diese Bedingungen verstoßen hast."
     },
     "law": {
-      "title": "9. Applicable Law",
-      "description": "These Terms are governed by French law. Any dispute relating to the interpretation or execution of these Terms will be submitted to the competent French courts."
+      "title": "9. Anwendbares Recht",
+      "description": "Diese Bedingungen unterliegen dem französischen Recht. Streitigkeiten bezüglich der Auslegung oder Durchführung dieser Bedingungen werden den zuständigen französischen Gerichten vorgelegt."
     },
     "contactSection": {
-      "title": "10. Contact",
-      "description": "For any questions regarding these Terms of Service, contact us at"
+      "title": "10. Kontakt",
+      "description": "Bei Fragen zu diesen Nutzungsbedingungen kontaktiere uns unter"
     },
     "entireAgreement": {
-      "title": "11. Entire Agreement",
-      "description": "These Terms, along with our",
-      "privacyLink": "Privacy Policy",
-      "descriptionEnd": "constitute the entire agreement between you and Swipe Movie regarding the use of the service."
+      "title": "11. Gesamte Vereinbarung",
+      "description": "Diese Bedingungen bilden zusammen mit unserer",
+      "privacyLink": "Datenschutzerklärung",
+      "descriptionEnd": "die gesamte Vereinbarung zwischen dir und Swipe Movie bezüglich der Nutzung des Dienstes."
     }
   },
   "login": {
-    "loading": "Loading...",
+    "loading": "Laden...",
     "hero": {
-      "title": "Welcome to Swipe Movie",
-      "subtitle": "Finally decide which movie to watch as a group, without endless debate!"
+      "title": "Willkommen bei Swipe Movie",
+      "subtitle": "Entscheide endlich, welchen Film ihr gemeinsam schaut – ohne endlose Diskussionen!"
     },
     "features": {
       "createRoom": {
-        "title": "Create a room in 30 seconds",
-        "description": "Choose your criteria, invite your friends and swipe together"
+        "title": "Erstelle einen Raum in 30 Sekunden",
+        "description": "Wähle deine Kriterien, lade deine Freunde ein und swipt zusammen"
       },
       "catalog": {
-        "title": "Thousands of movies and series",
-        "description": "Complete catalog with filters by genre, platform, year..."
+        "title": "Tausende Filme und Serien",
+        "description": "Vollständiger Katalog mit Filtern nach Genre, Plattform, Jahr..."
       },
       "matches": {
-        "title": "Real-time matches",
-        "description": "Instant notification as soon as you have a match!"
+        "title": "Matches in Echtzeit",
+        "description": "Sofortige Benachrichtigung, sobald ihr einen Match habt!"
       }
     },
     "card": {
-      "title": "Sign In",
-      "subtitle": "Sign in to create your first room",
-      "googleButton": "Continue with Google",
-      "connecting": "Signing in...",
-      "free": "100% free",
-      "noCard": "No credit card required",
-      "terms": "By signing in, you agree to our",
-      "termsLink": "Terms of Service",
-      "and": "and our",
-      "privacyLink": "Privacy Policy"
+      "title": "Anmelden",
+      "subtitle": "Melde dich an, um deinen ersten Raum zu erstellen",
+      "googleButton": "Weiter mit Google",
+      "connecting": "Anmelden...",
+      "free": "100% kostenlos",
+      "noCard": "Keine Kreditkarte nötig",
+      "terms": "Mit der Anmeldung akzeptierst du unsere",
+      "termsLink": "Nutzungsbedingungen",
+      "and": "und unsere",
+      "privacyLink": "Datenschutzerklärung"
     }
   },
   "preview": {
-    "title": "🎬 Cinema Theme Preview",
+    "title": "🎬 Kino-Theme Vorschau",
     "card": {
-      "title": "Movie Card",
-      "description": "Discover your new \"cinema\" palette"
+      "title": "Filmkarte",
+      "description": "Entdecke deine neue \"Kino\"-Palette"
     },
     "badges": {
-      "accent": "Accent",
-      "primary": "Primary",
-      "secondary": "Secondary"
+      "accent": "Akzent",
+      "primary": "Primär",
+      "secondary": "Sekundär"
     },
     "buttons": {
-      "primary": "Primary",
-      "destructive": "Destructive"
+      "primary": "Primär",
+      "destructive": "Destruktiv"
     }
   },
   "onboarding": {
     "step1": {
-      "title": "Create a room in 30 seconds",
-      "description": "Choose a name, select your filters (genre, platform, rating) and invite your friends!"
+      "title": "Erstelle einen Raum in 30 Sekunden",
+      "description": "Wähle einen Namen, stelle deine Filter ein (Genre, Plattform, Bewertung) und lade deine Freunde ein!"
     },
     "step2": {
-      "title": "Invite your friends",
-      "description": "Share the room code with your roommates, family or friends. Everyone can join easily!"
+      "title": "Lade deine Freunde ein",
+      "description": "Teile den Raumcode mit deinen Mitbewohnern, deiner Familie oder Freunden. Alle können ganz einfach beitreten!"
     },
     "step3": {
-      "title": "Swipe together",
-      "description": "Everyone swipes on their own, just like Tinder. ❤️ to like, ❌ to pass."
+      "title": "Zusammen swipen",
+      "description": "Jeder swipt für sich, wie bei Tinder. ❤️ für gefällt mir, ❌ für weiter."
     },
     "step4": {
-      "title": "Automatic match!",
-      "description": "As soon as everyone likes the same movie, it's a match! No more debate, time for popcorn 🍿"
+      "title": "Automatischer Match!",
+      "description": "Sobald allen derselbe Film gefällt, ist es ein Match! Schluss mit der Diskussion, her mit dem Popcorn 🍿"
     },
-    "next": "Next",
-    "previous": "Previous",
-    "skip": "Skip tutorial",
-    "finish": "Let's go!"
+    "next": "Weiter",
+    "previous": "Zurück",
+    "skip": "Tutorial überspringen",
+    "finish": "Los geht's!"
   },
   "pricing": {
-    "title": "Choose Your Plan",
-    "subtitle": "Start for free, upgrade when you need more features",
+    "title": "Wähle deinen Plan",
+    "subtitle": "Starte kostenlos, upgrade wenn du mehr brauchst",
     "free": {
-      "description": "Perfect to get started",
+      "description": "Perfekt zum Loslegen",
       "features": {
-        "rooms": "3 rooms max",
-        "participants": "4 participants per room",
-        "swipes": "20 swipes per room",
-        "expiry": "Rooms expire after 7 days",
-        "filters": "Advanced filters",
-        "email": "Email notifications"
+        "rooms": "Maximal 3 Räume",
+        "participants": "4 Teilnehmer pro Raum",
+        "swipes": "20 Swipes pro Raum",
+        "expiry": "Räume verfallen nach 7 Tagen",
+        "filters": "Erweiterte Filter",
+        "email": "E-Mail-Benachrichtigungen"
       },
-      "cta": "Get Started"
+      "cta": "Loslegen"
     },
     "starter": {
-      "description": "For regular users",
+      "description": "Für regelmäßige Nutzer",
       "features": {
-        "rooms": "Unlimited rooms",
-        "participants": "8 participants per room",
-        "swipes": "50 swipes per room",
-        "expiry": "30-day room expiry",
-        "email": "Email notifications",
-        "filters": "Advanced filters"
+        "rooms": "Unbegrenzte Räume",
+        "participants": "8 Teilnehmer pro Raum",
+        "swipes": "50 Swipes pro Raum",
+        "expiry": "30 Tage Gültigkeit",
+        "email": "E-Mail-Benachrichtigungen",
+        "filters": "Erweiterte Filter"
       },
-      "cta": "Choose Starter"
+      "cta": "Starter wählen"
     },
     "pro": {
-      "description": "Best for power users",
-      "badge": "Most Popular",
+      "description": "Ideal für Power-User",
+      "badge": "Am beliebtesten",
       "features": {
-        "unlimited": "Unlimited rooms",
-        "participants": "Unlimited participants",
-        "swipes": "Unlimited swipes",
-        "noExpiry": "Rooms never expire",
-        "filters": "Advanced filters",
-        "email": "Email notifications"
+        "unlimited": "Unbegrenzte Räume",
+        "participants": "Unbegrenzte Teilnehmer",
+        "swipes": "Unbegrenzte Swipes",
+        "noExpiry": "Räume ohne Ablaufdatum",
+        "filters": "Erweiterte Filter",
+        "email": "E-Mail-Benachrichtigungen"
       },
-      "cta": "Choose Pro"
+      "cta": "Pro wählen"
     },
     "team": {
-      "description": "For teams and organizations",
+      "description": "Für Teams und Organisationen",
       "features": {
-        "accounts": "5 team accounts",
-        "everything": "Everything in Pro",
-        "api": "API access",
-        "whitelabel": "White-label options",
-        "support": "Priority support",
-        "analytics": "Advanced analytics"
+        "accounts": "5 Teamkonten",
+        "everything": "Alles aus Pro inklusive",
+        "api": "API-Zugang",
+        "whitelabel": "White-Label-Optionen",
+        "support": "Prioritäts-Support",
+        "analytics": "Erweiterte Analysen"
       },
-      "cta": "Choose Team"
+      "cta": "Team wählen"
     },
     "faq": {
-      "title": "Frequently Asked Questions",
+      "title": "Häufig gestellte Fragen",
       "q1": {
-        "question": "Can I cancel my subscription at any time?",
-        "answer": "Yes, you can cancel your subscription at any time from your account settings. You'll keep access to premium features until the end of your billing period."
+        "question": "Kann ich mein Abo jederzeit kündigen?",
+        "answer": "Ja, du kannst dein Abo jederzeit in deinen Kontoeinstellungen kündigen. Du behältst den Zugang zu Premium-Funktionen bis zum Ende deines Abrechnungszeitraums."
       },
       "q2": {
-        "question": "What happens to my rooms if I downgrade?",
-        "answer": "Your existing rooms will remain accessible, but you won't be able to create new rooms that exceed your plan's limits. Older rooms may expire based on your new plan's retention period."
+        "question": "Was passiert mit meinen Räumen, wenn ich downgrade?",
+        "answer": "Deine bestehenden Räume bleiben zugänglich, aber du kannst keine neuen Räume erstellen, die die Limits deines Plans überschreiten. Ältere Räume können basierend auf der Aufbewahrungsfrist deines neuen Plans verfallen."
       },
       "q3": {
-        "question": "Is my payment information secure?",
-        "answer": "Yes, we use Stripe for payment processing, which is PCI-DSS compliant and trusted by millions of businesses worldwide. We never store your credit card information on our servers."
+        "question": "Sind meine Zahlungsdaten sicher?",
+        "answer": "Ja, wir nutzen Stripe für die Zahlungsabwicklung, das PCI-DSS-konform und von Millionen Unternehmen weltweit genutzt wird. Wir speichern niemals deine Kreditkartendaten auf unseren Servern."
       }
     }
   },
   "dashboard": {
     "subscription": {
-      "title": "My Subscription",
-      "subtitle": "Manage your subscription and view your usage",
-      "backToRooms": "Back to rooms",
-      "currentPlan": "Current Plan",
-      "renewsOn": "Renews on {date}",
-      "upgrade": "Upgrade",
+      "title": "Mein Abonnement",
+      "subtitle": "Verwalte dein Abo und sieh deine Nutzung ein",
+      "backToRooms": "Zurück zu den Räumen",
+      "currentPlan": "Aktueller Plan",
+      "renewsOn": "Verlängerung am {date}",
+      "upgrade": "Upgraden",
       "usage": {
-        "title": "Usage",
-        "rooms": "Active rooms",
-        "swipesPerRoom": "Swipes per room",
-        "participantsPerRoom": "Participants per room",
-        "unlimited": "Unlimited"
+        "title": "Nutzung",
+        "rooms": "Aktive Räume",
+        "swipesPerRoom": "Swipes pro Raum",
+        "participantsPerRoom": "Teilnehmer pro Raum",
+        "unlimited": "Unbegrenzt"
       },
       "features": {
-        "title": "Features",
-        "advancedFilters": "Advanced filters",
-        "emailNotifications": "Email notifications",
-        "apiAccess": "API access",
-        "roomExpiry": "Room expiry: {days} days",
-        "unlimited": "unlimited"
+        "title": "Funktionen",
+        "advancedFilters": "Erweiterte Filter",
+        "emailNotifications": "E-Mail-Benachrichtigungen",
+        "apiAccess": "API-Zugang",
+        "roomExpiry": "Raum-Ablauf: {days} Tage",
+        "unlimited": "unbegrenzt"
       },
       "upgradeCta": {
-        "title": "Unlock more features",
-        "description": "Upgrade to a higher plan for unlimited rooms, more participants, and advanced filters.",
-        "button": "View plans"
+        "title": "Schalte mehr Funktionen frei",
+        "description": "Upgrade auf einen höheren Plan für unbegrenzte Räume, mehr Teilnehmer und erweiterte Filter.",
+        "button": "Pläne ansehen"
       }
     }
   },
   "connections": {
-    "title": "Connected Services",
-    "subtitle": "Connect your accounts to improve recommendations",
-    "backToRooms": "Back to rooms",
-    "connected": "Connected",
-    "disconnected": "Not connected",
-    "connect": "Connect",
-    "disconnect": "Disconnect",
-    "sync": "Sync",
-    "syncing": "Syncing...",
-    "lastSync": "Last sync",
-    "syncSuccess": "Sync successful",
-    "syncError": "Sync error",
-    "connectSuccess": "Account connected",
-    "connectError": "Connection error",
-    "disconnectSuccess": "Account disconnected",
-    "disconnectError": "Disconnection error",
-    "imported": "{count} items imported",
+    "title": "Verbundene Dienste",
+    "subtitle": "Verbinde deine Konten, um die Empfehlungen zu verbessern",
+    "backToRooms": "Zurück zu den Räumen",
+    "connected": "Verbunden",
+    "disconnected": "Nicht verbunden",
+    "connect": "Verbinden",
+    "disconnect": "Trennen",
+    "sync": "Synchronisieren",
+    "syncing": "Synchronisiere...",
+    "lastSync": "Letzte Synchronisierung",
+    "syncSuccess": "Synchronisierung erfolgreich",
+    "syncError": "Synchronisierungsfehler",
+    "connectSuccess": "Konto verbunden",
+    "connectError": "Verbindungsfehler",
+    "disconnectSuccess": "Konto getrennt",
+    "disconnectError": "Fehler beim Trennen",
+    "imported": "{count} Elemente importiert",
     "trakt": {
       "name": "Trakt",
-      "description": "Sync your watched movies and TV shows history"
+      "description": "Synchronisiere deinen Verlauf gesehener Filme und Serien"
     },
     "anilist": {
       "name": "AniList",
-      "description": "Import your anime library"
+      "description": "Importiere deine Anime-Bibliothek"
     }
   },
   "subscription": {
     "upgrade": {
       "rooms": {
-        "title": "Room Limit Reached",
-        "description": "You've reached the maximum of {limit} rooms on the FREE plan. Upgrade to create unlimited rooms and enjoy more features!"
+        "title": "Raum-Limit erreicht",
+        "description": "Du hast das Maximum von {limit} Räumen im KOSTENLOS-Plan erreicht. Upgrade, um unbegrenzte Räume zu erstellen und mehr Funktionen zu nutzen!"
       },
       "participants": {
-        "title": "Participant Limit Reached",
-        "description": "You've reached the maximum of {limit} participants per room on the FREE plan. Upgrade for more participants!"
+        "title": "Teilnehmer-Limit erreicht",
+        "description": "Du hast das Maximum von {limit} Teilnehmern pro Raum im KOSTENLOS-Plan erreicht. Upgrade für mehr Teilnehmer!"
       },
       "swipes": {
-        "title": "Swipe Limit Reached",
-        "description": "You've used all {limit} swipes in this room. Upgrade for unlimited swipes!"
+        "title": "Swipe-Limit erreicht",
+        "description": "Du hast alle {limit} Swipes in diesem Raum verbraucht. Upgrade für unbegrenzte Swipes!"
       },
       "filters": {
-        "title": "Advanced Filters Locked",
-        "description": "Advanced filters are only available on PRO and TEAM plans. Upgrade to unlock powerful filtering options!"
+        "title": "Erweiterte Filter gesperrt",
+        "description": "Erweiterte Filter sind nur in den PRO- und TEAM-Plänen verfügbar. Upgrade, um leistungsstarke Filteroptionen freizuschalten!"
       },
-      "currentPlan": "Your current plan",
-      "recommended": "Recommended upgrade",
+      "currentPlan": "Dein aktueller Plan",
+      "recommended": "Empfohlenes Upgrade",
       "benefits": {
-        "title": "What you'll get:",
-        "unlimitedRooms": "Unlimited rooms",
-        "unlimitedParticipants": "Unlimited participants",
-        "unlimitedSwipes": "Unlimited swipes",
-        "moreParticipants": "More participants per room",
-        "noExpiry": "Rooms never expire",
-        "advancedFilters": "Advanced filtering options",
-        "betterMatches": "Better movie matches"
+        "title": "Das bekommst du:",
+        "unlimitedRooms": "Unbegrenzte Räume",
+        "unlimitedParticipants": "Unbegrenzte Teilnehmer",
+        "unlimitedSwipes": "Unbegrenzte Swipes",
+        "moreParticipants": "Mehr Teilnehmer pro Raum",
+        "noExpiry": "Räume ohne Ablaufdatum",
+        "advancedFilters": "Erweiterte Filteroptionen",
+        "betterMatches": "Bessere Film-Matches"
       },
-      "notNow": "Not now",
-      "viewPlans": "View Plans"
+      "notNow": "Nicht jetzt",
+      "viewPlans": "Pläne ansehen"
     }
   },
   "gdpr": {
     "banner": {
-      "message": "We use cookies to enhance your experience. By continuing, you accept our privacy policy.",
-      "learnMore": "Learn more",
-      "acceptAll": "Accept all",
-      "rejectAll": "Reject",
-      "customize": "Customize",
-      "preferencesTitle": "Cookie preferences",
-      "savePreferences": "Save"
+      "message": "Wir verwenden Cookies, um deine Erfahrung zu verbessern. Durch Fortfahren akzeptierst du unsere Datenschutzerklärung.",
+      "learnMore": "Mehr erfahren",
+      "acceptAll": "Alle akzeptieren",
+      "rejectAll": "Ablehnen",
+      "customize": "Anpassen",
+      "preferencesTitle": "Cookie-Einstellungen",
+      "savePreferences": "Speichern"
     },
     "cookies": {
-      "required": "Required",
+      "required": "Erforderlich",
       "necessary": {
-        "title": "Essential cookies",
-        "description": "Required for the site to function (login, security)"
+        "title": "Essentielle Cookies",
+        "description": "Erforderlich für das Funktionieren der Seite (Anmeldung, Sicherheit)"
       },
       "analytics": {
-        "title": "Analytics cookies",
-        "description": "Help us understand how you use the site"
+        "title": "Analyse-Cookies",
+        "description": "Helfen uns zu verstehen, wie du die Seite nutzt"
       },
       "marketing": {
-        "title": "Marketing cookies",
-        "description": "Used to show you relevant ads"
+        "title": "Marketing-Cookies",
+        "description": "Werden verwendet, um dir relevante Werbung anzuzeigen"
       }
     }
   },
   "settings": {
-    "title": "Settings",
-    "subtitle": "Manage your account and preferences",
-    "backToRooms": "Back to rooms",
+    "title": "Einstellungen",
+    "subtitle": "Verwalte dein Konto und deine Präferenzen",
+    "backToRooms": "Zurück zu den Räumen",
     "profile": {
-      "title": "Profile",
-      "email": "Email address",
-      "name": "Display name",
-      "notSet": "Not set",
-      "createdAt": "Member since"
+      "title": "Profil",
+      "email": "E-Mail-Adresse",
+      "name": "Anzeigename",
+      "notSet": "Nicht festgelegt",
+      "createdAt": "Mitglied seit"
     },
     "data": {
-      "title": "Data & Privacy",
-      "description": "In accordance with GDPR, you can export or delete your data at any time.",
-      "exportButton": "Export my data",
-      "exporting": "Exporting...",
-      "exportSuccess": "Export successful",
-      "exportSuccessDescription": "Your data has been downloaded.",
-      "exportError": "Export error",
-      "exportErrorDescription": "Unable to export your data. Please try again later.",
-      "exportInfo": "Export includes your profile, swipes, matches, and preferences."
+      "title": "Daten & Datenschutz",
+      "description": "Gemäß der DSGVO kannst du deine Daten jederzeit exportieren oder löschen.",
+      "exportButton": "Meine Daten exportieren",
+      "exporting": "Exportiere...",
+      "exportSuccess": "Export erfolgreich",
+      "exportSuccessDescription": "Deine Daten wurden heruntergeladen.",
+      "exportError": "Exportfehler",
+      "exportErrorDescription": "Deine Daten konnten nicht exportiert werden. Versuch es später erneut.",
+      "exportInfo": "Der Export umfasst dein Profil, deine Swipes, deine Matches und deine Einstellungen."
     },
     "danger": {
-      "title": "Danger zone",
-      "description": "These actions are irreversible. Proceed with caution.",
-      "logout": "Log out",
-      "deleteButton": "Delete my account",
-      "deleteDialogTitle": "Permanently delete your account?",
-      "deleteDialogDescription": "This action is irreversible. All your data will be deleted: profile, swipes, matches, and subscription.",
-      "cancel": "Cancel",
-      "confirmDelete": "Yes, delete my account",
-      "deleting": "Deleting...",
-      "deleteSuccess": "Account deleted",
-      "deleteSuccessDescription": "Your account has been successfully deleted.",
-      "deleteError": "Deletion error",
-      "deleteErrorDescription": "Unable to delete your account. Please try again later."
+      "title": "Gefahrenzone",
+      "description": "Diese Aktionen sind unwiderruflich. Geh mit Vorsicht vor.",
+      "logout": "Abmelden",
+      "deleteButton": "Mein Konto löschen",
+      "deleteDialogTitle": "Konto dauerhaft löschen?",
+      "deleteDialogDescription": "Diese Aktion ist unwiderruflich. Alle deine Daten werden gelöscht: Profil, Swipes, Matches und Abonnement.",
+      "cancel": "Abbrechen",
+      "confirmDelete": "Ja, mein Konto löschen",
+      "deleting": "Lösche...",
+      "deleteSuccess": "Konto gelöscht",
+      "deleteSuccessDescription": "Dein Konto wurde erfolgreich gelöscht.",
+      "deleteError": "Löschfehler",
+      "deleteErrorDescription": "Dein Konto konnte nicht gelöscht werden. Versuch es später erneut."
     }
   },
   "trial": {
-    "banner": "Testmodus — {remaining} Swipes ubrig",
+    "banner": "Testmodus — {remaining} Swipes übrig",
     "bannerCta": "Konto erstellen",
     "matchTitle": "Es ist ein Match!",
-    "matchSubtitle": "Ihr mogt beide diesen Film",
+    "matchSubtitle": "Ihr mögt beide diesen Film",
     "loginWall": {
       "matchTitle": "Match gefunden! 🎉",
       "matchDescription": "Erstelle dein kostenloses Konto, um deine Matches zu behalten und noch mehr Freunde einzuladen.",
-      "limitTitle": "Gefallt dir das Konzept?",
-      "limitDescription": "Registriere dich kostenlos, um unbegrenzte Swipes freizuschalten und eigene Rooms zu erstellen.",
+      "limitTitle": "Gefällt dir das Konzept?",
+      "limitDescription": "Registriere dich kostenlos, um unbegrenzte Swipes freizuschalten und eigene Räume zu erstellen.",
       "cta": "Weiter mit Google",
-      "dismiss": "Vielleicht spater"
+      "dismiss": "Vielleicht später"
     },
     "invite": "Freund einladen",
     "inviteDescription": "Teile diesen Link, um zusammen zu swipen",
     "swipeCount": "{count}/{total} Swipes",
-    "loading": "Wird geladen...",
+    "loading": "Laden...",
     "badge": "Kostenlos · Ohne Anmeldung",
     "title": "Finde deinen nächsten Film",
     "subtitle": "Wähle ein Genre, swipe mit Freunden und matche auf den perfekten Film. Kein Konto nötig.",
-    "step1": "Swipe",
+    "step1": "Swipen",
     "step2": "Einladen",
     "step3": "Match",
     "pickGenre": "Welches Genre heute Abend?",
@@ -962,7 +962,7 @@
       "animation": "Animation",
       "thriller": "Thriller"
     },
-    "creating": "Erstelle deinen Raum...",
-    "creatingSubtitle": "Filme werden für dich vorbereitet"
+    "creating": "Dein Raum wird erstellt...",
+    "creatingSubtitle": "Wir bereiten die Filme für dich vor"
   }
 }
