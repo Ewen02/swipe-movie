@@ -60,6 +60,10 @@ export class RoomsService {
     return this.roomCrudService.getUserRooms(userId, pagination);
   }
 
+  async resetRoom(roomId: string, userId: string) {
+    return this.roomCrudService.resetRoom(roomId, userId);
+  }
+
   async expireOldRooms() {
     return this.roomCrudService.expireOldRooms();
   }

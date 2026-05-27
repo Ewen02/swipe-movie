@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsNumber,
   IsArray,
+  IsBoolean,
   Min,
   Max,
   MaxLength as ValidatorMaxLength,
@@ -122,4 +123,24 @@ export class CreateRoomDto {
   @IsOptional()
   @IsString()
   originalLanguage?: string;
+
+  @ApiProperty({
+    example: false,
+    description: 'Whether the room resets periodically',
+    required: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  isRecurring?: boolean;
+
+  @ApiProperty({
+    example: 'monthly',
+    description: 'Recurring interval: "weekly" or "monthly"',
+    required: false,
+    enum: ['weekly', 'monthly'],
+  })
+  @IsOptional()
+  @IsString()
+  @IsIn(['weekly', 'monthly'])
+  recurringInterval?: string;
 }

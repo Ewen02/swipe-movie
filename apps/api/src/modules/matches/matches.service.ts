@@ -113,6 +113,91 @@ export class MatchesService {
     return false;
   }
 
+  /**
+   * Find all matches across all rooms where the user is a member.
+   * Returns matches enriched with vote counts, ordered by creation date desc.
+   */
+  async findByUser(userId: string): Promise<
+    (ResponseMatchDto & { roomName: string; roomCode: string })[]
+  > {
+    // 1. Get all roomIds where user is a member
+    const memberships = await this.prisma.roomMember.findMany({
+      where: { userId },
+      select: { roomId: true, room: { select: { name: true, code: true } } },
+    });
+
+    if (memberships.length === 0) return [];
+
+    const roomIds = memberships.map((m) => m.roomId);
+    const roomMap = new Map(
+      memberships.map((m) => [m.roomId, { name: m.room.name, code: m.room.code }]),
+    );
+
+    // 2. Get all matches for those rooms
+    const matches = await this.prisma.match.findMany({
+      where: { roomId: { in: roomIds } },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (matches.length === 0) return [];
+
+    // 3. Get vote counts in batch
+    const voteCounts = await this.prisma.swipe.groupBy({
+      by: ['movieId', 'roomId'],
+      where: {
+        roomId: { in: roomIds },
+        movieId: { in: matches.map((m) => m.movieId) },
+        value: true,
+      },
+      _count: { id: true },
+    });
+
+    const voteKey = (roomId: string, movieId: string) => `${roomId}:${movieId}`;
+    const voteCountMap = new Map(
+      voteCounts.map((vc) => [voteKey(vc.roomId, vc.movieId), vc._count.id]),
+    );
+
+    return matches.map((match) => ({
+      ...match,
+      voteCount: voteCountMap.get(voteKey(match.roomId, match.movieId)) || 0,
+      roomName: roomMap.get(match.roomId)?.name || 'Unknown',
+      roomCode: roomMap.get(match.roomId)?.code || '',
+    }));
+  }
+
+  /**
+   * Find a single match by ID (public, no auth required).
+   * Returns basic match info + room code.
+   */
+  async findByIdPublic(matchId: string): Promise<{
+    id: string;
+    movieId: string;
+    roomId: string;
+    roomCode: string;
+    createdAt: Date;
+    voteCount: number;
+  } | null> {
+    const match = await this.prisma.match.findUnique({
+      where: { id: matchId },
+      include: { room: { select: { code: true } } },
+    });
+
+    if (!match) return null;
+
+    const voteCount = await this.prisma.swipe.count({
+      where: { roomId: match.roomId, movieId: match.movieId, value: true },
+    });
+
+    return {
+      id: match.id,
+      movieId: match.movieId,
+      roomId: match.roomId,
+      roomCode: match.room.code,
+      createdAt: match.createdAt,
+      voteCount,
+    };
+  }
+
   async findByRoom(
     roomId: string,
     pagination?: PaginationQueryDto,

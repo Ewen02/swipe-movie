@@ -161,6 +161,8 @@ export class RoomCrudService {
           watchProviders: dto.watchProviders || [],
           watchRegion: dto.watchRegion,
           originalLanguage: dto.originalLanguage,
+          isRecurring: dto.isRecurring ?? false,
+          recurringInterval: dto.isRecurring ? (dto.recurringInterval ?? 'monthly') : null,
         },
         select: {
           id: true,
@@ -449,6 +451,84 @@ export class RoomCrudService {
     });
     if (!membership) {
       throw new ForbiddenException('You are not a member of this room');
+    }
+  }
+
+  /**
+   * Reset a recurring room: delete all swipes and matches, set lastResetAt.
+   * Only the room owner can trigger a manual reset.
+   */
+  async resetRoom(roomId: string, userId: string): Promise<Room> {
+    await this.verifyOwnership(roomId, userId);
+
+    const room = await this.prisma.room.findUnique({
+      where: { id: roomId },
+      select: { code: true },
+    });
+
+    await this.prisma.$transaction(async (tx: any) => {
+      await tx.swipe.deleteMany({ where: { roomId } });
+      await tx.match.deleteMany({ where: { roomId } });
+      await tx.room.update({
+        where: { id: roomId },
+        data: { lastResetAt: new Date() },
+      });
+    });
+
+    // Invalidate caches
+    if (room) {
+      await this.invalidateRoomCache(room.code);
+    }
+    await this.invalidateUserRoomsCache(userId);
+
+    const updated = await this.prisma.room.findUnique({
+      where: { id: roomId },
+    });
+
+    this.logger.log(`Room ${roomId} reset by user ${userId}`);
+    return updated!;
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async resetRecurringRooms() {
+    const now = new Date();
+
+    const recurringRooms = await this.prisma.room.findMany({
+      where: {
+        isRecurring: true,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        recurringInterval: true,
+        lastResetAt: true,
+        createdAt: true,
+      },
+    });
+
+    let resetCount = 0;
+    for (const room of recurringRooms) {
+      const lastReset = room.lastResetAt || room.createdAt;
+      const intervalMs =
+        room.recurringInterval === 'weekly'
+          ? 7 * 24 * 60 * 60 * 1000
+          : 30 * 24 * 60 * 60 * 1000; // monthly default
+
+      if (now.getTime() - lastReset.getTime() >= intervalMs) {
+        await this.prisma.$transaction(async (tx: any) => {
+          await tx.swipe.deleteMany({ where: { roomId: room.id } });
+          await tx.match.deleteMany({ where: { roomId: room.id } });
+          await tx.room.update({
+            where: { id: room.id },
+            data: { lastResetAt: now },
+          });
+        });
+        resetCount++;
+      }
+    }
+
+    if (resetCount > 0) {
+      this.logger.log(`Auto-reset ${resetCount} recurring rooms`);
     }
   }
 

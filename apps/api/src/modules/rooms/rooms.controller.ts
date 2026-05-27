@@ -129,6 +129,13 @@ export class RoomsController {
     return this.service.members(roomId, userId);
   }
 
+  @ApiOperation({ summary: 'Reset a room (clear swipes and matches)' })
+  @ApiOkResponse({ description: 'Room reset successfully' })
+  @Post('id/:id/reset')
+  reset(@UserId() userId: string, @Param('id') roomId: string) {
+    return this.service.resetRoom(roomId, userId);
+  }
+
   @ApiOperation({ summary: 'Get all swipes in a room' })
   @ApiOkResponse({ description: 'List of swipes', type: [ResponseSwipeDto] })
   @Get('id/:id/swipes')
