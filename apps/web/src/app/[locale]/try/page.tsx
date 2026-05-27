@@ -1,16 +1,19 @@
 "use client"
 
-import { useState, Suspense } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useParams, useSearchParams } from "next/navigation"
 import { motion } from "framer-motion"
 import { Film, Sparkles, Users, Heart } from "lucide-react"
+import { captureEvent } from "@/components/providers/PostHogProvider"
 import { Button } from "@swipe-movie/ui"
 import { useTranslations } from "next-intl"
 import {
   isTrialActive,
   getTrialData,
   startTrial,
+  clearTrialData,
 } from "@/lib/trial"
+import { POST } from "@/lib/api"
 
 const GENRE_OPTIONS = [
   { id: 28, emoji: "💥", labelKey: "action" },
@@ -52,6 +55,7 @@ function TrialPageContent() {
         type: "movie",
       })
 
+      captureEvent("trial_started", { genreId, roomCode: data.roomCode })
       router.push(`/${locale}/rooms/${data.roomCode}`)
     } catch (err) {
       console.error("[TrialPage] Failed:", err)
@@ -60,9 +64,55 @@ function TrialPageContent() {
     }
   }
 
+  // Handle post-OAuth migration: ?migrate=true means user just signed up
+  useEffect(() => {
+    const shouldMigrate = searchParams?.get("migrate") === "true"
+    if (!shouldMigrate) return
+
+    const trialInfo = getTrialData()
+    if (!trialInfo) {
+      router.replace(`/${locale}/rooms`)
+      return
+    }
+
+    async function migrate() {
+      try {
+        await POST("/trial/migrate", {
+          body: JSON.stringify({ guestId: trialInfo!.guestId }),
+        })
+        captureEvent("trial_converted", { guestId: trialInfo!.guestId, roomCode: trialInfo!.roomCode })
+      } catch (err) {
+        console.error("[TrialPage] Migration failed:", err)
+      } finally {
+        const roomCode = trialInfo!.roomCode
+        clearTrialData()
+        router.replace(`/${locale}/rooms/${roomCode}`)
+      }
+    }
+
+    migrate()
+  }, [searchParams, locale, router])
+
+  // Show loading screen while creating room
+  if (isCreating) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <motion.div
+          className="text-center space-y-4"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
+          <Film className="w-14 h-14 mx-auto animate-pulse text-primary" />
+          <p className="text-lg font-medium text-foreground">{t("creating")}</p>
+          <p className="text-sm text-muted-foreground">{t("creatingSubtitle")}</p>
+        </motion.div>
+      </div>
+    )
+  }
+
   // If ?genre=28 is in URL, skip genre selection and start directly
   const genreParam = searchParams?.get("genre")
-  if (genreParam && !isCreating) {
+  if (genreParam) {
     const genreId = parseInt(genreParam, 10)
     if (!isNaN(genreId)) {
       handleStart(genreId)

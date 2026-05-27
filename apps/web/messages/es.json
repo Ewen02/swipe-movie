@@ -961,6 +961,8 @@
       "drama": "Drama",
       "animation": "Animación",
       "thriller": "Thriller"
-    }
+    },
+    "creating": "Creando tu sala...",
+    "creatingSubtitle": "Preparando las películas para ti"
   }
 }

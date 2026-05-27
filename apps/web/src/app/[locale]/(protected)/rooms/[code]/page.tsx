@@ -126,9 +126,15 @@ function RoomPageContent() {
     try {
       const result = await createSwipe(room.id, movieIdStr, value)
       captureEvent("swipe", { direction, movieId: movieIdStr, roomId: room.id })
-      if (isTrial) setTrialSwipeCount(prev => prev + 1)
+      if (isTrial) {
+        setTrialSwipeCount(prev => prev + 1)
+        captureEvent("trial_swipe", { movieId: movieIdStr, direction, swipeNumber: trialSwipeCount + 1 })
+      }
       if (result.matchCreated) {
-        if (isTrial) setTrialHasMatch(true)
+        if (isTrial) {
+          setTrialHasMatch(true)
+          captureEvent("trial_match", { movieId: movieIdStr, roomId: room.id })
+        }
         captureEvent("match_found", { movieId: movieIdStr, roomId: room.id })
         triggerMatchAnimation(movie)
       }

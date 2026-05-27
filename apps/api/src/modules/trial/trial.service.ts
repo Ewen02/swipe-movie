@@ -131,6 +131,12 @@ export class TrialService {
           data: { createdBy: realUserId },
         });
 
+        // Mark real user as onboarding completed (they already experienced the product)
+        await tx.user.update({
+          where: { id: realUserId },
+          data: { onboardingCompleted: true, onboardingStep: 4 },
+        });
+
         // Delete the ghost user
         await tx.user.delete({
           where: { id: guestId },

@@ -36,8 +36,7 @@ export default function TrialJoinPage() {
           return
         }
 
-        // Redirect to the trial swiping page
-        router.replace(`/${locale}/try?room=${code}`)
+        router.replace(`/${locale}/rooms/${code}`)
       } catch (err) {
         console.error('[TrialJoin] Error:', err)
         setError('An error occurred. Please try again.')

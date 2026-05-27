@@ -12,20 +12,20 @@ interface UseLoginWallReturn {
 }
 
 const MAX_DISMISSALS = 2
-const SOFT_LIMIT = 10
-const HARD_LIMIT = 15
+const SOFT_LIMIT = 15
+const HARD_LIMIT = 25
+const COOLDOWN_AFTER_DISMISS = 5
 
 export function useLoginWall(swipeCount: number, hasMatch: boolean): UseLoginWallReturn {
   const [shouldShow, setShouldShow] = useState(false)
   const [trigger, setTrigger] = useState<LoginWallTrigger>(null)
   const [dismissCount, setDismissCount] = useState(0)
+  const [dismissedAtSwipe, setDismissedAtSwipe] = useState(0)
 
-  // Track whether match was already shown to avoid re-triggering
   const matchShownRef = useRef(false)
 
   const isHardBlock = swipeCount >= HARD_LIMIT || dismissCount >= MAX_DISMISSALS
 
-  // If a match is found, show the wall
   useEffect(() => {
     if (hasMatch && !matchShownRef.current) {
       matchShownRef.current = true
@@ -34,15 +34,19 @@ export function useLoginWall(swipeCount: number, hasMatch: boolean): UseLoginWal
     }
   }, [hasMatch])
 
-  // If swipe count reaches the soft limit
   useEffect(() => {
-    if (swipeCount >= SOFT_LIMIT && !hasMatch && !shouldShow && trigger !== 'match') {
+    if (
+      swipeCount >= SOFT_LIMIT &&
+      !hasMatch &&
+      !shouldShow &&
+      trigger !== 'match' &&
+      swipeCount >= dismissedAtSwipe + COOLDOWN_AFTER_DISMISS
+    ) {
       setTrigger('swipe_limit')
       setShouldShow(true)
     }
-  }, [swipeCount, hasMatch, shouldShow, trigger])
+  }, [swipeCount, hasMatch, shouldShow, trigger, dismissedAtSwipe])
 
-  // Hard block on HARD_LIMIT
   useEffect(() => {
     if (swipeCount >= HARD_LIMIT) {
       setTrigger('swipe_limit')
@@ -53,8 +57,9 @@ export function useLoginWall(swipeCount: number, hasMatch: boolean): UseLoginWal
   const dismiss = useCallback(() => {
     if (isHardBlock) return
     setDismissCount((prev) => prev + 1)
+    setDismissedAtSwipe(swipeCount)
     setShouldShow(false)
-  }, [isHardBlock])
+  }, [isHardBlock, swipeCount])
 
   return {
     shouldShow,

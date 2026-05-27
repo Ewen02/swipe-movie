@@ -961,6 +961,8 @@
       "drama": "Drammatico",
       "animation": "Animazione",
       "thriller": "Thriller"
-    }
+    },
+    "creating": "Creazione della room...",
+    "creatingSubtitle": "Prepariamo i film per te"
   }
 }
