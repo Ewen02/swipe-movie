@@ -3,6 +3,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import * as crypto from 'crypto';
 import type { MovieFilters } from '@swipe-movie/types';
+import { PrismaService } from '../../infra/prisma.service';
 import {
   MovieBasicDto,
   MoviesGenresDto,
@@ -27,7 +28,17 @@ const CACHE_TTL = {
   GENRES: 7 * 24 * 60 * 60 * 1000, // 7 days
   DISCOVER: 12 * 60 * 60 * 1000, // 12 hours (increased from 6h)
   WATCH_PROVIDERS: 7 * 24 * 60 * 60 * 1000, // 7 days
+  PUBLIC_STATS: 30 * 60 * 1000, // 30 minutes — kept short so SEO pages reflect recent activity
 } as const;
+
+const MIN_SWIPES_FOR_STATS = 50;
+
+export type PublicMovieStats = {
+  likeRate: number | null;
+  swipeCount: number;
+  matchCount: number;
+  hasEnoughData: boolean;
+};
 
 @Injectable()
 export class MoviesService {
@@ -35,8 +46,39 @@ export class MoviesService {
 
   constructor(
     private readonly tmdb: TmdbService,
+    private readonly prisma: PrismaService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
+
+  /**
+   * Aggregated, anonymous statistics computed from real user swipes & matches.
+   * Returned `hasEnoughData` is false below MIN_SWIPES_FOR_STATS to avoid
+   * misleading ratios on tiny samples and to protect against single-user inference.
+   */
+  async getPublicStats(movieId: number): Promise<PublicMovieStats> {
+    const cacheKey = `tmdb:public-stats:${movieId}`;
+    const cached = await this.cacheManager.get<PublicMovieStats>(cacheKey);
+    if (cached) return cached;
+
+    const movieIdStr = movieId.toString();
+
+    const [likeCount, swipeCount, matchCount] = await Promise.all([
+      this.prisma.swipe.count({ where: { movieId: movieIdStr, value: true } }),
+      this.prisma.swipe.count({ where: { movieId: movieIdStr } }),
+      this.prisma.match.count({ where: { movieId: movieIdStr } }),
+    ]);
+
+    const hasEnoughData = swipeCount >= MIN_SWIPES_FOR_STATS;
+    const result: PublicMovieStats = {
+      likeRate: hasEnoughData ? likeCount / swipeCount : null,
+      swipeCount,
+      matchCount,
+      hasEnoughData,
+    };
+
+    await this.cacheManager.set(cacheKey, result, CACHE_TTL.PUBLIC_STATS);
+    return result;
+  }
 
   /**
    * Generate a cache key hash from an object
@@ -55,13 +97,16 @@ export class MoviesService {
   private mapToMovieSummary(
     media: TMDbDiscoverResponse['results'][number],
   ): MovieBasicDto {
-    // Check if it's a TV show (has 'name' instead of 'title')
-    const isTVShow = 'name' in media;
+    // TMDb returns either a movie (title/release_date) or a TV show (name/first_air_date).
+    // We narrow with a type guard so the rest of the mapping is type-checked.
+    const isTVShow = (
+      m: typeof media,
+    ): m is Extract<typeof media, { name: string }> => 'name' in m;
 
     return {
       id: media.id,
       adult: media.adult ?? false,
-      title: isTVShow ? (media as any).name : (media as any).title,
+      title: isTVShow(media) ? media.name : media.title,
       backdropUrl: media.backdrop_path
         ? `${TMDB_IMAGE_BASE.BACKDROP}${media.backdrop_path}`
         : '',
@@ -70,11 +115,15 @@ export class MoviesService {
         : TMDB_IMAGE_BASE.NO_POSTER,
       genreIds: media.genre_ids ?? [],
       originalLanguage: media.original_language ?? '',
-      originalTitle: isTVShow ? (media as any).original_name : (media as any).original_title,
+      originalTitle: isTVShow(media)
+        ? media.original_name
+        : media.original_title,
       popularity: media.popularity ?? 0,
-      releaseDate: isTVShow ? ((media as any).first_air_date ?? '') : ((media as any).release_date ?? ''),
+      releaseDate: isTVShow(media)
+        ? (media.first_air_date ?? '')
+        : (media.release_date ?? ''),
       overview: media.overview ?? '',
-      video: isTVShow ? false : ((media as any).video ?? false),
+      video: isTVShow(media) ? false : (media.video ?? false),
       voteAverage: media.vote_average ?? 0,
       voteCount: media.vote_count ?? 0,
     };
@@ -151,15 +200,30 @@ export class MoviesService {
             job: c.job,
             department: c.department,
           })) ?? [],
+      similar:
+        movie.similar?.results
+          ?.slice(0, 12)
+          .map((m) => this.mapToMovieSummary(m)) ?? [],
+      externalIds: movie.external_ids
+        ? {
+            imdbId: movie.external_ids.imdb_id ?? undefined,
+            facebookId: movie.external_ids.facebook_id ?? undefined,
+            instagramId: movie.external_ids.instagram_id ?? undefined,
+            twitterId: movie.external_ids.twitter_id ?? undefined,
+          }
+        : undefined,
     };
   }
 
   async getMovieDetails(
     movieId: number,
     type: 'movie' | 'tv' = 'movie',
+    options: { language?: string; region?: string } = {},
   ): Promise<MovieDetailsDto> {
     const mediaType = type === 'tv' ? 'tv' : 'movie';
-    const cacheKey = `tmdb:${mediaType}:${movieId}`;
+    const language = options.language ?? TMDB_DEFAULT_LANG;
+    const region = options.region ?? 'FR';
+    const cacheKey = `tmdb:${mediaType}:${movieId}:${language}:${region}`;
 
     // Try to get from cache
     const cached = await this.cacheManager.get<MovieDetailsDto>(cacheKey);
@@ -167,13 +231,13 @@ export class MoviesService {
       return cached;
     }
 
-    // Fetch from TMDb API with videos and credits
-    const url = `/${mediaType}/${movieId}?language=${TMDB_DEFAULT_LANG}&append_to_response=videos,credits`;
+    // Fetch from TMDb API with videos, credits, similar and external_ids in a single call
+    const url = `/${mediaType}/${movieId}?language=${language}&append_to_response=videos,credits,similar,external_ids`;
     const json = await this.tmdb.fetchJson<TMDbMovieDetailsResponse>(url);
     const result = this.mapToMovieDetails(json);
 
-    // Fetch watch providers separately and add to result
-    const watchProviders = await this.getWatchProviders(movieId, type);
+    // Fetch watch providers separately (different endpoint shape) and add to result
+    const watchProviders = await this.getWatchProviders(movieId, type, region);
     result.watchProviders = watchProviders;
 
     // Store in cache
@@ -261,9 +325,10 @@ export class MoviesService {
     // Always filter by watch providers to exclude cinema-only releases
     // If no providers specified, use popular streaming services in France
     const DEFAULT_PROVIDERS = [8, 119, 337, 350, 531, 381, 283, 56, 1899, 1796]; // Netflix, Prime, Disney+, Apple TV+, Paramount+, Canal+, Crunchyroll, OCS, Max, OCS
-    const providers = filters?.watchProviders && filters.watchProviders.length > 0
-      ? filters.watchProviders
-      : DEFAULT_PROVIDERS;
+    const providers =
+      filters?.watchProviders && filters.watchProviders.length > 0
+        ? filters.watchProviders
+        : DEFAULT_PROVIDERS;
 
     params.append('with_watch_providers', providers.join('|'));
     // TMDB requires watch_region when filtering by providers
@@ -316,14 +381,16 @@ export class MoviesService {
   async getWatchProviders(
     movieId: number,
     type: 'movie' | 'tv' = 'movie',
+    region = 'FR',
   ): Promise<{ id: number; name: string; logoPath: string }[]> {
     const mediaType = type === 'tv' ? 'tv' : 'movie';
-    const cacheKey = `tmdb:providers:${mediaType}:${movieId}`;
+    const cacheKey = `tmdb:providers:${mediaType}:${movieId}:${region}`;
 
     // Try to get from cache
-    const cached = await this.cacheManager.get<
-      { id: number; name: string; logoPath: string }[]
-    >(cacheKey);
+    const cached =
+      await this.cacheManager.get<
+        { id: number; name: string; logoPath: string }[]
+      >(cacheKey);
     if (cached) {
       return cached;
     }
@@ -333,9 +400,9 @@ export class MoviesService {
     try {
       const json = await this.tmdb.fetchJson<TMDbWatchProvidersResponse>(url);
 
-      // Get providers for France (FR) - flatrate means streaming subscription
-      const frProviders = json.results?.['FR'];
-      if (!frProviders?.flatrate) {
+      // flatrate = streaming subscription. Falls back to empty array if region unknown.
+      const regionProviders = json.results?.[region];
+      if (!regionProviders?.flatrate) {
         // Cache empty result too to avoid repeated API calls
         await this.cacheManager.set(cacheKey, [], CACHE_TTL.WATCH_PROVIDERS);
         return [];
@@ -343,7 +410,10 @@ export class MoviesService {
 
       // Deduplicate providers by normalized name to avoid duplicates like
       // "Crunchyroll" and "Crunchyroll Amazon Channel"
-      const uniqueProvidersMap = new Map<string, { id: number; name: string; logoPath: string }>();
+      const uniqueProvidersMap = new Map<
+        string,
+        { id: number; name: string; logoPath: string }
+      >();
 
       // Patterns to normalize provider names (remove channel suffixes)
       const normalizeProviderName = (name: string): string => {
@@ -354,7 +424,7 @@ export class MoviesService {
           .trim();
       };
 
-      frProviders.flatrate.forEach((p) => {
+      regionProviders.flatrate.forEach((p) => {
         const normalizedName = normalizeProviderName(p.provider_name);
         // Keep the first occurrence (usually the main provider, not the channel)
         if (!uniqueProvidersMap.has(normalizedName)) {
@@ -402,9 +472,7 @@ export class MoviesService {
   async getBatchWatchProviders(
     movieIds: number[],
     type: 'movie' | 'tv' = 'movie',
-  ): Promise<
-    Record<number, { id: number; name: string; logoPath: string }[]>
-  > {
+  ): Promise<Record<number, { id: number; name: string; logoPath: string }[]>> {
     // Fetch all watch providers in parallel
     const results = await Promise.allSettled(
       movieIds.map(async (id) => ({
@@ -441,9 +509,10 @@ export class MoviesService {
     const cacheKey = `tmdb:providers:${region}`;
 
     // Try to get from cache
-    const cached = await this.cacheManager.get<
-      { id: number; name: string; logoPath: string }[]
-    >(cacheKey);
+    const cached =
+      await this.cacheManager.get<
+        { id: number; name: string; logoPath: string }[]
+      >(cacheKey);
     if (cached) {
       return cached;
     }
@@ -478,7 +547,10 @@ export class MoviesService {
 
       return providers;
     } catch (error) {
-      this.logger.error(`Failed to fetch watch providers for ${region}:`, error);
+      this.logger.error(
+        `Failed to fetch watch providers for ${region}:`,
+        error,
+      );
       return [];
     }
   }

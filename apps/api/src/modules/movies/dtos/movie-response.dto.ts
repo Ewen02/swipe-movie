@@ -185,4 +185,15 @@ export class MovieDetailsDto extends MovieBasicDto implements MovieDetails {
     required: false,
   })
   crew?: MovieCrew[];
+
+  @ApiProperty({ required: false })
+  similar?: MovieBasic[];
+
+  @ApiProperty({ required: false })
+  externalIds?: {
+    imdbId?: string;
+    facebookId?: string;
+    instagramId?: string;
+    twitterId?: string;
+  };
 }

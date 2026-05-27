@@ -119,6 +119,13 @@ export interface MovieDetails extends MovieBasic {
   videos?: MovieVideo[];
   cast?: MovieCast[];
   crew?: MovieCrew[];
+  similar?: MovieBasic[];
+  externalIds?: {
+    imdbId?: string;
+    facebookId?: string;
+    instagramId?: string;
+    twitterId?: string;
+  };
 }
 
 /**

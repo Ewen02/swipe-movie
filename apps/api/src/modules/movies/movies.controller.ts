@@ -8,7 +8,12 @@ import {
   ParseFloatPipe,
 } from '@nestjs/common';
 import { MoviesService, MovieFilters } from './movies.service';
-import { ApiOkResponse, ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiTags,
+  ApiOperation,
+  ApiQuery,
+} from '@nestjs/swagger';
 import {
   MovieBasicDto,
   MoviesGenresDto,
@@ -22,9 +27,15 @@ export class MoviesController {
 
   @ApiOperation({ summary: 'Get popular movies' })
   @ApiOkResponse({ type: [MovieBasicDto] })
-  @ApiQuery({ name: 'page', required: false, description: 'Page number (defaults to 1)' })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number (defaults to 1)',
+  })
   @Get('popular')
-  getPopular(@Query('page', new ParseIntPipe({ optional: true })) page?: number) {
+  getPopular(
+    @Query('page', new ParseIntPipe({ optional: true })) page?: number,
+  ) {
     return this.moviesService.getPopularMovies(page);
   }
 
@@ -137,7 +148,10 @@ export class MoviesController {
   })
   @Get('batch/details')
   getBatchMovieDetails(@Query('ids') ids: string) {
-    const movieIds = ids.split(',').map((id) => parseInt(id.trim(), 10)).slice(0, 50);
+    const movieIds = ids
+      .split(',')
+      .map((id) => parseInt(id.trim(), 10))
+      .slice(0, 50);
     return this.moviesService.getBatchMovieDetails(movieIds);
   }
 
@@ -240,12 +254,49 @@ export class MoviesController {
     enum: ['movie', 'tv'],
     description: 'Type of content (defaults to movie)',
   })
+  @ApiQuery({
+    name: 'language',
+    required: false,
+    description: 'BCP-47 language tag (e.g. fr-FR, en-US). Defaults to fr-FR.',
+  })
+  @ApiQuery({
+    name: 'region',
+    required: false,
+    description:
+      'ISO-3166-1 country code for watch providers (e.g. FR, US). Defaults to FR.',
+  })
   @Get(':movieId')
   getMovieDetails(
     @Param('movieId', ParseIntPipe) movieId: number,
     @Query('type') type?: string,
+    @Query('language') language?: string,
+    @Query('region') region?: string,
   ) {
-    return this.moviesService.getMovieDetails(movieId, type as 'movie' | 'tv');
+    return this.moviesService.getMovieDetails(movieId, type as 'movie' | 'tv', {
+      language,
+      region,
+    });
+  }
+
+  @ApiOperation({
+    summary: 'Get aggregated public stats for a movie (anonymous)',
+    description:
+      'Returns aggregated swipe stats (% likes, match count) used on public SEO pages. Empty/null when sample is below threshold.',
+  })
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        likeRate: { type: 'number', nullable: true },
+        swipeCount: { type: 'number' },
+        matchCount: { type: 'number' },
+        hasEnoughData: { type: 'boolean' },
+      },
+    },
+  })
+  @Get(':movieId/public-stats')
+  getPublicStats(@Param('movieId', ParseIntPipe) movieId: number) {
+    return this.moviesService.getPublicStats(movieId);
   }
 
   @ApiOperation({ summary: 'Get watch providers for a movie' })
@@ -261,7 +312,10 @@ export class MoviesController {
     @Param('movieId', ParseIntPipe) movieId: number,
     @Query('type') type?: string,
   ) {
-    return this.moviesService.getWatchProviders(movieId, type as 'movie' | 'tv');
+    return this.moviesService.getWatchProviders(
+      movieId,
+      type as 'movie' | 'tv',
+    );
   }
 
   @ApiOperation({ summary: 'Clear all movie cache (development only)' })
