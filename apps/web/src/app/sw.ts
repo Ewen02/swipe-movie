@@ -8,25 +8,45 @@ declare const self: ServiceWorkerGlobalScope & {
 };
 
 const serwist = new Serwist({
-  precacheEntries: self.__SW_MANIFEST,
+  precacheEntries: [
+    ...(self.__SW_MANIFEST || []),
+    { url: "/offline.html", revision: "1" },
+  ],
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
   runtimeCaching: [
-    // Cache TMDB images
+    // Cache TMDB images more aggressively
     {
       matcher: ({ url }) => url.hostname === "image.tmdb.org",
       handler: new CacheFirst({
         cacheName: "tmdb-images",
         plugins: [
           new ExpirationPlugin({
-            maxEntries: 200,
+            maxEntries: 500,
             maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
           }),
           new CacheableResponsePlugin({
             statuses: [0, 200],
           }),
         ],
+      }),
+    },
+    // Cache navigations with network-first and offline fallback
+    {
+      matcher: ({ request }) => request.mode === "navigate",
+      handler: new NetworkFirst({
+        cacheName: "pages",
+        plugins: [
+          new ExpirationPlugin({
+            maxEntries: 50,
+            maxAgeSeconds: 60 * 60 * 24, // 1 day
+          }),
+          new CacheableResponsePlugin({
+            statuses: [0, 200],
+          }),
+        ],
+        networkTimeoutSeconds: 5,
       }),
     },
     // Cache API responses with network first strategy
@@ -49,6 +69,16 @@ const serwist = new Serwist({
     // Default cache strategy
     ...defaultCache,
   ],
+  fallbacks: {
+    entries: [
+      {
+        url: "/offline.html",
+        matcher({ request }) {
+          return request.destination === "document";
+        },
+      },
+    ],
+  },
 });
 
 serwist.addEventListeners();

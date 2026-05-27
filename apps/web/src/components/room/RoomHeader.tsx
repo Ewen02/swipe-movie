@@ -1,5 +1,5 @@
 import { Badge } from "@swipe-movie/ui"
-import { Film, Users } from "lucide-react"
+import { Film, Users, RefreshCw } from "lucide-react"
 import { ShareRoomButton } from "@/components/room/ShareRoomButton"
 import { motion } from "framer-motion"
 
@@ -8,6 +8,9 @@ interface RoomHeaderProps {
   roomCode: string
   roomType: string | undefined
   membersCount: number
+  isRecurring?: boolean
+  lastResetAt?: string | null
+  recurringInterval?: string | null
   translations: {
     unnamedRoom: string
     moviesType: string
@@ -15,11 +18,23 @@ interface RoomHeaderProps {
   }
 }
 
+function getNextResetLabel(lastResetAt: string | null | undefined, interval: string | null | undefined): string | null {
+  if (!lastResetAt || !interval) return null
+  const last = new Date(lastResetAt)
+  const intervalMs = interval === 'weekly' ? 7 * 24 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000
+  const nextReset = new Date(last.getTime() + intervalMs)
+  const daysLeft = Math.max(0, Math.ceil((nextReset.getTime() - Date.now()) / (24 * 60 * 60 * 1000)))
+  return `${daysLeft}j`
+}
+
 export function RoomHeader({
   roomName,
   roomCode,
   roomType,
   membersCount,
+  isRecurring,
+  lastResetAt,
+  recurringInterval,
   translations: t,
 }: RoomHeaderProps) {
   const displayName = roomName || t.unnamedRoom
@@ -56,10 +71,16 @@ export function RoomHeader({
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 w-full sm:w-auto">
+              <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
                 <Badge className="bg-foreground/10 text-foreground border-border shrink-0">
                   {roomType === 'movie' ? t.moviesType : t.tvShowsType}
                 </Badge>
+                {isRecurring && (
+                  <Badge className="bg-primary/10 text-primary border-primary/30 shrink-0 flex items-center gap-1">
+                    <RefreshCw className="w-3 h-3" />
+                    Récurrente {getNextResetLabel(lastResetAt, recurringInterval) && `· Prochain reset dans ${getNextResetLabel(lastResetAt, recurringInterval)}`}
+                  </Badge>
+                )}
                 <ShareRoomButton
                   roomCode={roomCode}
                   roomName={displayName}

@@ -26,7 +26,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { createRoomSchema, CreateRoomValues } from "@/schemas/rooms"
 import type { MovieGenre } from "@/schemas/movies"
-import { Sparkles, Loader2, Film, Tv, ChevronDown, ChevronUp } from "lucide-react"
+import { Sparkles, Loader2, Film, Tv, ChevronDown, ChevronUp, RefreshCw } from "lucide-react"
 
 interface CreateRoomDialogProps {
   open: boolean
@@ -44,6 +44,7 @@ export function CreateRoomDialog({
   loading,
 }: CreateRoomDialogProps) {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
+  const [isRecurring, setIsRecurring] = useState(false)
   const [filters, setFilters] = useState<RoomFilterValues>({
     watchRegion: "FR",
     minRating: 6.0,
@@ -61,6 +62,8 @@ export function CreateRoomDialog({
     const roomData = {
       ...values,
       ...filters,
+      isRecurring,
+      ...(isRecurring ? { recurringInterval: 'monthly' as const } : {}),
     }
     await onSubmit(roomData as CreateRoomValues)
   }
@@ -200,6 +203,36 @@ export function CreateRoomDialog({
                 </FormItem>
               )}
             />
+
+            {/* Room récurrente toggle */}
+            <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-gradient-to-br from-background/50 to-background/30">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                  <RefreshCw className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h4 className="font-semibold">Room récurrente</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Reset automatique mensuel des swipes
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={isRecurring}
+                onClick={() => setIsRecurring(!isRecurring)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  isRecurring ? "bg-primary" : "bg-muted"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    isRecurring ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </div>
 
             {/* Filtres avancés - Section repliable */}
             <div className={`relative rounded-2xl border transition-all ${

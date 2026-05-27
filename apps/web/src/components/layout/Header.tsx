@@ -26,7 +26,7 @@ import {
 } from "@swipe-movie/ui"
 import { ThemeToggle } from "@/components/layout/ThemeToggle"
 import { LanguageSelector } from "@/components/language-selector"
-import { User, LogOut, Film, CreditCard, Menu, X, Settings, Globe, Link2, Library, Shield } from "lucide-react"
+import { User, LogOut, Film, CreditCard, Menu, X, Settings, Globe, Link2, Library, Shield, Heart } from "lucide-react"
 import { useIsAdmin } from "@/hooks/useIsAdmin"
 
 export function Header() {
@@ -154,6 +154,12 @@ export function Header() {
                         {t('nav.library')}
                       </Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/library/matches" className="cursor-pointer">
+                        <Heart className="mr-2 h-4 w-4" />
+                        {t('nav.matches')}
+                      </Link>
+                    </DropdownMenuItem>
                     {isAdmin && (
                       <>
                         <DropdownMenuSeparator />
@@ -224,6 +230,12 @@ export function Header() {
                       <Link href="/library" className="cursor-pointer">
                         <Library className="mr-2 h-4 w-4" />
                         {t('nav.library')}
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/library/matches" className="cursor-pointer">
+                        <Heart className="mr-2 h-4 w-4" />
+                        {t('nav.matches')}
                       </Link>
                     </DropdownMenuItem>
                     {isAdmin && (
@@ -390,6 +402,15 @@ export function Header() {
                       >
                         <Library className="h-5 w-5 text-emerald-500" />
                         <span>{t('nav.library')}</span>
+                      </Link>
+
+                      <Link
+                        href="/library/matches"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-foreground/5 transition-colors"
+                      >
+                        <Heart className="h-5 w-5 text-pink-500" />
+                        <span>{t('nav.matches')}</span>
                       </Link>
 
                       {isAdmin && (

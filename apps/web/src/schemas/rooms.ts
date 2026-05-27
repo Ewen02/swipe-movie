@@ -23,6 +23,8 @@ export const createRoomSchema = z.object({
   watchProviders: z.array(z.number()).optional(),
   watchRegion: z.string().length(ValidationConstraints.ISO_CODE_LENGTH).optional(),
   originalLanguage: z.string().length(ValidationConstraints.ISO_CODE_LENGTH).optional(),
+  isRecurring: z.boolean().optional(),
+  recurringInterval: z.enum(['weekly', 'monthly']).optional(),
 })
 export type CreateRoomValues = z.infer<typeof createRoomSchema>
 
@@ -58,6 +60,9 @@ export const roomSchema = z.object({
   watchProviders: z.array(z.number()).optional(),
   watchRegion: z.string().nullable().optional(),
   originalLanguage: z.string().nullable().optional(),
+  isRecurring: z.boolean().optional(),
+  lastResetAt: z.string().nullable().optional(),
+  recurringInterval: z.string().nullable().optional(),
 })
 export type Room = z.infer<typeof roomSchema>
 

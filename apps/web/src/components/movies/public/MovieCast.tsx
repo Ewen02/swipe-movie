@@ -29,6 +29,7 @@ export function MovieCast({ cast, title }: Props) {
                   fill
                   sizes="80px"
                   className="object-cover"
+                  loading="lazy"
                   unoptimized
                 />
               ) : null}

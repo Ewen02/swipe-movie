@@ -84,6 +84,7 @@ const nextConfig = {
                   'https://accounts.google.com',
                   'https://oauth2.googleapis.com',
                 ].join(' '),
+              "frame-src 'self' https://www.youtube-nocookie.com https://www.youtube.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self' https://accounts.google.com",

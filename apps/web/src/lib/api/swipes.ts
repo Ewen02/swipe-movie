@@ -74,6 +74,20 @@ export async function getRoomAnalytics(roomId: string) {
   return response.json()
 }
 
+/**
+ * Get all matches for the current user across all rooms
+ */
+export async function getMyMatches(): Promise<
+  (Match & { roomName: string; roomCode: string })[]
+> {
+  const response = await GET("/matches/me")
+  if (!response.ok) {
+    throw new Error("Failed to fetch user matches")
+  }
+  const data = await response.json()
+  return Array.isArray(data) ? data : []
+}
+
 export interface UserStatsResponse {
   totalMatches: number
   totalSwipes: number

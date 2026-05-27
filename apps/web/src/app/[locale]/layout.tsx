@@ -375,6 +375,7 @@ export default async function LocaleLayout({
       <head>
         <link rel="preconnect" href="https://image.tmdb.org" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://image.tmdb.org" />
+        <link rel="dns-prefetch" href="https://www.youtube-nocookie.com" />
         <script
           type="application/ld+json"
           // JSON-LD must be inlined; payload built from a typed object above.
