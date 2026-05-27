@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   Post,
   Body,
   Req,
@@ -38,14 +39,27 @@ export class TrialController {
   }
 
   @Post('cleanup')
-  async cleanupGuests(
+  async cleanupPostGuests(
     @Headers('authorization') authHeader: string,
   ) {
+    this.verifyCronSecret(authHeader);
+    const count = await this.trialService.cleanupExpiredGuests();
+    return { deleted: count };
+  }
+
+  @Get('cleanup')
+  async cleanupGetGuests(
+    @Headers('authorization') authHeader: string,
+  ) {
+    this.verifyCronSecret(authHeader);
+    const count = await this.trialService.cleanupExpiredGuests();
+    return { deleted: count };
+  }
+
+  private verifyCronSecret(authHeader: string) {
     const cronSecret = this.config.get<string>('CRON_SECRET');
     if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
       throw new ForbiddenException('Invalid cron secret');
     }
-    const count = await this.trialService.cleanupExpiredGuests();
-    return { deleted: count };
   }
 }
