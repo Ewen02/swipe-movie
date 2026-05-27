@@ -35,7 +35,9 @@ export function ShareRoomButton({
   const [showQR, setShowQR] = useState(false)
 
   const roomUrl = typeof window !== "undefined"
-    ? `${window.location.origin}/rooms/${roomCode}`
+    ? defaultOpen
+      ? `${window.location.origin}/try/join/${roomCode}`
+      : `${window.location.origin}/rooms/${roomCode}`
     : ""
 
   const handleCopyLink = useCallback(async () => {
