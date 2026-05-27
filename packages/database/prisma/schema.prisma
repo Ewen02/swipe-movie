@@ -130,6 +130,7 @@ model Room {
 
   @@index([type, genreId])
   @@index([deletedAt])
+  @@index([createdBy])
 }
 
 model RoomMember {
@@ -152,7 +153,7 @@ model Swipe {
   createdAt DateTime @default(now())
 
   room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([roomId, userId, movieId], name: "userId_roomId_movieId")
   @@index([roomId])
