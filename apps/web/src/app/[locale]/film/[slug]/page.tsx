@@ -5,6 +5,7 @@ import { buildLanguageAlternates, SITE_NAME, SITE_URL } from '@/lib/seo';
 import { parseMovieSlug, buildMovieSlug } from '@/lib/slug';
 import { getPublicMovieDetails, getPublicMovieStats } from '@/lib/movies-public';
 import { MediaPage } from '@/components/movies/public/MediaPage';
+import { SEOPageTracker } from '@/components/seo/SEOPageTracker';
 
 // Allow on-demand generation for new slugs (ISR).
 export const dynamicParams = true;
@@ -244,6 +245,7 @@ export default async function FilmPage({ params }: { params: Promise<Params> }) 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      <SEOPageTracker pageType="film" locale={locale} slug={slug} title={movie.title} tmdbId={movie.id} />
       <MediaPage movie={movie} stats={stats} locale={locale} type="film" labels={t} />
     </>
   );

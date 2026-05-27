@@ -5,6 +5,7 @@ import { buildLanguageAlternates, SITE_NAME, SITE_URL } from '@/lib/seo';
 import { parseMovieSlug, buildMovieSlug } from '@/lib/slug';
 import { getPublicMovieDetails, getPublicMovieStats } from '@/lib/movies-public';
 import { MediaPage } from '@/components/movies/public/MediaPage';
+import { SEOPageTracker } from '@/components/seo/SEOPageTracker';
 
 export const dynamicParams = true;
 export const revalidate = 86400;
@@ -228,6 +229,7 @@ export default async function SeriePage({ params }: { params: Promise<Params> })
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      <SEOPageTracker pageType="serie" locale={locale} slug={slug} title={movie.title} tmdbId={movie.id} />
       <MediaPage movie={movie} stats={stats} locale={locale} type="serie" labels={t} />
     </>
   );

@@ -6,6 +6,7 @@ import { buildLanguageAlternates, SITE_NAME, SITE_URL } from '@/lib/seo';
 import { getProviderBySlug, listGenres, PROVIDERS } from '@/lib/catalog';
 import { getMoviesByGenrePublic } from '@/lib/movies-public';
 import { ListingPage } from '@/components/movies/public/ListingPage';
+import { SEOPageTracker } from '@/components/seo/SEOPageTracker';
 import { buildMovieSlug } from '@/lib/slug';
 
 export const dynamicParams = false;
@@ -201,6 +202,7 @@ export default async function PlatformPage({ params }: { params: Promise<Params>
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      <SEOPageTracker pageType="plateforme" locale={locale} slug={provider} title={name} provider={provider} />
       <ListingPage
         title={`${t.titlePrefix} ${name}`}
         intro={intro}

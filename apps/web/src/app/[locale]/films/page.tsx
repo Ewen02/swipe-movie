@@ -5,6 +5,7 @@ import { locales, type Locale } from '@/i18n';
 import { buildLanguageAlternates, SITE_NAME, SITE_URL } from '@/lib/seo';
 import { listGenres, listProviders } from '@/lib/catalog';
 import { listContexts } from '@/lib/contexts';
+import { SEOPageTracker } from '@/components/seo/SEOPageTracker';
 
 export const revalidate = 604800; // 7d — hub content rarely changes
 
@@ -154,6 +155,7 @@ export default async function FilmsHubPage({ params }: { params: Promise<Params>
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
+      <SEOPageTracker pageType="hub" locale={locale} slug="films" title={t.title} />
       <div className="container mx-auto px-4 py-8 md:py-12 space-y-12 max-w-6xl">
         <header className="space-y-4">
           <h1 className="text-3xl md:text-5xl font-bold">

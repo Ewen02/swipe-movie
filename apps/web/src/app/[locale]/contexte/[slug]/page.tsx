@@ -6,6 +6,7 @@ import { buildLanguageAlternates, SITE_NAME, SITE_URL } from '@/lib/seo';
 import { CONTEXTS, getContextBySlug } from '@/lib/contexts';
 import { getMoviesForContext } from '@/lib/movies-public';
 import { MovieGrid } from '@/components/movies/public/MovieGrid';
+import { SEOPageTracker } from '@/components/seo/SEOPageTracker';
 import { buildMovieSlug } from '@/lib/slug';
 
 export const dynamicParams = false;
@@ -172,6 +173,7 @@ export default async function ContextPage({ params }: { params: Promise<Params> 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
+      <SEOPageTracker pageType="contexte" locale={locale} slug={slug} title={title} />
       <article className="container mx-auto px-4 py-8 md:py-12 space-y-10 max-w-4xl">
         <nav aria-label="breadcrumb" className="text-sm text-muted-foreground">
           <ol className="flex flex-wrap items-center gap-2">

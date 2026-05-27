@@ -6,6 +6,7 @@ import { buildLanguageAlternates, SITE_NAME, SITE_URL } from '@/lib/seo';
 import { getGenreBySlug, listGenres, listProviders, GENRES } from '@/lib/catalog';
 import { getMoviesByGenrePublic } from '@/lib/movies-public';
 import { ListingPage } from '@/components/movies/public/ListingPage';
+import { SEOPageTracker } from '@/components/seo/SEOPageTracker';
 import { buildMovieSlug } from '@/lib/slug';
 
 export const dynamicParams = false;
@@ -190,6 +191,7 @@ export default async function GenrePage({ params }: { params: Promise<Params> })
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      <SEOPageTracker pageType="genre" locale={locale} slug={slug} title={name} genre={slug} />
       <ListingPage
         title={`${t.titleSuffix} ${name.toLowerCase()}`}
         intro={intro}
