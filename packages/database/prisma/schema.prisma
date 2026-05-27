@@ -184,10 +184,10 @@ model UserMediaLibrary {
   id         String    @id @default(cuid())
   userId     String
   tmdbId     String
-  mediaType  String
-  status     String
+  mediaType  String // TS enum MediaType: "movie" | "tv"
+  status     String // TS enum MediaStatus: "watched" | "watchlist" | "rated" | "liked" | "disliked"
   rating     Float?
-  source     String
+  source     String // TS enum MediaSource: "trakt" | "anilist" | "manual" | "onboarding" | "discover"
   externalId String?
   watchedAt  DateTime?
   importedAt DateTime  @default(now())
@@ -198,6 +198,7 @@ model UserMediaLibrary {
   @@unique([userId, tmdbId, mediaType])
   @@index([userId, status])
   @@index([userId, source])
+  @@index([userId, mediaType])
 }
 
 // ==========================================
@@ -219,6 +220,7 @@ model Subscription {
   trialEnd             DateTime?
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
+  deletedAt            DateTime?
 
   user User @relation(fields: [referenceId], references: [id], onDelete: Cascade)
 
