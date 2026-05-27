@@ -77,7 +77,7 @@ function RoomPageContent() {
     resetUserJoined,
     userLeft,
     resetUserLeft,
-  } = useMatchNotifications({ roomId: isTrial ? null : (room?.id || null) })
+  } = useMatchNotifications({ roomId: room?.id || null })
 
   // Notify when a member joins the room
   useEffect(() => {

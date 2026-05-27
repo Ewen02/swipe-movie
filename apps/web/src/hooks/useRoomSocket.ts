@@ -71,10 +71,10 @@ export function useRoomSocket(roomId: string | null): UseRoomSocketReturn {
     // Create socket connection
     // Use polling first for handshake, then upgrade to websocket
     const socket = io(socketUrl, {
-      transports: ["polling", "websocket"],
+      transports: ["websocket"],
       withCredentials: true,
       reconnection: true,
-      reconnectionAttempts: SocketConfig.MAX_RECONNECT_ATTEMPTS,
+      reconnectionAttempts: 3,
       reconnectionDelay: SocketConfig.RECONNECT_DELAY_BASE,
       reconnectionDelayMax: SocketConfig.RECONNECT_DELAY_MAX,
       timeout: SocketConfig.CONNECTION_TIMEOUT,
