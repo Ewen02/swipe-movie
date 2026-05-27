@@ -38,7 +38,11 @@ async function bootstrap() {
     }),
   );
 
-  app.enableCors({ origin: process.env.WEB_ORIGIN, credentials: true });
+  app.enableCors({
+    origin: process.env.WEB_ORIGIN,
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-User-Email', 'X-Internal-Secret'],
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // Remove non-whitelisted properties
