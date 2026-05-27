@@ -18,7 +18,8 @@ export class RequestLoggerMiddleware implements NestMiddleware {
     res.on('finish', () => {
       const duration = Date.now() - start;
       const { statusCode } = res;
-      const user = (req as any).user?.email || '-';
+      const reqWithUser = req as Request & { user?: { email?: string } };
+      const user = reqWithUser.user?.email || '-';
 
       const message = `${method} ${originalUrl} ${statusCode} ${duration}ms ${user}`;
 

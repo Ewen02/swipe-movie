@@ -321,6 +321,22 @@ export class RoomsService {
   }
 
   /**
+   * Verify that the user is the owner (creator) of the room, throw ForbiddenException if not
+   */
+  private async verifyOwnership(roomId: string, userId: string): Promise<void> {
+    const room = await this.prisma.room.findUnique({
+      where: { id: roomId },
+      select: { createdBy: true },
+    });
+    if (!room) {
+      throw new NotFoundException('Room not found');
+    }
+    if (room.createdBy !== userId) {
+      throw new ForbiddenException('You are not the owner of this room');
+    }
+  }
+
+  /**
    * Verify that a user is a member of a room, throw ForbiddenException if not
    */
   private async verifyMembership(roomId: string, userId: string): Promise<void> {

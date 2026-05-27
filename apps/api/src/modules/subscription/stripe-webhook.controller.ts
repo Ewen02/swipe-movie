@@ -133,7 +133,7 @@ export class StripeWebhookController {
       return;
     }
 
-    const priceId = subscription.items.data[0]?.price.id;
+    const priceId = subscription.items.data[0]?.price.id ?? '';
     const plan = this.mapPriceIdToPlan(priceId);
     const status = this.mapStripeStatus(subscription.status);
 

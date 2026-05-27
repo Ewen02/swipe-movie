@@ -7,9 +7,10 @@ import {
   Body,
   Param,
   UseGuards,
-  Request,
+  Req,
   BadRequestException,
 } from '@nestjs/common';
+import { AuthenticatedRequest } from '../../common/types/authenticated-request';
 import { ConfigService } from '@nestjs/config';
 import { SubscriptionService } from './subscription.service';
 import { StripeService } from './stripe.service';
@@ -35,16 +36,16 @@ export class SubscriptionController {
    * Get current user's subscription
    */
   @Get('me')
-  async getMySubscription(@Request() req: any) {
-    return await this.subscriptionService.getSubscriptionOrNull(req.user.id);
+  async getMySubscription(@Req() req: Express.Request) {
+    return await this.subscriptionService.getSubscriptionOrNull((req.user as { id: string }).id);
   }
 
   /**
    * Get feature limits for current user
    */
   @Get('me/limits')
-  async getMyLimits(@Request() req: any) {
-    const plan = await this.subscriptionService.getUserPlan(req.user.id);
+  async getMyLimits(@Req() req: Express.Request) {
+    const plan = await this.subscriptionService.getUserPlan((req.user as { id: string }).id);
     return this.subscriptionService.getFeatureLimits(plan);
   }
 
@@ -52,8 +53,8 @@ export class SubscriptionController {
    * Get current user's usage statistics
    */
   @Get('me/usage')
-  async getMyUsage(@Request() req: any) {
-    return await this.subscriptionService.getUsageStats(req.user.id);
+  async getMyUsage(@Req() req: Express.Request) {
+    return await this.subscriptionService.getUsageStats((req.user as { id: string }).id);
   }
 
   /**
@@ -61,9 +62,9 @@ export class SubscriptionController {
    * Allows users to manage their subscription (cancel, update payment, etc.)
    */
   @Post('portal')
-  async createPortalSession(@Request() req: any) {
+  async createPortalSession(@Req() req: Express.Request) {
     const subscription = await this.subscriptionService.getSubscriptionOrNull(
-      req.user.id,
+      (req.user as { id: string }).id,
     );
 
     if (!subscription?.stripeCustomerId) {

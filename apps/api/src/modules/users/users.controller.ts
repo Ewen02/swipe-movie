@@ -9,7 +9,7 @@ import {
   Param,
   Query,
   UseGuards,
-  Request,
+  Req,
   NotFoundException,
   ParseIntPipe,
 } from '@nestjs/common';
@@ -39,8 +39,8 @@ export class UsersController {
   @ApiOperation({ summary: 'Get current user preferences' })
   @ApiOkResponse({ type: UserPreferencesDto })
   @Get('me/preferences')
-  async getMyPreferences(@Request() req: any): Promise<UserPreferencesDto> {
-    const preferences = await this.usersService.getUserPreferences(req.user.sub);
+  async getMyPreferences(@Req() req: Express.Request): Promise<UserPreferencesDto> {
+    const preferences = await this.usersService.getUserPreferences((req.user as { sub: string }).sub);
     if (!preferences) {
       throw new NotFoundException('User not found');
     }
@@ -51,27 +51,27 @@ export class UsersController {
   @ApiOkResponse({ type: UserPreferencesDto })
   @Put('me/preferences')
   async updateMyPreferences(
-    @Request() req: any,
+    @Req() req: Express.Request,
     @Body() dto: UpdateUserPreferencesDto,
   ): Promise<UserPreferencesDto> {
-    return this.usersService.updateUserPreferences(req.user.sub, dto);
+    return this.usersService.updateUserPreferences((req.user as { sub: string }).sub, dto);
   }
 
   @ApiOperation({ summary: 'Save batch onboarding swipes' })
   @ApiOkResponse({ schema: { properties: { saved: { type: 'number' } } } })
   @Post('me/onboarding/swipes')
   async saveOnboardingSwipes(
-    @Request() req: any,
+    @Req() req: Express.Request,
     @Body() dto: BatchOnboardingSwipeDto,
   ): Promise<{ saved: number }> {
-    return this.usersService.saveBatchOnboardingSwipes(req.user.sub, dto.swipes);
+    return this.usersService.saveBatchOnboardingSwipes((req.user as { sub: string }).sub, dto.swipes);
   }
 
   @ApiOperation({ summary: 'Complete onboarding' })
   @ApiOkResponse({ type: UserPreferencesDto })
   @Post('me/onboarding/complete')
-  async completeOnboarding(@Request() req: any): Promise<UserPreferencesDto> {
-    return this.usersService.completeOnboarding(req.user.sub);
+  async completeOnboarding(@Req() req: Express.Request): Promise<UserPreferencesDto> {
+    return this.usersService.completeOnboarding((req.user as { sub: string }).sub);
   }
 
   @ApiOperation({ summary: 'Get user library' })
@@ -82,13 +82,13 @@ export class UsersController {
   @ApiQuery({ name: 'limit', required: false, type: Number })
   @Get('me/library')
   async getMyLibrary(
-    @Request() req: any,
+    @Req() req: Express.Request,
     @Query('status') status?: string,
     @Query('source') source?: string,
     @Query('page', new ParseIntPipe({ optional: true })) page?: number,
     @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
   ): Promise<LibraryResponseDto> {
-    return this.usersService.getUserLibrary(req.user.sub, {
+    return this.usersService.getUserLibrary((req.user as { sub: string }).sub, {
       status,
       source,
       page,
@@ -100,29 +100,29 @@ export class UsersController {
   @ApiOkResponse({ type: LibraryItemDto })
   @Patch('me/library/:id')
   async updateLibraryItem(
-    @Request() req: any,
+    @Req() req: Express.Request,
     @Param('id') itemId: string,
     @Body() dto: UpdateLibraryItemDto,
   ): Promise<LibraryItemDto> {
-    return this.usersService.updateLibraryItemStatus(req.user.sub, itemId, dto.status);
+    return this.usersService.updateLibraryItemStatus((req.user as { sub: string }).sub, itemId, dto.status);
   }
 
   @ApiOperation({ summary: 'Delete library item' })
   @ApiOkResponse({ schema: { properties: { success: { type: 'boolean' } } } })
   @Delete('me/library/:id')
   async deleteLibraryItem(
-    @Request() req: any,
+    @Req() req: Express.Request,
     @Param('id') itemId: string,
   ): Promise<{ success: boolean }> {
-    await this.usersService.deleteLibraryItem(req.user.sub, itemId);
+    await this.usersService.deleteLibraryItem((req.user as { sub: string }).sub, itemId);
     return { success: true };
   }
 
   @ApiOperation({ summary: 'Get library statistics' })
   @ApiOkResponse({ type: LibraryStatsDto })
   @Get('me/library/stats')
-  async getLibraryStats(@Request() req: any): Promise<LibraryStatsDto> {
-    return this.usersService.getLibraryStats(req.user.sub);
+  async getLibraryStats(@Req() req: Express.Request): Promise<LibraryStatsDto> {
+    return this.usersService.getLibraryStats((req.user as { sub: string }).sub);
   }
 
   @ApiOperation({ summary: 'Delete library item by TMDB ID' })
@@ -130,12 +130,12 @@ export class UsersController {
   @ApiQuery({ name: 'mediaType', required: false, enum: ['movie', 'tv'] })
   @Delete('me/library/by-tmdb/:tmdbId')
   async deleteLibraryItemByTmdbId(
-    @Request() req: any,
+    @Req() req: Express.Request,
     @Param('tmdbId') tmdbId: string,
     @Query('mediaType') mediaType?: string,
   ): Promise<{ success: boolean }> {
     await this.usersService.deleteLibraryItemByTmdbId(
-      req.user.sub,
+      (req.user as { sub: string }).sub,
       tmdbId,
       (mediaType || 'movie') as MediaType,
     );
@@ -145,15 +145,15 @@ export class UsersController {
   @ApiOperation({ summary: 'Export all user data (GDPR)' })
   @ApiOkResponse({ description: 'User data export' })
   @Get('me/export')
-  async exportUserData(@Request() req: any) {
-    return this.usersService.exportUserData(req.user.sub);
+  async exportUserData(@Req() req: Express.Request) {
+    return this.usersService.exportUserData((req.user as { sub: string }).sub);
   }
 
   @ApiOperation({ summary: 'Delete user account and all data (GDPR)' })
   @ApiOkResponse({ schema: { properties: { success: { type: 'boolean' } } } })
   @Delete('me')
-  async deleteUserAccount(@Request() req: any): Promise<{ success: boolean }> {
-    await this.usersService.deleteUserAccount(req.user.sub);
+  async deleteUserAccount(@Req() req: Express.Request): Promise<{ success: boolean }> {
+    await this.usersService.deleteUserAccount((req.user as { sub: string }).sub);
     return { success: true };
   }
 }

@@ -54,9 +54,8 @@ export class SentryExceptionFilter implements ExceptionFilter {
             method: request.method,
           },
           user: {
-            // Add user context if available
-            id: (request as any).user?.id,
-            email: (request as any).user?.email,
+            id: (request as unknown as { user?: { id?: string } }).user?.id,
+            email: (request as unknown as { user?: { email?: string } }).user?.email,
           },
         });
       }
@@ -70,7 +69,7 @@ export class SentryExceptionFilter implements ExceptionFilter {
       message:
         typeof message === 'string'
           ? message
-          : (message as any).message || 'Internal server error',
+          : ((message as Record<string, unknown>).message as string) || 'Internal server error',
     });
   }
 }

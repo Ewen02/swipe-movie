@@ -1,11 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 import { PrismaService } from '../../infra/prisma.service';
+
+// Cache TTL constants (in milliseconds)
+const ADMIN_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 @Injectable()
 export class AdminService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+  ) {}
 
   async getGlobalStats() {
+    const cacheKey = 'admin:global-stats';
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) return cached;
+
     const now = new Date();
     const todayStart = new Date(now);
     todayStart.setHours(0, 0, 0, 0);
@@ -39,7 +51,7 @@ export class AdminService {
       }),
     ]);
 
-    return {
+    const result = {
       totalUsers,
       totalRooms,
       totalSwipes,
@@ -48,9 +60,15 @@ export class AdminService {
       activeWeek: activeWeekResult.length,
       activeMonth: activeMonthResult.length,
     };
+    await this.cacheManager.set(cacheKey, result, ADMIN_CACHE_TTL);
+    return result;
   }
 
   async getRetention() {
+    const cacheKey = 'admin:retention';
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) return cached;
+
     const ninetyDaysAgo = new Date(Date.now() - 90 * 86400000);
 
     const [users, lastSwipes] = await Promise.all([
@@ -79,7 +97,7 @@ export class AdminService {
       const weekStart = new Date(user.createdAt);
       weekStart.setDate(weekStart.getDate() - weekStart.getDay());
       weekStart.setHours(0, 0, 0, 0);
-      const key = weekStart.toISOString().split('T')[0];
+      const key = weekStart.toISOString().split('T')[0] ?? '';
 
       if (!cohorts.has(key)) {
         cohorts.set(key, { users: [], createdAt: weekStart });
@@ -114,13 +132,15 @@ export class AdminService {
       };
     });
 
-    return { cohorts: result };
+    const retentionResult = { cohorts: result };
+    await this.cacheManager.set(cacheKey, retentionResult, ADMIN_CACHE_TTL);
+    return retentionResult;
   }
 
   async getUsers(page: number, limit: number) {
     const skip = (page - 1) * limit;
 
-    const [users, total, lastSwipes] = await Promise.all([
+    const [users, total] = await Promise.all([
       this.prisma.user.findMany({
         skip,
         take: limit,
@@ -140,11 +160,17 @@ export class AdminService {
         },
       }),
       this.prisma.user.count(),
-      this.prisma.swipe.groupBy({
-        by: ['userId'],
-        _max: { createdAt: true },
-      }),
     ]);
+
+    // Fetch last swipe only for the users on the current page (avoids N+1 / full-table groupBy)
+    const userIds = users.map((u) => u.id);
+    const lastSwipes = userIds.length > 0
+      ? await this.prisma.swipe.groupBy({
+          by: ['userId'],
+          where: { userId: { in: userIds } },
+          _max: { createdAt: true },
+        })
+      : [];
 
     const lastSwipeMap = new Map(
       lastSwipes.map((s) => [s.userId, s._max.createdAt]),
@@ -170,7 +196,11 @@ export class AdminService {
     };
   }
 
-  async getDailyActivity(days = 30) {
+  async getDailyActivity(days = 30): Promise<{ days: Array<{ date: string; swipes: number; matches: number; newUsers: number; newRooms: number }> }> {
+    const cacheKey = `admin:daily-activity:${days}`;
+    const cached = await this.cacheManager.get<{ days: Array<{ date: string; swipes: number; matches: number; newUsers: number; newRooms: number }> }>(cacheKey);
+    if (cached) return cached;
+
     const now = new Date();
     const startDate = new Date(now.getTime() - days * 86400000);
     startDate.setHours(0, 0, 0, 0);
@@ -198,7 +228,7 @@ export class AdminService {
     const bucketByDate = (items: { createdAt: Date }[]) => {
       const map = new Map<string, number>();
       for (const item of items) {
-        const key = item.createdAt.toISOString().split('T')[0];
+        const key = item.createdAt.toISOString().split('T')[0] ?? '';
         map.set(key, (map.get(key) ?? 0) + 1);
       }
       return map;
@@ -213,7 +243,7 @@ export class AdminService {
       const date = new Date(now);
       date.setDate(date.getDate() - (days - 1 - i));
       date.setHours(0, 0, 0, 0);
-      const key = date.toISOString().split('T')[0];
+      const key = date.toISOString().split('T')[0] ?? '';
 
       return {
         date: key,
@@ -224,10 +254,16 @@ export class AdminService {
       };
     });
 
-    return { days: result };
+    const activityResult = { days: result };
+    await this.cacheManager.set(cacheKey, activityResult, ADMIN_CACHE_TTL);
+    return activityResult;
   }
 
   async getConversionStats() {
+    const cacheKey = 'admin:conversions';
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) return cached;
+
     const [
       totalUsers,
       onboardedUsers,
@@ -248,16 +284,22 @@ export class AdminService {
     const calc = (n: number) =>
       totalUsers > 0 ? Math.round((n / totalUsers) * 100) : 0;
 
-    return {
+    const conversionResult = {
       totalUsers,
       onboarded: { count: onboardedUsers, rate: calc(onboardedUsers) },
       withRoom: { count: usersWithRoom, rate: calc(usersWithRoom) },
       withSwipe: { count: usersWithSwipe, rate: calc(usersWithSwipe) },
       totalMatches: usersWithMatch,
     };
+    await this.cacheManager.set(cacheKey, conversionResult, ADMIN_CACHE_TTL);
+    return conversionResult;
   }
 
   async getSubscriptionStats() {
+    const cacheKey = 'admin:subscriptions';
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) return cached;
+
     const subscriptions = await this.prisma.subscription.groupBy({
       by: ['plan', 'status'],
       _count: { id: true },
@@ -268,9 +310,9 @@ export class AdminService {
       if (!plans[sub.plan]) {
         plans[sub.plan] = { active: 0, total: 0 };
       }
-      plans[sub.plan].total += sub._count.id;
+      plans[sub.plan]!.total += sub._count.id;
       if (sub.status === 'active' || sub.status === 'trialing') {
-        plans[sub.plan].active += sub._count.id;
+        plans[sub.plan]!.active += sub._count.id;
       }
     }
 
@@ -280,15 +322,21 @@ export class AdminService {
 
     const totalUsers = await this.prisma.user.count();
 
-    return {
+    const subsResult = {
       plans,
       totalPaid,
       totalUsers,
       paidRate: totalUsers > 0 ? Math.round((totalPaid / totalUsers) * 100) : 0,
     };
+    await this.cacheManager.set(cacheKey, subsResult, ADMIN_CACHE_TTL);
+    return subsResult;
   }
 
   async getTopMatches(limit = 10) {
+    const cacheKey = `admin:top-matches:${limit}`;
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) return cached;
+
     const matches = await this.prisma.match.groupBy({
       by: ['movieId'],
       _count: { id: true },
@@ -296,11 +344,13 @@ export class AdminService {
       take: limit,
     });
 
-    return {
+    const topMatchesResult = {
       movies: matches.map((m) => ({
         movieId: m.movieId,
         matchCount: m._count.id,
       })),
     };
+    await this.cacheManager.set(cacheKey, topMatchesResult, ADMIN_CACHE_TTL);
+    return topMatchesResult;
   }
 }
