@@ -11,6 +11,7 @@ interface RoomHeaderProps {
   isRecurring?: boolean
   lastResetAt?: string | null
   recurringInterval?: string | null
+  isTrial?: boolean
   translations: {
     unnamedRoom: string
     moviesType: string
@@ -35,6 +36,7 @@ export function RoomHeader({
   isRecurring,
   lastResetAt,
   recurringInterval,
+  isTrial,
   translations: t,
 }: RoomHeaderProps) {
   const displayName = roomName || t.unnamedRoom
@@ -87,6 +89,7 @@ export function RoomHeader({
                   variant="default"
                   size="default"
                   className="bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg text-white ml-auto"
+                  defaultOpen={isTrial}
                 />
               </div>
             </div>

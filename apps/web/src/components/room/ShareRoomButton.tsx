@@ -18,6 +18,7 @@ interface ShareRoomButtonProps {
   variant?: "default" | "outline" | "ghost"
   size?: "default" | "sm" | "lg" | "icon"
   className?: string
+  defaultOpen?: boolean
 }
 
 export function ShareRoomButton({
@@ -26,8 +27,9 @@ export function ShareRoomButton({
   variant = "outline",
   size = "default",
   className,
+  defaultOpen = false,
 }: ShareRoomButtonProps) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(defaultOpen)
   const [copiedLink, setCopiedLink] = useState(false)
   const [copiedCode, setCopiedCode] = useState(false)
   const [showQR, setShowQR] = useState(false)

@@ -77,7 +77,7 @@ function RoomPageContent() {
     resetUserJoined,
     userLeft,
     resetUserLeft,
-  } = useMatchNotifications({ roomId: room?.id || null })
+  } = useMatchNotifications({ roomId: isTrial ? null : (room?.id || null) })
 
   // Notify when a member joins the room
   useEffect(() => {
@@ -323,6 +323,7 @@ function RoomPageContent() {
             roomCode={room.code}
             roomType={room.type}
             membersCount={room.members.length}
+            isTrial={isTrial}
             translations={{
               unnamedRoom: t('unnamedRoom'),
               moviesType: t('moviesType'),
