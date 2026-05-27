@@ -3,8 +3,11 @@ import {
   Post,
   Body,
   Req,
+  Headers,
   UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import { TrialService } from './trial.service';
 import { StartTrialDto } from './dto/start-trial.dto';
@@ -13,7 +16,10 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('trial')
 export class TrialController {
-  constructor(private readonly trialService: TrialService) {}
+  constructor(
+    private readonly trialService: TrialService,
+    private readonly config: ConfigService,
+  ) {}
 
   @Post('start')
   @Throttle({ default: { limit: 5, ttl: 3600000 } })
@@ -29,5 +35,17 @@ export class TrialController {
   ) {
     await this.trialService.migrateGuestToUser(dto.guestId, req.user.id);
     return { success: true };
+  }
+
+  @Post('cleanup')
+  async cleanupGuests(
+    @Headers('authorization') authHeader: string,
+  ) {
+    const cronSecret = this.config.get<string>('CRON_SECRET');
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+      throw new ForbiddenException('Invalid cron secret');
+    }
+    const count = await this.trialService.cleanupExpiredGuests();
+    return { deleted: count };
   }
 }

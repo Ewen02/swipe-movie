@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/trial/cleanup",
+      "schedule": "0 3 * * *"
+    }
+  ]
+}
