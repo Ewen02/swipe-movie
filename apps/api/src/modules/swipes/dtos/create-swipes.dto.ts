@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsString } from 'class-validator';
+import { IsBoolean, IsString, MaxLength } from 'class-validator';
 
 export class CreateSwipeDto {
   @ApiProperty({
@@ -14,6 +14,7 @@ export class CreateSwipeDto {
     description: 'ID of the movie title',
   })
   @IsString()
+  @MaxLength(50)
   movieId!: string;
 
   @ApiProperty({
@@ -21,5 +22,6 @@ export class CreateSwipeDto {
     description: 'ID of the room',
   })
   @IsString()
+  @MaxLength(50)
   roomId!: string;
 }

@@ -5,6 +5,7 @@ import {
   Inject,
   Logger,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 
@@ -16,8 +17,8 @@ interface RetryConfig {
 
 @Injectable()
 export class TmdbService {
-  private readonly baseUrl = process.env.TMDB_API_URL;
-  private readonly apiKey = process.env.TMDB_API_KEY;
+  private readonly baseUrl: string;
+  private readonly apiKey: string;
   private readonly logger = new Logger(TmdbService.name);
   private readonly retryConfig: RetryConfig = {
     maxRetries: 3,
@@ -25,7 +26,13 @@ export class TmdbService {
     maxDelay: 10000, // 10 secondes max
   };
 
-  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+  constructor(
+    private readonly config: ConfigService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {
+    this.baseUrl = this.config.getOrThrow<string>('TMDB_API_URL');
+    this.apiKey = this.config.getOrThrow<string>('TMDB_API_KEY');
+  }
 
   private async sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));

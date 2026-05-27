@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsString, MaxLength } from 'class-validator';
 
 export class JoinRoomDto {
   @ApiProperty({
@@ -7,5 +7,6 @@ export class JoinRoomDto {
     description: 'Code of the room to join',
   })
   @IsString()
+  @MaxLength(10)
   code!: string;
 }

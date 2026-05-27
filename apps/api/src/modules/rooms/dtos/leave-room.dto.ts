@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsString, MaxLength } from 'class-validator';
 
 export class LeaveRoomDto {
   @ApiProperty({
@@ -7,5 +7,6 @@ export class LeaveRoomDto {
     example: '123456789',
   })
   @IsString()
+  @MaxLength(50)
   roomId!: string;
 }

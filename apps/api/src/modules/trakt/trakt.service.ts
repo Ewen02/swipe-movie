@@ -1,6 +1,16 @@
-import { Injectable, Logger, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  UnauthorizedException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { MediaType, MediaStatus, MediaSource } from '../../common/constants/media';
+import {
+  MediaType,
+  MediaStatus,
+  MediaSource,
+} from '../../common/constants/media';
 import { PrismaService } from '../../infra/prisma.service';
 import {
   TraktConfig,
@@ -57,7 +67,9 @@ export class TraktService {
    * Exchange authorization code for tokens
    */
   async exchangeCodeForTokens(code: string): Promise<TraktTokens> {
-    this.logger.debug(`Exchanging code for tokens with redirect_uri: ${this.redirectUri}`);
+    this.logger.debug(
+      `Exchanging code for tokens with redirect_uri: ${this.redirectUri}`,
+    );
 
     const response = await fetch(TraktConfig.TOKEN_URL, {
       method: 'POST',
@@ -75,12 +87,18 @@ export class TraktService {
 
     if (!response.ok) {
       const error = await response.text();
-      this.logger.error(`Trakt token exchange failed (${response.status}): ${error}`);
-      this.logger.error(`Request details - redirect_uri: ${this.redirectUri}, client_id: ${this.clientId.substring(0, 8)}...`);
-      throw new UnauthorizedException(`Failed to exchange Trakt code for tokens: ${error}`);
+      this.logger.error(
+        `Trakt token exchange failed (${response.status}): ${error}`,
+      );
+      this.logger.error(
+        `Request details - redirect_uri: ${this.redirectUri}, client_id: ${this.clientId.substring(0, 8)}...`,
+      );
+      throw new UnauthorizedException(
+        `Failed to exchange Trakt code for tokens: ${error}`,
+      );
     }
 
-    return response.json();
+    return await response.json();
   }
 
   /**
@@ -105,7 +123,7 @@ export class TraktService {
       throw new UnauthorizedException('Failed to refresh Trakt token');
     }
 
-    return response.json();
+    return await response.json();
   }
 
   /**
@@ -201,9 +219,7 @@ export class TraktService {
    * Store tokens for user
    */
   async storeTokens(userId: string, tokens: TraktTokens): Promise<void> {
-    const expiresAt = new Date(
-      (tokens.created_at + tokens.expires_in) * 1000,
-    );
+    const expiresAt = new Date((tokens.created_at + tokens.expires_in) * 1000);
 
     await this.prisma.account.upsert({
       where: {
@@ -426,17 +442,23 @@ export class TraktService {
   /**
    * Invalidate recommendations cache for all rooms where user is a member
    */
-  private async invalidateUserRoomsRecommendationsCache(userId: string): Promise<void> {
+  private async invalidateUserRoomsRecommendationsCache(
+    userId: string,
+  ): Promise<void> {
     const userRooms = await this.prisma.roomMember.findMany({
       where: { userId },
       select: { roomId: true },
     });
 
     for (const { roomId } of userRooms) {
-      await this.recommendationsService.invalidateRoomRecommendationsCache(roomId);
+      await this.recommendationsService.invalidateRoomRecommendationsCache(
+        roomId,
+      );
     }
 
-    this.logger.debug(`Invalidated recommendations cache for ${userRooms.length} rooms after Trakt sync`);
+    this.logger.debug(
+      `Invalidated recommendations cache for ${userRooms.length} rooms after Trakt sync`,
+    );
   }
 
   /**
