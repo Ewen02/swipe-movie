@@ -212,6 +212,12 @@ export class SubscriptionService {
    * Get user's current plan
    */
   async getUserPlan(userId: string): Promise<string> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { isGuest: true },
+    });
+    if (user?.isGuest) return SubscriptionPlan.TRIAL;
+
     const subscription = await this.getSubscriptionOrNull(userId);
     return subscription?.plan || SubscriptionPlan.FREE;
   }

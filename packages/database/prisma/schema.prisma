@@ -30,6 +30,7 @@ model User {
   emailVerified    Boolean            @default(false)
   image            String?
   roles            String[]           @default([])
+  isGuest          Boolean            @default(false)
   stripeCustomerId String?            @unique
 
   // User preferences (onboarding)
@@ -47,6 +48,8 @@ model User {
   mediaLibrary     UserMediaLibrary[]
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
+
+  @@index([isGuest])
 }
 
 model Session {

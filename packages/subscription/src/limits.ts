@@ -4,6 +4,15 @@ import { SubscriptionPlan, type SubscriptionPlanType, type FeatureLimits } from 
  * Feature limits for each subscription plan
  */
 export const FEATURE_LIMITS: Record<SubscriptionPlanType, FeatureLimits> = {
+  [SubscriptionPlan.TRIAL]: {
+    maxRooms: 1,
+    maxParticipants: 4,
+    maxSwipes: 15,
+    roomExpiryDays: 1,
+    hasAdvancedFilters: false,
+    hasEmailNotifications: false,
+    hasApiAccess: false,
+  },
   [SubscriptionPlan.FREE]: {
     maxRooms: 3,
     maxParticipants: 4,

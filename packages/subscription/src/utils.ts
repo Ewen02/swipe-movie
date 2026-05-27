@@ -67,6 +67,7 @@ export function checkLimit(
  */
 export function isPlanHigherOrEqual(planA: SubscriptionPlanType, planB: SubscriptionPlanType): boolean {
   const planOrder: Record<SubscriptionPlanType, number> = {
+    [SubscriptionPlan.TRIAL]: -1,
     [SubscriptionPlan.FREE]: 0,
     [SubscriptionPlan.STARTER]: 1,
     [SubscriptionPlan.PRO]: 2,

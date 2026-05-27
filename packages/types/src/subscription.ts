@@ -1,5 +1,6 @@
 // Subscription Plans
 export const SubscriptionPlan = {
+  TRIAL: 'trial',
   FREE: 'free',
   STARTER: 'starter',
   PRO: 'pro',
