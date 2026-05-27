@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MoviesController } from './movies.controller';
 import { MoviesService } from './movies.service';
+import { MovieDiscoverService } from './movie-discover.service';
+import { MovieDetailsService } from './movie-details.service';
+import { MovieProviderService } from './movie-provider.service';
 import { TmdbModule } from '../tmdb/tmdb.module';
 import { TMDBProvider, OMDbProvider } from './providers';
 import { IMovieProvider } from './interfaces/movie-provider.interface';
@@ -20,6 +23,9 @@ import { IMovieProvider } from './interfaces/movie-provider.interface';
   controllers: [MoviesController],
   providers: [
     MoviesService,
+    MovieDiscoverService,
+    MovieDetailsService,
+    MovieProviderService,
     TMDBProvider,
     OMDbProvider,
     {
