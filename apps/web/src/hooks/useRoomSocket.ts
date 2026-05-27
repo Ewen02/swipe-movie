@@ -153,10 +153,10 @@ export function useRoomSocket(roomId: string | null): UseRoomSocketReturn {
     })
 
     // Connection error
-    socket.on("connect_error", (error: any) => {
+    socket.on("connect_error", (error: Error) => {
       if (!isMounted) return
 
-      console.error("[WebSocket] Connection error:", error.message, "| type:", error.type, "| description:", error.description, "| context:", JSON.stringify({ url: socketUrl, transport: socket.io?.engine?.transport?.name }))
+      console.error("[WebSocket] Connection error:", error.message)
       setIsConnected(false)
       setConnectionState("error")
     })
