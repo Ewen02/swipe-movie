@@ -20,14 +20,18 @@ import {
   useHealthCheck,
 } from "@/hooks/useAdminData"
 
+import dynamic from "next/dynamic"
 import { KPICards } from "@/components/admin/KPICards"
 import { HealthChecks } from "@/components/admin/HealthChecks"
 import { ConversionFunnel } from "@/components/admin/ConversionFunnel"
-import { RetentionTable } from "@/components/admin/RetentionTable"
-import { ActivityChart } from "@/components/admin/ActivityChart"
-import { UsersTable } from "@/components/admin/UsersTable"
 import { SubscriptionStats } from "@/components/admin/SubscriptionStats"
 import { TopMatchedMovies } from "@/components/admin/TopMatchedMovies"
+
+// Lazy-load tab content components that are not visible by default
+// ActivityChart is especially heavy due to recharts dependency
+const ActivityChart = dynamic(() => import("@/components/admin/ActivityChart").then(m => ({ default: m.ActivityChart })), { ssr: false })
+const RetentionTable = dynamic(() => import("@/components/admin/RetentionTable").then(m => ({ default: m.RetentionTable })), { ssr: false })
+const UsersTable = dynamic(() => import("@/components/admin/UsersTable").then(m => ({ default: m.UsersTable })), { ssr: false })
 
 const TAB_CONFIG = [
   { value: "overview", label: "Vue d'ensemble", icon: LayoutDashboard },

@@ -62,7 +62,7 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
         return
       }
 
-      console.log(`[useMoviesData] Initial load - room: ${room.id}, swipes: ${swipedMovieIds.size}`)
+      if (process.env.NODE_ENV === "development") console.log(`[useMoviesData] Initial load - room: ${room.id}, swipes: ${swipedMovieIds.size}`)
       initialLoadDoneRef.current = loadKey
 
       // Reset pagination state
@@ -150,9 +150,11 @@ export function useMoviesData({ room, swipedMovieIds, swipesLoaded }: UseMoviesD
             const existingIds = new Set(validPrev.map(m => m.id))
             const newMovies = validWithProviders.filter(m => !existingIds.has(m.id))
 
-            console.log(`[useMoviesData] Appending: ${newMovies.length} new movies to ${validPrev.length} existing`)
-            console.log(`[useMoviesData] New movie IDs:`, newMovies.map(m => m.id))
-            console.log(`[useMoviesData] Total after append: ${validPrev.length + newMovies.length}`)
+            if (process.env.NODE_ENV === "development") {
+              console.log(`[useMoviesData] Appending: ${newMovies.length} new movies to ${validPrev.length} existing`)
+              console.log(`[useMoviesData] New movie IDs:`, newMovies.map(m => m.id))
+              console.log(`[useMoviesData] Total after append: ${validPrev.length + newMovies.length}`)
+            }
 
             return [...validPrev, ...newMovies]
           })

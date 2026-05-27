@@ -133,6 +133,15 @@ export function useSubscription(): UseSubscriptionResult {
     void fetchSubscription();
   }, [fetchSubscription]);
 
+  // Revalidate subscription when the window regains focus (e.g. after checkout/upgrade)
+  useEffect(() => {
+    const handleFocus = () => {
+      void fetchSubscription();
+    };
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [fetchSubscription]);
+
   // Derive plan from subscription or default to FREE
   const plan = (subscription?.plan?.toLowerCase() as SubscriptionPlanType) || SubscriptionPlan.FREE;
   const limits = getFeatureLimits(plan);

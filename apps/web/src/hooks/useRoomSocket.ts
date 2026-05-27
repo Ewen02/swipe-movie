@@ -10,6 +10,8 @@ import {
   ConnectionState,
 } from "@swipe-movie/types"
 
+const isDev = process.env.NODE_ENV === "development"
+
 interface UseRoomSocketReturn {
   newMatch: MatchCreatedPayload | null
   deletedMatchMovieId: string | null
@@ -64,7 +66,7 @@ export function useRoomSocket(roomId: string | null): UseRoomSocketReturn {
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
     const socketUrl = `${apiUrl}/ws`
-    console.log(`[WebSocket] Connecting to ${socketUrl} for room ${roomId}`)
+    if (isDev) console.log(`[WebSocket] Connecting to ${socketUrl} for room ${roomId}`)
 
     // Create socket connection
     // Use polling first for handshake, then upgrade to websocket
@@ -85,7 +87,7 @@ export function useRoomSocket(roomId: string | null): UseRoomSocketReturn {
     socket.on("connect", () => {
       if (!isMounted) return
 
-      console.log("[WebSocket] Connected successfully")
+      if (isDev) console.log("[WebSocket] Connected successfully")
       setIsConnected(true)
       setConnectionState("connected")
       setReconnectAttempts(0)
@@ -99,7 +101,7 @@ export function useRoomSocket(roomId: string | null): UseRoomSocketReturn {
     socket.io.on("reconnect_attempt", (attemptNumber) => {
       if (!isMounted) return
 
-      console.log(`[WebSocket] Reconnect attempt ${attemptNumber}/${SocketConfig.MAX_RECONNECT_ATTEMPTS}`)
+      if (isDev) console.log(`[WebSocket] Reconnect attempt ${attemptNumber}/${SocketConfig.MAX_RECONNECT_ATTEMPTS}`)
       setConnectionState("reconnecting")
       setReconnectAttempts(attemptNumber)
     })
@@ -108,7 +110,7 @@ export function useRoomSocket(roomId: string | null): UseRoomSocketReturn {
     socket.io.on("reconnect", (attemptNumber) => {
       if (!isMounted) return
 
-      console.log(`[WebSocket] Reconnected after ${attemptNumber} attempts`)
+      if (isDev) console.log(`[WebSocket] Reconnected after ${attemptNumber} attempts`)
       setIsConnected(true)
       setConnectionState("connected")
       setReconnectAttempts(0)
@@ -125,7 +127,7 @@ export function useRoomSocket(roomId: string | null): UseRoomSocketReturn {
     socket.io.on("reconnect_failed", () => {
       if (!isMounted) return
 
-      console.error("[WebSocket] Reconnection failed after max attempts")
+      if (isDev) console.error("[WebSocket] Reconnection failed after max attempts")
       setConnectionState("error")
     })
 
@@ -133,14 +135,14 @@ export function useRoomSocket(roomId: string | null): UseRoomSocketReturn {
     socket.io.on("reconnect_error", (error) => {
       if (!isMounted) return
 
-      console.error("[WebSocket] Reconnection error:", error.message)
+      if (isDev) console.error("[WebSocket] Reconnection error:", error.message)
     })
 
     // Disconnected
     socket.on("disconnect", (reason) => {
       if (!isMounted) return
 
-      console.log(`[WebSocket] Disconnected: ${reason}`)
+      if (isDev) console.log(`[WebSocket] Disconnected: ${reason}`)
       setIsConnected(false)
       hasJoinedRoomRef.current = false
 
@@ -156,7 +158,7 @@ export function useRoomSocket(roomId: string | null): UseRoomSocketReturn {
     socket.on("connect_error", (error: Error) => {
       if (!isMounted) return
 
-      console.error("[WebSocket] Connection error:", error.message)
+      if (isDev) console.error("[WebSocket] Connection error:", error.message)
       setIsConnected(false)
       setConnectionState("error")
     })
@@ -165,7 +167,7 @@ export function useRoomSocket(roomId: string | null): UseRoomSocketReturn {
     socket.on(SocketEvents.MATCH_CREATED, (payload: MatchCreatedPayload) => {
       if (!isMounted) return
 
-      console.log("[WebSocket] Match created:", payload)
+      if (isDev) console.log("[WebSocket] Match created:", payload)
       setNewMatch(payload)
     })
 
@@ -173,7 +175,7 @@ export function useRoomSocket(roomId: string | null): UseRoomSocketReturn {
     socket.on(SocketEvents.MATCH_DELETED, (payload: MatchDeletedPayload) => {
       if (!isMounted) return
 
-      console.log("[WebSocket] Match deleted:", payload)
+      if (isDev) console.log("[WebSocket] Match deleted:", payload)
       setDeletedMatchMovieId(payload.movieId)
     })
 
@@ -181,7 +183,7 @@ export function useRoomSocket(roomId: string | null): UseRoomSocketReturn {
     socket.on(SocketEvents.USER_JOINED, (payload: UserJoinedPayload) => {
       if (!isMounted) return
 
-      console.log("[WebSocket] User joined:", payload)
+      if (isDev) console.log("[WebSocket] User joined:", payload)
       setUserJoined(payload)
     })
 
@@ -189,13 +191,13 @@ export function useRoomSocket(roomId: string | null): UseRoomSocketReturn {
     socket.on(SocketEvents.USER_LEFT, (payload: UserLeftPayload) => {
       if (!isMounted) return
 
-      console.log("[WebSocket] User left:", payload)
+      if (isDev) console.log("[WebSocket] User left:", payload)
       setUserLeft(payload)
     })
 
     // Ping/pong for connection health check
     socket.on("ping", () => {
-      console.log("[WebSocket] Ping received")
+      if (isDev) console.log("[WebSocket] Ping received")
     })
 
     // Cleanup

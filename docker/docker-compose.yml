@@ -2,10 +2,10 @@ name: swipe-movie
 
 services:
   db:
-    image: postgres:16
+    image: postgres:16-alpine
     container_name: swipe-movie-db
     environment:
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_DB: ${DB_NAME:-swipe}
     ports: ["5432:5432"]
@@ -22,7 +22,7 @@ services:
       - app-network
 
   redis:
-    image: redis:7
+    image: redis:7-alpine
     container_name: swipe-movie-redis
     ports: ["6379:6379"]
     command: redis-server --appendonly yes --save 60 1000 --save 300 100 --save 900 1
