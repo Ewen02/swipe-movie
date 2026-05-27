@@ -23,5 +23,6 @@
       "@infra/*": ["src/infra/*"]
     }
   },
-  "include": ["src/**/*", "src/types/**/*", "prisma/**/*.ts"]
+  "include": ["src/**/*", "src/types/**/*", "prisma/**/*.ts"],
+  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"]
 }
