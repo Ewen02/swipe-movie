@@ -1,46 +1,47 @@
-"use client"
+'use client';
 
-import { signIn, useSession } from "@/lib/auth-client"
-import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useState, Suspense } from "react"
-import Link from "next/link"
-import { motion } from "framer-motion"
-import { useTranslations } from "next-intl"
-import { Button } from "@swipe-movie/ui"
-import { Film, Sparkles, Heart, X, CheckCircle2, Shield, Zap } from "lucide-react"
-import { PublicHeader } from "@/components/layout/PublicHeader"
+import { signIn, useSession } from '@/lib/auth-client';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
+import { Button } from '@swipe-movie/ui';
+import { Film, Sparkles, Heart, X, CheckCircle2, Shield, Zap } from 'lucide-react';
+import { PublicHeader } from '@/components/layout/PublicHeader';
 
 function LoginPageContent() {
-  const t = useTranslations('login')
-  const { data: session, isPending } = useSession()
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const t = useTranslations('login');
+  const { data: session, isPending } = useSession();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const rawCallback = searchParams?.get("callbackUrl") || "/rooms"
-  const callbackUrl = rawCallback.startsWith("/") ? rawCallback : "/rooms"
+  const rawCallback = searchParams?.get('callbackUrl') || '/rooms';
+  const callbackUrl = rawCallback.startsWith('/') ? rawCallback : '/rooms';
 
   useEffect(() => {
     if (session) {
-      router.push(callbackUrl)
+      router.push(callbackUrl);
     }
-  }, [session, router, callbackUrl])
+  }, [session, router, callbackUrl]);
 
   const handleGoogleSignIn = async () => {
-    setIsLoading(true)
-    setError(null)
+    setIsLoading(true);
+    setError(null);
     try {
       await signIn.social({
-        provider: "google",
+        provider: 'google',
         callbackURL: callbackUrl,
-      })
+      });
     } catch (error) {
-      console.error("Sign in error:", error)
-      setError("La connexion a échoué. Réessaie ou contacte le support.")
-      setIsLoading(false)
+      console.error('Sign in error:', error);
+      setError('La connexion a échoué. Réessaie ou contacte le support.');
+      setIsLoading(false);
     }
-  }
+  };
 
   if (isPending) {
     return (
@@ -50,11 +51,11 @@ function LoginPageContent() {
           <p className="text-muted-foreground">{t('loading')}</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (session) {
-    return null
+    return null;
   }
 
   return (
@@ -70,7 +71,14 @@ function LoginPageContent() {
           <div className="w-full max-w-md">
             {/* Logo - desktop only */}
             <Link href="/" className="hidden lg:block mb-12">
-              <img src="/logo.png" alt="Swipe Movie" className="h-10" />
+              <Image
+                src="/logo.png"
+                alt="Swipe Movie"
+                width={160}
+                height={40}
+                priority
+                className="h-10 w-auto"
+              />
             </Link>
 
             <motion.div
@@ -85,18 +93,11 @@ function LoginPageContent() {
               </div>
 
               {/* Title */}
-              <h1 className="text-3xl md:text-4xl font-bold mb-3">
-                {t('hero.title')}
-              </h1>
-              <p className="text-muted-foreground mb-8">
-                {t('hero.subtitle')}
-              </p>
+              <h1 className="text-3xl md:text-4xl font-bold mb-3">{t('hero.title')}</h1>
+              <p className="text-muted-foreground mb-8">{t('hero.subtitle')}</p>
 
               {/* Google Button */}
-              <motion.div
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-              >
+              <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
                 <Button
                   onClick={handleGoogleSignIn}
                   disabled={isLoading}
@@ -138,9 +139,7 @@ function LoginPageContent() {
                 </Button>
               </motion.div>
 
-              {error && (
-                <p className="text-sm text-red-500 mt-3 text-center">{error}</p>
-              )}
+              {error && <p className="text-sm text-red-500 mt-3 text-center">{error}</p>}
 
               {/* Trust badges */}
               <div className="mt-6 flex flex-wrap gap-4 text-sm">
@@ -160,11 +159,11 @@ function LoginPageContent() {
 
               {/* Terms */}
               <p className="text-xs text-muted-foreground mt-8">
-                {t('card.terms')}{" "}
+                {t('card.terms')}{' '}
                 <Link href="/terms" className="text-primary hover:underline">
                   {t('card.termsLink')}
-                </Link>{" "}
-                {t('card.and')}{" "}
+                </Link>{' '}
+                {t('card.and')}{' '}
                 <Link href="/privacy" className="text-primary hover:underline">
                   {t('card.privacyLink')}
                 </Link>
@@ -194,7 +193,8 @@ function LoginPageContent() {
                 </span>
               </h2>
               <p className="text-xl text-muted-foreground mb-12 leading-relaxed">
-                Fini les débats interminables ! Swipez, matchez et regardez ensemble en quelques secondes.
+                Fini les débats interminables ! Swipez, matchez et regardez ensemble en quelques
+                secondes.
               </p>
 
               {/* Demo Cards Visual */}
@@ -202,15 +202,15 @@ function LoginPageContent() {
                 {/* Background cards */}
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-red-500/10 rounded-2xl border border-border backdrop-blur-sm"
-                  style={{ transform: "rotate(8deg) translateX(30px)" }}
+                  style={{ transform: 'rotate(8deg) translateX(30px)' }}
                   animate={{
                     rotate: [8, 10, 8],
-                    y: [0, -10, 0]
+                    y: [0, -10, 0],
                   }}
                   transition={{
                     duration: 4,
                     repeat: Infinity,
-                    ease: "easeInOut"
+                    ease: 'easeInOut',
                   }}
                 >
                   <div className="absolute top-4 left-4 px-3 py-1.5 bg-red-500/20 rounded-full">
@@ -220,16 +220,16 @@ function LoginPageContent() {
 
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-2xl border border-border backdrop-blur-sm"
-                  style={{ transform: "rotate(-5deg) translateX(-20px)" }}
+                  style={{ transform: 'rotate(-5deg) translateX(-20px)' }}
                   animate={{
                     rotate: [-5, -7, -5],
-                    y: [0, -5, 0]
+                    y: [0, -5, 0],
                   }}
                   transition={{
                     duration: 4,
                     repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 0.5
+                    ease: 'easeInOut',
+                    delay: 0.5,
                   }}
                 >
                   <div className="absolute top-4 right-4 px-3 py-1.5 bg-green-500/20 rounded-full">
@@ -276,11 +276,11 @@ function LoginPageContent() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function LoadingFallback() {
-  const t = useTranslations('login')
+  const t = useTranslations('login');
   return (
     <div className="flex h-screen items-center justify-center bg-background">
       <div className="text-center">
@@ -288,7 +288,7 @@ function LoadingFallback() {
         <p className="text-muted-foreground">{t('loading')}</p>
       </div>
     </div>
-  )
+  );
 }
 
 export default function LoginPage() {
@@ -296,5 +296,5 @@ export default function LoginPage() {
     <Suspense fallback={<LoadingFallback />}>
       <LoginPageContent />
     </Suspense>
-  )
+  );
 }

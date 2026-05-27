@@ -1,3 +1,4 @@
+const path = require('path');
 const js = require('@eslint/js');
 const tseslint = require('typescript-eslint');
 const reactPlugin = require('eslint-plugin-react');
@@ -60,6 +61,11 @@ module.exports = [
 
       // Prettier intégré
       'prettier/prettier': ['error', { endOfLine: 'lf' }],
+
+      // Next.js + React 19 use the JSX auto runtime — no need to import React.
+      'react/react-in-jsx-scope': 'off',
+      // TypeScript already enforces prop types at the type level.
+      'react/prop-types': 'off',
     },
   },
 
@@ -77,7 +83,6 @@ module.exports = [
         ecmaFeatures: { jsx: true },
         tsconfigRootDir: path.join(__dirname, 'apps/web'),
         projectService: true,
-        project: ['./tsconfig.json'],
       },
     },
   },
