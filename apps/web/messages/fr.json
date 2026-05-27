@@ -442,17 +442,29 @@
       "account": {
         "title": "1. Informations de compte",
         "intro": "Lorsque vous vous connectez avec Google OAuth, nous collectons :",
-        "items": ["Votre nom", "Votre adresse email", "Votre photo de profil Google (si disponible)"]
+        "items": [
+          "Votre nom",
+          "Votre adresse email",
+          "Votre photo de profil Google (si disponible)"
+        ]
       },
       "usage": {
         "title": "2. Données d'utilisation",
         "intro": "Pour faire fonctionner l'application, nous stockons :",
-        "items": ["Les rooms que vous créez ou rejoignez", "Vos swipes (like/dislike sur les films)", "Les matches détectés dans vos rooms"]
+        "items": [
+          "Les rooms que vous créez ou rejoignez",
+          "Vos swipes (like/dislike sur les films)",
+          "Les matches détectés dans vos rooms"
+        ]
       },
       "technical": {
         "title": "3. Données techniques",
         "intro": "Pour améliorer l'expérience utilisateur, nous collectons via Vercel Analytics :",
-        "items": ["Pages visitées (de manière anonymisée)", "Temps passé sur l'application", "Pays d'origine (pour les statistiques générales)"]
+        "items": [
+          "Pages visitées (de manière anonymisée)",
+          "Temps passé sur l'application",
+          "Pays d'origine (pour les statistiques générales)"
+        ]
       }
     },
     "dataUsage": {
@@ -473,7 +485,13 @@
     "security": {
       "title": "Sécurité des données",
       "intro": "Nous mettons en place des mesures de sécurité techniques et organisationnelles pour protéger vos données :",
-      "items": ["Connexion sécurisée via HTTPS", "Authentification via Google OAuth 2.0", "Base de données hébergée sur des serveurs sécurisés (Neon PostgreSQL)", "Sessions chiffrées et tokens d'authentification sécurisés", "Aucun stockage de mots de passe (délégué à Google)"]
+      "items": [
+        "Connexion sécurisée via HTTPS",
+        "Authentification via Google OAuth 2.0",
+        "Base de données hébergée sur des serveurs sécurisés (Neon PostgreSQL)",
+        "Sessions chiffrées et tokens d'authentification sécurisés",
+        "Aucun stockage de mots de passe (délégué à Google)"
+      ]
     },
     "rights": {
       "title": "Vos droits (RGPD)",
@@ -508,7 +526,10 @@
     "cookies": {
       "title": "Cookies",
       "intro": "Nous utilisons des cookies strictement nécessaires au fonctionnement de l'application :",
-      "items": ["Cookie de session pour l'authentification (obligatoire)", "Cookie de préférence de thème (dark/light mode)"],
+      "items": [
+        "Cookie de session pour l'authentification (obligatoire)",
+        "Cookie de préférence de thème (dark/light mode)"
+      ],
       "noTracking": "Nous n'utilisons pas de cookies publicitaires ou de tracking tiers."
     },
     "changes": {
@@ -919,6 +940,27 @@
     "invite": "Invite un ami",
     "inviteDescription": "Partage ce lien pour swiper à deux",
     "swipeCount": "{count}/{total} swipes",
-    "loading": "Chargement..."
+    "loading": "Chargement...",
+    "badge": "Gratuit · Sans inscription",
+    "title": "Trouve ton prochain film",
+    "subtitle": "Choisis un genre, swipe avec tes amis et matchez sur le film parfait. Aucun compte requis.",
+    "step1": "Swipe",
+    "step2": "Invite",
+    "step3": "Match",
+    "pickGenre": "Quel genre pour ce soir ?",
+    "allGenres": "Tous les genres",
+    "trustFree": "100% gratuit",
+    "trustNoAccount": "Sans inscription",
+    "trust30s": "Prêt en 30s",
+    "genres": {
+      "action": "Action",
+      "comedy": "Comédie",
+      "horror": "Horreur",
+      "romance": "Romance",
+      "scifi": "Sci-Fi",
+      "drama": "Drame",
+      "animation": "Animation",
+      "thriller": "Thriller"
+    }
   }
 }

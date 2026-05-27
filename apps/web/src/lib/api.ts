@@ -26,12 +26,23 @@ async function getCachedUserEmail(): Promise<string | undefined> {
   }
 }
 
+function getTrialToken(): string | undefined {
+  if (typeof document === "undefined") return undefined
+  const match = document.cookie.match(/(?:^|;\s*)trial-session=([^;]+)/)
+  return match?.[1] || undefined
+}
+
 export async function apiFetch(input: string, init: RequestInit = {}) {
   const reqHeaders = new Headers(init.headers)
   const userEmail = await getCachedUserEmail()
 
   if (userEmail) {
     reqHeaders.set("X-User-Email", userEmail)
+  } else {
+    const trialToken = getTrialToken()
+    if (trialToken) {
+      reqHeaders.set("Authorization", `Bearer ${trialToken}`)
+    }
   }
 
   return fetch(`${process.env.NEXT_PUBLIC_API_URL}${input}`, { ...init, headers: reqHeaders })

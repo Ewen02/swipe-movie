@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, lazy, Suspense } from "react"
 import { useParams } from "next/navigation"
 import { useSession } from "@/lib/auth-client"
 import { useTranslations } from "next-intl"
+import { isTrialActive, getTrialData } from "@/lib/trial"
 import { createSwipe, deleteSwipe } from "@/lib/api/swipes"
 import { ApiError } from "@/lib/http"
 import { captureEvent } from "@/components/providers/PostHogProvider"
@@ -20,6 +21,9 @@ import { BottomTabNav } from "@/components/room/BottomTabNav"
 import { JoinRoomScreen } from "@/components/room/JoinRoomScreen"
 import { RoomHeader } from "@/components/room/RoomHeader"
 import { RoomTabs } from "@/components/room/RoomTabs"
+import { TrialBanner } from "@/components/trial/TrialBanner"
+import { LoginWallModal } from "@/components/trial/LoginWallModal"
+import { useLoginWall } from "@/hooks/trial/useLoginWall"
 
 // Lazy load heavy components that are not always visible
 const MovieDetailsModal = lazy(() => import("@/components/movies/MovieDetailsModal").then(m => ({ default: m.MovieDetailsModal })))
@@ -31,10 +35,16 @@ function RoomPageContent() {
   const code = params?.code ?? ""
   const { data: session } = useSession()
   const { toast } = useToast()
+  const trialData = isTrialActive() ? getTrialData() : null
+  const isTrial = Boolean(trialData)
   const [currentTab, setCurrentTab] = useState("swipe")
   const [joiningRoom, setJoiningRoom] = useState(false)
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null)
   const [showMovieDetails, setShowMovieDetails] = useState(false)
+  const [trialSwipeCount, setTrialSwipeCount] = useState(0)
+  const [trialHasMatch, setTrialHasMatch] = useState(false)
+  const locale = (params as unknown as { locale?: string })?.locale ?? "fr"
+  const { shouldShow: showTrialWall, trigger: trialTrigger, dismiss: trialDismiss, isHardBlock: trialHardBlock } = useLoginWall(trialSwipeCount, trialHasMatch)
 
   const {
     room,
@@ -116,7 +126,9 @@ function RoomPageContent() {
     try {
       const result = await createSwipe(room.id, movieIdStr, value)
       captureEvent("swipe", { direction, movieId: movieIdStr, roomId: room.id })
+      if (isTrial) setTrialSwipeCount(prev => prev + 1)
       if (result.matchCreated) {
+        if (isTrial) setTrialHasMatch(true)
         captureEvent("match_found", { movieId: movieIdStr, roomId: room.id })
         triggerMatchAnimation(movie)
       }
@@ -211,7 +223,7 @@ function RoomPageContent() {
     )
   }
 
-  const userId = session?.user?.id
+  const userId = session?.user?.id ?? trialData?.guestId
   const isMember = userId && room.members.some(member => member.id === userId)
 
   const handleJoinRoom = async () => {
@@ -265,6 +277,20 @@ function RoomPageContent() {
 
   return (
     <>
+      {isTrial && (
+        <TrialBanner remaining={Math.max(0, 15 - trialSwipeCount)} locale={locale} />
+      )}
+
+      {isTrial && (
+        <LoginWallModal
+          show={showTrialWall && !showMatchAnimation}
+          trigger={trialTrigger}
+          isHardBlock={trialHardBlock}
+          locale={locale}
+          onDismiss={trialDismiss}
+        />
+      )}
+
       <MatchAnimation
         show={showMatchAnimation}
         movie={matchedMovie || undefined}

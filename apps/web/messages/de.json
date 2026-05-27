@@ -442,17 +442,29 @@
       "account": {
         "title": "1. Account Information",
         "intro": "When you sign in with Google OAuth, we collect:",
-        "items": ["Your name", "Your email address", "Your Google profile picture (if available)"]
+        "items": [
+          "Your name",
+          "Your email address",
+          "Your Google profile picture (if available)"
+        ]
       },
       "usage": {
         "title": "2. Usage Data",
         "intro": "To make the application work, we store:",
-        "items": ["The rooms you create or join", "Your swipes (like/dislike on movies)", "The matches detected in your rooms"]
+        "items": [
+          "The rooms you create or join",
+          "Your swipes (like/dislike on movies)",
+          "The matches detected in your rooms"
+        ]
       },
       "technical": {
         "title": "3. Technical Data",
         "intro": "To improve user experience, we collect via Vercel Analytics:",
-        "items": ["Pages visited (anonymized)", "Time spent on the application", "Country of origin (for general statistics)"]
+        "items": [
+          "Pages visited (anonymized)",
+          "Time spent on the application",
+          "Country of origin (for general statistics)"
+        ]
       }
     },
     "dataUsage": {
@@ -473,7 +485,13 @@
     "security": {
       "title": "Data Security",
       "intro": "We implement technical and organizational security measures to protect your data:",
-      "items": ["Secure connection via HTTPS", "Authentication via Google OAuth 2.0", "Database hosted on secure servers (Neon PostgreSQL)", "Encrypted sessions and secure authentication tokens", "No password storage (delegated to Google)"]
+      "items": [
+        "Secure connection via HTTPS",
+        "Authentication via Google OAuth 2.0",
+        "Database hosted on secure servers (Neon PostgreSQL)",
+        "Encrypted sessions and secure authentication tokens",
+        "No password storage (delegated to Google)"
+      ]
     },
     "rights": {
       "title": "Your Rights (GDPR)",
@@ -508,7 +526,10 @@
     "cookies": {
       "title": "Cookies",
       "intro": "We use cookies strictly necessary for the application to function:",
-      "items": ["Session cookie for authentication (required)", "Theme preference cookie (dark/light mode)"],
+      "items": [
+        "Session cookie for authentication (required)",
+        "Theme preference cookie (dark/light mode)"
+      ],
       "noTracking": "We do not use advertising or third-party tracking cookies."
     },
     "changes": {
@@ -919,6 +940,27 @@
     "invite": "Freund einladen",
     "inviteDescription": "Teile diesen Link, um zusammen zu swipen",
     "swipeCount": "{count}/{total} Swipes",
-    "loading": "Wird geladen..."
+    "loading": "Wird geladen...",
+    "badge": "Kostenlos · Ohne Anmeldung",
+    "title": "Finde deinen nächsten Film",
+    "subtitle": "Wähle ein Genre, swipe mit Freunden und matche auf den perfekten Film. Kein Konto nötig.",
+    "step1": "Swipe",
+    "step2": "Einladen",
+    "step3": "Match",
+    "pickGenre": "Welches Genre heute Abend?",
+    "allGenres": "Alle Genres",
+    "trustFree": "100% kostenlos",
+    "trustNoAccount": "Ohne Anmeldung",
+    "trust30s": "Fertig in 30s",
+    "genres": {
+      "action": "Action",
+      "comedy": "Komödie",
+      "horror": "Horror",
+      "romance": "Romanze",
+      "scifi": "Sci-Fi",
+      "drama": "Drama",
+      "animation": "Animation",
+      "thriller": "Thriller"
+    }
   }
 }

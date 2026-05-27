@@ -34,11 +34,14 @@ const protectedPrefixes = [
 
 const localePrefixPattern = new RegExp(`^/(${locales.join('|')})(?=/|$)`);
 
+function pathWithoutLocale(pathname: string): string {
+  return pathname.replace(localePrefixPattern, '') || '/';
+}
+
 function isPublicPath(pathname: string): boolean {
-  // Remove locale prefix if present
-  const pathWithoutLocale = pathname.replace(localePrefixPattern, '') || '/';
+  const clean = pathWithoutLocale(pathname);
   return !protectedPrefixes.some(
-    (prefix) => pathWithoutLocale === prefix || pathWithoutLocale.startsWith(prefix + '/'),
+    (prefix) => clean === prefix || clean.startsWith(prefix + '/'),
   );
 }
 
@@ -70,6 +73,12 @@ export default async function proxy(req: NextRequest) {
 
   // If not authenticated and trying to access protected path
   if (!isAuthenticated && !isPublic) {
+    // Allow trial users (ghost JWT) to access /rooms/* routes
+    const trialToken = req.cookies.get('trial-session')?.value;
+    if (trialToken && pathWithoutLocale(pathname).startsWith('/rooms')) {
+      return intlProxy(req);
+    }
+
     // Get the locale from the path or use default
     const locale = pathname.match(localePrefixPattern)?.[1] || defaultLocale;
     const loginUrl = new URL(`/${locale === defaultLocale ? '' : locale + '/'}login`, req.url);

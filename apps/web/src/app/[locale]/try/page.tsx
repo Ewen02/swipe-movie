@@ -1,209 +1,178 @@
 "use client"
 
-import { useEffect, useState, useCallback, Suspense } from "react"
-import { useSearchParams, useParams } from "next/navigation"
-import { Film } from "lucide-react"
+import { useState, Suspense } from "react"
+import { useRouter, useParams, useSearchParams } from "next/navigation"
+import { motion } from "framer-motion"
+import { Film, Sparkles, Users, Heart } from "lucide-react"
+import { Button } from "@swipe-movie/ui"
 import { useTranslations } from "next-intl"
 import {
   isTrialActive,
   getTrialData,
   startTrial,
-  trialApiFetch,
-  type TrialData,
 } from "@/lib/trial"
-import { useLoginWall } from "@/hooks/trial/useLoginWall"
-import { TrialBanner } from "@/components/trial/TrialBanner"
-import { TrialMatchAnimation } from "@/components/trial/TrialMatchAnimation"
-import { LoginWallModal } from "@/components/trial/LoginWallModal"
-import { MovieCards } from "@/components/swipe/MovieCards"
-import type { MovieBasic } from "@/schemas/movies"
 
-const TOTAL_SWIPES = 15
+const GENRE_OPTIONS = [
+  { id: 28, emoji: "💥", labelKey: "action" },
+  { id: 35, emoji: "😂", labelKey: "comedy" },
+  { id: 27, emoji: "👻", labelKey: "horror" },
+  { id: 10749, emoji: "💕", labelKey: "romance" },
+  { id: 878, emoji: "🚀", labelKey: "scifi" },
+  { id: 18, emoji: "🎭", labelKey: "drama" },
+  { id: 16, emoji: "✨", labelKey: "animation" },
+  { id: 53, emoji: "🔍", labelKey: "thriller" },
+]
 
 function TrialPageContent() {
   const t = useTranslations("trial")
+  const router = useRouter()
   const params = useParams()
   const searchParams = useSearchParams()
   const locale = (params?.locale as string) || "fr"
 
-  const [trialData, setTrialData] = useState<TrialData | null>(null)
-  const [isInitializing, setIsInitializing] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [movies, setMovies] = useState<MovieBasic[]>([])
-  const [roomId, setRoomId] = useState<string | null>(null)
-  const [swipeCount, setSwipeCount] = useState(0)
-  const [hasMatch, setHasMatch] = useState(false)
-  const [showMatch, setShowMatch] = useState(false)
-  const [latestMatchMovie, setLatestMatchMovie] = useState<MovieBasic | null>(null)
-  const [moviesPage, setMoviesPage] = useState(1)
+  const [isCreating, setIsCreating] = useState(false)
+  const [selectedGenre, setSelectedGenre] = useState<number | null>(null)
 
-  // Login wall
-  const { shouldShow: showLoginWall, trigger, dismiss, isHardBlock } = useLoginWall(
-    swipeCount,
-    hasMatch,
-  )
+  const handleStart = async (genreId?: number) => {
+    setIsCreating(true)
+    setSelectedGenre(genreId ?? null)
 
-  // Initialize trial session
-  useEffect(() => {
-    async function init() {
-      try {
-        let data: TrialData
-        if (isTrialActive()) {
-          const existing = getTrialData()
-          if (existing) {
-            data = existing
-          } else {
-            data = await createTrial()
-          }
-        } else {
-          data = await createTrial()
-        }
-
-        setTrialData(data)
-
-        // Fetch room ID from room code
-        const roomRes = await trialApiFetch(`/rooms/code/${data.roomCode}`)
-        if (roomRes.ok) {
-          const room = await roomRes.json()
-          setRoomId(room.id)
-        }
-
-        // Fetch initial movies
-        await loadMovies(1)
-      } catch (err) {
-        console.error("[TrialPage] Failed to start trial:", err)
-        setError("Failed to start trial. Please try again.")
-      } finally {
-        setIsInitializing(false)
-      }
-    }
-
-    async function createTrial(): Promise<TrialData> {
-      const genreParam = searchParams?.get("genre")
-      const genreId = genreParam ? parseInt(genreParam, 10) : undefined
-      return startTrial({
-        genreId: genreId && !isNaN(genreId) ? genreId : undefined,
-      })
-    }
-
-    init()
-  }, [searchParams])
-
-  async function loadMovies(page: number) {
     try {
-      const res = await trialApiFetch(`/movies/popular?page=${page}`)
-      if (res.ok) {
-        const data = await res.json()
-        if (Array.isArray(data)) {
-          setMovies((prev) => {
-            const existingIds = new Set(prev.map((m) => m.id))
-            const newMovies = data.filter((m: MovieBasic) => !existingIds.has(m.id))
-            return [...prev, ...newMovies]
-          })
+      // Check for existing trial session
+      if (isTrialActive()) {
+        const existing = getTrialData()
+        if (existing) {
+          router.push(`/${locale}/rooms/${existing.roomCode}`)
+          return
         }
       }
-    } catch {
-      // Silently fail — movies will show empty state
+
+      const data = await startTrial({
+        genreId,
+        type: "movie",
+      })
+
+      router.push(`/${locale}/rooms/${data.roomCode}`)
+    } catch (err) {
+      console.error("[TrialPage] Failed:", err)
+      setIsCreating(false)
+      setSelectedGenre(null)
     }
   }
 
-  const handleSwipe = useCallback(
-    async (movie: MovieBasic, direction: "left" | "right") => {
-      if (!roomId || swipeCount >= TOTAL_SWIPES) return
-
-      const value = direction === "right"
-      setSwipeCount((prev) => prev + 1)
-
-      try {
-        const res = await trialApiFetch("/swipes", {
-          method: "POST",
-          body: JSON.stringify({ roomId, movieId: String(movie.id), value }),
-        })
-
-        if (res.ok) {
-          const data = await res.json()
-          if (data.matchCreated) {
-            setHasMatch(true)
-            setLatestMatchMovie(movie)
-            setShowMatch(true)
-          }
-        }
-      } catch {
-        // Swipe failed silently — the card is already gone visually
-      }
-    },
-    [roomId, swipeCount],
-  )
-
-  const handleEmpty = useCallback(() => {
-    const nextPage = moviesPage + 1
-    setMoviesPage(nextPage)
-    loadMovies(nextPage)
-  }, [moviesPage])
-
-  const handleMatchComplete = useCallback(() => {
-    setShowMatch(false)
-    setLatestMatchMovie(null)
-  }, [])
-
-  // Loading state
-  if (isInitializing || (!trialData && !error)) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <div className="text-center">
-          <Film className="w-12 h-12 mx-auto mb-4 animate-pulse text-primary" />
-          <p className="text-muted-foreground">{t("loading")}</p>
+  // If ?genre=28 is in URL, skip genre selection and start directly
+  const genreParam = searchParams?.get("genre")
+  if (genreParam && !isCreating) {
+    const genreId = parseInt(genreParam, 10)
+    if (!isNaN(genreId)) {
+      handleStart(genreId)
+      return (
+        <div className="flex h-screen items-center justify-center bg-background">
+          <Film className="w-12 h-12 animate-pulse text-primary" />
         </div>
-      </div>
-    )
+      )
+    }
   }
-
-  // Error state
-  if (error) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <div className="text-center max-w-sm mx-4">
-          <Film className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-          <p className="text-foreground font-medium mb-2">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="text-primary hover:underline text-sm"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    )
-  }
-
-  const remaining = Math.max(0, TOTAL_SWIPES - swipeCount)
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <TrialBanner remaining={remaining} locale={locale} />
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-12">
+      <motion.div
+        className="max-w-lg w-full text-center space-y-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {/* Header */}
+        <div className="space-y-4">
+          <motion.div
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-medium"
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Sparkles className="w-4 h-4" />
+            {t("badge")}
+          </motion.div>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-4 pt-16 pb-6">
-        <MovieCards
-          movies={movies}
-          onSwipe={handleSwipe}
-          onEmpty={handleEmpty}
-          isLoading={movies.length === 0}
-        />
-      </div>
+          <h1 className="text-3xl md:text-4xl font-bold">
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              {t("title")}
+            </span>
+          </h1>
 
-      <TrialMatchAnimation
-        show={showMatch}
-        movie={latestMatchMovie}
-        onComplete={handleMatchComplete}
-      />
+          <p className="text-muted-foreground text-base max-w-md mx-auto">
+            {t("subtitle")}
+          </p>
+        </div>
 
-      <LoginWallModal
-        show={showLoginWall && !showMatch}
-        trigger={trigger}
-        isHardBlock={isHardBlock}
-        locale={locale}
-        onDismiss={dismiss}
-      />
+        {/* Steps */}
+        <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1.5">
+            <Film className="w-4 h-4 text-primary" />
+            <span>{t("step1")}</span>
+          </div>
+          <div className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+          <div className="flex items-center gap-1.5">
+            <Users className="w-4 h-4 text-primary" />
+            <span>{t("step2")}</span>
+          </div>
+          <div className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+          <div className="flex items-center gap-1.5">
+            <Heart className="w-4 h-4 text-primary" />
+            <span>{t("step3")}</span>
+          </div>
+        </div>
+
+        {/* Genre selection */}
+        <div className="space-y-4">
+          <p className="text-sm font-medium text-foreground">
+            {t("pickGenre")}
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {GENRE_OPTIONS.map((genre) => (
+              <motion.button
+                key={genre.id}
+                onClick={() => handleStart(genre.id)}
+                disabled={isCreating}
+                className="flex flex-col items-center gap-2 p-4 rounded-2xl border border-border/60 bg-card/40 hover:border-primary hover:bg-primary/5 transition-all disabled:opacity-50 disabled:cursor-wait"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                <span className="text-2xl">
+                  {isCreating && selectedGenre === genre.id ? (
+                    <Film className="w-6 h-6 animate-spin text-primary" />
+                  ) : (
+                    genre.emoji
+                  )}
+                </span>
+                <span className="text-xs font-medium">{t(`genres.${genre.labelKey}`)}</span>
+              </motion.button>
+            ))}
+          </div>
+        </div>
+
+        {/* All genres button */}
+        <Button
+          variant="outline"
+          onClick={() => handleStart(0)}
+          disabled={isCreating}
+          className="rounded-full px-6"
+        >
+          {isCreating && selectedGenre === 0 ? (
+            <Film className="w-4 h-4 animate-spin mr-2" />
+          ) : null}
+          {t("allGenres")}
+        </Button>
+
+        {/* Trust badges */}
+        <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground/60">
+          <span>{t("trustFree")}</span>
+          <span>·</span>
+          <span>{t("trustNoAccount")}</span>
+          <span>·</span>
+          <span>{t("trust30s")}</span>
+        </div>
+      </motion.div>
     </div>
   )
 }
