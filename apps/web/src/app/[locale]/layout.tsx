@@ -290,6 +290,9 @@ export async function generateMetadata({
       apple: '/apple-touch-icon.png',
     },
     manifest: '/manifest.webmanifest',
+    verification: {
+      google: 'ooXy6Jzoj7Xc12F2QWs2tuuJ-ILeCz4HEunHnLtSeio',
+    },
     other: {
       'apple-mobile-web-app-capable': 'yes',
       'apple-mobile-web-app-status-bar-style': 'black-translucent',
