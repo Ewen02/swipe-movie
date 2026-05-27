@@ -2,7 +2,6 @@ import { getSession } from "@/lib/auth-client"
 import { getCachedEmail, setCachedEmail, clearSessionCache } from "@/lib/session-cache"
 
 async function getCachedUserEmail(): Promise<string | undefined> {
-  // Return cached email if available
   const cached = getCachedEmail()
   if (cached) {
     return cached
@@ -34,14 +33,15 @@ function getTrialToken(): string | undefined {
 
 export async function apiFetch(input: string, init: RequestInit = {}) {
   const reqHeaders = new Headers(init.headers)
-  const userEmail = await getCachedUserEmail()
 
-  if (userEmail) {
-    reqHeaders.set("X-User-Email", userEmail)
+  // Check trial token FIRST to avoid unnecessary getSession() calls for ghost users
+  const trialToken = getTrialToken()
+  if (trialToken) {
+    reqHeaders.set("Authorization", `Bearer ${trialToken}`)
   } else {
-    const trialToken = getTrialToken()
-    if (trialToken) {
-      reqHeaders.set("Authorization", `Bearer ${trialToken}`)
+    const userEmail = await getCachedUserEmail()
+    if (userEmail) {
+      reqHeaders.set("X-User-Email", userEmail)
     }
   }
 

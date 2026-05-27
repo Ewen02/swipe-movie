@@ -284,7 +284,7 @@ function RoomPageContent() {
   return (
     <>
       {isTrial && (
-        <TrialBanner remaining={Math.max(0, 15 - trialSwipeCount)} locale={locale} />
+        <TrialBanner remaining={Math.max(0, 25 - trialSwipeCount)} locale={locale} />
       )}
 
       {isTrial && (
