@@ -40,9 +40,10 @@ export class TrialController {
 
   @Post('cleanup')
   async cleanupPostGuests(
+    @Headers('user-agent') userAgent: string,
     @Headers('authorization') authHeader: string,
   ) {
-    this.verifyCronSecret(authHeader);
+    this.verifyCronAuth(userAgent, authHeader);
     const count = await this.trialService.cleanupExpiredGuests();
     return { deleted: count };
   }
@@ -52,6 +53,12 @@ export class TrialController {
     @Headers('user-agent') userAgent: string,
     @Headers('authorization') authHeader: string,
   ) {
+    this.verifyCronAuth(userAgent, authHeader);
+    const count = await this.trialService.cleanupExpiredGuests();
+    return { deleted: count };
+  }
+
+  private verifyCronAuth(userAgent: string, authHeader: string) {
     const cronSecret = this.config.get<string>('CRON_SECRET');
     const isVercelCron = userAgent?.startsWith('vercel-cron');
     const hasValidSecret = cronSecret && authHeader === `Bearer ${cronSecret}`;
@@ -59,8 +66,5 @@ export class TrialController {
     if (!isVercelCron && !hasValidSecret) {
       throw new ForbiddenException('Unauthorized');
     }
-
-    const count = await this.trialService.cleanupExpiredGuests();
-    return { deleted: count };
   }
 }
