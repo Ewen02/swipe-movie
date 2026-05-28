@@ -67,6 +67,9 @@ function TrendBadge({ current, previous }: { current: number; previous: number }
   );
 }
 
+// `isCumulative: true` means the stat is an all-time total (never decreases),
+// so showing a "vs prior period" trend badge is misleading — we hide it for
+// those and only show trend on actual flow metrics (active today/week/month).
 const KPI_CONFIG = [
   {
     key: 'totalUsers',
@@ -74,6 +77,7 @@ const KPI_CONFIG = [
     icon: Users,
     color: 'bg-blue-500/20 text-blue-400',
     sparkColor: '#3b82f6',
+    isCumulative: true,
   },
   {
     key: 'totalGuests',
@@ -81,6 +85,7 @@ const KPI_CONFIG = [
     icon: Ghost,
     color: 'bg-slate-500/20 text-slate-300',
     sparkColor: '#94a3b8',
+    isCumulative: true,
   },
   {
     key: 'activeToday',
@@ -88,6 +93,7 @@ const KPI_CONFIG = [
     icon: Activity,
     color: 'bg-green-500/20 text-green-400',
     sparkColor: '#22c55e',
+    isCumulative: false,
   },
   {
     key: 'activeWeek',
@@ -95,6 +101,7 @@ const KPI_CONFIG = [
     icon: TrendingUp,
     color: 'bg-emerald-500/20 text-emerald-400',
     sparkColor: '#10b981',
+    isCumulative: false,
   },
   {
     key: 'activeMonth',
@@ -102,6 +109,7 @@ const KPI_CONFIG = [
     icon: Calendar,
     color: 'bg-purple-500/20 text-purple-400',
     sparkColor: '#a855f7',
+    isCumulative: false,
   },
   {
     key: 'totalRooms',
@@ -109,6 +117,7 @@ const KPI_CONFIG = [
     icon: Home,
     color: 'bg-orange-500/20 text-orange-400',
     sparkColor: '#f97316',
+    isCumulative: true,
   },
   {
     key: 'totalSwipes',
@@ -116,6 +125,7 @@ const KPI_CONFIG = [
     icon: Zap,
     color: 'bg-pink-500/20 text-pink-400',
     sparkColor: '#ec4899',
+    isCumulative: true,
   },
   {
     key: 'totalMatches',
@@ -123,6 +133,7 @@ const KPI_CONFIG = [
     icon: Trophy,
     color: 'bg-amber-500/20 text-amber-400',
     sparkColor: '#f59e0b',
+    isCumulative: true,
   },
 ] as const;
 
@@ -183,7 +194,9 @@ export function KPICards({ stats, activity }: KPICardsProps) {
               <div className="text-2xl font-bold">
                 {typeof value === 'number' ? value.toLocaleString() : value}
               </div>
-              {trend && <TrendBadge current={trend.current} previous={trend.previous} />}
+              {trend && !cfg.isCumulative && (
+                <TrendBadge current={trend.current} previous={trend.previous} />
+              )}
             </div>
             <div className="text-xs text-muted-foreground mt-0.5">{cfg.label}</div>
           </div>
