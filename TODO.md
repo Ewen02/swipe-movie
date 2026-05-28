@@ -9,6 +9,15 @@
 - [ ] **Fix Light Mode** - Le thème clair n'est pas supporté correctement (30+ instances text-white hardcodé)
 - [x] ~~**Filtrer films sans providers**~~ - Déjà implémenté via `with_watch_providers` dans TMDB API
 
+## ⚠️ Comportements à clarifier (Trial)
+
+- [ ] **Guests invités (orphelins)** — Quand Alice (guest) invite Bob via `/try/join/{code}`, Bob crée son propre guest user. Si Alice convertit son compte via Google sign-in, sa migration (`migrateGuestToUser`) ne migre que les rooms où elle est `createdBy`. Les memberships de Bob/Charlie dans la room d'Alice survivent (bien — ils restent dans la room après migration), MAIS leur user guest est wipé à T+24h par le cron `cleanupExpiredGuests` → ils perdent leur historique de swipes dans cette room.
+  - **Options à arbitrer** :
+    1. Proposer un "Save this room to your account" à Bob aussi (sur match ou à T+1h)
+    2. Détecter les guests `members` (pas seulement `createdBy`) dans le cleanup et les protéger plus longtemps (par exemple 7 jours)
+    3. Garder le comportement actuel mais documenter dans le copy ("Connecte-toi pour garder ton historique")
+  - **À discuter** avec PM avant impl. Le cron logue déjà les guests "engaged" (>=5 swipes) supprimés (cf. `trial.service.ts cleanupExpiredGuests`) pour mesurer l'impact.
+
 ---
 
 ## ✅ Phase 1 - SaaS Foundation (Terminé)
