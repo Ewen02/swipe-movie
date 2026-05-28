@@ -17,10 +17,7 @@ async function bootstrap() {
   // Apply global exception filters
   // SentryExceptionFilter catches all exceptions and sends to Sentry
   // HttpExceptionFilter provides secure error responses
-  app.useGlobalFilters(
-    new SentryExceptionFilter(),
-    new HttpExceptionFilter(),
-  );
+  app.useGlobalFilters(new SentryExceptionFilter(), new HttpExceptionFilter());
 
   // Configure Helmet avec des options adaptées pour les APIs
   app.use(
@@ -41,7 +38,13 @@ async function bootstrap() {
   app.enableCors({
     origin: process.env.WEB_ORIGIN,
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-User-Email', 'X-Internal-Secret'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-User-Email',
+      'X-Internal-Secret',
+      'X-Trial-Token',
+    ],
   });
   app.useGlobalPipes(
     new ValidationPipe({

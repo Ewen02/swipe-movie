@@ -6,11 +6,13 @@ import {
   Req,
   Headers,
   UseGuards,
+  BadRequestException,
   ForbiddenException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import { TrialService } from './trial.service';
+import { AuthService } from '../auth/auth.service';
 import { StartTrialDto } from './dto/start-trial.dto';
 import { MigrateTrialDto } from './dto/migrate-trial.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -19,6 +21,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 export class TrialController {
   constructor(
     private readonly trialService: TrialService,
+    private readonly authService: AuthService,
     private readonly config: ConfigService,
   ) {}
 
@@ -32,9 +35,40 @@ export class TrialController {
   @UseGuards(JwtAuthGuard)
   async migrateTrial(
     @Body() dto: MigrateTrialDto,
+    @Headers('x-trial-token') trialToken: string | undefined,
     @Req() req: { user: { id: string } },
   ) {
-    await this.trialService.migrateGuestToUser(dto.guestId, req.user.id);
+    // The caller must be the real (post-OAuth) user, never the guest itself.
+    // Without this check, a stale trial JWT in the Authorization header would
+    // authenticate the request as the guest, and migrateGuestToUser would
+    // throw a cryptic 403 deep in the service.
+    if (req.user.id === dto.guestId) {
+      throw new BadRequestException(
+        'Migration must be triggered by the real user, not the guest',
+      );
+    }
+
+    // Prefer the signed trial token: it proves the caller actually owned the
+    // guest session, so they can't claim an arbitrary guestId from the body.
+    // Body guestId is still accepted as a fallback for older clients but must
+    // match the token when both are present.
+    let guestId = dto.guestId;
+    if (trialToken) {
+      const guestPayload = this.authService.verifyToken(trialToken);
+      if (!guestPayload) {
+        throw new BadRequestException('Invalid trial token');
+      }
+      if (dto.guestId && dto.guestId !== guestPayload.id) {
+        throw new BadRequestException('Trial token does not match guestId');
+      }
+      guestId = guestPayload.id;
+    }
+
+    if (!guestId) {
+      throw new BadRequestException('Missing guest identity');
+    }
+
+    await this.trialService.migrateGuestToUser(guestId, req.user.id);
     return { success: true };
   }
 

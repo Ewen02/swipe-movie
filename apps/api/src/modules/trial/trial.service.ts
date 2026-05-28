@@ -64,7 +64,23 @@ export class TrialService {
     return { roomCode: room.code, token, guestId: guestUser.id };
   }
 
-  async migrateGuestToUser(
+  async migrateGuestToUser(guestId: string, realUserId: string): Promise<void> {
+    try {
+      await this.runMigration(guestId, realUserId);
+    } catch (err) {
+      // Log with full context so failures are debuggable in prod (Sentry/Datadog).
+      // Without this, errors get swallowed into a generic 500 with no breadcrumb.
+      this.logger.error(
+        `Trial migration failed (guestId=${guestId}, realUserId=${realUserId}): ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+        err instanceof Error ? err.stack : undefined,
+      );
+      throw err;
+    }
+  }
+
+  private async runMigration(
     guestId: string,
     realUserId: string,
   ): Promise<void> {
@@ -147,9 +163,7 @@ export class TrialService {
       },
     );
 
-    this.logger.log(
-      `Migrated guest ${guestId} data to user ${realUserId}`,
-    );
+    this.logger.log(`Migrated guest ${guestId} data to user ${realUserId}`);
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_3AM)
