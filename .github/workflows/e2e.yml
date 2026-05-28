@@ -1,0 +1,133 @@
+name: E2E
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: swipe_movie_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      # Database — used by Prisma migrate and the API at runtime.
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/swipe_movie_test?schema=public
+      # API config
+      JWT_SECRET: ci-jwt-secret-not-used-in-prod
+      INTERNAL_API_SECRET: ci-internal-secret-not-used-in-prod
+      WEB_ORIGIN: http://localhost:3000
+      PORT: 3001
+      # Web config
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+      BETTER_AUTH_URL: http://localhost:3000
+      BETTER_AUTH_SECRET: ci-better-auth-secret-not-used-in-prod
+      # Disable Stripe/Sentry/OAuth in CI
+      STRIPE_SECRET_KEY: ''
+      NEXT_PUBLIC_SENTRY_DSN: ''
+      SENTRY_DSN: ''
+      GOOGLE_CLIENT_ID: ''
+      GOOGLE_CLIENT_SECRET: ''
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.1'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Prisma migrations
+        run: pnpm --filter @swipe-movie/database exec prisma migrate deploy
+
+      - name: Build API
+        run: pnpm --filter api build
+
+      - name: Build Web
+        run: pnpm --filter swipe-movie-web build
+
+      - name: Install Playwright browsers
+        run: pnpm --filter swipe-movie-web exec playwright install --with-deps chromium
+
+      - name: Start API in background
+        run: |
+          pnpm --filter api start:prod &
+          echo $! > /tmp/api.pid
+        env:
+          NODE_ENV: production
+
+      - name: Wait for API to be ready
+        # Poll /health (or similar) until the API responds, with a hard cap so
+        # CI doesn't hang forever if the start command silently failed.
+        run: |
+          for i in {1..60}; do
+            if curl -sf http://localhost:3001/health > /dev/null 2>&1; then
+              echo "API is ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "API did not become ready in 60s"
+          exit 1
+
+      - name: Start Web in background
+        run: |
+          pnpm --filter swipe-movie-web exec next start -p 3000 &
+          echo $! > /tmp/web.pid
+
+      - name: Wait for Web to be ready
+        run: |
+          for i in {1..60}; do
+            if curl -sf http://localhost:3000 > /dev/null 2>&1; then
+              echo "Web is ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Web did not become ready in 60s"
+          exit 1
+
+      - name: Run Playwright tests
+        run: pnpm --filter swipe-movie-web exec playwright test --project=chromium
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
+
+      - name: Stop background processes
+        if: always()
+        run: |
+          [ -f /tmp/api.pid ] && kill $(cat /tmp/api.pid) || true
+          [ -f /tmp/web.pid ] && kill $(cat /tmp/web.pid) || true
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report/
+          retention-days: 7
