@@ -33,6 +33,13 @@ model User {
   isGuest          Boolean            @default(false)
   stripeCustomerId String?            @unique
 
+  // Guest conversion tracking. Set when a guest signs up and migrateGuestToUser
+  // promotes them to a real account. Lets the admin separate organic signups
+  // from trial-driven signups and compute a true guest→user conversion rate.
+  convertedFromGuestAt        DateTime?
+  guestSwipesAtConversion     Int?
+  guestCreatedAt              DateTime?
+
   // User preferences (onboarding)
   watchProviders      Int[]     @default([])
   watchRegion         String    @default("FR")
@@ -50,6 +57,7 @@ model User {
   updatedAt        DateTime           @updatedAt
 
   @@index([isGuest])
+  @@index([convertedFromGuestAt])
 }
 
 model Session {
