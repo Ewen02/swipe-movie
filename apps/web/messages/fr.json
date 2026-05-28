@@ -964,6 +964,12 @@
       "thriller": "Thriller"
     },
     "creating": "Création de ta room...",
-    "creatingSubtitle": "On prépare les films pour toi"
+    "creatingSubtitle": "On prépare les films pour toi",
+    "migrating": "Connexion de ton compte...",
+    "migratingSubtitle": "On transfère ta room et tes likes",
+    "migrationErrorTitle": "Impossible de finaliser ton compte",
+    "migrationErrorDescription": "Ta room n'a pas pu être liée à ton compte. Réessaie ou contacte le support.",
+    "migrationRetry": "Réessayer",
+    "migrationGoToRooms": "Voir mes rooms"
   }
 }

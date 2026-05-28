@@ -964,6 +964,12 @@
       "thriller": "Thriller"
     },
     "creating": "Dein Raum wird erstellt...",
-    "creatingSubtitle": "Wir bereiten die Filme für dich vor"
+    "creatingSubtitle": "Wir bereiten die Filme für dich vor",
+    "migrating": "Konto wird verknüpft...",
+    "migratingSubtitle": "Raum und Likes werden übertragen",
+    "migrationErrorTitle": "Konto konnte nicht finalisiert werden",
+    "migrationErrorDescription": "Dein Raum konnte nicht mit deinem Konto verknüpft werden. Bitte erneut versuchen oder den Support kontaktieren.",
+    "migrationRetry": "Erneut versuchen",
+    "migrationGoToRooms": "Zu meinen Räumen"
   }
 }

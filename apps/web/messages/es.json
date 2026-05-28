@@ -964,6 +964,12 @@
       "thriller": "Thriller"
     },
     "creating": "Creando tu sala...",
-    "creatingSubtitle": "Preparando las películas para ti"
+    "creatingSubtitle": "Preparando las películas para ti",
+    "migrating": "Vinculando tu cuenta...",
+    "migratingSubtitle": "Transfiriendo tu sala y tus likes",
+    "migrationErrorTitle": "No se pudo finalizar tu cuenta",
+    "migrationErrorDescription": "Tu sala no pudo vincularse a tu cuenta. Inténtalo de nuevo o contacta con soporte.",
+    "migrationRetry": "Reintentar",
+    "migrationGoToRooms": "Ver mis salas"
   }
 }

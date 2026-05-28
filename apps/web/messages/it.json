@@ -964,6 +964,12 @@
       "thriller": "Thriller"
     },
     "creating": "Creazione della tua stanza...",
-    "creatingSubtitle": "Prepariamo i film per te"
+    "creatingSubtitle": "Prepariamo i film per te",
+    "migrating": "Collegamento del tuo account...",
+    "migratingSubtitle": "Trasferimento della stanza e dei like",
+    "migrationErrorTitle": "Impossibile finalizzare il tuo account",
+    "migrationErrorDescription": "La tua stanza non è stata collegata al tuo account. Riprova o contatta il supporto.",
+    "migrationRetry": "Riprova",
+    "migrationGoToRooms": "Vai alle mie stanze"
   }
 }
