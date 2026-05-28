@@ -179,12 +179,25 @@ export interface ViralStats {
   }>;
 }
 
+interface EnrichedMovieFields {
+  title: string | null;
+  posterUrl: string | null;
+  year: string | null;
+}
+
 export interface ContentStats {
-  topSwiped: Array<{ movieId: string; swipeCount: number }>;
-  controversial: Array<{ movieId: string; totalSwipes: number; likeRate: number }>;
-  deadMovies: Array<{ movieId: string; totalSwipes: number; likes: number }>;
-  topGenres: Array<{ genreId: number; roomCount: number }>;
-  topProviders: Array<{ providerId: number; roomCount: number }>;
+  topSwiped: Array<{ movieId: string; swipeCount: number } & EnrichedMovieFields>;
+  controversial: Array<
+    { movieId: string; totalSwipes: number; likeRate: number } & EnrichedMovieFields
+  >;
+  deadMovies: Array<{ movieId: string; totalSwipes: number; likes: number } & EnrichedMovieFields>;
+  topGenres: Array<{ genreId: number; roomCount: number; name: string | null }>;
+  topProviders: Array<{
+    providerId: number;
+    roomCount: number;
+    name: string | null;
+    logoUrl: string | null;
+  }>;
   mediaTypeSplit: { movie: number; tv: number };
 }
 

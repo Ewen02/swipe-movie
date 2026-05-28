@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { AdminService } from './admin.service';
 import { PrismaService } from '../../infra/prisma.service';
+import { MoviesService } from '../movies/movies.service';
 
 describe('AdminService', () => {
   let service: AdminService;
@@ -41,11 +42,21 @@ describe('AdminService', () => {
       set: jest.fn().mockResolvedValue(undefined),
     };
 
+    // MoviesService is only used by getContentStats (TMDB enrichment); the
+    // tests below cover getGlobalStats / getDailyActivity / getUsers, so a
+    // bare stub is enough to satisfy DI.
+    const moviesService = {
+      getBatchMovieDetails: jest.fn().mockResolvedValue([]),
+      getGenres: jest.fn().mockResolvedValue([]),
+      getAllWatchProviders: jest.fn().mockResolvedValue([]),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AdminService,
         { provide: PrismaService, useValue: prisma },
         { provide: CACHE_MANAGER, useValue: cacheManager },
+        { provide: MoviesService, useValue: moviesService },
       ],
     }).compile();
 

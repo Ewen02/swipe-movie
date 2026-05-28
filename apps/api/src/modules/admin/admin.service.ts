@@ -1,17 +1,97 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import { PrismaService } from '../../infra/prisma.service';
+import { MoviesService } from '../movies/movies.service';
 
 // Cache TTL constants (in milliseconds)
 const ADMIN_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 @Injectable()
 export class AdminService {
+  private readonly logger = new Logger(AdminService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    private readonly moviesService: MoviesService,
   ) {}
+
+  // Resolve a batch of TMDB movie IDs into title/poster/year for the admin
+  // panel. Wraps in try/catch because TMDB outages should degrade the admin
+  // dashboard, not break it — we fall back to bare IDs.
+  private async enrichMovies(
+    movieIds: string[],
+  ): Promise<
+    Map<string, { title: string; posterUrl: string; year: string | null }>
+  > {
+    const enriched = new Map<
+      string,
+      { title: string; posterUrl: string; year: string | null }
+    >();
+    if (movieIds.length === 0) return enriched;
+    try {
+      const numericIds = movieIds
+        .map((id) => Number(id))
+        .filter((n) => Number.isFinite(n));
+      const details = await this.moviesService.getBatchMovieDetails(numericIds);
+      for (const d of details) {
+        enriched.set(String(d.id), {
+          title: d.title,
+          posterUrl: d.posterUrl,
+          year: d.releaseDate ? d.releaseDate.slice(0, 4) : null,
+        });
+      }
+    } catch (err) {
+      this.logger.warn(
+        `enrichMovies: TMDB lookup failed, falling back to bare IDs: ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+      );
+    }
+    return enriched;
+  }
+
+  // Same idea for genres: resolve TMDB genre IDs to French names. Single call,
+  // cached server-side by MovieDiscoverService, so cheap to repeat.
+  private async resolveGenreNames(): Promise<Map<number, string>> {
+    const map = new Map<number, string>();
+    try {
+      const genres = await this.moviesService.getGenres();
+      for (const g of genres) map.set(g.id, g.name);
+    } catch (err) {
+      this.logger.warn(
+        `resolveGenreNames: TMDB lookup failed: ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+      );
+    }
+    return map;
+  }
+
+  // Providers come from a region-scoped lookup (FR by default). Same fail-soft
+  // pattern — admin shows the IDs if TMDB is unreachable.
+  private async resolveProviderNames(): Promise<
+    Map<number, { name: string; logoUrl: string | null }>
+  > {
+    const map = new Map<number, { name: string; logoUrl: string | null }>();
+    try {
+      const providers = await this.moviesService.getAllWatchProviders('FR');
+      for (const p of providers) {
+        map.set(p.id, {
+          name: p.name,
+          logoUrl: p.logoPath || null,
+        });
+      }
+    } catch (err) {
+      this.logger.warn(
+        `resolveProviderNames: TMDB lookup failed: ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+      );
+    }
+    return map;
+  }
 
   async getGlobalStats() {
     const cacheKey = 'admin:global-stats';
@@ -922,18 +1002,55 @@ export class AdminService {
       this.prisma.room.count({ where: { deletedAt: null, type: 'TV' } }),
     ]);
 
+    // Enrich IDs into titles/posters/genre names/provider names so the admin
+    // doesn't have to mentally translate TMDB IDs. All lookups go through
+    // batch-cached TMDB calls and fail soft (we just return the raw ID).
+    const allMovieIds = Array.from(
+      new Set([
+        ...topSwiped.map((m) => m.movieId),
+        ...controversial.map((m) => m.movieId),
+        ...deadMovies.map((m) => m.movieId),
+      ]),
+    );
+    const [movieMeta, genreMap, providerMap] = await Promise.all([
+      this.enrichMovies(allMovieIds),
+      this.resolveGenreNames(),
+      this.resolveProviderNames(),
+    ]);
+
+    const decorateMovie = (movieId: string) => {
+      const meta = movieMeta.get(movieId);
+      return {
+        title: meta?.title ?? null,
+        posterUrl: meta?.posterUrl ?? null,
+        year: meta?.year ?? null,
+      };
+    };
+
     const result = {
       topSwiped: topSwiped.map((m) => ({
         movieId: m.movieId,
         swipeCount: m._count.id,
+        ...decorateMovie(m.movieId),
       })),
-      controversial,
-      deadMovies,
+      controversial: controversial.map((m) => ({
+        ...m,
+        ...decorateMovie(m.movieId),
+      })),
+      deadMovies: deadMovies.map((m) => ({
+        ...m,
+        ...decorateMovie(m.movieId),
+      })),
       topGenres: genreCounts.map((g) => ({
         genreId: g.genreId,
         roomCount: g._count.id,
+        name: genreMap.get(g.genreId) ?? null,
       })),
-      topProviders,
+      topProviders: topProviders.map((p) => ({
+        ...p,
+        name: providerMap.get(p.providerId)?.name ?? null,
+        logoUrl: providerMap.get(p.providerId)?.logoUrl ?? null,
+      })),
       mediaTypeSplit: { movie: movieRooms, tv: tvRooms },
     };
     await this.cacheManager.set(cacheKey, result, ADMIN_CACHE_TTL);
