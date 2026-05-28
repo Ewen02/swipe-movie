@@ -1,20 +1,21 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useTranslations } from 'next-intl'
-import { signIn } from '@/lib/auth-client'
-import { Sparkles, Heart } from 'lucide-react'
-import { Button } from '@swipe-movie/ui'
-import type { MovieBasic } from '@/schemas/movies'
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from 'next-intl';
+import { signIn, authClient } from '@/lib/auth-client';
+import { Sparkles, Heart, Mail } from 'lucide-react';
+import { Button } from '@swipe-movie/ui';
+import { captureEvent } from '@/components/providers/PostHogProvider';
+import type { MovieBasic } from '@/schemas/movies';
 
 interface LoginWallModalProps {
-  show: boolean
-  trigger: 'match' | 'swipe_limit' | null
-  isHardBlock: boolean
-  locale: string
-  onDismiss: () => void
-  likedMovies?: MovieBasic[]
+  show: boolean;
+  trigger: 'match' | 'swipe_limit' | null;
+  isHardBlock: boolean;
+  locale: string;
+  onDismiss: () => void;
+  likedMovies?: MovieBasic[];
 }
 
 export function LoginWallModal({
@@ -25,25 +26,88 @@ export function LoginWallModal({
   onDismiss,
   likedMovies,
 }: LoginWallModalProps) {
-  const t = useTranslations('trial.loginWall')
-  const [isLoading, setIsLoading] = useState(false)
+  const t = useTranslations('trial.loginWall');
+  const [isLoading, setIsLoading] = useState(false);
+  const [showEmail, setShowEmail] = useState(false);
+  const [email, setEmail] = useState('');
+  const [emailState, setEmailState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const shownRef = useRef(false);
 
-  const callbackUrl = `/${locale}/try?migrate=true`
+  const callbackUrl = `/${locale}/try/migrate`;
+
+  // Fire a single PostHog event each time the wall transitions to visible,
+  // tagged with the trigger and hard-block status so we can build a clean
+  // funnel: wall_shown -> {signin_clicked | dismissed}.
+  useEffect(() => {
+    if (show && !shownRef.current) {
+      shownRef.current = true;
+      captureEvent('trial_login_wall_shown', {
+        trigger: trigger ?? 'unknown',
+        isHardBlock,
+        likedMoviesCount: likedMovies?.length ?? 0,
+      });
+    }
+    if (!show) {
+      shownRef.current = false;
+    }
+  }, [show, trigger, isHardBlock, likedMovies]);
 
   const handleGoogleSignIn = async () => {
-    setIsLoading(true)
+    captureEvent('trial_login_wall_signin_clicked', {
+      trigger: trigger ?? 'unknown',
+      isHardBlock,
+    });
+    setIsLoading(true);
     try {
       await signIn.social({
         provider: 'google',
         callbackURL: callbackUrl,
-      })
+      });
     } catch (error) {
-      console.error('Sign in error:', error)
-      setIsLoading(false)
+      console.error('Sign in error:', error);
+      setIsLoading(false);
     }
-  }
+  };
 
-  const isMatch = trigger === 'match'
+  const handleDismiss = () => {
+    captureEvent('trial_login_wall_dismissed', {
+      trigger: trigger ?? 'unknown',
+    });
+    onDismiss();
+  };
+
+  const handleEmailMagicLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.includes('@')) return;
+    captureEvent('trial_login_wall_email_clicked', { trigger: trigger ?? 'unknown' });
+    setEmailState('sending');
+    try {
+      // Better Auth's magicLinkClient extends signIn with a `.magicLink`
+      // method. The plugin is only configured server-side when RESEND_API_KEY
+      // is set, otherwise this returns an error response we surface as 'error'.
+      const result = await (
+        authClient as unknown as {
+          signIn: {
+            magicLink: (input: { email: string; callbackURL: string }) => Promise<{
+              error?: { message?: string } | null;
+            }>;
+          };
+        }
+      ).signIn.magicLink({
+        email,
+        callbackURL: callbackUrl,
+      });
+      if (result?.error) {
+        throw new Error(result.error.message || 'magic_link_failed');
+      }
+      setEmailState('sent');
+    } catch (error) {
+      console.error('Magic link error:', error);
+      setEmailState('error');
+    }
+  };
+
+  const isMatch = trigger === 'match';
 
   return (
     <AnimatePresence>
@@ -60,7 +124,7 @@ export function LoginWallModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="absolute inset-0 bg-black/60 backdrop-blur-md"
-            onClick={!isHardBlock ? onDismiss : undefined}
+            onClick={!isHardBlock ? handleDismiss : undefined}
           />
 
           {/* Modal */}
@@ -123,7 +187,7 @@ export function LoginWallModal({
                   transition={{ delay: 0.45 }}
                 >
                   <p className="text-xs text-muted-foreground mb-2 text-center font-medium">
-                    Tu risques de les perdre
+                    {t('losingThem')}
                   </p>
                   <div className="flex gap-2 overflow-x-auto pb-2 justify-center">
                     {likedMovies.slice(0, 5).map((movie) => (
@@ -160,7 +224,7 @@ export function LoginWallModal({
                   {isLoading ? (
                     <div className="flex items-center gap-3">
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary" />
-                      <span>Connexion...</span>
+                      <span>{t('loading')}</span>
                     </div>
                   ) : (
                     <>
@@ -190,6 +254,63 @@ export function LoginWallModal({
                     </>
                   )}
                 </Button>
+                <p className="text-xs text-muted-foreground text-center mt-2">{t('ctaHint')}</p>
+              </motion.div>
+
+              {/* Email magic link fallback — only renders when the feature
+                  is reachable (the plugin handles its own gating server-side
+                  and returns an error if RESEND_API_KEY isn't configured). */}
+              <motion.div
+                initial={{ y: 10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.55 }}
+              >
+                {!showEmail && emailState === 'idle' && (
+                  <button
+                    type="button"
+                    onClick={() => setShowEmail(true)}
+                    className="w-full flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground py-2 transition-colors"
+                  >
+                    <Mail className="w-4 h-4" />
+                    {t('emailCta')}
+                  </button>
+                )}
+
+                {showEmail && emailState !== 'sent' && (
+                  <form onSubmit={handleEmailMagicLink} className="space-y-2">
+                    <input
+                      type="email"
+                      required
+                      autoFocus
+                      placeholder={t('emailPlaceholder')}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      disabled={emailState === 'sending'}
+                      className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+                    />
+                    <Button
+                      type="submit"
+                      disabled={emailState === 'sending' || !email.includes('@')}
+                      size="sm"
+                      variant="outline"
+                      className="w-full"
+                    >
+                      {emailState === 'sending' ? t('emailSending') : t('emailSubmit')}
+                    </Button>
+                    {emailState === 'error' && (
+                      <p className="text-xs text-red-500 text-center">{t('emailError')}</p>
+                    )}
+                  </form>
+                )}
+
+                {emailState === 'sent' && (
+                  <div className="text-center py-2">
+                    <p className="text-sm font-medium text-foreground">{t('emailSentTitle')}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {t('emailSentDescription')}
+                    </p>
+                  </div>
+                )}
               </motion.div>
 
               {!isHardBlock && (
@@ -199,7 +320,7 @@ export function LoginWallModal({
                   transition={{ delay: 0.6 }}
                 >
                   <button
-                    onClick={onDismiss}
+                    onClick={handleDismiss}
                     className="w-full text-center text-sm text-muted-foreground hover:text-foreground py-2 transition-colors"
                   >
                     {t('dismiss')}
@@ -211,5 +332,5 @@ export function LoginWallModal({
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }

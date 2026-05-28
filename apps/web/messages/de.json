@@ -932,11 +932,25 @@
     "matchSubtitle": "Ihr mögt beide diesen Film",
     "loginWall": {
       "matchTitle": "Match gefunden! 🎉",
-      "matchDescription": "Erstelle dein kostenloses Konto, um deine Matches zu behalten und noch mehr Freunde einzuladen.",
+      "matchDescription": "Registriere dich oder melde dich an, um Matches zu behalten und weitere Freunde einzuladen.",
       "limitTitle": "Gefällt dir das Konzept?",
-      "limitDescription": "Registriere dich kostenlos, um unbegrenzte Swipes freizuschalten und eigene Räume zu erstellen.",
+      "limitDescription": "Mit Google weitermachen, um unbegrenzte Swipes freizuschalten und Räume zu behalten.",
       "cta": "Weiter mit Google",
-      "dismiss": "Vielleicht später"
+      "ctaHint": "Mit einem Klick registrieren oder anmelden",
+      "dismiss": "Vielleicht später",
+      "losingThem": "Du könntest sie verlieren",
+      "loading": "Anmeldung...",
+      "emailCta": "Oder per E-Mail fortfahren",
+      "emailPlaceholder": "deine@email.com",
+      "emailSubmit": "Link senden",
+      "emailSending": "Wird gesendet...",
+      "emailSentTitle": "Prüfe deinen Posteingang",
+      "emailSentDescription": "Wir haben dir einen Login-Link geschickt. Er läuft in 5 Minuten ab.",
+      "emailError": "Link konnte nicht gesendet werden. Erneut versuchen oder Google verwenden."
+    },
+    "join": {
+      "error": "Raum konnte nicht beigetreten werden. Der Code ist möglicherweise ungültig oder abgelaufen.",
+      "retry": "Erneut versuchen"
     },
     "invite": "Freund einladen",
     "inviteDescription": "Teile diesen Link, um zusammen zu swipen",

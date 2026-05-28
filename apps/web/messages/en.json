@@ -932,11 +932,25 @@
     "matchSubtitle": "You both like this movie",
     "loginWall": {
       "matchTitle": "Match found! 🎉",
-      "matchDescription": "Create your free account to keep your matches and invite even more friends.",
+      "matchDescription": "Sign up or log in to keep your matches and invite even more friends.",
       "limitTitle": "Loving it?",
-      "limitDescription": "Sign up for free to unlock unlimited swipes and create your own rooms.",
+      "limitDescription": "Continue with Google to unlock unlimited swipes and keep your rooms.",
       "cta": "Continue with Google",
-      "dismiss": "Maybe later"
+      "ctaHint": "Sign up or log in in one click",
+      "dismiss": "Maybe later",
+      "losingThem": "You might lose them",
+      "loading": "Signing in...",
+      "emailCta": "Or continue by email",
+      "emailPlaceholder": "your@email.com",
+      "emailSubmit": "Send me the link",
+      "emailSending": "Sending...",
+      "emailSentTitle": "Check your inbox",
+      "emailSentDescription": "We've sent you a login link. It expires in 5 minutes.",
+      "emailError": "Couldn't send the link. Retry or use Google."
+    },
+    "join": {
+      "error": "Unable to join the room. The code may be invalid or expired.",
+      "retry": "Retry"
     },
     "invite": "Invite a friend",
     "inviteDescription": "Share this link to swipe together",

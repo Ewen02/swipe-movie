@@ -932,11 +932,25 @@
     "matchSubtitle": "A los dos os gusta esta película",
     "loginWall": {
       "matchTitle": "¡Match encontrado! 🎉",
-      "matchDescription": "Crea tu cuenta gratuita para conservar tus matches e invitar a más amigos.",
+      "matchDescription": "Regístrate o inicia sesión para conservar tus matches e invitar a más amigos.",
       "limitTitle": "¿Te está gustando?",
-      "limitDescription": "Regístrate gratis para desbloquear swipes ilimitados y crear tus propias salas.",
+      "limitDescription": "Continúa con Google para desbloquear swipes ilimitados y conservar tus salas.",
       "cta": "Continuar con Google",
-      "dismiss": "Quizás más tarde"
+      "ctaHint": "Regístrate o inicia sesión con un clic",
+      "dismiss": "Quizás más tarde",
+      "losingThem": "Podrías perderlos",
+      "loading": "Iniciando sesión...",
+      "emailCta": "O continuar por email",
+      "emailPlaceholder": "tu@email.com",
+      "emailSubmit": "Recibir el enlace",
+      "emailSending": "Enviando...",
+      "emailSentTitle": "Revisa tu bandeja",
+      "emailSentDescription": "Te enviamos un enlace de acceso. Caduca en 5 minutos.",
+      "emailError": "No se pudo enviar el enlace. Reintenta o usa Google."
+    },
+    "join": {
+      "error": "No se pudo unir a la sala. El código puede ser inválido o haber caducado.",
+      "retry": "Reintentar"
     },
     "invite": "Invita a un amigo",
     "inviteDescription": "Comparte este enlace para deslizar juntos",

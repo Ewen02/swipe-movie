@@ -932,11 +932,25 @@
     "matchSubtitle": "Vous aimez tous les deux ce film",
     "loginWall": {
       "matchTitle": "Match trouvé ! 🎉",
-      "matchDescription": "Crée ton compte gratuit pour garder tes matchs et inviter encore plus d'amis.",
+      "matchDescription": "Crée ton compte ou connecte-toi pour garder tes matchs et inviter encore plus d'amis.",
       "limitTitle": "Tu kiffes le concept ?",
-      "limitDescription": "Inscris-toi gratuitement pour débloquer des swipes illimités et créer tes propres rooms.",
+      "limitDescription": "Continue avec Google pour débloquer des swipes illimités et garder tes rooms.",
       "cta": "Continuer avec Google",
-      "dismiss": "Peut-être plus tard"
+      "ctaHint": "Crée un compte ou connecte-toi en un clic",
+      "dismiss": "Peut-être plus tard",
+      "losingThem": "Tu risques de les perdre",
+      "loading": "Connexion...",
+      "emailCta": "Ou continuer par email",
+      "emailPlaceholder": "ton@email.com",
+      "emailSubmit": "Recevoir le lien",
+      "emailSending": "Envoi...",
+      "emailSentTitle": "Vérifie ta boîte mail",
+      "emailSentDescription": "On t'a envoyé un lien de connexion. Il expire dans 5 minutes.",
+      "emailError": "Impossible d'envoyer le lien. Réessaie ou utilise Google."
+    },
+    "join": {
+      "error": "Impossible de rejoindre la room. Le code est peut-être invalide ou expiré.",
+      "retry": "Réessayer"
     },
     "invite": "Invite un ami",
     "inviteDescription": "Partage ce lien pour swiper à deux",

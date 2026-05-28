@@ -49,6 +49,7 @@
     "@sentry/node": "^10.25.0",
     "@serwist/next": "^9.2.3",
     "@swipe-movie/database": "workspace:*",
+    "@swipe-movie/email": "workspace:*",
     "@swipe-movie/subscription": "workspace:*",
     "@swipe-movie/types": "workspace:*",
     "@swipe-movie/ui": "workspace:*",

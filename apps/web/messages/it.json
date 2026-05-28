@@ -932,11 +932,25 @@
     "matchSubtitle": "Vi piace entrambi questo film",
     "loginWall": {
       "matchTitle": "Match trovato! 🎉",
-      "matchDescription": "Crea il tuo account gratuito per conservare i tuoi match e invitare ancora più amici.",
+      "matchDescription": "Registrati o accedi per conservare i tuoi match e invitare ancora più amici.",
       "limitTitle": "Ti sta piacendo?",
-      "limitDescription": "Iscriviti gratis per sbloccare swipe illimitati e creare le tue stanze.",
+      "limitDescription": "Continua con Google per sbloccare swipe illimitati e conservare le tue stanze.",
       "cta": "Continua con Google",
-      "dismiss": "Forse più tardi"
+      "ctaHint": "Registrati o accedi con un clic",
+      "dismiss": "Forse più tardi",
+      "losingThem": "Potresti perderli",
+      "loading": "Accesso...",
+      "emailCta": "O continua via email",
+      "emailPlaceholder": "tua@email.com",
+      "emailSubmit": "Inviami il link",
+      "emailSending": "Invio...",
+      "emailSentTitle": "Controlla la tua casella",
+      "emailSentDescription": "Ti abbiamo inviato un link di accesso. Scade tra 5 minuti.",
+      "emailError": "Impossibile inviare il link. Riprova o usa Google."
+    },
+    "join": {
+      "error": "Impossibile unirsi alla stanza. Il codice potrebbe non essere valido o essere scaduto.",
+      "retry": "Riprova"
     },
     "invite": "Invita un amico",
     "inviteDescription": "Condividi questo link per swippare insieme",
