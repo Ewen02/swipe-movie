@@ -44,24 +44,25 @@ export class AdminController {
     @User('email') email: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
+    @Query('filter') filter?: string,
   ) {
-    this.logger.log(`${email} accessed GET /admin/users?page=${page || 1}`);
+    const normalizedFilter: 'all' | 'users' | 'guests' =
+      filter === 'all' || filter === 'guests' ? filter : 'users';
+    this.logger.log(
+      `${email} accessed GET /admin/users?page=${page || 1}&filter=${normalizedFilter}`,
+    );
     return this.adminService.getUsers(
       parseInt(page || '1', 10),
       parseInt(limit || '20', 10),
+      normalizedFilter,
     );
   }
 
   @Get('activity')
   @ApiOperation({ summary: 'Get daily activity for last N days' })
-  getActivity(
-    @User('email') email: string,
-    @Query('days') days?: string,
-  ) {
+  getActivity(@User('email') email: string, @Query('days') days?: string) {
     this.logger.log(`${email} accessed GET /admin/activity`);
-    return this.adminService.getDailyActivity(
-      parseInt(days || '30', 10),
-    );
+    return this.adminService.getDailyActivity(parseInt(days || '30', 10));
   }
 
   @Get('conversions')
@@ -80,10 +81,7 @@ export class AdminController {
 
   @Get('top-matches')
   @ApiOperation({ summary: 'Get most matched movies globally' })
-  getTopMatches(
-    @User('email') email: string,
-    @Query('limit') limit?: string,
-  ) {
+  getTopMatches(@User('email') email: string, @Query('limit') limit?: string) {
     this.logger.log(`${email} accessed GET /admin/top-matches`);
     return this.adminService.getTopMatches(parseInt(limit || '10', 10));
   }
@@ -92,17 +90,28 @@ export class AdminController {
   @ApiOperation({ summary: 'Export users as CSV' })
   async exportUsers(
     @User('email') email: string,
+    @Query('filter') filter: string | undefined,
     @Res() res: Response,
   ) {
-    this.logger.log(`${email} exported users CSV`);
-    const { data } = await this.adminService.getUsers(1, 10000);
+    const normalizedFilter: 'all' | 'users' | 'guests' =
+      filter === 'all' || filter === 'guests' ? filter : 'users';
+    this.logger.log(`${email} exported users CSV (filter=${normalizedFilter})`);
+    const { data } = await this.adminService.getUsers(
+      1,
+      10000,
+      normalizedFilter,
+    );
 
-    const header = 'Name,Email,Joined,Swipes,Rooms,Last Active\n';
+    const header =
+      'Name,Email,Type,Converted At,Joined,Swipes,Rooms,Last Active\n';
     const rows = data
-      .map(
-        (u) =>
-          `"${u.name || ''}","${u.email}","${new Date(u.createdAt).toISOString().split('T')[0]}",${u.swipesCount},${u.roomsCount},"${u.lastActive ? new Date(u.lastActive).toISOString().split('T')[0] : 'Never'}"`,
-      )
+      .map((u) => {
+        const type = u.isGuest ? 'guest' : 'user';
+        const converted = u.convertedFromGuestAt
+          ? new Date(u.convertedFromGuestAt).toISOString().split('T')[0]
+          : '';
+        return `"${u.name || ''}","${u.email}","${type}","${converted}","${new Date(u.createdAt).toISOString().split('T')[0]}",${u.swipesCount},${u.roomsCount},"${u.lastActive ? new Date(u.lastActive).toISOString().split('T')[0] : 'Never'}"`;
+      })
       .join('\n');
 
     res.setHeader('Content-Type', 'text/csv');
@@ -125,9 +134,13 @@ export class AdminController {
       parseInt(days || '30', 10),
     );
 
-    const header = 'Date,Swipes,Matches,New Users,New Rooms\n';
+    const header =
+      'Date,Swipes,Matches,New Users,New Guests,New Conversions,New Rooms\n';
     const rows = data
-      .map((d) => `${d.date},${d.swipes},${d.matches},${d.newUsers},${d.newRooms}`)
+      .map(
+        (d) =>
+          `${d.date},${d.swipes},${d.matches},${d.newUsers},${d.newGuests},${d.newConversions},${d.newRooms}`,
+      )
       .join('\n');
 
     res.setHeader('Content-Type', 'text/csv');

@@ -53,8 +53,11 @@ describe('AdminService', () => {
   });
 
   describe('getGlobalStats', () => {
-    it('should return correct counts from the database', async () => {
-      prisma.user.count.mockResolvedValue(100);
+    it('should return correct counts from the database (users vs guests split)', async () => {
+      // Two user.count calls now: authenticated then guests.
+      prisma.user.count
+        .mockResolvedValueOnce(100) // totalUsers (isGuest=false)
+        .mockResolvedValueOnce(15); // totalGuests (isGuest=true)
       prisma.room.count.mockResolvedValue(25);
       prisma.swipe.count.mockResolvedValue(5000);
       prisma.match.count.mockResolvedValue(150);
@@ -67,6 +70,7 @@ describe('AdminService', () => {
 
       expect(result).toEqual({
         totalUsers: 100,
+        totalGuests: 15,
         totalRooms: 25,
         totalSwipes: 5000,
         totalMatches: 150,
@@ -87,7 +91,7 @@ describe('AdminService', () => {
 
       expect(cacheManager.set).toHaveBeenCalledWith(
         'admin:global-stats',
-        expect.objectContaining({ totalUsers: 0 }),
+        expect.objectContaining({ totalUsers: 0, totalGuests: 0 }),
         5 * 60 * 1000,
       );
     });
@@ -95,6 +99,7 @@ describe('AdminService', () => {
     it('should return cached data without hitting the database', async () => {
       const cachedStats = {
         totalUsers: 50,
+        totalGuests: 8,
         totalRooms: 10,
         totalSwipes: 2000,
         totalMatches: 80,
@@ -115,7 +120,7 @@ describe('AdminService', () => {
   });
 
   describe('getDailyActivity', () => {
-    it('should return array with correct number of days', async () => {
+    it('should return array with correct number of days and guest/conversion fields', async () => {
       prisma.swipe.findMany.mockResolvedValue([]);
       prisma.match.findMany.mockResolvedValue([]);
       prisma.user.findMany.mockResolvedValue([]);
@@ -128,6 +133,8 @@ describe('AdminService', () => {
       expect(result.days[0]).toHaveProperty('swipes');
       expect(result.days[0]).toHaveProperty('matches');
       expect(result.days[0]).toHaveProperty('newUsers');
+      expect(result.days[0]).toHaveProperty('newGuests');
+      expect(result.days[0]).toHaveProperty('newConversions');
       expect(result.days[0]).toHaveProperty('newRooms');
     });
 
@@ -165,11 +172,25 @@ describe('AdminService', () => {
       expect(dayEntry!.swipes).toBe(2);
       expect(dayEntry!.matches).toBe(1);
       expect(dayEntry!.newUsers).toBe(0);
+      expect(dayEntry!.newGuests).toBe(0);
+      expect(dayEntry!.newConversions).toBe(0);
       expect(dayEntry!.newRooms).toBe(0);
     });
 
     it('should return cached data when available', async () => {
-      const cached = { days: [{ date: '2025-01-01', swipes: 10, matches: 1, newUsers: 2, newRooms: 1 }] };
+      const cached = {
+        days: [
+          {
+            date: '2025-01-01',
+            swipes: 10,
+            matches: 1,
+            newUsers: 2,
+            newGuests: 0,
+            newConversions: 0,
+            newRooms: 1,
+          },
+        ],
+      };
       cacheManager.get.mockResolvedValue(cached);
 
       const result = await service.getDailyActivity(1);
@@ -195,7 +216,7 @@ describe('AdminService', () => {
   });
 
   describe('getUsers', () => {
-    it('should return paginated users with lastSwipe data', async () => {
+    it('should return paginated users with lastSwipe data and guest flag', async () => {
       const createdAt = new Date('2025-01-01T00:00:00Z');
       const lastSwipeDate = new Date('2025-01-10T14:30:00Z');
 
@@ -206,6 +227,8 @@ describe('AdminService', () => {
           name: 'Alice',
           roles: ['user'],
           createdAt,
+          isGuest: false,
+          convertedFromGuestAt: null,
           _count: { swipes: 42, members: 3 },
         },
       ]);
@@ -224,6 +247,8 @@ describe('AdminService', () => {
             name: 'Alice',
             roles: ['user'],
             createdAt,
+            isGuest: false,
+            convertedFromGuestAt: null,
             swipesCount: 42,
             roomsCount: 3,
             lastActive: lastSwipeDate,
@@ -232,8 +257,43 @@ describe('AdminService', () => {
         total: 1,
         page: 1,
         limit: 10,
+        filter: 'users',
         totalPages: 1,
       });
+    });
+
+    it('defaults filter=users and only fetches isGuest=false', async () => {
+      prisma.user.findMany.mockResolvedValue([]);
+      prisma.user.count.mockResolvedValue(0);
+
+      await service.getUsers(1, 10);
+
+      expect(prisma.user.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { isGuest: false } }),
+      );
+      expect(prisma.user.count).toHaveBeenCalledWith({ where: { isGuest: false } });
+    });
+
+    it('filter=guests returns only guests', async () => {
+      prisma.user.findMany.mockResolvedValue([]);
+      prisma.user.count.mockResolvedValue(0);
+
+      await service.getUsers(1, 10, 'guests');
+
+      expect(prisma.user.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { isGuest: true } }),
+      );
+    });
+
+    it('filter=all returns both', async () => {
+      prisma.user.findMany.mockResolvedValue([]);
+      prisma.user.count.mockResolvedValue(0);
+
+      await service.getUsers(1, 10, 'all');
+
+      expect(prisma.user.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: {} }),
+      );
     });
 
     it('should use correct skip/take for pagination', async () => {
@@ -258,6 +318,8 @@ describe('AdminService', () => {
           name: 'Bob',
           roles: [],
           createdAt: new Date(),
+          isGuest: false,
+          convertedFromGuestAt: null,
           _count: { swipes: 0, members: 0 },
         },
       ]);

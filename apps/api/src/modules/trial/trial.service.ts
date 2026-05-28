@@ -134,6 +134,12 @@ export class TrialService {
       try {
         await this.prisma.$transaction(
           async (tx) => {
+            // Snapshot guest engagement before transfer so the conversion record
+            // on the real user reflects what the trial actually achieved.
+            const guestSwipeCount = await tx.swipe.count({
+              where: { userId: guestId },
+            });
+
             // Transfer swipes from guest to real user
             await tx.swipe.updateMany({
               where: { userId: guestId },
@@ -171,10 +177,19 @@ export class TrialService {
               data: { createdBy: realUserId },
             });
 
-            // Mark real user as onboarding completed (they already experienced the product)
+            // Mark real user as onboarding completed (they already experienced
+            // the product) and stamp guest-conversion metadata. The
+            // conversion fields stay on the real user after the guest row is
+            // deleted so admin metrics can attribute the signup to trial.
             await tx.user.update({
               where: { id: realUserId },
-              data: { onboardingCompleted: true, onboardingStep: 4 },
+              data: {
+                onboardingCompleted: true,
+                onboardingStep: 4,
+                convertedFromGuestAt: new Date(),
+                guestSwipesAtConversion: guestSwipeCount,
+                guestCreatedAt: guestUser.createdAt,
+              },
             });
 
             // Delete the ghost user

@@ -35,6 +35,7 @@ describe('TrialService', () => {
       },
       swipe: {
         updateMany: jest.fn(),
+        count: jest.fn(),
       },
       $transaction: jest.fn(async (cb: (tx: typeof prisma) => Promise<unknown>) => cb(prisma)),
     };
@@ -83,12 +84,15 @@ describe('TrialService', () => {
   });
 
   describe('migrateGuestToUser', () => {
+    const guestCreatedAt = new Date('2026-05-27T10:00:00Z');
+
     function setupHappyPath() {
       prisma.user.findUnique
         .mockResolvedValueOnce({ id: realUserId, isGuest: false }) // realUser first
-        .mockResolvedValueOnce({ id: guestId, isGuest: true }); // then guest
+        .mockResolvedValueOnce({ id: guestId, isGuest: true, createdAt: guestCreatedAt }); // then guest
       prisma.roomMember.findMany.mockResolvedValue([{ roomId: 'r1' }]);
-      prisma.swipe.updateMany.mockResolvedValue({ count: 5 });
+      prisma.swipe.count.mockResolvedValue(7);
+      prisma.swipe.updateMany.mockResolvedValue({ count: 7 });
       prisma.roomMember.deleteMany.mockResolvedValue({ count: 0 });
       prisma.roomMember.updateMany.mockResolvedValue({ count: 1 });
       prisma.room.updateMany.mockResolvedValue({ count: 1 });
@@ -96,7 +100,7 @@ describe('TrialService', () => {
       prisma.user.delete.mockResolvedValue({});
     }
 
-    it('migrates swipes, memberships, rooms and marks onboarding complete', async () => {
+    it('migrates swipes, memberships, rooms and stamps conversion metadata', async () => {
       setupHappyPath();
 
       const result = await service.migrateGuestToUser(guestId, realUserId);
@@ -108,7 +112,13 @@ describe('TrialService', () => {
       });
       expect(prisma.user.update).toHaveBeenCalledWith({
         where: { id: realUserId },
-        data: { onboardingCompleted: true, onboardingStep: 4 },
+        data: expect.objectContaining({
+          onboardingCompleted: true,
+          onboardingStep: 4,
+          convertedFromGuestAt: expect.any(Date),
+          guestSwipesAtConversion: 7,
+          guestCreatedAt,
+        }),
       });
       expect(prisma.user.delete).toHaveBeenCalledWith({ where: { id: guestId } });
     });

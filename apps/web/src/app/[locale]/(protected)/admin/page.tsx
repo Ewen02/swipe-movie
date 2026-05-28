@@ -1,14 +1,21 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
-  Shield, RefreshCw, ArrowLeft, Loader2,
-  LayoutDashboard, TrendingUp, Users, UserSearch,
-} from "lucide-react"
-import { Button, Tabs, TabsList, TabsTrigger, TabsContent } from "@swipe-movie/ui"
-import { Footer } from "@/components/layout/Footer"
-import { BackgroundOrbs } from "@/components/layout/BackgroundOrbs"
+  Shield,
+  RefreshCw,
+  ArrowLeft,
+  Loader2,
+  LayoutDashboard,
+  TrendingUp,
+  Users,
+  UserSearch,
+  Ghost,
+} from 'lucide-react';
+import { Button, Tabs, TabsList, TabsTrigger, TabsContent } from '@swipe-movie/ui';
+import { Footer } from '@/components/layout/Footer';
+import { BackgroundOrbs } from '@/components/layout/BackgroundOrbs';
 import {
   useAdminStats,
   useAdminRetention,
@@ -17,62 +24,109 @@ import {
   useAdminConversions,
   useAdminSubscriptions,
   useAdminTopMatches,
+  useAdminTrialStats,
   useHealthCheck,
-} from "@/hooks/useAdminData"
+} from '@/hooks/useAdminData';
+import type { AdminUsersFilter } from '@/lib/api/admin';
 
-import dynamic from "next/dynamic"
-import { KPICards } from "@/components/admin/KPICards"
-import { HealthChecks } from "@/components/admin/HealthChecks"
-import { ConversionFunnel } from "@/components/admin/ConversionFunnel"
-import { SubscriptionStats } from "@/components/admin/SubscriptionStats"
-import { TopMatchedMovies } from "@/components/admin/TopMatchedMovies"
+import dynamic from 'next/dynamic';
+import { KPICards } from '@/components/admin/KPICards';
+import { HealthChecks } from '@/components/admin/HealthChecks';
+import { ConversionFunnel } from '@/components/admin/ConversionFunnel';
+import { SubscriptionStats } from '@/components/admin/SubscriptionStats';
+import { TopMatchedMovies } from '@/components/admin/TopMatchedMovies';
+import { GuestStats } from '@/components/admin/GuestStats';
 
 // Lazy-load tab content components that are not visible by default
 // ActivityChart is especially heavy due to recharts dependency
-const ActivityChart = dynamic(() => import("@/components/admin/ActivityChart").then(m => ({ default: m.ActivityChart })), { ssr: false })
-const RetentionTable = dynamic(() => import("@/components/admin/RetentionTable").then(m => ({ default: m.RetentionTable })), { ssr: false })
-const UsersTable = dynamic(() => import("@/components/admin/UsersTable").then(m => ({ default: m.UsersTable })), { ssr: false })
+const ActivityChart = dynamic(
+  () => import('@/components/admin/ActivityChart').then((m) => ({ default: m.ActivityChart })),
+  { ssr: false },
+);
+const RetentionTable = dynamic(
+  () => import('@/components/admin/RetentionTable').then((m) => ({ default: m.RetentionTable })),
+  { ssr: false },
+);
+const UsersTable = dynamic(
+  () => import('@/components/admin/UsersTable').then((m) => ({ default: m.UsersTable })),
+  { ssr: false },
+);
 
 const TAB_CONFIG = [
-  { value: "overview", label: "Vue d'ensemble", icon: LayoutDashboard },
-  { value: "activity", label: "Activité", icon: TrendingUp },
-  { value: "retention", label: "Rétention", icon: Users },
-  { value: "users", label: "Utilisateurs", icon: UserSearch },
-] as const
+  { value: 'overview', label: "Vue d'ensemble", icon: LayoutDashboard },
+  { value: 'activity', label: 'Activité', icon: TrendingUp },
+  { value: 'guests', label: 'Guests', icon: Ghost },
+  { value: 'retention', label: 'Rétention', icon: Users },
+  { value: 'users', label: 'Utilisateurs', icon: UserSearch },
+] as const;
 
 export default function AdminPage() {
-  const router = useRouter()
-  const [usersPage, setUsersPage] = useState(1)
-  const [activityDays, setActivityDays] = useState(30)
+  const router = useRouter();
+  const [usersPage, setUsersPage] = useState(1);
+  const [usersFilter, setUsersFilter] = useState<AdminUsersFilter>('users');
+  const [activityDays, setActivityDays] = useState(30);
 
-  const { stats, isLoading: statsLoading, error: statsError, refresh: refreshStats } = useAdminStats()
-  const { retention, isLoading: retentionLoading, refresh: refreshRetention } = useAdminRetention()
-  const { users, isLoading: usersLoading, refresh: refreshUsers } = useAdminUsers(usersPage)
-  const { activity, isLoading: activityLoading, refresh: refreshActivity } = useAdminActivity(activityDays)
-  const { conversions, isLoading: conversionsLoading, refresh: refreshConversions } = useAdminConversions()
-  const { subscriptions, isLoading: subsLoading, refresh: refreshSubs } = useAdminSubscriptions()
-  const { topMatches, isLoading: matchesLoading, refresh: refreshMatches } = useAdminTopMatches()
-  const { health, isLoading: healthLoading, refresh: refreshHealth } = useHealthCheck()
+  const {
+    stats,
+    isLoading: statsLoading,
+    error: statsError,
+    refresh: refreshStats,
+  } = useAdminStats();
+  const { retention, isLoading: retentionLoading, refresh: refreshRetention } = useAdminRetention();
+  const {
+    users,
+    isLoading: usersLoading,
+    refresh: refreshUsers,
+  } = useAdminUsers(usersPage, usersFilter);
+  const {
+    activity,
+    isLoading: activityLoading,
+    refresh: refreshActivity,
+  } = useAdminActivity(activityDays);
+  const {
+    conversions,
+    isLoading: conversionsLoading,
+    refresh: refreshConversions,
+  } = useAdminConversions();
+  const { subscriptions, isLoading: subsLoading, refresh: refreshSubs } = useAdminSubscriptions();
+  const { topMatches, isLoading: matchesLoading, refresh: refreshMatches } = useAdminTopMatches();
+  const {
+    trialStats,
+    isLoading: trialStatsLoading,
+    refresh: refreshTrialStats,
+  } = useAdminTrialStats();
+  const { health, isLoading: healthLoading, refresh: refreshHealth } = useHealthCheck();
 
   useEffect(() => {
-    if (statsError && !statsLoading) router.push("/rooms")
-  }, [statsError, statsLoading, router])
+    if (statsError && !statsLoading) router.push('/rooms');
+  }, [statsError, statsLoading, router]);
+
+  const handleFilterChange = (next: AdminUsersFilter) => {
+    setUsersFilter(next);
+    setUsersPage(1);
+  };
 
   const refreshAll = () => {
-    refreshStats(); refreshRetention(); refreshUsers()
-    refreshActivity(); refreshConversions(); refreshSubs(); refreshMatches()
-    refreshHealth()
-  }
+    refreshStats();
+    refreshRetention();
+    refreshUsers();
+    refreshActivity();
+    refreshConversions();
+    refreshSubs();
+    refreshMatches();
+    refreshTrialStats();
+    refreshHealth();
+  };
 
   if (statsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
-    )
+    );
   }
 
-  if (statsError || !stats) return null
+  if (statsError || !stats) return null;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -94,7 +148,12 @@ export default function AdminPage() {
                 <RefreshCw className="w-4 h-4" />
                 Refresh
               </Button>
-              <Button variant="outline" size="sm" onClick={() => router.push("/rooms")} className="gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.push('/rooms')}
+                className="gap-2"
+              >
                 <ArrowLeft className="w-4 h-4" />
                 Rooms
               </Button>
@@ -121,6 +180,7 @@ export default function AdminPage() {
               </TabsList>
 
               <TabsContent value="overview" className="space-y-6 mt-0">
+                <GuestStats trialStats={trialStats} isLoading={trialStatsLoading} />
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <ConversionFunnel conversions={conversions} isLoading={conversionsLoading} />
                   <SubscriptionStats subscriptions={subscriptions} isLoading={subsLoading} />
@@ -137,6 +197,10 @@ export default function AdminPage() {
                 />
               </TabsContent>
 
+              <TabsContent value="guests" className="space-y-6 mt-0">
+                <GuestStats trialStats={trialStats} isLoading={trialStatsLoading} />
+              </TabsContent>
+
               <TabsContent value="retention" className="space-y-6 mt-0">
                 <RetentionTable retention={retention} isLoading={retentionLoading} />
               </TabsContent>
@@ -146,7 +210,9 @@ export default function AdminPage() {
                   users={users}
                   isLoading={usersLoading}
                   page={usersPage}
+                  filter={usersFilter}
                   onPageChange={setUsersPage}
+                  onFilterChange={handleFilterChange}
                 />
               </TabsContent>
             </Tabs>
@@ -156,5 +222,5 @@ export default function AdminPage() {
 
       <Footer />
     </div>
-  )
+  );
 }
