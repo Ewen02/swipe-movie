@@ -11,6 +11,9 @@ export {
 // Export limits
 export { FEATURE_LIMITS, getFeatureLimits } from './limits';
 
+// Trial-specific config shared between web and api
+export { TRIAL_CONFIG } from './trial';
+
 // Export utilities
 export {
   canPerformAction,
