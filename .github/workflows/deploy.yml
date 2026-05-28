@@ -71,6 +71,10 @@ jobs:
         run: pnpm run build:api
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_API }}
+          # Needed so `prisma migrate deploy` (wired into the build via Turbo)
+          # can reach the production DB. Missing this = build fails with
+          # "Environment variable DATABASE_URL not found".
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Deployment Placeholder
         run: |
