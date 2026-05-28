@@ -1,17 +1,13 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Film, Sparkles, Users, Heart } from 'lucide-react';
-import { useSWRConfig } from 'swr';
 import { captureEvent } from '@/components/providers/PostHogProvider';
 import { Button } from '@swipe-movie/ui';
 import { useTranslations } from 'next-intl';
-import { isTrialActive, getTrialData, startTrial, clearTrialData } from '@/lib/trial';
-import { POST } from '@/lib/api';
-import { USER_PREFERENCES_KEY } from '@/hooks/useUserPreferences';
-import { ROOMS_KEY } from '@/hooks/useRooms';
+import { useTrial } from '@/hooks/trial/useTrial';
 
 const GENRE_OPTIONS = [
   { id: 28, emoji: '💥', labelKey: 'action' },
@@ -31,151 +27,56 @@ function TrialPageContent() {
   const searchParams = useSearchParams();
   const locale = (params?.locale as string) || 'fr';
 
+  const trial = useTrial();
   const [isCreating, setIsCreating] = useState(false);
   const [selectedGenre, setSelectedGenre] = useState<number | null>(null);
-  const [migrationState, setMigrationState] = useState<'idle' | 'migrating' | 'error'>('idle');
-  const [migrationError, setMigrationError] = useState<string | null>(null);
-  const { mutate: mutateSWR } = useSWRConfig();
 
-  const handleStart = async (genreId?: number) => {
-    setIsCreating(true);
-    setSelectedGenre(genreId ?? null);
+  // Back-compat: the previous LoginWall used `/try?migrate=true` as Better
+  // Auth's callbackURL. New callers use `/try/migrate` directly, but a user
+  // who started OAuth before the deploy can still land here — bounce them.
+  useEffect(() => {
+    if (searchParams?.get('migrate') === 'true') {
+      router.replace(`/${locale}/try/migrate`);
+    }
+  }, [searchParams, router, locale]);
 
-    try {
-      // Check for existing trial session
-      if (isTrialActive()) {
-        const existing = getTrialData();
-        if (existing) {
-          router.push(`/${locale}/rooms/${existing.roomCode}`);
+  const handleStart = useCallback(
+    async (genreId?: number) => {
+      setIsCreating(true);
+      setSelectedGenre(genreId ?? null);
+
+      try {
+        // Already in a trial? Send them straight to their existing room.
+        if (trial.isActive && trial.data) {
+          router.push(`/${locale}/rooms/${trial.data.roomCode}`);
           return;
         }
-      }
 
-      const data = await startTrial({
-        genreId,
-        type: 'movie',
-      });
-
-      captureEvent('trial_started', { genreId, roomCode: data.roomCode });
-      router.push(`/${locale}/rooms/${data.roomCode}`);
-    } catch (err) {
-      console.error('[TrialPage] Failed:', err);
-      setIsCreating(false);
-      setSelectedGenre(null);
-    }
-  };
-
-  // Handle post-OAuth migration: ?migrate=true means user just signed up
-  useEffect(() => {
-    const shouldMigrate = searchParams?.get('migrate') === 'true';
-    if (!shouldMigrate) return;
-
-    const trialInfo = getTrialData();
-    if (!trialInfo) {
-      router.replace(`/${locale}/rooms`);
-      return;
-    }
-
-    async function migrate() {
-      setMigrationState('migrating');
-      setMigrationError(null);
-      const roomCode = trialInfo!.roomCode;
-      const guestId = trialInfo!.guestId;
-      const trialToken = trialInfo!.token;
-      try {
-        // Send the signed guest token so the backend can derive guestId from
-        // the token itself (proof of ownership) instead of trusting the body.
-        const res = await POST('/trial/migrate', {
-          headers: { 'X-Trial-Token': trialToken },
-          body: JSON.stringify({ guestId }),
-        });
-
-        // If the backend treated the call as already-migrated (404 guest), we
-        // can treat that as success too — the rooms are already on the user.
-        if (!res.ok && res.status !== 404) {
-          const body = await res.text().catch(() => '');
-          throw new Error(`Migration failed (${res.status}): ${body || res.statusText}`);
-        }
-
-        captureEvent('trial_converted', { guestId, roomCode });
-
-        // Invalidate SWR caches that depend on the user identity:
-        // - preferences (controls OnboardingCheck redirect)
-        // - rooms list (so the trial room appears immediately)
-        await Promise.all([mutateSWR(USER_PREFERENCES_KEY), mutateSWR(ROOMS_KEY)]);
-
-        // Only clear trial data on confirmed success.
-        clearTrialData();
-        try {
-          localStorage.removeItem(`trial-swipe-count-${roomCode}`);
-        } catch {
-          /* ignore */
-        }
-
-        router.replace(`/${locale}/rooms/${roomCode}`);
+        const data = await trial.start({ genreId, type: 'movie' });
+        captureEvent('trial_started', { genreId, roomCode: data.roomCode });
+        router.push(`/${locale}/rooms/${data.roomCode}`);
       } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        console.error('[TrialPage] Migration failed:', err);
-        captureEvent('trial_migration_failed', { guestId, roomCode, error: message });
-        setMigrationState('error');
-        setMigrationError(message);
-        // Do NOT clear trial data and do NOT redirect — keep the user on this
-        // page with a visible error and a retry path. The trial cookie/data
-        // stays so the next retry has the guestId available.
+        console.error('[TrialPage] Failed:', err);
+        setIsCreating(false);
+        setSelectedGenre(null);
       }
-    }
+    },
+    [router, locale, trial],
+  );
 
-    migrate();
-  }, [searchParams, locale, router, mutateSWR]);
+  // Auto-start when ?genre=28 is present. In a useEffect, not render, with a
+  // ref guard so React StrictMode doesn't fire it twice and create two ghosts.
+  const autoStartedRef = useRef(false);
+  useEffect(() => {
+    const genreParam = searchParams?.get('genre');
+    if (!genreParam || autoStartedRef.current) return;
+    const genreId = parseInt(genreParam, 10);
+    if (Number.isNaN(genreId)) return;
+    autoStartedRef.current = true;
+    handleStart(genreId);
+  }, [searchParams, handleStart]);
 
-  // Migration in progress: prevents the user from briefly hitting the room
-  // page with the (now-mismatched) trial auth before the migration finishes.
-  if (migrationState === 'migrating') {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <motion.div
-          className="text-center space-y-4"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
-          <Film className="w-14 h-14 mx-auto animate-pulse text-primary" />
-          <p className="text-lg font-medium text-foreground">{t('migrating')}</p>
-          <p className="text-sm text-muted-foreground">{t('migratingSubtitle')}</p>
-        </motion.div>
-      </div>
-    );
-  }
-
-  if (migrationState === 'error') {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background px-6">
-        <div className="text-center space-y-4 max-w-md">
-          <p className="text-lg font-semibold text-foreground">{t('migrationErrorTitle')}</p>
-          <p className="text-sm text-muted-foreground">{t('migrationErrorDescription')}</p>
-          {migrationError && (
-            <p className="text-xs text-muted-foreground/60 font-mono break-all">{migrationError}</p>
-          )}
-          <div className="flex gap-3 justify-center pt-2">
-            <Button
-              onClick={() => {
-                setMigrationState('idle');
-                setMigrationError(null);
-                router.replace(`/${locale}/try?migrate=true`);
-              }}
-            >
-              {t('migrationRetry')}
-            </Button>
-            <Button variant="outline" onClick={() => router.replace(`/${locale}/rooms`)}>
-              {t('migrationGoToRooms')}
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Show loading screen while creating room
-  if (isCreating) {
+  if (isCreating || autoStartedRef.current) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <motion.div
@@ -189,20 +90,6 @@ function TrialPageContent() {
         </motion.div>
       </div>
     );
-  }
-
-  // If ?genre=28 is in URL, skip genre selection and start directly
-  const genreParam = searchParams?.get('genre');
-  if (genreParam) {
-    const genreId = parseInt(genreParam, 10);
-    if (!isNaN(genreId)) {
-      handleStart(genreId);
-      return (
-        <div className="flex h-screen items-center justify-center bg-background">
-          <Film className="w-12 h-12 animate-pulse text-primary" />
-        </div>
-      );
-    }
   }
 
   return (

@@ -1,50 +1,61 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { Film } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { startTrial, trialApiFetch } from '@/lib/trial'
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { Film } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { startTrial, trialApiFetch } from '@/lib/trial';
+import { getSession } from '@/lib/auth-client';
+import { joinRoom } from '@/lib/api/rooms';
 
 export default function TrialJoinPage() {
-  const t = useTranslations('trial')
-  const params = useParams()
-  const router = useRouter()
-  const locale = (params?.locale as string) || 'fr'
-  const code = params?.code as string
+  const t = useTranslations('trial');
+  const tJoin = useTranslations('trial.join');
+  const params = useParams();
+  const router = useRouter();
+  const locale = (params?.locale as string) || 'fr';
+  const code = params?.code as string;
 
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!code) return
+    if (!code) return;
 
-    async function joinRoom() {
+    async function joinAsLoggedUser() {
+      // Existing account: join the room directly, no ghost user creation.
+      await joinRoom({ code });
+      router.replace(`/${locale}/rooms/${code}`);
+    }
+
+    async function joinAsGuest() {
+      await startTrial();
+      const joinRes = await trialApiFetch('/rooms/join', {
+        method: 'POST',
+        body: JSON.stringify({ code }),
+      });
+      if (!joinRes.ok) {
+        const body = await joinRes.json().catch(() => ({}));
+        throw new Error(body?.message || 'join_failed');
+      }
+      router.replace(`/${locale}/rooms/${code}`);
+    }
+
+    async function run() {
       try {
-        // Create a ghost user
-        await startTrial()
-
-        // Join the room
-        const joinRes = await trialApiFetch('/rooms/join', {
-          method: 'POST',
-          body: JSON.stringify({ code }),
-        })
-
-        if (!joinRes.ok) {
-          const err = await joinRes.json().catch(() => ({}))
-          console.error('[TrialJoin] Failed to join room:', err)
-          setError('Unable to join the room. The code may be invalid or expired.')
-          return
+        const session = await getSession();
+        if (session?.data?.user?.email) {
+          await joinAsLoggedUser();
+        } else {
+          await joinAsGuest();
         }
-
-        router.replace(`/${locale}/rooms/${code}`)
       } catch (err) {
-        console.error('[TrialJoin] Error:', err)
-        setError('An error occurred. Please try again.')
+        console.error('[TrialJoin] Error:', err);
+        setError(tJoin('error'));
       }
     }
 
-    joinRoom()
-  }, [code, locale, router])
+    run();
+  }, [code, locale, router, tJoin]);
 
   if (error) {
     return (
@@ -56,11 +67,11 @@ export default function TrialJoinPage() {
             onClick={() => window.location.reload()}
             className="text-primary hover:underline text-sm"
           >
-            Retry
+            {tJoin('retry')}
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -70,5 +81,5 @@ export default function TrialJoinPage() {
         <p className="text-muted-foreground">{t('loading')}</p>
       </div>
     </div>
-  )
+  );
 }

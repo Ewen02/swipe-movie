@@ -1,141 +1,152 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { motion, AnimatePresence } from "framer-motion"
-import { Loader2 } from "lucide-react"
-import { StepProviders, StepGenres, StepSwipe, StepComplete } from "./components"
-import { useUserPreferences } from "@/hooks/useUserPreferences"
-import type { OnboardingSwipe } from "@/lib/api/users"
-import { OnboardingPageSkeleton } from "./OnboardingPageSkeleton"
-import { captureEvent } from "@/components/providers/PostHogProvider"
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Loader2 } from 'lucide-react';
+import { StepProviders, StepGenres, StepSwipe, StepComplete } from './components';
+import { useUserPreferences } from '@/hooks/useUserPreferences';
+import type { OnboardingSwipe } from '@/lib/api/users';
+import { OnboardingPageSkeleton } from './OnboardingPageSkeleton';
+import { captureEvent } from '@/components/providers/PostHogProvider';
+import { getTrialData, clearTrialData } from '@/lib/trial';
 
 const STEPS = [
-  { id: "providers", title: "Plateformes" },
-  { id: "genres", title: "Genres" },
-  { id: "swipe", title: "Validation" },
-  { id: "complete", title: "Termine" },
-]
+  { id: 'providers', title: 'Plateformes' },
+  { id: 'genres', title: 'Genres' },
+  { id: 'swipe', title: 'Validation' },
+  { id: 'complete', title: 'Termine' },
+];
 
 export default function OnboardingPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const { preferences, isLoading, update, saveSwipes, complete } = useUserPreferences()
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { preferences, isLoading, update, saveSwipes, complete } = useUserPreferences();
 
   // Debug mode: ?debug=true to force restart onboarding
-  const isDebugMode = searchParams.get("debug") === "true"
+  const isDebugMode = searchParams.get('debug') === 'true';
 
-  const [currentStep, setCurrentStep] = useState(0)
-  const [selectedProviders, setSelectedProviders] = useState<number[]>([])
-  const [selectedGenres, setSelectedGenres] = useState<number[]>([])
-  const [isSaving, setIsSaving] = useState(false)
+  const [currentStep, setCurrentStep] = useState(0);
+  const [selectedProviders, setSelectedProviders] = useState<number[]>([]);
+  const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Load saved preferences if available
   useEffect(() => {
     if (preferences && !isDebugMode) {
       if (preferences.watchProviders?.length > 0) {
-        setSelectedProviders(preferences.watchProviders)
+        setSelectedProviders(preferences.watchProviders);
       }
       if (preferences.favoriteGenreIds?.length > 0) {
-        setSelectedGenres(preferences.favoriteGenreIds)
+        setSelectedGenres(preferences.favoriteGenreIds);
       }
       // Resume from saved step
       if (preferences.onboardingStep > 0 && preferences.onboardingStep < 4) {
-        setCurrentStep(preferences.onboardingStep)
+        setCurrentStep(preferences.onboardingStep);
       }
       // If already completed, redirect to rooms
       if (preferences.onboardingCompleted) {
-        router.replace("/rooms")
+        router.replace('/rooms');
       } else {
-        captureEvent("onboarding_started", { step: preferences.onboardingStep || 0 })
+        captureEvent('onboarding_started', { step: preferences.onboardingStep || 0 });
       }
     }
-  }, [preferences, router, isDebugMode])
+  }, [preferences, router, isDebugMode]);
 
   const handleProvidersNext = async () => {
-    setIsSaving(true)
+    setIsSaving(true);
     try {
       await update({
         watchProviders: selectedProviders,
         onboardingStep: 1,
-      })
-      setCurrentStep(1)
+      });
+      setCurrentStep(1);
     } catch (error) {
-      console.error("Failed to save providers:", error)
+      console.error('Failed to save providers:', error);
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleGenresNext = async () => {
-    setIsSaving(true)
+    setIsSaving(true);
     try {
       await update({
         favoriteGenreIds: selectedGenres,
         onboardingStep: 2,
-      })
-      setCurrentStep(2)
+      });
+      setCurrentStep(2);
     } catch (error) {
-      console.error("Failed to save genres:", error)
+      console.error('Failed to save genres:', error);
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleSwipeComplete = async (swipes: OnboardingSwipe[]) => {
-    setIsSaving(true)
+    setIsSaving(true);
     try {
-      await saveSwipes(swipes)
-      await update({ onboardingStep: 3 })
-      setCurrentStep(3)
+      await saveSwipes(swipes);
+      await update({ onboardingStep: 3 });
+      setCurrentStep(3);
     } catch (error) {
-      console.error("Failed to save swipes:", error)
+      console.error('Failed to save swipes:', error);
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleCreateRoom = async () => {
-    setIsSaving(true)
+    setIsSaving(true);
     try {
-      await complete()
-      captureEvent("onboarding_completed", { nextAction: "create_room" })
-      router.push("/rooms?create=true")
+      await complete();
+      // Defense-in-depth: if the user reached onboarding while still holding
+      // trial data (e.g. migrate succeeded but didn't bypass onboarding),
+      // send them back to their trial room instead of forcing room creation.
+      const trial = getTrialData();
+      if (trial?.roomCode) {
+        clearTrialData();
+        captureEvent('onboarding_completed', { nextAction: 'trial_room' });
+        router.push(`/rooms/${trial.roomCode}`);
+        return;
+      }
+      captureEvent('onboarding_completed', { nextAction: 'create_room' });
+      router.push('/rooms?create=true');
     } catch (error) {
-      console.error("Failed to complete onboarding:", error)
+      console.error('Failed to complete onboarding:', error);
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleDiscover = async () => {
-    setIsSaving(true)
+    setIsSaving(true);
     try {
-      await complete()
-      captureEvent("onboarding_completed", { nextAction: "discover" })
-      router.push("/discover")
+      await complete();
+      captureEvent('onboarding_completed', { nextAction: 'discover' });
+      router.push('/discover');
     } catch (error) {
-      console.error("Failed to complete onboarding:", error)
+      console.error('Failed to complete onboarding:', error);
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleImport = async () => {
-    setIsSaving(true)
+    setIsSaving(true);
     try {
-      await complete()
-      captureEvent("onboarding_completed", { nextAction: "import" })
-      router.push("/connections")
+      await complete();
+      captureEvent('onboarding_completed', { nextAction: 'import' });
+      router.push('/connections');
     } catch (error) {
-      console.error("Failed to complete onboarding:", error)
+      console.error('Failed to complete onboarding:', error);
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   if (isLoading) {
-    return <OnboardingPageSkeleton />
+    return <OnboardingPageSkeleton />;
   }
 
   return (
@@ -145,18 +156,15 @@ export default function OnboardingPage() {
         <div className="mb-8">
           <div className="flex items-center justify-center gap-0 mb-2">
             {STEPS.slice(0, 3).map((step, index) => (
-              <div
-                key={step.id}
-                className="flex items-center"
-              >
+              <div key={step.id} className="flex items-center">
                 <div className="flex flex-col items-center">
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-colors ${
                       index < currentStep
-                        ? "bg-primary text-white"
+                        ? 'bg-primary text-white'
                         : index === currentStep
-                        ? "bg-primary/20 text-primary border-2 border-primary"
-                        : "bg-muted text-muted-foreground"
+                          ? 'bg-primary/20 text-primary border-2 border-primary'
+                          : 'bg-muted text-muted-foreground'
                     }`}
                   >
                     {index + 1}
@@ -168,7 +176,7 @@ export default function OnboardingPage() {
                 {index < 2 && (
                   <div
                     className={`h-0.5 w-16 sm:w-24 md:w-32 mx-2 rounded-full transition-colors ${
-                      index < currentStep ? "bg-primary" : "bg-muted"
+                      index < currentStep ? 'bg-primary' : 'bg-muted'
                     }`}
                   />
                 )}
@@ -231,5 +239,5 @@ export default function OnboardingPage() {
         </motion.div>
       </AnimatePresence>
     </div>
-  )
+  );
 }

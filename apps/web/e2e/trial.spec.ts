@@ -1,8 +1,11 @@
 import { test, expect, type Page } from '@playwright/test';
 
-// All trial tests require a running API to create ghost users and rooms
+// All trial tests require a running API to create ghost users and rooms.
+// CI provisions both Postgres and the API in the e2e workflow — see
+// .github/workflows/e2e.yml. To skip locally without the API, set
+// SKIP_TRIAL_E2E=1.
 test.describe('Trial Flow', () => {
-  test.skip(process.env.CI === 'true', 'Requires running API (ghost user creation)');
+  test.skip(process.env.SKIP_TRIAL_E2E === '1', 'API not running locally');
 
   /**
    * Helper: start a trial by navigating to /try, picking the first genre,
@@ -25,8 +28,10 @@ test.describe('Trial Flow', () => {
     // Extract the room code from the URL
     const url = page.url();
     const match = url.match(/\/rooms\/([A-Z0-9]+)$/i);
-    expect(match).not.toBeNull();
-    return match![1];
+    if (!match || !match[1]) {
+      throw new Error(`Could not extract room code from URL: ${url}`);
+    }
+    return match[1];
   }
 
   // ─── Test 1: Trial genre picker loads ───────────────────────────────
@@ -140,16 +145,26 @@ test.describe('Trial Flow', () => {
     await expect(trialBanner).toBeVisible({ timeout: 10_000 });
   });
 
-  // ─── Test 6: /try?migrate=true without trial data redirects ────────
+  // ─── Test 6: /try/migrate without trial data redirects ─────────────
 
-  test('migrate without trial data redirects to /rooms', async ({ page }) => {
-    // No trial cookie/localStorage: hitting the migrate query should bounce
+  test('migrate route without trial data redirects to /rooms', async ({ page }) => {
+    // No trial cookie/localStorage: hitting the migrate route should bounce
     // the user back to the rooms list rather than render a broken state.
-    await page.goto('/fr/try?migrate=true');
+    await page.goto('/fr/try/migrate');
     await page.waitForURL(/\/rooms$/, { timeout: 10_000 });
   });
 
-  // ─── Test 7: Migration error screen shows on backend failure ───────
+  // ─── Test 7: Legacy /try?migrate=true forwards to /try/migrate ─────
+
+  test('legacy ?migrate=true forwards to /try/migrate', async ({ page }) => {
+    // Older Better Auth callbacks point at /try?migrate=true; the picker
+    // route must forward them to the dedicated migration page rather than
+    // silently ignoring the param.
+    await page.goto('/fr/try?migrate=true');
+    await page.waitForURL(/\/try\/migrate|\/rooms$/, { timeout: 10_000 });
+  });
+
+  // ─── Test 8: Migration error screen shows on backend failure ───────
 
   test('migration error screen renders when backend fails', async ({ page, context }) => {
     // Seed a trial room so getTrialData() returns something.
@@ -165,7 +180,7 @@ test.describe('Trial Flow', () => {
       }),
     );
 
-    await page.goto('/fr/try?migrate=true');
+    await page.goto('/fr/try/migrate');
 
     // The dedicated error UI (not the room page) must be visible.
     await expect(page.getByText('Impossible de finaliser ton compte')).toBeVisible({
@@ -174,8 +189,8 @@ test.describe('Trial Flow', () => {
     await expect(page.getByRole('button', { name: 'Réessayer' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Voir mes rooms' })).toBeVisible();
 
-    // We must still be on /try (not redirected to the broken room).
-    expect(page.url()).toContain('/try');
+    // We must still be on /try/migrate (not redirected to the broken room).
+    expect(page.url()).toContain('/try/migrate');
 
     // The trial cookie should still exist for the retry path.
     const cookies = await context.cookies();

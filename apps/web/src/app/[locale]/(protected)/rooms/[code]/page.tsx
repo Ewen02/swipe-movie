@@ -1,83 +1,86 @@
-"use client"
+'use client';
 
-import { useState, useCallback, useEffect, lazy, Suspense } from "react"
-import { useParams } from "next/navigation"
-import { useSession } from "@/lib/auth-client"
-import { useTranslations } from "next-intl"
-import { isTrialActive, getTrialData } from "@/lib/trial"
-import { createSwipe, deleteSwipe } from "@/lib/api/swipes"
-import { ApiError } from "@/lib/http"
-import { captureEvent } from "@/components/providers/PostHogProvider"
-import { joinRoom } from "@/lib/api/rooms"
-import { useRoomData, useMoviesData, useMatchNotifications } from "@/hooks/room"
-import type { MovieBasic } from "@/schemas/movies"
-import { useToast } from "@/components/providers/toast-provider"
-import { MatchAnimation } from "@/components/room/MatchAnimation"
-import { Footer } from "@/components/layout/Footer"
-import { BackgroundOrbs } from "@/components/layout/BackgroundOrbs"
-import { RoomErrorBoundary } from "@/components/error"
-import { RoomPageSkeleton } from "@/components/room/RoomPageSkeleton"
-import { BottomTabNav } from "@/components/room/BottomTabNav"
-import { JoinRoomScreen } from "@/components/room/JoinRoomScreen"
-import { RoomHeader } from "@/components/room/RoomHeader"
-import { RoomTabs } from "@/components/room/RoomTabs"
-import { TrialBanner } from "@/components/trial/TrialBanner"
-import { TrialHeader } from "@/components/trial/TrialHeader"
-import { LoginWallModal } from "@/components/trial/LoginWallModal"
-import { TrialRecap } from "@/components/trial/TrialRecap"
-import { useLoginWall } from "@/hooks/trial/useLoginWall"
-import { clearTrialData } from "@/lib/trial"
-import { useRouter } from "next/navigation"
+import { useState, useCallback, useEffect, lazy, Suspense } from 'react';
+import { useParams } from 'next/navigation';
+import { useSession } from '@/lib/auth-client';
+import { useTranslations } from 'next-intl';
+import { isTrialActive, getTrialData } from '@/lib/trial';
+import { createSwipe, deleteSwipe } from '@/lib/api/swipes';
+import { ApiError } from '@/lib/http';
+import { captureEvent } from '@/components/providers/PostHogProvider';
+import { joinRoom } from '@/lib/api/rooms';
+import { useRoomData, useMoviesData, useMatchNotifications } from '@/hooks/room';
+import type { MovieBasic } from '@/schemas/movies';
+import { useToast } from '@/components/providers/toast-provider';
+import { MatchAnimation } from '@/components/room/MatchAnimation';
+import { Footer } from '@/components/layout/Footer';
+import { BackgroundOrbs } from '@/components/layout/BackgroundOrbs';
+import { RoomErrorBoundary } from '@/components/error';
+import { RoomPageSkeleton } from '@/components/room/RoomPageSkeleton';
+import { BottomTabNav } from '@/components/room/BottomTabNav';
+import { JoinRoomScreen } from '@/components/room/JoinRoomScreen';
+import { RoomHeader } from '@/components/room/RoomHeader';
+import { RoomTabs } from '@/components/room/RoomTabs';
+import { TrialBanner } from '@/components/trial/TrialBanner';
+import { TrialHeader } from '@/components/trial/TrialHeader';
+import { LoginWallModal } from '@/components/trial/LoginWallModal';
+import { TrialRecap } from '@/components/trial/TrialRecap';
+import { useLoginWall } from '@/hooks/trial/useLoginWall';
+import { clearTrialData } from '@/lib/trial';
+import { TRIAL_CONFIG } from '@swipe-movie/subscription';
+import { useRouter } from 'next/navigation';
 
 // Lazy load heavy components that are not always visible
-const MovieDetailsModal = lazy(() => import("@/components/movies/MovieDetailsModal").then(m => ({ default: m.MovieDetailsModal })))
+const MovieDetailsModal = lazy(() =>
+  import('@/components/movies/MovieDetailsModal').then((m) => ({ default: m.MovieDetailsModal })),
+);
 
 function RoomPageContent() {
-  const t = useTranslations('room')
-  const tSwipe = useTranslations('swipe')
-  const params = useParams<{ code: string }>()
-  const code = params?.code ?? ""
-  const { data: session } = useSession()
-  const { toast } = useToast()
-  const trialData = isTrialActive() ? getTrialData() : null
-  const isTrial = Boolean(trialData)
-  const [currentTab, setCurrentTab] = useState("swipe")
-  const [joiningRoom, setJoiningRoom] = useState(false)
-  const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null)
-  const [showMovieDetails, setShowMovieDetails] = useState(false)
+  const t = useTranslations('room');
+  const tSwipe = useTranslations('swipe');
+  const params = useParams<{ code: string }>();
+  const code = params?.code ?? '';
+  const { data: session } = useSession();
+  const { toast } = useToast();
+  const trialData = isTrialActive() ? getTrialData() : null;
+  const isTrial = Boolean(trialData);
+  const [currentTab, setCurrentTab] = useState('swipe');
+  const [joiningRoom, setJoiningRoom] = useState(false);
+  const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
+  const [showMovieDetails, setShowMovieDetails] = useState(false);
   const [trialSwipeCount, setTrialSwipeCount] = useState(() => {
-    if (typeof window === 'undefined') return 0
+    if (typeof window === 'undefined') return 0;
     try {
-      const saved = localStorage.getItem(`trial-swipe-count-${code}`)
-      return saved ? parseInt(saved, 10) : 0
+      const saved = localStorage.getItem(`trial-swipe-count-${code}`);
+      return saved ? parseInt(saved, 10) : 0;
     } catch {
-      return 0
+      return 0;
     }
-  })
-  const [trialHasMatch, setTrialHasMatch] = useState(false)
-  const [trialLikedMovies, setTrialLikedMovies] = useState<MovieBasic[]>([])
-  const router = useRouter()
-  const locale = (params as unknown as { locale?: string })?.locale ?? "fr"
+  });
+  const [trialHasMatch, setTrialHasMatch] = useState(false);
+  const [trialLikedMovies, setTrialLikedMovies] = useState<MovieBasic[]>([]);
+  const router = useRouter();
+  const locale = (params as unknown as { locale?: string })?.locale ?? 'fr';
   // Persist trial swipe count to localStorage
   useEffect(() => {
     if (isTrial && trialSwipeCount > 0) {
       try {
-        localStorage.setItem(`trial-swipe-count-${code}`, trialSwipeCount.toString())
-      } catch { /* ignore */ }
+        localStorage.setItem(`trial-swipe-count-${code}`, trialSwipeCount.toString());
+      } catch {
+        /* ignore */
+      }
     }
-  }, [isTrial, trialSwipeCount, code])
-
-  const { shouldShow: showTrialWall, trigger: trialTrigger, dismiss: trialDismiss, isHardBlock: trialHardBlock } = useLoginWall(trialSwipeCount, trialHasMatch)
+  }, [isTrial, trialSwipeCount, code]);
 
   const {
-    room,
-    loading,
-    error,
-    swipedMovieIds,
-    swipesLoaded,
-    setSwipedMovieIds,
-    reloadRoom,
-  } = useRoomData({ code })
+    shouldShow: showTrialWall,
+    trigger: trialTrigger,
+    dismiss: trialDismiss,
+    isHardBlock: trialHardBlock,
+  } = useLoginWall(trialSwipeCount, trialHasMatch);
+
+  const { room, loading, error, swipedMovieIds, swipesLoaded, setSwipedMovieIds, reloadRoom } =
+    useRoomData({ code });
 
   const {
     movies,
@@ -87,7 +90,7 @@ function RoomPageContent() {
     hasMoreMovies,
     loadMovies,
     handleLoadMoreMovies,
-  } = useMoviesData({ room, swipedMovieIds, swipesLoaded })
+  } = useMoviesData({ room, swipedMovieIds, swipesLoaded });
 
   const {
     matchedMovie,
@@ -100,139 +103,162 @@ function RoomPageContent() {
     resetUserJoined,
     userLeft,
     resetUserLeft,
-  } = useMatchNotifications({ roomId: room?.id || null })
+  } = useMatchNotifications({ roomId: room?.id || null });
 
   // Notify when a member joins the room
   useEffect(() => {
-    if (!userJoined) return
-    const name = userJoined.user.name || t('members.someone')
+    if (!userJoined) return;
+    const name = userJoined.user.name || t('members.someone');
     toast({
       title: t('members.joined', { name }),
-      type: "success",
+      type: 'success',
       duration: 3000,
-    })
-    reloadRoom()
-    resetUserJoined()
-  }, [userJoined, toast, reloadRoom, resetUserJoined, t])
+    });
+    reloadRoom();
+    resetUserJoined();
+  }, [userJoined, toast, reloadRoom, resetUserJoined, t]);
 
   // Notify when a member leaves the room
   useEffect(() => {
-    if (!userLeft) return
+    if (!userLeft) return;
     toast({
       title: t('members.left'),
-      type: "default",
+      type: 'default',
       duration: 3000,
-    })
-    reloadRoom()
-    resetUserLeft()
-  }, [userLeft, toast, reloadRoom, resetUserLeft, t])
+    });
+    reloadRoom();
+    resetUserLeft();
+  }, [userLeft, toast, reloadRoom, resetUserLeft, t]);
 
   // Auto-load more movies when the list is empty but more are available
   useEffect(() => {
     if (movies.length === 0 && hasMoreMovies && !moviesLoading && room) {
-      handleLoadMoreMovies()
+      handleLoadMoreMovies();
     }
-  }, [movies.length, hasMoreMovies, moviesLoading, room, handleLoadMoreMovies])
+  }, [movies.length, hasMoreMovies, moviesLoading, room, handleLoadMoreMovies]);
 
-  const handleSwipe = useCallback(async (movie: MovieBasic, direction: "left" | "right") => {
-    if (!room) return
-    const value = direction === "right"
-    const movieIdStr = movie.id.toString()
+  const handleSwipe = useCallback(
+    async (movie: MovieBasic, direction: 'left' | 'right') => {
+      if (!room) return;
+      const value = direction === 'right';
+      const movieIdStr = movie.id.toString();
 
-    setSwipedMovieIds(prev => {
-      const newSet = new Set(prev)
-      newSet.add(movieIdStr)
-      return newSet
-    })
-    setMovies(prev => prev.filter(m => m.id.toString() !== movieIdStr))
+      setSwipedMovieIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.add(movieIdStr);
+        return newSet;
+      });
+      setMovies((prev) => prev.filter((m) => m.id.toString() !== movieIdStr));
 
-    try {
-      const result = await createSwipe(room.id, movieIdStr, value)
-      captureEvent("swipe", { direction, movieId: movieIdStr, roomId: room.id })
-      if (isTrial) {
-        setTrialSwipeCount(prev => prev + 1)
-        if (direction === "right") {
-          setTrialLikedMovies(prev => [...prev, movie])
-        }
-        captureEvent("trial_swipe", { movieId: movieIdStr, direction, swipeNumber: trialSwipeCount + 1 })
-      }
-      if (result.matchCreated) {
+      try {
+        const result = await createSwipe(room.id, movieIdStr, value);
+        captureEvent('swipe', { direction, movieId: movieIdStr, roomId: room.id });
         if (isTrial) {
-          setTrialHasMatch(true)
-          captureEvent("trial_match", { movieId: movieIdStr, roomId: room.id })
+          setTrialSwipeCount((prev) => prev + 1);
+          if (direction === 'right') {
+            setTrialLikedMovies((prev) => [...prev, movie]);
+          }
+          captureEvent('trial_swipe', {
+            movieId: movieIdStr,
+            direction,
+            swipeNumber: trialSwipeCount + 1,
+          });
         }
-        captureEvent("match_found", { movieId: movieIdStr, roomId: room.id })
-        triggerMatchAnimation(movie)
+        if (result.matchCreated) {
+          if (isTrial) {
+            setTrialHasMatch(true);
+            captureEvent('trial_match', { movieId: movieIdStr, roomId: room.id });
+          }
+          captureEvent('match_found', { movieId: movieIdStr, roomId: room.id });
+          triggerMatchAnimation(movie);
+        }
+      } catch (err) {
+        console.error('Failed to save swipe:', err);
+        setSwipedMovieIds((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(movieIdStr);
+          return newSet;
+        });
+        setMovies((prev) => [movie, ...prev]);
+
+        const isSwipeLimitError =
+          err instanceof ApiError &&
+          (err.code === 'SWIPE_LIMIT_REACHED' || err.message.toLowerCase().includes('swipe limit'));
+
+        if (isSwipeLimitError) {
+          toast({
+            type: 'error',
+            title: tSwipe('limitReached'),
+            description: tSwipe('limitReachedDescription'),
+          });
+        } else {
+          toast({
+            type: 'error',
+            title: tSwipe('swipeError'),
+            description: err instanceof Error ? err.message : tSwipe('swipeErrorDescription'),
+          });
+        }
       }
-    } catch (err) {
-      console.error("Failed to save swipe:", err)
-      setSwipedMovieIds(prev => {
-        const newSet = new Set(prev)
-        newSet.delete(movieIdStr)
-        return newSet
-      })
-      setMovies(prev => [movie, ...prev])
+    },
+    [room, setSwipedMovieIds, setMovies, triggerMatchAnimation, toast, tSwipe],
+  );
 
-      const isSwipeLimitError = err instanceof ApiError &&
-        (err.code === 'SWIPE_LIMIT_REACHED' || err.message.toLowerCase().includes('swipe limit'))
+  const handleUndo = useCallback(
+    async (movie: MovieBasic) => {
+      if (!room) return;
+      const movieIdStr = movie.id.toString();
 
-      if (isSwipeLimitError) {
-        toast({
-          type: "error",
-          title: tSwipe('limitReached'),
-          description: tSwipe('limitReachedDescription'),
-        })
-      } else {
-        toast({
-          type: "error",
-          title: tSwipe('swipeError'),
-          description: err instanceof Error ? err.message : tSwipe('swipeErrorDescription'),
-        })
+      try {
+        await deleteSwipe(room.id, movieIdStr);
+        setSwipedMovieIds((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(movieIdStr);
+          return newSet;
+        });
+        setMovies((prev) => {
+          const exists = prev.some((m) => m.id.toString() === movieIdStr);
+          if (exists) return prev;
+          return [movie, ...prev];
+        });
+        setRefreshMatches((prev) => prev + 1);
+      } catch (err) {
+        console.error('Failed to undo swipe:', err);
       }
-    }
-  }, [room, setSwipedMovieIds, setMovies, triggerMatchAnimation, toast, tSwipe])
-
-  const handleUndo = useCallback(async (movie: MovieBasic) => {
-    if (!room) return
-    const movieIdStr = movie.id.toString()
-
-    try {
-      await deleteSwipe(room.id, movieIdStr)
-      setSwipedMovieIds(prev => {
-        const newSet = new Set(prev)
-        newSet.delete(movieIdStr)
-        return newSet
-      })
-      setMovies(prev => {
-        const exists = prev.some(m => m.id.toString() === movieIdStr)
-        if (exists) return prev
-        return [movie, ...prev]
-      })
-      setRefreshMatches(prev => prev + 1)
-    } catch (err) {
-      console.error("Failed to undo swipe:", err)
-    }
-  }, [room, setSwipedMovieIds, setMovies, setRefreshMatches])
+    },
+    [room, setSwipedMovieIds, setMovies, setRefreshMatches],
+  );
 
   const handleShowDetails = useCallback((movieId: number) => {
-    setSelectedMovieId(movieId)
-    setShowMovieDetails(true)
-  }, [])
+    setSelectedMovieId(movieId);
+    setShowMovieDetails(true);
+  }, []);
 
-  const handleTabChange = useCallback(async (value: string) => {
-    setCurrentTab(value)
-    if (value === "swipe" && room) {
-      const filtered = movies.filter(movie => movie && !swipedMovieIds.has(movie.id.toString()))
-      if (filtered.length !== movies.length) {
-        setMovies(filtered)
+  const handleTabChange = useCallback(
+    async (value: string) => {
+      setCurrentTab(value);
+      if (value === 'swipe' && room) {
+        const filtered = movies.filter(
+          (movie) => movie && !swipedMovieIds.has(movie.id.toString()),
+        );
+        if (filtered.length !== movies.length) {
+          setMovies(filtered);
+        }
+        if (filtered.length < 3 && room.genreId !== null && room.genreId !== undefined) {
+          await loadMovies(
+            room.genreId,
+            room.type as 'movie' | 'tv',
+            currentPage + 1,
+            true,
+            undefined,
+            swipedMovieIds,
+          );
+        }
       }
-      if (filtered.length < 3 && room.genreId !== null && room.genreId !== undefined) {
-        await loadMovies(room.genreId, room.type as 'movie' | 'tv', currentPage + 1, true, undefined, swipedMovieIds)
-      }
-    }
-  }, [room, movies, swipedMovieIds, setMovies, loadMovies, currentPage])
+    },
+    [room, movies, swipedMovieIds, setMovies, loadMovies, currentPage],
+  );
 
-  if (loading) return <RoomPageSkeleton />
+  if (loading) return <RoomPageSkeleton />;
 
   if (error) {
     return (
@@ -243,7 +269,7 @@ function RoomPageContent() {
           <p className="text-muted-foreground">{error}</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!room) {
@@ -252,39 +278,42 @@ function RoomPageContent() {
         <BackgroundOrbs />
         <p className="text-muted-foreground relative z-10">{t('notFound')}</p>
       </div>
-    )
+    );
   }
 
-  const userId = session?.user?.id ?? trialData?.guestId
-  const isMember = userId && room.members.some(member => member.id === userId)
+  const userId = session?.user?.id ?? trialData?.guestId;
+  const isMember = userId && room.members.some((member) => member.id === userId);
 
   const handleJoinRoom = async () => {
     try {
-      setJoiningRoom(true)
-      await joinRoom({ code })
-      await reloadRoom()
-      captureEvent("room_joined", { roomCode: code })
-      toast({ title: t('welcomeTitle'), description: t('welcomeDescription') })
+      setJoiningRoom(true);
+      await joinRoom({ code });
+      await reloadRoom();
+      captureEvent('room_joined', { roomCode: code });
+      toast({ title: t('welcomeTitle'), description: t('welcomeDescription') });
     } catch (err) {
-      console.error("Failed to join room:", err)
-      const errorMessage = err instanceof Error ? err.message : String(err)
-      if (errorMessage.toLowerCase().includes('full') || errorMessage.toLowerCase().includes('pleine')) {
+      console.error('Failed to join room:', err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      if (
+        errorMessage.toLowerCase().includes('full') ||
+        errorMessage.toLowerCase().includes('pleine')
+      ) {
         toast({
-          type: "error",
+          type: 'error',
           title: t('roomFullTitle'),
           description: t('roomFullDescription', { current: room?.members.length || 0, max: 10 }),
-        })
+        });
       } else {
         toast({
-          type: "error",
+          type: 'error',
           title: t('joinErrorTitle'),
           description: t('joinErrorDescription'),
-        })
+        });
       }
     } finally {
-      setJoiningRoom(false)
+      setJoiningRoom(false);
     }
-  }
+  };
 
   if (!isMember) {
     return (
@@ -304,32 +333,33 @@ function RoomPageContent() {
           joiningButton: t('joiningButton'),
         }}
       />
-    )
+    );
   }
 
   // Show TrialRecap when the hard swipe limit is reached
-  if (isTrial && trialSwipeCount >= 25) {
+  if (isTrial && trialSwipeCount >= TRIAL_CONFIG.hardSwipeLimit) {
     return (
       <TrialRecap
         likedMovies={trialLikedMovies}
         locale={locale}
         onSignUp={() => {}}
         onRetry={() => {
-          clearTrialData()
-          router.push(`/${locale}/try`)
+          clearTrialData();
+          router.push(`/${locale}/try`);
         }}
       />
-    )
+    );
   }
 
   return (
     <>
-      {isTrial && (
-        <TrialHeader locale={locale} roomCode={code} />
-      )}
+      {isTrial && <TrialHeader locale={locale} roomCode={code} />}
 
       {isTrial && (
-        <TrialBanner remaining={Math.max(0, 25 - trialSwipeCount)} locale={locale} />
+        <TrialBanner
+          remaining={Math.max(0, TRIAL_CONFIG.hardSwipeLimit - trialSwipeCount)}
+          locale={locale}
+        />
       )}
 
       {isTrial && (
@@ -353,7 +383,7 @@ function RoomPageContent() {
         {showMovieDetails && (
           <MovieDetailsModal
             movieId={selectedMovieId}
-            mediaType={room?.type as "movie" | "tv" | undefined}
+            mediaType={room?.type as 'movie' | 'tv' | undefined}
             open={showMovieDetails}
             onOpenChange={setShowMovieDetails}
           />
@@ -432,16 +462,16 @@ function RoomPageContent() {
         <div className="h-20 sm:hidden" />
       </div>
     </>
-  )
+  );
 }
 
 export default function RoomPage() {
-  const params = useParams<{ code: string }>()
-  const code = params?.code ?? ""
+  const params = useParams<{ code: string }>();
+  const code = params?.code ?? '';
 
   return (
     <RoomErrorBoundary roomId={code}>
       <RoomPageContent />
     </RoomErrorBoundary>
-  )
+  );
 }
