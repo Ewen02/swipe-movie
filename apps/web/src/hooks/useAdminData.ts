@@ -10,6 +10,11 @@ import {
   getAdminSubscriptions,
   getAdminTopMatches,
   getAdminTrialStats,
+  getAdminEngagement,
+  getAdminViral,
+  getAdminContent,
+  getAdminRevenue,
+  getAdminPerformance,
   getHealthCheck,
   type AdminStats,
   type AdminUsersFilter,
@@ -20,6 +25,11 @@ import {
   type SubscriptionStats,
   type TopMatchesData,
   type TrialStats,
+  type EngagementStats,
+  type ViralStats,
+  type ContentStats,
+  type RevenueStats,
+  type PerformanceStats,
   type HealthCheckData,
 } from '@/lib/api/admin';
 
@@ -93,6 +103,51 @@ export function useAdminTopMatches() {
     { dedupingInterval: 60 * 1000, revalidateOnFocus: false },
   );
   return { topMatches: data, isLoading, error, refresh: () => mutate() };
+}
+
+export function useAdminEngagement() {
+  const { data, error, isLoading, mutate } = useSWR<EngagementStats>(
+    '/api/admin/engagement',
+    () => getAdminEngagement(),
+    { dedupingInterval: 60 * 1000, revalidateOnFocus: false },
+  );
+  return { engagement: data, isLoading, error, refresh: () => mutate() };
+}
+
+export function useAdminViral() {
+  const { data, error, isLoading, mutate } = useSWR<ViralStats>(
+    '/api/admin/viral',
+    () => getAdminViral(),
+    { dedupingInterval: 60 * 1000, revalidateOnFocus: false },
+  );
+  return { viral: data, isLoading, error, refresh: () => mutate() };
+}
+
+export function useAdminContent() {
+  const { data, error, isLoading, mutate } = useSWR<ContentStats>(
+    '/api/admin/content',
+    () => getAdminContent(),
+    { dedupingInterval: 60 * 1000, revalidateOnFocus: false },
+  );
+  return { content: data, isLoading, error, refresh: () => mutate() };
+}
+
+export function useAdminRevenue() {
+  const { data, error, isLoading, mutate } = useSWR<RevenueStats>(
+    '/api/admin/revenue',
+    () => getAdminRevenue(),
+    { dedupingInterval: 60 * 1000, revalidateOnFocus: false },
+  );
+  return { revenue: data, isLoading, error, refresh: () => mutate() };
+}
+
+export function useAdminPerformance() {
+  const { data, error, isLoading, mutate } = useSWR<PerformanceStats>(
+    '/api/admin/performance',
+    () => getAdminPerformance(),
+    { dedupingInterval: 30 * 1000, revalidateOnFocus: false },
+  );
+  return { performance: data, isLoading, error, refresh: () => mutate() };
 }
 
 export function useHealthCheck() {

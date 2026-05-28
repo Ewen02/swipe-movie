@@ -86,6 +86,53 @@ export class AdminController {
     return this.adminService.getTopMatches(parseInt(limit || '10', 10));
   }
 
+  @Get('engagement')
+  @ApiOperation({
+    summary:
+      'Get engagement stats (swipes/user, time-to-first-action, like rate)',
+  })
+  getEngagement(@User('email') email: string) {
+    this.logger.log(`${email} accessed GET /admin/engagement`);
+    return this.adminService.getEngagementStats();
+  }
+
+  @Get('viral')
+  @ApiOperation({
+    summary: 'Get viral funnel stats (room sizes, orphans, top inviters)',
+  })
+  getViral(@User('email') email: string) {
+    this.logger.log(`${email} accessed GET /admin/viral`);
+    return this.adminService.getViralStats();
+  }
+
+  @Get('content')
+  @ApiOperation({
+    summary:
+      'Get content stats (top swiped, controversial, dead movies, genres, providers)',
+  })
+  getContent(@User('email') email: string, @Query('limit') limit?: string) {
+    this.logger.log(`${email} accessed GET /admin/content`);
+    return this.adminService.getContentStats(parseInt(limit || '10', 10));
+  }
+
+  @Get('revenue')
+  @ApiOperation({
+    summary: 'Get revenue stats (plan counts, churn, trial->paid, tenure)',
+  })
+  getRevenue(@User('email') email: string) {
+    this.logger.log(`${email} accessed GET /admin/revenue`);
+    return this.adminService.getRevenueStats();
+  }
+
+  @Get('performance')
+  @ApiOperation({
+    summary: 'Get runtime/perf stats (uptime, memory, table sizes)',
+  })
+  getPerformance(@User('email') email: string) {
+    this.logger.log(`${email} accessed GET /admin/performance`);
+    return this.adminService.getPerformanceStats();
+  }
+
   @Get('export/users')
   @ApiOperation({ summary: 'Export users as CSV' })
   async exportUsers(

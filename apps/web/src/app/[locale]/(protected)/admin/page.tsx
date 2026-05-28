@@ -12,6 +12,11 @@ import {
   Users,
   UserSearch,
   Ghost,
+  Activity,
+  Share2,
+  Film,
+  DollarSign,
+  Cpu,
 } from 'lucide-react';
 import { Button, Tabs, TabsList, TabsTrigger, TabsContent } from '@swipe-movie/ui';
 import { Footer } from '@/components/layout/Footer';
@@ -25,6 +30,11 @@ import {
   useAdminSubscriptions,
   useAdminTopMatches,
   useAdminTrialStats,
+  useAdminEngagement,
+  useAdminViral,
+  useAdminContent,
+  useAdminRevenue,
+  useAdminPerformance,
   useHealthCheck,
 } from '@/hooks/useAdminData';
 import type { AdminUsersFilter } from '@/lib/api/admin';
@@ -51,13 +61,44 @@ const UsersTable = dynamic(
   () => import('@/components/admin/UsersTable').then((m) => ({ default: m.UsersTable })),
   { ssr: false },
 );
+const EngagementStatsPanel = dynamic(
+  () =>
+    import('@/components/admin/EngagementStats').then((m) => ({
+      default: m.EngagementStatsPanel,
+    })),
+  { ssr: false },
+);
+const ViralStatsPanel = dynamic(
+  () => import('@/components/admin/ViralStats').then((m) => ({ default: m.ViralStatsPanel })),
+  { ssr: false },
+);
+const ContentStatsPanel = dynamic(
+  () => import('@/components/admin/ContentStats').then((m) => ({ default: m.ContentStatsPanel })),
+  { ssr: false },
+);
+const RevenueStatsPanel = dynamic(
+  () => import('@/components/admin/RevenueStats').then((m) => ({ default: m.RevenueStatsPanel })),
+  { ssr: false },
+);
+const PerformanceStatsPanel = dynamic(
+  () =>
+    import('@/components/admin/PerformanceStats').then((m) => ({
+      default: m.PerformanceStatsPanel,
+    })),
+  { ssr: false },
+);
 
 const TAB_CONFIG = [
   { value: 'overview', label: "Vue d'ensemble", icon: LayoutDashboard },
   { value: 'activity', label: 'Activité', icon: TrendingUp },
+  { value: 'engagement', label: 'Engagement', icon: Activity },
+  { value: 'viral', label: 'Viralité', icon: Share2 },
+  { value: 'content', label: 'Contenu', icon: Film },
+  { value: 'revenue', label: 'Revenu', icon: DollarSign },
   { value: 'guests', label: 'Guests', icon: Ghost },
   { value: 'retention', label: 'Rétention', icon: Users },
   { value: 'users', label: 'Utilisateurs', icon: UserSearch },
+  { value: 'perf', label: 'Perf', icon: Cpu },
 ] as const;
 
 export default function AdminPage() {
@@ -95,6 +136,19 @@ export default function AdminPage() {
     isLoading: trialStatsLoading,
     refresh: refreshTrialStats,
   } = useAdminTrialStats();
+  const {
+    engagement,
+    isLoading: engagementLoading,
+    refresh: refreshEngagement,
+  } = useAdminEngagement();
+  const { viral, isLoading: viralLoading, refresh: refreshViral } = useAdminViral();
+  const { content, isLoading: contentLoading, refresh: refreshContent } = useAdminContent();
+  const { revenue, isLoading: revenueLoading, refresh: refreshRevenue } = useAdminRevenue();
+  const {
+    performance,
+    isLoading: performanceLoading,
+    refresh: refreshPerformance,
+  } = useAdminPerformance();
   const { health, isLoading: healthLoading, refresh: refreshHealth } = useHealthCheck();
 
   useEffect(() => {
@@ -115,6 +169,11 @@ export default function AdminPage() {
     refreshSubs();
     refreshMatches();
     refreshTrialStats();
+    refreshEngagement();
+    refreshViral();
+    refreshContent();
+    refreshRevenue();
+    refreshPerformance();
     refreshHealth();
   };
 
@@ -197,8 +256,28 @@ export default function AdminPage() {
                 />
               </TabsContent>
 
+              <TabsContent value="engagement" className="space-y-6 mt-0">
+                <EngagementStatsPanel engagement={engagement} isLoading={engagementLoading} />
+              </TabsContent>
+
+              <TabsContent value="viral" className="space-y-6 mt-0">
+                <ViralStatsPanel viral={viral} isLoading={viralLoading} />
+              </TabsContent>
+
+              <TabsContent value="content" className="space-y-6 mt-0">
+                <ContentStatsPanel content={content} isLoading={contentLoading} />
+              </TabsContent>
+
+              <TabsContent value="revenue" className="space-y-6 mt-0">
+                <RevenueStatsPanel revenue={revenue} isLoading={revenueLoading} />
+              </TabsContent>
+
               <TabsContent value="guests" className="space-y-6 mt-0">
                 <GuestStats trialStats={trialStats} isLoading={trialStatsLoading} />
+              </TabsContent>
+
+              <TabsContent value="perf" className="space-y-6 mt-0">
+                <PerformanceStatsPanel performance={performance} isLoading={performanceLoading} />
               </TabsContent>
 
               <TabsContent value="retention" className="space-y-6 mt-0">

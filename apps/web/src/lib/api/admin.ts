@@ -151,6 +151,98 @@ export async function getAdminTopMatches(limit = 10): Promise<TopMatchesData> {
   return res.json();
 }
 
+export interface EngagementStats {
+  swipesPerUser: { median: number; p75: number; p95: number; max: number };
+  distribution: { b0: number; b1_10: number; b11_50: number; b51_plus: number };
+  timeToFirstSwipeMin: { median: number; p75: number; avg: number; sampleSize: number };
+  timeToFirstMatchMin: { median: number; p75: number; avg: number; sampleSize: number };
+  likeRate: number;
+  totalSwipes: number;
+  totalLikes: number;
+}
+
+export interface ViralStats {
+  avgRoomSize: number;
+  multiUserRate: number;
+  sizeDistribution: { size1: number; size2: number; size3_4: number; size5_plus: number };
+  orphanRooms: number;
+  totalActiveRooms: number;
+  recurringRooms: number;
+  recurringRate: number;
+  topInviters: Array<{
+    userId: string;
+    email: string;
+    name: string | null;
+    isGuest: boolean;
+    roomsCreated: number;
+    totalMembersAttracted: number;
+  }>;
+}
+
+export interface ContentStats {
+  topSwiped: Array<{ movieId: string; swipeCount: number }>;
+  controversial: Array<{ movieId: string; totalSwipes: number; likeRate: number }>;
+  deadMovies: Array<{ movieId: string; totalSwipes: number; likes: number }>;
+  topGenres: Array<{ genreId: number; roomCount: number }>;
+  topProviders: Array<{ providerId: number; roomCount: number }>;
+  mediaTypeSplit: { movie: number; tv: number };
+}
+
+export interface RevenueStats {
+  planCounts: Record<string, { active: number; trialing: number }>;
+  activePaying: number;
+  cancelled30d: number;
+  cancelled90d: number;
+  churnRate30d: number;
+  trialEnded30d: number;
+  trialConverted30d: number;
+  trialToPaidRate: number;
+  avgTenureDays: number;
+}
+
+export interface PerformanceStats {
+  process: { uptimeSec: number; heapUsedMb: number; nodeVersion: string };
+  tableSizes: {
+    users: number;
+    rooms: number;
+    swipes: number;
+    matches: number;
+    sessions: number;
+    subscriptions: number;
+  };
+  adminCacheTtlSec: number;
+}
+
+export async function getAdminEngagement(): Promise<EngagementStats> {
+  const res = await GET('/admin/engagement');
+  if (!res.ok) throw new Error(`Admin engagement failed: ${res.status}`);
+  return res.json();
+}
+
+export async function getAdminViral(): Promise<ViralStats> {
+  const res = await GET('/admin/viral');
+  if (!res.ok) throw new Error(`Admin viral failed: ${res.status}`);
+  return res.json();
+}
+
+export async function getAdminContent(limit = 10): Promise<ContentStats> {
+  const res = await GET(`/admin/content?limit=${limit}`);
+  if (!res.ok) throw new Error(`Admin content failed: ${res.status}`);
+  return res.json();
+}
+
+export async function getAdminRevenue(): Promise<RevenueStats> {
+  const res = await GET('/admin/revenue');
+  if (!res.ok) throw new Error(`Admin revenue failed: ${res.status}`);
+  return res.json();
+}
+
+export async function getAdminPerformance(): Promise<PerformanceStats> {
+  const res = await GET('/admin/performance');
+  if (!res.ok) throw new Error(`Admin performance failed: ${res.status}`);
+  return res.json();
+}
+
 export interface HealthCheckData {
   status: string;
   timestamp: string;

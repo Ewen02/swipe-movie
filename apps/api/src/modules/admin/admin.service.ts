@@ -572,4 +572,519 @@ export class AdminService {
     await this.cacheManager.set(cacheKey, topMatchesResult, ADMIN_CACHE_TTL);
     return topMatchesResult;
   }
+
+  // ============================================================
+  // A. Engagement: how deeply users actually use the product
+  // ============================================================
+  async getEngagementStats() {
+    const cacheKey = 'admin:engagement';
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) return cached;
+
+    // Per-user swipe counts (real users only). The distribution buckets help
+    // distinguish drive-by signups from real activation.
+    const userSwipes = await this.prisma.swipe.groupBy({
+      by: ['userId'],
+      where: { user: { isGuest: false } },
+      _count: { id: true },
+      _min: { createdAt: true },
+    });
+
+    const userIds = userSwipes.map((u) => u.userId);
+    const users =
+      userIds.length > 0
+        ? await this.prisma.user.findMany({
+            where: { id: { in: userIds } },
+            select: { id: true, createdAt: true },
+          })
+        : [];
+    const userCreatedMap = new Map(users.map((u) => [u.id, u.createdAt]));
+
+    // Time-to-first-swipe (signup → first swipe), in minutes.
+    const firstSwipeDeltas: number[] = [];
+    for (const row of userSwipes) {
+      const created = userCreatedMap.get(row.userId);
+      if (!created || !row._min.createdAt) continue;
+      const deltaMin =
+        (row._min.createdAt.getTime() - created.getTime()) / 60000;
+      if (deltaMin >= 0) firstSwipeDeltas.push(deltaMin);
+    }
+
+    const swipeCounts = userSwipes.map((u) => u._count.id);
+    swipeCounts.sort((a, b) => a - b);
+
+    const percentile = (sorted: number[], p: number) => {
+      if (sorted.length === 0) return 0;
+      const idx = Math.min(
+        sorted.length - 1,
+        Math.floor((p / 100) * sorted.length),
+      );
+      return sorted[idx] ?? 0;
+    };
+
+    // Distribution buckets — pick widths that map to product moments:
+    // 0 = signed up but never swiped (dead lead)
+    // 1-10 = tried but bounced
+    // 11-50 = real session
+    // 51+ = heavy user
+    const buckets = { b0: 0, b1_10: 0, b11_50: 0, b51_plus: 0 };
+    for (const c of swipeCounts) {
+      if (c === 0) buckets.b0++;
+      else if (c <= 10) buckets.b1_10++;
+      else if (c <= 50) buckets.b11_50++;
+      else buckets.b51_plus++;
+    }
+    // Account for users that have 0 swipes (not in groupBy result).
+    const totalRealUsers = await this.prisma.user.count({
+      where: { isGuest: false },
+    });
+    buckets.b0 += Math.max(0, totalRealUsers - swipeCounts.length);
+
+    // Time-to-first-match (signup → first match in any of their rooms).
+    // Match rows don't carry userId, so we join: match.room → room.members.
+    const usersWithMatchData = await this.prisma.user.findMany({
+      where: { isGuest: false },
+      select: {
+        id: true,
+        createdAt: true,
+        members: {
+          select: {
+            room: {
+              select: {
+                matches: {
+                  select: { createdAt: true },
+                  orderBy: { createdAt: 'asc' },
+                  take: 1,
+                },
+              },
+            },
+          },
+        },
+      },
+      take: 2000, // cap so the join doesn't explode on big tables
+    });
+    const firstMatchDeltas: number[] = [];
+    for (const u of usersWithMatchData) {
+      let firstMatch: Date | null = null;
+      for (const m of u.members) {
+        const candidate = m.room.matches[0]?.createdAt;
+        if (!candidate) continue;
+        if (!firstMatch || candidate < firstMatch) firstMatch = candidate;
+      }
+      if (firstMatch) {
+        const deltaMin = (firstMatch.getTime() - u.createdAt.getTime()) / 60000;
+        if (deltaMin >= 0) firstMatchDeltas.push(deltaMin);
+      }
+    }
+
+    // Like rate: % of swipes that are "yes". Tells us how lenient the catalog
+    // feels — a 90% like rate means the algorithm is too easy.
+    const [likes, totalSwipes] = await Promise.all([
+      this.prisma.swipe.count({ where: { value: true } }),
+      this.prisma.swipe.count(),
+    ]);
+
+    const avg = (arr: number[]) =>
+      arr.length > 0 ? arr.reduce((s, n) => s + n, 0) / arr.length : 0;
+    const sorted = (arr: number[]) => [...arr].sort((a, b) => a - b);
+
+    const sortedFirstSwipe = sorted(firstSwipeDeltas);
+    const sortedFirstMatch = sorted(firstMatchDeltas);
+
+    const result = {
+      swipesPerUser: {
+        median: percentile(swipeCounts, 50),
+        p75: percentile(swipeCounts, 75),
+        p95: percentile(swipeCounts, 95),
+        max: swipeCounts[swipeCounts.length - 1] ?? 0,
+      },
+      distribution: buckets,
+      timeToFirstSwipeMin: {
+        median: Math.round(percentile(sortedFirstSwipe, 50)),
+        p75: Math.round(percentile(sortedFirstSwipe, 75)),
+        avg: Math.round(avg(firstSwipeDeltas)),
+        sampleSize: firstSwipeDeltas.length,
+      },
+      timeToFirstMatchMin: {
+        median: Math.round(percentile(sortedFirstMatch, 50)),
+        p75: Math.round(percentile(sortedFirstMatch, 75)),
+        avg: Math.round(avg(firstMatchDeltas)),
+        sampleSize: firstMatchDeltas.length,
+      },
+      likeRate: totalSwipes > 0 ? Math.round((likes / totalSwipes) * 100) : 0,
+      totalSwipes,
+      totalLikes: likes,
+    };
+    await this.cacheManager.set(cacheKey, result, ADMIN_CACHE_TTL);
+    return result;
+  }
+
+  // ============================================================
+  // B. Viral funnel: how rooms spread and fill up
+  // ============================================================
+  async getViralStats() {
+    const cacheKey = 'admin:viral';
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) return cached;
+
+    const memberCounts = await this.prisma.roomMember.groupBy({
+      by: ['roomId'],
+      _count: { id: true },
+    });
+
+    const sizes = memberCounts.map((m) => m._count.id);
+    sizes.sort((a, b) => a - b);
+
+    const sizeDist = { size1: 0, size2: 0, size3_4: 0, size5_plus: 0 };
+    for (const s of sizes) {
+      if (s <= 1) sizeDist.size1++;
+      else if (s === 2) sizeDist.size2++;
+      else if (s <= 4) sizeDist.size3_4++;
+      else sizeDist.size5_plus++;
+    }
+
+    const totalRooms = await this.prisma.room.count({
+      where: { deletedAt: null },
+    });
+    // Rooms with no member row at all = code generated but nobody joined.
+    const roomsWithMembers = memberCounts.length;
+    const orphanRooms = Math.max(0, totalRooms - roomsWithMembers);
+
+    const avgRoomSize =
+      sizes.length > 0
+        ? Math.round((sizes.reduce((s, n) => s + n, 0) / sizes.length) * 10) /
+          10
+        : 0;
+
+    const multiUserRooms = sizes.filter((s) => s >= 2).length;
+    const multiUserRate =
+      sizes.length > 0 ? Math.round((multiUserRooms / sizes.length) * 100) : 0;
+
+    // Top inviters: users whose rooms attract the most members.
+    const allRoomsWithCreator = await this.prisma.room.findMany({
+      where: { deletedAt: null },
+      select: {
+        createdBy: true,
+        _count: { select: { members: true } },
+      },
+    });
+    const inviterMap = new Map<string, { rooms: number; members: number }>();
+    for (const r of allRoomsWithCreator) {
+      const cur = inviterMap.get(r.createdBy) ?? { rooms: 0, members: 0 };
+      cur.rooms++;
+      cur.members += r._count.members;
+      inviterMap.set(r.createdBy, cur);
+    }
+    const topInviterIds = Array.from(inviterMap.entries())
+      .sort((a, b) => b[1].members - a[1].members)
+      .slice(0, 10);
+    const inviterUsers =
+      topInviterIds.length > 0
+        ? await this.prisma.user.findMany({
+            where: { id: { in: topInviterIds.map(([id]) => id) } },
+            select: { id: true, email: true, name: true, isGuest: true },
+          })
+        : [];
+    const inviterUserMap = new Map(inviterUsers.map((u) => [u.id, u]));
+    const topInviters = topInviterIds.map(([id, agg]) => ({
+      userId: id,
+      email: inviterUserMap.get(id)?.email ?? '(deleted)',
+      name: inviterUserMap.get(id)?.name ?? null,
+      isGuest: inviterUserMap.get(id)?.isGuest ?? false,
+      roomsCreated: agg.rooms,
+      totalMembersAttracted: agg.members,
+    }));
+
+    const recurringRooms = await this.prisma.room.count({
+      where: { deletedAt: null, isRecurring: true },
+    });
+
+    const result = {
+      avgRoomSize,
+      multiUserRate,
+      sizeDistribution: sizeDist,
+      orphanRooms,
+      totalActiveRooms: totalRooms,
+      recurringRooms,
+      recurringRate:
+        totalRooms > 0 ? Math.round((recurringRooms / totalRooms) * 100) : 0,
+      topInviters,
+    };
+    await this.cacheManager.set(cacheKey, result, ADMIN_CACHE_TTL);
+    return result;
+  }
+
+  // ============================================================
+  // D. Content: what the catalog actually looks like in use
+  // ============================================================
+  async getContentStats(limit = 10) {
+    const cacheKey = `admin:content:${limit}`;
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) return cached;
+
+    // Top swiped movies (vs top matched, which we already expose).
+    const [topSwiped, perMovie] = await Promise.all([
+      this.prisma.swipe.groupBy({
+        by: ['movieId'],
+        _count: { id: true },
+        orderBy: { _count: { id: 'desc' } },
+        take: limit,
+      }),
+      // For per-movie like rate / "controversial" detection we need likes+dislikes.
+      // Cap to top 200 most-swiped to keep this tractable.
+      this.prisma.swipe.groupBy({
+        by: ['movieId', 'value'],
+        _count: { id: true },
+        orderBy: { _count: { id: 'desc' } },
+        take: 1000,
+      }),
+    ]);
+
+    const movieStats = new Map<string, { likes: number; dislikes: number }>();
+    for (const row of perMovie) {
+      const cur = movieStats.get(row.movieId) ?? { likes: 0, dislikes: 0 };
+      if (row.value) cur.likes += row._count.id;
+      else cur.dislikes += row._count.id;
+      movieStats.set(row.movieId, cur);
+    }
+
+    // Controversial = at least 20 swipes AND like rate between 40-60%.
+    // Below the threshold the signal is noise.
+    const MIN_SWIPES_FOR_CONTROVERSY = 20;
+    const controversial = Array.from(movieStats.entries())
+      .map(([movieId, s]) => {
+        const total = s.likes + s.dislikes;
+        return {
+          movieId,
+          totalSwipes: total,
+          likeRate: total > 0 ? Math.round((s.likes / total) * 100) : 0,
+        };
+      })
+      .filter(
+        (m) =>
+          m.totalSwipes >= MIN_SWIPES_FOR_CONTROVERSY &&
+          m.likeRate >= 40 &&
+          m.likeRate <= 60,
+      )
+      .sort((a, b) => b.totalSwipes - a.totalSwipes)
+      .slice(0, limit);
+
+    // "Dead" movies: heavily swiped but never matched. Find candidates by
+    // intersecting top-swiped with movies that have zero matches.
+    const matchedMovieIds = new Set(
+      (await this.prisma.match.groupBy({ by: ['movieId'] })).map(
+        (m) => m.movieId,
+      ),
+    );
+    const deadMovies = Array.from(movieStats.entries())
+      .filter(
+        ([id, s]) =>
+          !matchedMovieIds.has(id) &&
+          s.likes + s.dislikes >= MIN_SWIPES_FOR_CONTROVERSY,
+      )
+      .map(([movieId, s]) => ({
+        movieId,
+        totalSwipes: s.likes + s.dislikes,
+        likes: s.likes,
+      }))
+      .sort((a, b) => b.totalSwipes - a.totalSwipes)
+      .slice(0, limit);
+
+    // Top genres (from rooms — better proxy than aggregating each swipe's TMDB
+    // metadata which we'd have to refetch).
+    const genreCounts = await this.prisma.room.groupBy({
+      by: ['genreId'],
+      where: { deletedAt: null },
+      _count: { id: true },
+      orderBy: { _count: { id: 'desc' } },
+      take: limit,
+    });
+
+    // Top providers — unnest the array.
+    const allRoomProviders = await this.prisma.room.findMany({
+      where: { deletedAt: null },
+      select: { watchProviders: true },
+    });
+    const providerCount = new Map<number, number>();
+    for (const r of allRoomProviders) {
+      for (const p of r.watchProviders) {
+        providerCount.set(p, (providerCount.get(p) ?? 0) + 1);
+      }
+    }
+    const topProviders = Array.from(providerCount.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, limit)
+      .map(([providerId, count]) => ({ providerId, roomCount: count }));
+
+    // Movie/TV split.
+    const [movieRooms, tvRooms] = await Promise.all([
+      this.prisma.room.count({ where: { deletedAt: null, type: 'MOVIE' } }),
+      this.prisma.room.count({ where: { deletedAt: null, type: 'TV' } }),
+    ]);
+
+    const result = {
+      topSwiped: topSwiped.map((m) => ({
+        movieId: m.movieId,
+        swipeCount: m._count.id,
+      })),
+      controversial,
+      deadMovies,
+      topGenres: genreCounts.map((g) => ({
+        genreId: g.genreId,
+        roomCount: g._count.id,
+      })),
+      topProviders,
+      mediaTypeSplit: { movie: movieRooms, tv: tvRooms },
+    };
+    await this.cacheManager.set(cacheKey, result, ADMIN_CACHE_TTL);
+    return result;
+  }
+
+  // ============================================================
+  // E. Revenue: MRR, ARPU, churn, LTV
+  // ============================================================
+  async getRevenueStats() {
+    const cacheKey = 'admin:revenue';
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) return cached;
+
+    // We don't store prices in the DB; the canonical source is
+    // packages/subscription. Hardcoding here would drift — instead we count
+    // active paying subscriptions per plan and let the caller resolve price.
+    const activeSubs = await this.prisma.subscription.findMany({
+      where: {
+        status: { in: ['active', 'trialing'] },
+        deletedAt: null,
+      },
+      select: {
+        plan: true,
+        status: true,
+        periodStart: true,
+        periodEnd: true,
+        trialEnd: true,
+        createdAt: true,
+      },
+    });
+
+    const planCounts: Record<string, { active: number; trialing: number }> = {};
+    for (const s of activeSubs) {
+      const slot = (planCounts[s.plan] ??= { active: 0, trialing: 0 });
+      if (s.status === 'trialing') slot.trialing++;
+      else slot.active++;
+    }
+
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000);
+    const ninetyDaysAgo = new Date(Date.now() - 90 * 86400000);
+
+    // Churn proxy: subs cancelled (deletedAt set) in last 30/90d, relative to
+    // active+cancelled in the same window. Not actuarial but useful directional.
+    const [cancelled30d, cancelled90d] = await Promise.all([
+      this.prisma.subscription.count({
+        where: { deletedAt: { gte: thirtyDaysAgo } },
+      }),
+      this.prisma.subscription.count({
+        where: { deletedAt: { gte: ninetyDaysAgo } },
+      }),
+    ]);
+
+    const activeCount = Object.values(planCounts).reduce(
+      (s, v) => s + v.active + v.trialing,
+      0,
+    );
+    const churnRate30d =
+      activeCount + cancelled30d > 0
+        ? Math.round((cancelled30d / (activeCount + cancelled30d)) * 100)
+        : 0;
+
+    // Trial-end conversion: subs with trialEnd in past 30d that are still
+    // active = trial converted to paid.
+    const [trialEnded30d, trialConverted30d] = await Promise.all([
+      this.prisma.subscription.count({
+        where: {
+          trialEnd: { gte: thirtyDaysAgo, lte: new Date() },
+        },
+      }),
+      this.prisma.subscription.count({
+        where: {
+          trialEnd: { gte: thirtyDaysAgo, lte: new Date() },
+          status: 'active',
+          deletedAt: null,
+        },
+      }),
+    ]);
+
+    const trialToPaidRate =
+      trialEnded30d > 0
+        ? Math.round((trialConverted30d / trialEnded30d) * 100)
+        : 0;
+
+    // Avg subscription age (days) for currently-active paying subs — proxy for
+    // tenure / LTV trend.
+    const paidActive = activeSubs.filter(
+      (s) => s.status === 'active' && s.plan !== 'free' && s.plan !== 'FREE',
+    );
+    const avgTenureDays =
+      paidActive.length > 0
+        ? Math.round(
+            paidActive.reduce(
+              (sum, s) => sum + (Date.now() - s.createdAt.getTime()) / 86400000,
+              0,
+            ) / paidActive.length,
+          )
+        : 0;
+
+    const result = {
+      planCounts,
+      activePaying: paidActive.length,
+      cancelled30d,
+      cancelled90d,
+      churnRate30d,
+      trialEnded30d,
+      trialConverted30d,
+      trialToPaidRate,
+      avgTenureDays,
+    };
+    await this.cacheManager.set(cacheKey, result, ADMIN_CACHE_TTL);
+    return result;
+  }
+
+  // ============================================================
+  // F. Performance / health
+  // ============================================================
+  async getPerformanceStats() {
+    const cacheKey = 'admin:perf';
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) return cached;
+
+    // We don't have a request-log table — so this surfaces what we *do* have:
+    // - process uptime (already on /health)
+    // - cache stats from the in-memory manager
+    // - per-table row counts to spot tables that have grown unexpectedly
+    const uptimeSec = Math.round(process.uptime());
+    const memoryMb = Math.round(process.memoryUsage().heapUsed / 1024 / 1024);
+
+    const [users, rooms, swipes, matches, sessions, subscriptions] =
+      await Promise.all([
+        this.prisma.user.count(),
+        this.prisma.room.count(),
+        this.prisma.swipe.count(),
+        this.prisma.match.count(),
+        this.prisma.session.count(),
+        this.prisma.subscription.count(),
+      ]);
+
+    const result = {
+      process: {
+        uptimeSec,
+        heapUsedMb: memoryMb,
+        nodeVersion: process.version,
+      },
+      tableSizes: { users, rooms, swipes, matches, sessions, subscriptions },
+      // Cache TTL we use for the admin endpoints — exposes the freshness
+      // contract so users know data can be up to N seconds stale.
+      adminCacheTtlSec: Math.round(ADMIN_CACHE_TTL / 1000),
+    };
+    await this.cacheManager.set(cacheKey, result, ADMIN_CACHE_TTL);
+    return result;
+  }
 }
