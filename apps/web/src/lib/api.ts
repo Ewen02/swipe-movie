@@ -1,22 +1,15 @@
 import { getSession } from '@/lib/auth-client';
 import { getCachedEmail, setCachedEmail, clearSessionCache } from '@/lib/session-cache';
 
-async function getCachedUserEmail(): Promise<string | undefined> {
-  const cached = getCachedEmail();
-  if (cached) {
-    return cached;
-  }
-
+async function fetchSessionEmail(): Promise<string | undefined> {
   try {
     const session = await getSession();
     const email = session?.data?.user?.email;
-
     if (email) {
       setCachedEmail(email);
     } else {
       clearSessionCache();
     }
-
     return email;
   } catch (e) {
     console.error('[api] Failed to get session:', e);
@@ -31,29 +24,44 @@ function getTrialToken(): string | undefined {
   return match?.[1] || undefined;
 }
 
-export async function apiFetch(input: string, init: RequestInit = {}) {
-  const reqHeaders = new Headers(init.headers);
+type AuthHeader =
+  | { kind: 'session'; name: 'X-User-Email'; value: string }
+  | { kind: 'trial'; name: 'Authorization'; value: string }
+  | { kind: 'none' };
 
-  // A real Better Auth session always wins over a leftover trial token.
-  // Why: after OAuth, the trial cookie can linger for a few ms before
-  // clearTrialData() runs — using the guest JWT during that window would
-  // authenticate the migrate/room calls as the (about-to-be-deleted) guest.
-  // Cached email lookup avoids a network call when the session is known.
+/**
+ * Resolve which auth header to send for this request. A real Better Auth
+ * session always wins over a leftover trial token — after OAuth, the trial
+ * cookie can linger for a few ms before clearTrialData() runs; using the
+ * guest JWT during that window would authenticate calls as the (about-to-be-
+ * deleted) guest. The cached email lookup avoids a network call when the
+ * session is already known.
+ */
+async function resolveAuthHeader(): Promise<AuthHeader> {
   const cachedEmail = getCachedEmail();
   if (cachedEmail) {
-    reqHeaders.set('X-User-Email', cachedEmail);
-  } else {
-    const trialToken = getTrialToken();
-    if (trialToken) {
-      reqHeaders.set('Authorization', `Bearer ${trialToken}`);
-    } else {
-      const userEmail = await getCachedUserEmail();
-      if (userEmail) {
-        reqHeaders.set('X-User-Email', userEmail);
-      }
-    }
+    return { kind: 'session', name: 'X-User-Email', value: cachedEmail };
   }
 
+  const trialToken = getTrialToken();
+  if (trialToken) {
+    return { kind: 'trial', name: 'Authorization', value: `Bearer ${trialToken}` };
+  }
+
+  const sessionEmail = await fetchSessionEmail();
+  if (sessionEmail) {
+    return { kind: 'session', name: 'X-User-Email', value: sessionEmail };
+  }
+
+  return { kind: 'none' };
+}
+
+export async function apiFetch(input: string, init: RequestInit = {}) {
+  const reqHeaders = new Headers(init.headers);
+  const auth = await resolveAuthHeader();
+  if (auth.kind !== 'none') {
+    reqHeaders.set(auth.name, auth.value);
+  }
   return fetch(`${process.env.NEXT_PUBLIC_API_URL}${input}`, { ...init, headers: reqHeaders });
 }
 

@@ -21,8 +21,10 @@ jest.mock('next/navigation', () => ({
   },
 }))
 
-// Mock next-auth
-jest.mock('next-auth/react', () => ({
+// Mock Better Auth client (project migrated off next-auth). Individual
+// specs can override these with jest.mock(...) at file scope to test
+// session-dependent behavior.
+jest.mock('@/lib/auth-client', () => ({
   useSession() {
     return {
       data: {
@@ -32,24 +34,20 @@ jest.mock('next-auth/react', () => ({
           name: 'Test User',
         },
       },
-      status: 'authenticated',
+      isPending: false,
     }
   },
-  signIn: jest.fn(),
+  getSession: jest.fn().mockResolvedValue({
+    data: { user: { id: 'test-user-id', email: 'test@example.com', name: 'Test User' } },
+  }),
+  signIn: { social: jest.fn() },
   signOut: jest.fn(),
-  SessionProvider: ({ children }) => children,
+  authClient: {},
 }))
 
-// Mock next-auth
-jest.mock('next-auth', () => ({
-  __esModule: true,
-  default: jest.fn(),
-}))
-
-// Mock lib/auth
+// Mock lib/auth (server-side Better Auth instance — not usable in jsdom)
 jest.mock('@/lib/auth', () => ({
-  authOptions: {},
-  getServerSession: jest.fn(),
+  auth: { api: { getSession: jest.fn() } },
 }))
 
 // Mock Socket.IO client
