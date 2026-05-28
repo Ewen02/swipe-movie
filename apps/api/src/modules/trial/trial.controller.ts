@@ -26,7 +26,10 @@ export class TrialController {
   ) {}
 
   @Post('start')
-  @Throttle({ default: { limit: 5, ttl: 3600000 } })
+  // 20/h instead of 5/h — corporate NAT and mobile carriers share IPs across
+  // many users, so a tight limit blocked legitimate trials. Abuse is bounded
+  // by the daily guest cleanup cron and ghost-user storage cost is minimal.
+  @Throttle({ default: { limit: 20, ttl: 3600000 } })
   async startTrial(@Body() dto: StartTrialDto) {
     return this.trialService.startTrial(dto);
   }
@@ -68,8 +71,11 @@ export class TrialController {
       throw new BadRequestException('Missing guest identity');
     }
 
-    await this.trialService.migrateGuestToUser(guestId, req.user.id);
-    return { success: true };
+    const result = await this.trialService.migrateGuestToUser(
+      guestId,
+      req.user.id,
+    );
+    return { success: true, alreadyMigrated: result.alreadyMigrated };
   }
 
   @Post('cleanup')

@@ -33,6 +33,12 @@ export class AuthController {
   @ApiOkResponse({ description: 'User upserted successfully' })
   @Post('oauth-upsert')
   async oauthUpsert(@Body() dto: OauthUpsertDto) {
+    // This endpoint is only callable with InternalApiGuard (X-Internal-Secret)
+    // from the web app's Better Auth databaseHooks. The caller is responsible
+    // for only invoking it after a verified OAuth callback — there is no
+    // emailVerified check here because the provider already validated it
+    // upstream. If a new provider that doesn't verify email is added, gate
+    // it on the web side or pass an `emailVerified` flag.
     this.logger.log(`OAuth upsert request for email: ${dto.email}`);
 
     if (!dto.email || !dto.name) {

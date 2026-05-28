@@ -51,11 +51,17 @@ export class TrialService {
       },
     });
 
-    const token = this.authService.issueToken({
-      id: guestUser.id,
-      email: guestUser.email,
-      roles: [],
-    });
+    // 2h matches TRIAL_CONFIG.durationMs on the client; the cookie and
+    // isTrialActive() use the same window so the token can't expire while
+    // the UI still thinks the trial is live.
+    const token = this.authService.issueToken(
+      {
+        id: guestUser.id,
+        email: guestUser.email,
+        roles: [],
+      },
+      { expiresIn: '2h' },
+    );
 
     this.logger.log(
       `Trial started for guest ${guestUser.id}, room ${room.code}`,
@@ -64,9 +70,12 @@ export class TrialService {
     return { roomCode: room.code, token, guestId: guestUser.id };
   }
 
-  async migrateGuestToUser(guestId: string, realUserId: string): Promise<void> {
+  async migrateGuestToUser(
+    guestId: string,
+    realUserId: string,
+  ): Promise<{ alreadyMigrated: boolean }> {
     try {
-      await this.runMigration(guestId, realUserId);
+      return await this.runMigration(guestId, realUserId);
     } catch (err) {
       // Log with full context so failures are debuggable in prod (Sentry/Datadog).
       // Without this, errors get swallowed into a generic 500 with no breadcrumb.
@@ -83,19 +92,7 @@ export class TrialService {
   private async runMigration(
     guestId: string,
     realUserId: string,
-  ): Promise<void> {
-    const guestUser = await this.prisma.user.findUnique({
-      where: { id: guestId },
-    });
-
-    if (!guestUser) {
-      throw new NotFoundException('Guest user not found');
-    }
-
-    if (!guestUser.isGuest) {
-      throw new ForbiddenException('User is not a guest account');
-    }
-
+  ): Promise<{ alreadyMigrated: boolean }> {
     const realUser = await this.prisma.user.findUnique({
       where: { id: realUserId },
     });
@@ -108,79 +105,144 @@ export class TrialService {
       throw new ForbiddenException('Target user cannot be a guest account');
     }
 
-    await this.prisma.$transaction(
-      async (tx) => {
-        // Transfer swipes from guest to real user
-        await tx.swipe.updateMany({
-          where: { userId: guestId },
-          data: { userId: realUserId },
-        });
+    const guestUser = await this.prisma.user.findUnique({
+      where: { id: guestId },
+    });
 
-        // Get rooms where the guest is a member
-        const guestMemberships = await tx.roomMember.findMany({
-          where: { userId: guestId },
-          select: { roomId: true },
-        });
+    // Idempotency: a previous successful migration deletes the guest row, so a
+    // retry hits this path. Treat it as success so the client gets a stable
+    // 2xx instead of cryptic 404s on retries (network blip, double-click).
+    if (!guestUser) {
+      this.logger.log(
+        `Migration noop: guest ${guestId} already migrated for realUser ${realUserId}`,
+      );
+      return { alreadyMigrated: true };
+    }
 
-        const guestRoomIds = guestMemberships.map((m) => m.roomId);
+    if (!guestUser.isGuest) {
+      throw new ForbiddenException('User is not a guest account');
+    }
 
-        // Delete any existing memberships for the real user in those same rooms
-        // to avoid unique constraint violations
-        if (guestRoomIds.length > 0) {
-          await tx.roomMember.deleteMany({
-            where: {
-              userId: realUserId,
-              roomId: { in: guestRoomIds },
-            },
-          });
+    // Retry on Postgres serialization_failure (40001). Serializable isolation
+    // catches dirty writes by aborting one of the conflicting txs; under
+    // concurrent migrations (rare, but possible if the user double-clicks
+    // retry) we want to transparently re-run instead of surfacing a 500.
+    const MAX_RETRIES = 3;
+    let attempt = 0;
+
+    while (true) {
+      try {
+        await this.prisma.$transaction(
+          async (tx) => {
+            // Transfer swipes from guest to real user
+            await tx.swipe.updateMany({
+              where: { userId: guestId },
+              data: { userId: realUserId },
+            });
+
+            // Get rooms where the guest is a member
+            const guestMemberships = await tx.roomMember.findMany({
+              where: { userId: guestId },
+              select: { roomId: true },
+            });
+
+            const guestRoomIds = guestMemberships.map((m) => m.roomId);
+
+            // Delete any existing memberships for the real user in those same rooms
+            // to avoid unique constraint violations
+            if (guestRoomIds.length > 0) {
+              await tx.roomMember.deleteMany({
+                where: {
+                  userId: realUserId,
+                  roomId: { in: guestRoomIds },
+                },
+              });
+            }
+
+            // Transfer room memberships from guest to real user
+            await tx.roomMember.updateMany({
+              where: { userId: guestId },
+              data: { userId: realUserId },
+            });
+
+            // Transfer room ownership from guest to real user
+            await tx.room.updateMany({
+              where: { createdBy: guestId },
+              data: { createdBy: realUserId },
+            });
+
+            // Mark real user as onboarding completed (they already experienced the product)
+            await tx.user.update({
+              where: { id: realUserId },
+              data: { onboardingCompleted: true, onboardingStep: 4 },
+            });
+
+            // Delete the ghost user
+            await tx.user.delete({
+              where: { id: guestId },
+            });
+          },
+          {
+            isolationLevel: 'Serializable',
+          },
+        );
+        break;
+      } catch (err) {
+        const isSerializationFailure =
+          err instanceof Error &&
+          'code' in err &&
+          (err as { code: string }).code === 'P2034';
+        if (isSerializationFailure && attempt < MAX_RETRIES - 1) {
+          attempt++;
+          this.logger.warn(
+            `Migration tx serialization_failure, retrying (${attempt}/${MAX_RETRIES})`,
+          );
+          continue;
         }
-
-        // Transfer room memberships from guest to real user
-        await tx.roomMember.updateMany({
-          where: { userId: guestId },
-          data: { userId: realUserId },
-        });
-
-        // Transfer room ownership from guest to real user
-        await tx.room.updateMany({
-          where: { createdBy: guestId },
-          data: { createdBy: realUserId },
-        });
-
-        // Mark real user as onboarding completed (they already experienced the product)
-        await tx.user.update({
-          where: { id: realUserId },
-          data: { onboardingCompleted: true, onboardingStep: 4 },
-        });
-
-        // Delete the ghost user
-        await tx.user.delete({
-          where: { id: guestId },
-        });
-      },
-      {
-        isolationLevel: 'Serializable',
-      },
-    );
+        throw err;
+      }
+    }
 
     this.logger.log(`Migrated guest ${guestId} data to user ${realUserId}`);
+    return { alreadyMigrated: false };
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_3AM)
   async cleanupExpiredGuests(): Promise<number> {
     const expirationDate = new Date(Date.now() - 86_400_000); // 24 hours
 
-    // Find expired guest user IDs
+    // Find expired guest user IDs along with how many swipes/rooms they own —
+    // a high count suggests the user actually engaged and the migration
+    // probably failed silently, which is worth investigating.
     const expiredGuests = await this.prisma.user.findMany({
       where: {
         isGuest: true,
         createdAt: { lt: expirationDate },
       },
-      select: { id: true },
+      select: {
+        id: true,
+        email: true,
+        createdAt: true,
+        _count: { select: { swipes: true, members: true } },
+      },
     });
 
     if (expiredGuests.length === 0) {
       return 0;
+    }
+
+    // Surface guests that swiped >= 5 times: those are the lost-conversion
+    // signal — we deleted real user activity because migration didn't happen.
+    const engagedLost = expiredGuests.filter((g) => g._count.swipes >= 5);
+    if (engagedLost.length > 0) {
+      this.logger.warn(
+        `Cleanup deleting ${engagedLost.length} engaged guest(s) with >=5 swipes — possible failed migration:`,
+      );
+      for (const g of engagedLost) {
+        this.logger.warn(
+          `  guest=${g.id} swipes=${g._count.swipes} rooms=${g._count.members}`,
+        );
+      }
     }
 
     const expiredGuestIds = expiredGuests.map((g) => g.id);
@@ -195,7 +257,9 @@ export class TrialService {
       where: { id: { in: expiredGuestIds } },
     });
 
-    this.logger.log(`Cleaned up ${result.count} expired guest users`);
+    this.logger.log(
+      `Cleaned up ${result.count} expired guest users (engaged lost: ${engagedLost.length})`,
+    );
 
     return result.count;
   }

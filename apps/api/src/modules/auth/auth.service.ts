@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 
 export interface TokenUser {
   id: string;
@@ -13,7 +13,10 @@ export class AuthService {
 
   constructor(private readonly jwt: JwtService) {}
 
-  issueToken(user: TokenUser): string {
+  issueToken(
+    user: TokenUser,
+    options?: Pick<JwtSignOptions, 'expiresIn'>,
+  ): string {
     this.logger.log(`Issuing token for user ${user.id}`);
 
     const payload = {
@@ -23,7 +26,12 @@ export class AuthService {
     };
 
     try {
-      return this.jwt.sign(payload);
+      // The default expiresIn comes from JwtModule signOptions (1h for
+      // regular sessions). Callers like the trial flow override to 2h so
+      // the JWT lifetime matches the trial cookie/localStorage lifetime.
+      return options?.expiresIn !== undefined
+        ? this.jwt.sign(payload, options)
+        : this.jwt.sign(payload);
     } catch (error) {
       this.logger.error(`Failed to issue token for user ${user.id}`, error);
       throw error;
