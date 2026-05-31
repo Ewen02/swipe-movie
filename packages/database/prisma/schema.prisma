@@ -52,17 +52,38 @@ model User {
   onboardingStep      Int       @default(0) // 0=not started, 1=providers, 2=genres, 3=swipes, 4=completed
   onboardingCompleted Boolean   @default(false)
 
-  members          RoomMember[]
-  swipes           Swipe[]
-  subscriptions    Subscription[]
-  sessions         Session[]
-  accounts         Account[]
-  mediaLibrary     UserMediaLibrary[]
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  members           RoomMember[]
+  swipes            Swipe[]
+  subscriptions     Subscription[]
+  sessions          Session[]
+  accounts          Account[]
+  mediaLibrary      UserMediaLibrary[]
+  pushSubscriptions PushSubscription[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
 
   @@index([isGuest])
   @@index([convertedFromGuestAt])
+}
+
+// A Web Push subscription (one per browser/device). Created when a user opts in
+// to push notifications; the cron/notification senders fan out over all of a
+// user's subscriptions. Dead endpoints (410/404 from the push service) are
+// pruned on send.
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // The push endpoint URL is globally unique per browser subscription.
+  endpoint  String   @unique
+  // Keys needed to encrypt the payload (from the browser PushSubscription).
+  p256dh    String
+  auth      String
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 model Session {

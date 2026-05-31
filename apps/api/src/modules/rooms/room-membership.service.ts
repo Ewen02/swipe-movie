@@ -15,6 +15,7 @@ import { SubscriptionService } from '../subscription/subscription.service';
 import { MatchesGateway } from '../matches/matches.gateway';
 import { RoomJoinResponseDto, RoomMembersResponseDto } from './dtos';
 import { RoomCrudService } from './room-crud.service';
+import { PushService } from '../push/push.service';
 
 @Injectable()
 export class RoomMembershipService {
@@ -27,6 +28,7 @@ export class RoomMembershipService {
     @Inject(forwardRef(() => MatchesGateway))
     private matchesGateway: MatchesGateway,
     private roomCrudService: RoomCrudService,
+    private readonly pushService: PushService,
   ) {}
 
   async join(userId: string, code: string): Promise<RoomJoinResponseDto> {
@@ -113,6 +115,28 @@ export class RoomMembershipService {
         id: user.id,
         name: user.name,
       });
+
+      // Push the existing members who aren't live in the room so they come back
+      // and swipe with the newcomer. Excludes the joiner and anyone currently
+      // connected (they already see the WebSocket arrival).
+      const onlineUserIds = this.matchesGateway.getOnlineUserIdsInRoom(room.id);
+      const recipientIds = room.members
+        .map((m) => m.userId)
+        .filter((id) => id !== userId && !onlineUserIds.has(id));
+      if (recipientIds.length > 0) {
+        void this.pushService
+          .sendToUsers(recipientIds, {
+            title: 'Quelqu’un a rejoint votre room',
+            body: `${user.name || 'Un ami'} vient de rejoindre "${room.name}" — à vous de swiper !`,
+            url: `/rooms/${room.code}`,
+          })
+          .catch((err) => {
+            this.logger.error(
+              `Join push failed for room ${room.code}`,
+              err instanceof Error ? err.stack : String(err),
+            );
+          });
+      }
     }
 
     return this.roomCrudService.mapToRoomResponse<RoomJoinResponseDto>(

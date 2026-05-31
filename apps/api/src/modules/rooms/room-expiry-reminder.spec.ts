@@ -5,6 +5,7 @@ import { RoomCrudService } from './room-crud.service';
 import { PrismaService } from '../../infra/prisma.service';
 import { SubscriptionService } from '../subscription/subscription.service';
 import { NestEmailService } from '../email/email.service';
+import { PushService } from '../push/push.service';
 
 describe('RoomCrudService.sendExpiryReminders', () => {
   let service: RoomCrudService;
@@ -12,6 +13,7 @@ describe('RoomCrudService.sendExpiryReminders', () => {
     room: { findMany: jest.Mock; update: jest.Mock };
   };
   let emailService: { sendRoomExpiryReminder: jest.Mock };
+  let pushService: { sendToUsers: jest.Mock };
 
   beforeAll(() => {
     jest.spyOn(Logger.prototype, 'log').mockImplementation(() => undefined);
@@ -28,6 +30,9 @@ describe('RoomCrudService.sendExpiryReminders', () => {
     emailService = {
       sendRoomExpiryReminder: jest.fn().mockResolvedValue(true),
     };
+    pushService = {
+      sendToUsers: jest.fn().mockResolvedValue(0),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -39,6 +44,7 @@ describe('RoomCrudService.sendExpiryReminders', () => {
           useValue: { get: jest.fn(), set: jest.fn(), del: jest.fn() },
         },
         { provide: NestEmailService, useValue: emailService },
+        { provide: PushService, useValue: pushService },
       ],
     }).compile();
 
