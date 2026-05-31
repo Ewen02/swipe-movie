@@ -7,10 +7,11 @@ import { getPublicMovieDetails, getPublicMovieStats } from '@/lib/movies-public'
 import { MediaPage } from '@/components/movies/public/MediaPage';
 import { SEOPageTracker } from '@/components/seo/SEOPageTracker';
 
-// Allow on-demand generation for new slugs (ISR).
-export const dynamicParams = true;
-// Re-fetch at most every 24h per slug.
-export const revalidate = 86400;
+// Render on demand. The underlying API fetches set their own `revalidate`
+// (see lib/movies-public.ts), so responses stay cached for 24h without forcing
+// the whole route into static generation — which conflicts with the request-scoped
+// i18n config read in the locale layout and threw DYNAMIC_SERVER_USAGE at runtime.
+export const dynamic = 'force-dynamic';
 
 type Params = { locale: string; slug: string };
 
@@ -165,9 +166,6 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   };
 }
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale, slug: 'placeholder-0' })).slice(0, 0);
-}
 
 export default async function FilmPage({ params }: { params: Promise<Params> }) {
   const { locale, slug } = await params;

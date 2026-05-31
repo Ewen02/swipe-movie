@@ -7,8 +7,10 @@ import { getPublicMovieDetails, getPublicMovieStats } from '@/lib/movies-public'
 import { MediaPage } from '@/components/movies/public/MediaPage';
 import { SEOPageTracker } from '@/components/seo/SEOPageTracker';
 
-export const dynamicParams = true;
-export const revalidate = 86400;
+// Render on demand. Underlying API fetches set their own `revalidate` (24h), so
+// responses stay cached without forcing static generation — which conflicts with
+// the request-scoped i18n config read in the locale layout (DYNAMIC_SERVER_USAGE).
+export const dynamic = 'force-dynamic';
 
 type Params = { locale: string; slug: string };
 

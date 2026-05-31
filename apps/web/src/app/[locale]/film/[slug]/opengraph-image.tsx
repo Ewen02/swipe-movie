@@ -9,9 +9,10 @@ export const contentType = 'image/png';
 
 type Params = { locale: string; slug: string };
 
-export default async function MovieOg({ params }: { params: Params }) {
-  const parsed = parseMovieSlug(params.slug);
-  const movie = parsed ? await getPublicMovieDetails(parsed.id, params.locale, 'movie') : null;
+export default async function MovieOg({ params }: { params: Promise<Params> }) {
+  const { locale, slug } = await params;
+  const parsed = parseMovieSlug(slug);
+  const movie = parsed ? await getPublicMovieDetails(parsed.id, locale, 'movie') : null;
 
   const title = movie?.title ?? 'Swipe Movie';
   const year = movie?.releaseDate ? new Date(movie.releaseDate).getFullYear() : null;
@@ -23,7 +24,7 @@ export default async function MovieOg({ params }: { params: Params }) {
     de: 'Finde deinen nächsten Film mit Freunden',
     it: 'Trova il tuo prossimo film con gli amici',
   };
-  const tagline = TAGLINES[params.locale] ?? TAGLINES.fr;
+  const tagline = TAGLINES[locale] ?? TAGLINES.fr;
 
   return new ImageResponse(
     <div
