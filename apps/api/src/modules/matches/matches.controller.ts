@@ -26,7 +26,9 @@ import { PaginationQueryDto } from '../../common/dtos';
 export class MatchesController {
   constructor(private readonly matchesService: MatchesService) {}
 
-  @ApiOperation({ summary: 'Get all matches for the authenticated user across all rooms' })
+  @ApiOperation({
+    summary: 'Get all matches for the authenticated user across all rooms',
+  })
   @ApiOkResponse({
     description: 'List of all matches for the current user',
   })
@@ -60,7 +62,8 @@ export class MatchesController {
 
   @ApiOperation({ summary: 'Get matches of a room (optionally paginated)' })
   @ApiOkResponse({
-    description: 'List of matches in the room (paginated if query params provided)',
+    description:
+      'List of matches in the room (paginated if query params provided)',
     type: [ResponseMatchDto],
   })
   @ApiBearerAuth()

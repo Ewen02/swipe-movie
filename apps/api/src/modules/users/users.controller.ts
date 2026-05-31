@@ -13,7 +13,13 @@ import {
   NotFoundException,
   ParseIntPipe,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiOkResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { MediaType } from '../../common/constants/media';
 import { UsersService } from './users.service';
 import {
@@ -39,8 +45,12 @@ export class UsersController {
   @ApiOperation({ summary: 'Get current user preferences' })
   @ApiOkResponse({ type: UserPreferencesDto })
   @Get('me/preferences')
-  async getMyPreferences(@Req() req: Express.Request): Promise<UserPreferencesDto> {
-    const preferences = await this.usersService.getUserPreferences((req.user as { sub: string }).sub);
+  async getMyPreferences(
+    @Req() req: Express.Request,
+  ): Promise<UserPreferencesDto> {
+    const preferences = await this.usersService.getUserPreferences(
+      (req.user as { sub: string }).sub,
+    );
     if (!preferences) {
       throw new NotFoundException('User not found');
     }
@@ -54,7 +64,10 @@ export class UsersController {
     @Req() req: Express.Request,
     @Body() dto: UpdateUserPreferencesDto,
   ): Promise<UserPreferencesDto> {
-    return this.usersService.updateUserPreferences((req.user as { sub: string }).sub, dto);
+    return this.usersService.updateUserPreferences(
+      (req.user as { sub: string }).sub,
+      dto,
+    );
   }
 
   @ApiOperation({ summary: 'Save batch onboarding swipes' })
@@ -64,20 +77,35 @@ export class UsersController {
     @Req() req: Express.Request,
     @Body() dto: BatchOnboardingSwipeDto,
   ): Promise<{ saved: number }> {
-    return this.usersService.saveBatchOnboardingSwipes((req.user as { sub: string }).sub, dto.swipes);
+    return this.usersService.saveBatchOnboardingSwipes(
+      (req.user as { sub: string }).sub,
+      dto.swipes,
+    );
   }
 
   @ApiOperation({ summary: 'Complete onboarding' })
   @ApiOkResponse({ type: UserPreferencesDto })
   @Post('me/onboarding/complete')
-  async completeOnboarding(@Req() req: Express.Request): Promise<UserPreferencesDto> {
-    return this.usersService.completeOnboarding((req.user as { sub: string }).sub);
+  async completeOnboarding(
+    @Req() req: Express.Request,
+  ): Promise<UserPreferencesDto> {
+    return this.usersService.completeOnboarding(
+      (req.user as { sub: string }).sub,
+    );
   }
 
   @ApiOperation({ summary: 'Get user library' })
   @ApiOkResponse({ type: LibraryResponseDto })
-  @ApiQuery({ name: 'status', required: false, enum: ['watched', 'watchlist', 'rated', 'liked', 'disliked'] })
-  @ApiQuery({ name: 'source', required: false, enum: ['trakt', 'anilist', 'manual', 'onboarding', 'discover'] })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: ['watched', 'watchlist', 'rated', 'liked', 'disliked'],
+  })
+  @ApiQuery({
+    name: 'source',
+    required: false,
+    enum: ['trakt', 'anilist', 'manual', 'onboarding', 'discover'],
+  })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   @Get('me/library')
@@ -104,7 +132,11 @@ export class UsersController {
     @Param('id') itemId: string,
     @Body() dto: UpdateLibraryItemDto,
   ): Promise<LibraryItemDto> {
-    return this.usersService.updateLibraryItemStatus((req.user as { sub: string }).sub, itemId, dto.status);
+    return this.usersService.updateLibraryItemStatus(
+      (req.user as { sub: string }).sub,
+      itemId,
+      dto.status,
+    );
   }
 
   @ApiOperation({ summary: 'Delete library item' })
@@ -114,7 +146,10 @@ export class UsersController {
     @Req() req: Express.Request,
     @Param('id') itemId: string,
   ): Promise<{ success: boolean }> {
-    await this.usersService.deleteLibraryItem((req.user as { sub: string }).sub, itemId);
+    await this.usersService.deleteLibraryItem(
+      (req.user as { sub: string }).sub,
+      itemId,
+    );
     return { success: true };
   }
 
@@ -152,8 +187,12 @@ export class UsersController {
   @ApiOperation({ summary: 'Delete user account and all data (GDPR)' })
   @ApiOkResponse({ schema: { properties: { success: { type: 'boolean' } } } })
   @Delete('me')
-  async deleteUserAccount(@Req() req: Express.Request): Promise<{ success: boolean }> {
-    await this.usersService.deleteUserAccount((req.user as { sub: string }).sub);
+  async deleteUserAccount(
+    @Req() req: Express.Request,
+  ): Promise<{ success: boolean }> {
+    await this.usersService.deleteUserAccount(
+      (req.user as { sub: string }).sub,
+    );
     return { success: true };
   }
 }

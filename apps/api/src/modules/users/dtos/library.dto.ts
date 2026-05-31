@@ -15,7 +15,9 @@ export class LibraryItemDto {
   @ApiProperty({ enum: ['watched', 'watchlist', 'rated', 'liked', 'disliked'] })
   status!: string;
 
-  @ApiProperty({ enum: ['trakt', 'anilist', 'manual', 'onboarding', 'discover'] })
+  @ApiProperty({
+    enum: ['trakt', 'anilist', 'manual', 'onboarding', 'discover'],
+  })
   source!: string;
 
   @ApiPropertyOptional()
@@ -46,12 +48,16 @@ export class UpdateLibraryItemDto {
 }
 
 export class LibraryQueryDto {
-  @ApiPropertyOptional({ enum: ['watched', 'watchlist', 'rated', 'liked', 'disliked'] })
+  @ApiPropertyOptional({
+    enum: ['watched', 'watchlist', 'rated', 'liked', 'disliked'],
+  })
   @IsOptional()
   @IsEnum(['watched', 'watchlist', 'rated', 'liked', 'disliked'])
   status?: string;
 
-  @ApiPropertyOptional({ enum: ['trakt', 'anilist', 'manual', 'onboarding', 'discover'] })
+  @ApiPropertyOptional({
+    enum: ['trakt', 'anilist', 'manual', 'onboarding', 'discover'],
+  })
   @IsOptional()
   @IsEnum(['trakt', 'anilist', 'manual', 'onboarding', 'discover'])
   source?: string;
@@ -69,9 +75,13 @@ export class LibraryStatsDto {
   @ApiProperty()
   total!: number;
 
-  @ApiProperty({ example: { watched: 10, watchlist: 5, liked: 20, disliked: 3, rated: 2 } })
+  @ApiProperty({
+    example: { watched: 10, watchlist: 5, liked: 20, disliked: 3, rated: 2 },
+  })
   byStatus!: Record<string, number>;
 
-  @ApiProperty({ example: { trakt: 15, anilist: 5, manual: 3, onboarding: 10, discover: 7 } })
+  @ApiProperty({
+    example: { trakt: 15, anilist: 5, manual: 3, onboarding: 10, discover: 7 },
+  })
   bySource!: Record<string, number>;
 }

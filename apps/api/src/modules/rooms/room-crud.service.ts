@@ -58,7 +58,19 @@ export class RoomCrudService {
    * Maps a room object to a response DTO with optional fields
    */
   mapToRoomResponse<T extends RoomJoinResponseDto | RoomWithMembersResponseDto>(
-    room: Partial<Room> & Pick<Room, 'id' | 'name' | 'code' | 'genreId' | 'type' | 'createdBy' | 'createdAt' | 'watchProviders' | 'watchRegion'>,
+    room: Partial<Room> &
+      Pick<
+        Room,
+        | 'id'
+        | 'name'
+        | 'code'
+        | 'genreId'
+        | 'type'
+        | 'createdBy'
+        | 'createdAt'
+        | 'watchProviders'
+        | 'watchRegion'
+      >,
     members?: Array<{ user: { id: string; name: string | null } }>,
   ): T {
     const response: Record<string, unknown> = {
@@ -162,7 +174,9 @@ export class RoomCrudService {
           watchRegion: dto.watchRegion,
           originalLanguage: dto.originalLanguage,
           isRecurring: dto.isRecurring ?? false,
-          recurringInterval: dto.isRecurring ? (dto.recurringInterval ?? 'monthly') : null,
+          recurringInterval: dto.isRecurring
+            ? (dto.recurringInterval ?? 'monthly')
+            : null,
         },
         select: {
           id: true,
@@ -196,7 +210,10 @@ export class RoomCrudService {
     });
   }
 
-  async getById(roomId: string, userId?: string): Promise<RoomWithMembersResponseDto> {
+  async getById(
+    roomId: string,
+    userId?: string,
+  ): Promise<RoomWithMembersResponseDto> {
     if (userId) {
       await this.verifyMembership(roomId, userId);
     }
@@ -232,15 +249,22 @@ export class RoomCrudService {
       throw new NotFoundException('Room not found');
     }
 
-    return this.mapToRoomResponse<RoomWithMembersResponseDto>(room, roomMembers);
+    return this.mapToRoomResponse<RoomWithMembersResponseDto>(
+      room,
+      roomMembers,
+    );
   }
 
-  async getByCode(code: string, userId?: string): Promise<RoomWithMembersResponseDto> {
+  async getByCode(
+    code: string,
+    userId?: string,
+  ): Promise<RoomWithMembersResponseDto> {
     const cacheKey = `rooms:code:${code}`;
 
     // Try to get from cache (skip cache when membership check is needed)
     if (!userId) {
-      const cached = await this.cacheManager.get<RoomWithMembersResponseDto>(cacheKey);
+      const cached =
+        await this.cacheManager.get<RoomWithMembersResponseDto>(cacheKey);
       if (cached) {
         return cached;
       }
@@ -280,7 +304,10 @@ export class RoomCrudService {
       }
     }
 
-    const result = this.mapToRoomResponse<RoomWithMembersResponseDto>(room, room.members);
+    const result = this.mapToRoomResponse<RoomWithMembersResponseDto>(
+      room,
+      room.members,
+    );
 
     // Store in cache
     await this.cacheManager.set(cacheKey, result, CacheTTL.ROOM_BY_CODE);
@@ -291,8 +318,10 @@ export class RoomCrudService {
   async getUserRooms(
     userId: string,
     pagination?: PaginationQueryDto,
-  ): Promise<PaginatedResponseDto<MemberRoomsResponseDto['rooms'][0]> | MemberRoomsResponseDto> {
-
+  ): Promise<
+    | PaginatedResponseDto<MemberRoomsResponseDto['rooms'][0]>
+    | MemberRoomsResponseDto
+  > {
     const where = { members: { some: { userId } } };
 
     // If pagination is provided, return paginated response
@@ -365,7 +394,8 @@ export class RoomCrudService {
     const cacheKey = `rooms:user:${userId}`;
 
     // Try to get from cache (only for non-paginated requests)
-    const cached = await this.cacheManager.get<MemberRoomsResponseDto>(cacheKey);
+    const cached =
+      await this.cacheManager.get<MemberRoomsResponseDto>(cacheKey);
     if (cached) {
       return cached;
     }

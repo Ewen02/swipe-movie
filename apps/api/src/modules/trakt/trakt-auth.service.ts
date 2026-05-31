@@ -1,13 +1,7 @@
-import {
-  Injectable,
-  Logger,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../infra/prisma.service';
-import {
-  MediaSource,
-} from '../../common/constants/media';
+import { MediaSource } from '../../common/constants/media';
 import {
   TraktConfig,
   TraktTokens,

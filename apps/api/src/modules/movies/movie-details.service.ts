@@ -1,10 +1,7 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
-import {
-  MovieBasicDto,
-  MovieDetailsDto,
-} from './dtos/movie-response.dto';
+import { MovieBasicDto, MovieDetailsDto } from './dtos/movie-response.dto';
 import {
   TMDbPopularResponse,
   TMDbMovieDetailsResponse,
@@ -129,7 +126,11 @@ export class MovieDetailsService {
     const result = this.mapToMovieDetails(json);
 
     // Fetch watch providers separately (different endpoint shape) and add to result
-    const watchProviders = await this.movieProviderService.getWatchProviders(movieId, type, region);
+    const watchProviders = await this.movieProviderService.getWatchProviders(
+      movieId,
+      type,
+      region,
+    );
     result.watchProviders = watchProviders;
 
     // Store in cache

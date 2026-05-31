@@ -35,7 +35,10 @@ import { IMovieProvider } from './interfaces/movie-provider.interface';
         omdbProvider: OMDbProvider,
         configService: ConfigService,
       ): IMovieProvider => {
-        const provider = configService.get<string>('MOVIE_API_PROVIDER', 'tmdb');
+        const provider = configService.get<string>(
+          'MOVIE_API_PROVIDER',
+          'tmdb',
+        );
 
         switch (provider.toLowerCase()) {
           case 'omdb':

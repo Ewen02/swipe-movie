@@ -8,5 +8,4 @@ import { SetMetadata } from '@nestjs/common';
  * @RequiresPlan('pro')
  * async someRoute() {}
  */
-export const RequiresPlan = (plan: string) =>
-  SetMetadata('requiredPlan', plan);
+export const RequiresPlan = (plan: string) => SetMetadata('requiredPlan', plan);

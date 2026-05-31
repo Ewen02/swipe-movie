@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, forwardRef, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  forwardRef,
+  Inject,
+} from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import { PrismaService } from '../../infra/prisma.service';
@@ -117,9 +122,9 @@ export class MatchesService {
    * Find all matches across all rooms where the user is a member.
    * Returns matches enriched with vote counts, ordered by creation date desc.
    */
-  async findByUser(userId: string): Promise<
-    (ResponseMatchDto & { roomName: string; roomCode: string })[]
-  > {
+  async findByUser(
+    userId: string,
+  ): Promise<(ResponseMatchDto & { roomName: string; roomCode: string })[]> {
     // 1. Get all roomIds where user is a member
     const memberships = await this.prisma.roomMember.findMany({
       where: { userId },
@@ -130,7 +135,10 @@ export class MatchesService {
 
     const roomIds = memberships.map((m) => m.roomId);
     const roomMap = new Map(
-      memberships.map((m) => [m.roomId, { name: m.room.name, code: m.room.code }]),
+      memberships.map((m) => [
+        m.roomId,
+        { name: m.room.name, code: m.room.code },
+      ]),
     );
 
     // 2. Get all matches for those rooms

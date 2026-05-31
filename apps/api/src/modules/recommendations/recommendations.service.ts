@@ -15,7 +15,11 @@ import type {
 const RECOMMENDATIONS_CACHE_TTL = 2 * 60 * 1000;
 
 // Re-export types for backward compatibility with consumers
-export type { RoomRecommendationContext, UserMediaStatus, RecommendedMovie } from '@swipe-movie/types';
+export type {
+  RoomRecommendationContext,
+  UserMediaStatus,
+  RecommendedMovie,
+} from '@swipe-movie/types';
 
 /**
  * Scoring weights configuration
@@ -23,25 +27,25 @@ export type { RoomRecommendationContext, UserMediaStatus, RecommendedMovie } fro
  */
 const SCORING_WEIGHTS = {
   // Watchlist factors (highest priority - social proof from room members)
-  WATCHLIST_ALL_MEMBERS: 100,      // All members have it in watchlist = perfect match
-  WATCHLIST_PER_MEMBER: 25,        // Points per member with movie in watchlist
+  WATCHLIST_ALL_MEMBERS: 100, // All members have it in watchlist = perfect match
+  WATCHLIST_PER_MEMBER: 25, // Points per member with movie in watchlist
 
   // Quality factors (TMDB data)
-  VOTE_AVERAGE_MULTIPLIER: 8,      // voteAverage (0-10) × multiplier = 0-80 points
-  VOTE_COUNT_LOG_MULTIPLIER: 3,    // log10(voteCount) × multiplier (more votes = more reliable)
-  POPULARITY_LOG_MULTIPLIER: 2,    // log10(popularity) × multiplier
+  VOTE_AVERAGE_MULTIPLIER: 8, // voteAverage (0-10) × multiplier = 0-80 points
+  VOTE_COUNT_LOG_MULTIPLIER: 3, // log10(voteCount) × multiplier (more votes = more reliable)
+  POPULARITY_LOG_MULTIPLIER: 2, // log10(popularity) × multiplier
 
   // Recency factors
-  RECENT_RELEASE_BONUS: 15,        // Released in last 2 years
-  CLASSIC_BONUS: 10,               // Released 20+ years ago (classics)
+  RECENT_RELEASE_BONUS: 15, // Released in last 2 years
+  CLASSIC_BONUS: 10, // Released 20+ years ago (classics)
 
   // Penalty factors
-  LOW_VOTE_COUNT_PENALTY: -20,     // Less than 100 votes = unreliable
-  WATCHED_BY_SOME_PENALTY: -50,    // Some members already watched (but not all)
+  LOW_VOTE_COUNT_PENALTY: -20, // Less than 100 votes = unreliable
+  WATCHED_BY_SOME_PENALTY: -50, // Some members already watched (but not all)
 
   // User rating factors (from Trakt/AniList)
-  HIGH_USER_RATING_BONUS: 20,      // Average user rating > 8
-  USER_RATING_MULTIPLIER: 5,       // Points per rating point above 5
+  HIGH_USER_RATING_BONUS: 20, // Average user rating > 8
+  USER_RATING_MULTIPLIER: 5, // Points per rating point above 5
 } as const;
 
 /**
@@ -75,7 +79,9 @@ export class RecommendationsService {
   async invalidateRoomRecommendationsCache(roomId: string): Promise<void> {
     // Invalidate all pages for this room (we cache pages 1-20 typically)
     for (let page = 1; page <= 20; page++) {
-      await this.cacheManager.del(`recommendations:room:${roomId}:page:${page}`);
+      await this.cacheManager.del(
+        `recommendations:room:${roomId}:page:${page}`,
+      );
     }
     this.logger.debug(`Invalidated recommendations cache for room ${roomId}`);
   }
@@ -101,7 +107,7 @@ export class RecommendationsService {
    */
   async getWatchedByUsers(
     userIds: string[],
-    mediaType: string = "movie",
+    mediaType: string = 'movie',
   ): Promise<Set<string>> {
     const entries = await this.prisma.userMediaLibrary.findMany({
       where: {
@@ -120,7 +126,7 @@ export class RecommendationsService {
    */
   async getWatchlistByUsers(
     userIds: string[],
-    mediaType: string = "movie",
+    mediaType: string = 'movie',
   ): Promise<Map<string, number>> {
     const entries = await this.prisma.userMediaLibrary.findMany({
       where: {
@@ -146,7 +152,7 @@ export class RecommendationsService {
    */
   async getCommonWatchlist(
     userIds: string[],
-    mediaType: string = "movie",
+    mediaType: string = 'movie',
   ): Promise<Set<string>> {
     if (userIds.length === 0) return new Set();
 
@@ -188,7 +194,8 @@ export class RecommendationsService {
         watchlistScore = SCORING_WEIGHTS.WATCHLIST_ALL_MEMBERS;
       } else {
         // Partial watchlist match - score based on percentage of members
-        watchlistScore = watchlistMemberCount * SCORING_WEIGHTS.WATCHLIST_PER_MEMBER;
+        watchlistScore =
+          watchlistMemberCount * SCORING_WEIGHTS.WATCHLIST_PER_MEMBER;
       }
     }
 
@@ -198,12 +205,15 @@ export class RecommendationsService {
 
     // Vote count reliability bonus (log scale to prevent huge movies dominating)
     if (movie.voteCount > 0) {
-      qualityScore += Math.log10(movie.voteCount) * SCORING_WEIGHTS.VOTE_COUNT_LOG_MULTIPLIER;
+      qualityScore +=
+        Math.log10(movie.voteCount) * SCORING_WEIGHTS.VOTE_COUNT_LOG_MULTIPLIER;
     }
 
     // Popularity bonus (log scale)
     if (movie.popularity > 0) {
-      qualityScore += Math.log10(movie.popularity) * SCORING_WEIGHTS.POPULARITY_LOG_MULTIPLIER;
+      qualityScore +=
+        Math.log10(movie.popularity) *
+        SCORING_WEIGHTS.POPULARITY_LOG_MULTIPLIER;
     }
 
     // === RECENCY SCORE ===
@@ -229,7 +239,8 @@ export class RecommendationsService {
       }
       // Additional points for ratings above 5
       if (avgUserRating > 5) {
-        userRatingScore += (avgUserRating - 5) * SCORING_WEIGHTS.USER_RATING_MULTIPLIER;
+        userRatingScore +=
+          (avgUserRating - 5) * SCORING_WEIGHTS.USER_RATING_MULTIPLIER;
       }
     }
 
@@ -244,7 +255,12 @@ export class RecommendationsService {
       penalties += SCORING_WEIGHTS.WATCHED_BY_SOME_PENALTY;
     }
 
-    const totalScore = watchlistScore + qualityScore + recencyScore + userRatingScore + penalties;
+    const totalScore =
+      watchlistScore +
+      qualityScore +
+      recencyScore +
+      userRatingScore +
+      penalties;
 
     return {
       score: Math.max(0, totalScore), // Never negative
@@ -422,7 +438,11 @@ export class RecommendationsService {
     }
 
     // Cache the results
-    await this.cacheManager.set(cacheKey, filteredMovies, RECOMMENDATIONS_CACHE_TTL);
+    await this.cacheManager.set(
+      cacheKey,
+      filteredMovies,
+      RECOMMENDATIONS_CACHE_TTL,
+    );
 
     return filteredMovies;
   }
@@ -433,7 +453,7 @@ export class RecommendationsService {
   async isMovieWatchedByUser(
     userId: string,
     tmdbId: string,
-    mediaType: string = "movie",
+    mediaType: string = 'movie',
   ): Promise<boolean> {
     const entry = await this.prisma.userMediaLibrary.findFirst({
       where: {
@@ -474,7 +494,7 @@ export class RecommendationsService {
   async getBatchMovieStatus(
     userId: string,
     tmdbIds: string[],
-    mediaType: string = "movie",
+    mediaType: string = 'movie',
   ): Promise<Map<string, UserMediaStatus>> {
     const entries = await this.prisma.userMediaLibrary.findMany({
       where: {

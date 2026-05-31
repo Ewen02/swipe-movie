@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Get, Delete, UseGuards, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { SwipesService } from './swipes.service';
 import {
   ApiBearerAuth,
@@ -68,10 +76,7 @@ export class SwipesController {
   @ApiOkResponse({ description: 'Room statistics' })
   @ApiQuery({ name: 'roomId', required: true, description: 'Room ID' })
   @Get('analytics')
-  getRoomAnalytics(
-    @UserId() userId: string,
-    @Query('roomId') roomId: string,
-  ) {
+  getRoomAnalytics(@UserId() userId: string, @Query('roomId') roomId: string) {
     return this.service.getRoomAnalytics(roomId, userId);
   }
 

@@ -2,7 +2,10 @@ import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { MediaType } from '../../common/constants/media';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UserId } from '../../common/decorators/user.decorator';
-import { RecommendationsService, RecommendedMovie } from './recommendations.service';
+import {
+  RecommendationsService,
+  RecommendedMovie,
+} from './recommendations.service';
 import { PrismaService } from '../../infra/prisma.service';
 
 @Controller('recommendations')
@@ -54,16 +57,17 @@ export class RecommendationsController {
       originalLanguage: room.originalLanguage ?? undefined,
     };
 
-    const movies = await this.recommendationsService.getRecommendedMoviesForRoom(
-      {
-        roomId,
-        memberIds,
-        type,
-        genreId: room.genreId ?? 0,
-        filters,
-      },
-      parseInt(page, 10),
-    );
+    const movies =
+      await this.recommendationsService.getRecommendedMoviesForRoom(
+        {
+          roomId,
+          memberIds,
+          type,
+          genreId: room.genreId ?? 0,
+          filters,
+        },
+        parseInt(page, 10),
+      );
 
     return { movies };
   }
@@ -85,7 +89,8 @@ export class RecommendationsController {
    */
   @Get('user/library')
   async getUserLibrary(@UserId() userId: string) {
-    const library = await this.recommendationsService.getUserMediaLibrary(userId);
+    const library =
+      await this.recommendationsService.getUserMediaLibrary(userId);
     return { items: library };
   }
 
@@ -133,10 +138,13 @@ export class RecommendationsController {
     );
 
     // Convert Map to object for JSON response
-    const result: Record<string, { status: string; source: string } | null> = {};
+    const result: Record<string, { status: string; source: string } | null> =
+      {};
     for (const tmdbId of tmdbIds) {
       const entry = statusMap.get(tmdbId);
-      result[tmdbId] = entry ? { status: entry.status, source: entry.source } : null;
+      result[tmdbId] = entry
+        ? { status: entry.status, source: entry.source }
+        : null;
     }
 
     return result;

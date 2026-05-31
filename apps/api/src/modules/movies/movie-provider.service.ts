@@ -1,9 +1,7 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
-import {
-  TMDbWatchProvidersResponse,
-} from '../tmdb/types/tmdb.types';
+import { TMDbWatchProvidersResponse } from '../tmdb/types/tmdb.types';
 import { TmdbService } from '../tmdb/tmdb.service';
 import { TMDB_IMAGE_BASE, TMDB_DEFAULT_LANG } from '../tmdb/tmdb.constants';
 

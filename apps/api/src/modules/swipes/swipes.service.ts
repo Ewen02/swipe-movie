@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException, ForbiddenException, Inject, forwardRef } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import { PrismaService } from '../../infra/prisma.service';
@@ -30,7 +36,10 @@ export class SwipesService {
   /**
    * Invalidate user swipes cache for a specific room
    */
-  private async invalidateUserSwipesCache(userId: string, roomId: string): Promise<void> {
+  private async invalidateUserSwipesCache(
+    userId: string,
+    roomId: string,
+  ): Promise<void> {
     await this.cacheManager.del(`swipes:user:${userId}:room:${roomId}`);
   }
 
@@ -118,7 +127,10 @@ export class SwipesService {
     return { ...swipe, matchCreated: !!match };
   }
 
-  async findByRoom(roomId: string, userId?: string): Promise<ResponseSwipeDto[]> {
+  async findByRoom(
+    roomId: string,
+    userId?: string,
+  ): Promise<ResponseSwipeDto[]> {
     const room = await this.prisma.room.findUnique({
       where: { id: roomId },
       select: { id: true },
@@ -178,7 +190,11 @@ export class SwipesService {
     });
 
     // Store in cache
-    await this.cacheManager.set(cacheKey, swipes, CACHE_TTL.USER_SWIPES_IN_ROOM);
+    await this.cacheManager.set(
+      cacheKey,
+      swipes,
+      CACHE_TTL.USER_SWIPES_IN_ROOM,
+    );
 
     return swipes;
   }
@@ -276,7 +292,9 @@ export class SwipesService {
     }
 
     // Use parallel queries with aggregations for better performance
-    const sevenDaysAgo = new Date(Date.now() - ACTIVITY_LOOKBACK_DAYS * 86400000);
+    const sevenDaysAgo = new Date(
+      Date.now() - ACTIVITY_LOOKBACK_DAYS * 86400000,
+    );
 
     const [
       // Aggregated overview stats
@@ -319,15 +337,19 @@ export class SwipesService {
     ]);
 
     // Calculate overview from aggregated data
-    const totalLikes = overviewStats.find(s => s.value === true)?._count.id || 0;
-    const totalDislikes = overviewStats.find(s => s.value === false)?._count.id || 0;
+    const totalLikes =
+      overviewStats.find((s) => s.value === true)?._count.id || 0;
+    const totalDislikes =
+      overviewStats.find((s) => s.value === false)?._count.id || 0;
     const totalSwipes = totalLikes + totalDislikes;
 
     // Build member activity from aggregated stats
     const memberActivity = room.members.map((member) => {
-      const userStats = memberStats.filter(s => s.userId === member.user.id);
-      const memberLikes = userStats.find(s => s.value === true)?._count.id || 0;
-      const memberDislikes = userStats.find(s => s.value === false)?._count.id || 0;
+      const userStats = memberStats.filter((s) => s.userId === member.user.id);
+      const memberLikes =
+        userStats.find((s) => s.value === true)?._count.id || 0;
+      const memberDislikes =
+        userStats.find((s) => s.value === false)?._count.id || 0;
       const memberTotalSwipes = memberLikes + memberDislikes;
 
       return {
@@ -344,8 +366,11 @@ export class SwipesService {
     });
 
     // Build movie stats map from aggregated data
-    const movieStatsMap = new Map<string, { likes: number; dislikes: number }>();
-    movieStats.forEach(stat => {
+    const movieStatsMap = new Map<
+      string,
+      { likes: number; dislikes: number }
+    >();
+    movieStats.forEach((stat) => {
       if (!movieStatsMap.has(stat.movieId)) {
         movieStatsMap.set(stat.movieId, { likes: 0, dislikes: 0 });
       }
@@ -402,7 +427,9 @@ export class SwipesService {
           totalSwipes > 0 ? Math.round((totalLikes / totalSwipes) * 100) : 0,
         matchRate,
       },
-      memberActivity: memberActivity.sort((a, b) => b.totalSwipes - a.totalSwipes),
+      memberActivity: memberActivity.sort(
+        (a, b) => b.totalSwipes - a.totalSwipes,
+      ),
       mostLiked,
       mostDisliked,
       dailyActivity,

@@ -42,11 +42,17 @@ export class TMDBProvider implements IMovieProvider {
     if (runtimeMax !== undefined) filters.runtimeMax = runtimeMax;
     if (watchProviders !== undefined) filters.watchProviders = watchProviders;
     if (watchRegion !== undefined) filters.watchRegion = watchRegion;
-    if (originalLanguage !== undefined) filters.originalLanguage = originalLanguage;
+    if (originalLanguage !== undefined)
+      filters.originalLanguage = originalLanguage;
 
     // Use existing movies service method (getMoviesByGenre)
     // Signature: getMoviesByGenre(genreId, type, page, filters)
-    const results = await this.moviesService.getMoviesByGenre(genreId || 0, type, page, filters);
+    const results = await this.moviesService.getMoviesByGenre(
+      genreId || 0,
+      type,
+      page,
+      filters,
+    );
 
     // Transform to DiscoverResponse format
     return {
@@ -68,7 +74,11 @@ export class TMDBProvider implements IMovieProvider {
    * Search for movies/TV shows
    * Note: MoviesService doesn't have a search method yet - this is a TODO
    */
-  async search(_query: string, _type: 'movie' | 'tv', page: number = 1): Promise<DiscoverResponse> {
+  async search(
+    _query: string,
+    _type: 'movie' | 'tv',
+    page: number = 1,
+  ): Promise<DiscoverResponse> {
     // TODO: Implement search in MoviesService
     // For now, return empty results
     return {
@@ -91,7 +101,11 @@ export class TMDBProvider implements IMovieProvider {
   /**
    * Get watch providers for a movie/TV show
    */
-  async getWatchProviders(id: string, type: 'movie' | 'tv', _region: string): Promise<any> {
+  async getWatchProviders(
+    id: string,
+    type: 'movie' | 'tv',
+    _region: string,
+  ): Promise<any> {
     // MoviesService.getWatchProviders takes (id, type)
     return await this.moviesService.getWatchProviders(parseInt(id, 10), type);
   }

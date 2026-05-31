@@ -21,11 +21,7 @@ import { AuthModule } from '../auth/auth.module';
 @Module({
   imports: [AuthModule, ConfigModule],
   controllers: [SubscriptionController, StripeWebhookController],
-  providers: [
-    SubscriptionService,
-    StripeService,
-    SubscriptionGuard,
-  ],
+  providers: [SubscriptionService, StripeService, SubscriptionGuard],
   exports: [SubscriptionService, StripeService, SubscriptionGuard],
 })
 export class SubscriptionModule {}

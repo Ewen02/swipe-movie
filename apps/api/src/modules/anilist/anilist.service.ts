@@ -1,6 +1,16 @@
-import { Injectable, Logger, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  UnauthorizedException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { MediaType, MediaStatus, MediaSource } from '../../common/constants/media';
+import {
+  MediaType,
+  MediaStatus,
+  MediaSource,
+} from '../../common/constants/media';
 import { PrismaService } from '../../infra/prisma.service';
 import {
   AniListConfig,
@@ -118,7 +128,9 @@ export class AniListService {
     const result = await response.json();
 
     if (result.errors) {
-      this.logger.error(`AniList GraphQL errors: ${JSON.stringify(result.errors)}`);
+      this.logger.error(
+        `AniList GraphQL errors: ${JSON.stringify(result.errors)}`,
+      );
       throw new Error(result.errors[0]?.message || 'GraphQL error');
     }
 
@@ -227,8 +239,7 @@ export class AniListService {
     return {
       provider: ExternalProviders.ANILIST,
       connected: true,
-      username:
-        account.accountId !== 'anilist' ? account.accountId : undefined,
+      username: account.accountId !== 'anilist' ? account.accountId : undefined,
       expiresAt: account.accessTokenExpiresAt?.toISOString(),
       lastSync: account.lastSyncAt?.toISOString(),
     };
@@ -238,9 +249,7 @@ export class AniListService {
    * Search TMDB for anime by title
    * This is needed because AniList uses its own IDs, not TMDB IDs
    */
-  private async searchTmdbForAnime(
-    title: string,
-  ): Promise<string | null> {
+  private async searchTmdbForAnime(title: string): Promise<string | null> {
     const tmdbApiKey = this.configService.get<string>('TMDB_API_KEY');
     if (!tmdbApiKey) {
       return null;
@@ -303,7 +312,8 @@ export class AniListService {
       for (const list of animeList.lists) {
         for (const entry of list.entries) {
           const media = entry.media;
-          const status = (ANILIST_STATUS_MAP[entry.status] || 'watchlist') as MediaStatus;
+          const status = (ANILIST_STATUS_MAP[entry.status] ||
+            'watchlist') as MediaStatus;
 
           // Try to find TMDB ID
           // First, try using MyAnimeList ID if available (more reliable)
@@ -371,17 +381,23 @@ export class AniListService {
   /**
    * Invalidate recommendations cache for all rooms where user is a member
    */
-  private async invalidateUserRoomsRecommendationsCache(userId: string): Promise<void> {
+  private async invalidateUserRoomsRecommendationsCache(
+    userId: string,
+  ): Promise<void> {
     const userRooms = await this.prisma.roomMember.findMany({
       where: { userId },
       select: { roomId: true },
     });
 
     for (const { roomId } of userRooms) {
-      await this.recommendationsService.invalidateRoomRecommendationsCache(roomId);
+      await this.recommendationsService.invalidateRoomRecommendationsCache(
+        roomId,
+      );
     }
 
-    this.logger.debug(`Invalidated recommendations cache for ${userRooms.length} rooms after AniList sync`);
+    this.logger.debug(
+      `Invalidated recommendations cache for ${userRooms.length} rooms after AniList sync`,
+    );
   }
 
   /**

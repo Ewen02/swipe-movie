@@ -13,10 +13,7 @@ import type { Cache } from 'cache-manager';
 import { PrismaService } from '../../infra/prisma.service';
 import { SubscriptionService } from '../subscription/subscription.service';
 import { MatchesGateway } from '../matches/matches.gateway';
-import {
-  RoomJoinResponseDto,
-  RoomMembersResponseDto,
-} from './dtos';
+import { RoomJoinResponseDto, RoomMembersResponseDto } from './dtos';
 import { RoomCrudService } from './room-crud.service';
 
 @Injectable()
@@ -112,10 +109,15 @@ export class RoomMembershipService {
 
     // Emit WebSocket event to notify other room members (only for new members)
     if (!isAlreadyMember && user) {
-      this.matchesGateway.emitUserJoined(room.id, { id: user.id, name: user.name });
+      this.matchesGateway.emitUserJoined(room.id, {
+        id: user.id,
+        name: user.name,
+      });
     }
 
-    return this.roomCrudService.mapToRoomResponse<RoomJoinResponseDto>(joinedRoom);
+    return this.roomCrudService.mapToRoomResponse<RoomJoinResponseDto>(
+      joinedRoom,
+    );
   }
 
   async leave(userId: string, roomId: string) {
@@ -151,7 +153,10 @@ export class RoomMembershipService {
     return { ok: true };
   }
 
-  async members(roomId: string, userId?: string): Promise<RoomMembersResponseDto> {
+  async members(
+    roomId: string,
+    userId?: string,
+  ): Promise<RoomMembersResponseDto> {
     if (userId) {
       await this.roomCrudService.verifyMembership(roomId, userId);
     }

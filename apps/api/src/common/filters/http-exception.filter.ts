@@ -57,9 +57,16 @@ export class HttpExceptionFilter implements ExceptionFilter {
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
-      error: isProduction ? error : (exception instanceof Error ? exception.name : error),
-      message: isProduction && status === 500 ? 'Internal server error' : message,
-      ...(isProduction ? {} : { stack: exception instanceof Error ? exception.stack : undefined }),
+      error: isProduction
+        ? error
+        : exception instanceof Error
+          ? exception.name
+          : error,
+      message:
+        isProduction && status === 500 ? 'Internal server error' : message,
+      ...(isProduction
+        ? {}
+        : { stack: exception instanceof Error ? exception.stack : undefined }),
     };
 
     response.status(status).json(errorResponse);

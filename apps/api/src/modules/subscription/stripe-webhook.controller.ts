@@ -8,7 +8,11 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { StripeService } from './stripe.service';
-import { SubscriptionService, SubscriptionPlan, SubscriptionStatus } from './subscription.service';
+import {
+  SubscriptionService,
+  SubscriptionPlan,
+  SubscriptionStatus,
+} from './subscription.service';
 import Stripe from 'stripe';
 
 /**
@@ -64,30 +68,24 @@ export class StripeWebhookController {
     try {
       switch (event.type) {
         case 'checkout.session.completed':
-          await this.handleCheckoutCompleted(
-            event.data.object as Stripe.Checkout.Session,
-          );
+          await this.handleCheckoutCompleted(event.data.object);
           break;
 
         case 'customer.subscription.created':
         case 'customer.subscription.updated':
-          await this.handleSubscriptionUpdated(
-            event.data.object as Stripe.Subscription,
-          );
+          await this.handleSubscriptionUpdated(event.data.object);
           break;
 
         case 'customer.subscription.deleted':
-          await this.handleSubscriptionDeleted(
-            event.data.object as Stripe.Subscription,
-          );
+          await this.handleSubscriptionDeleted(event.data.object);
           break;
 
         case 'invoice.payment_succeeded':
-          await this.handlePaymentSucceeded(event.data.object as Stripe.Invoice);
+          await this.handlePaymentSucceeded(event.data.object);
           break;
 
         case 'invoice.payment_failed':
-          await this.handlePaymentFailed(event.data.object as Stripe.Invoice);
+          await this.handlePaymentFailed(event.data.object);
           break;
 
         default:

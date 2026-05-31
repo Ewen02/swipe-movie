@@ -11,7 +11,12 @@ import { MatchesModule } from '../matches/matches.module';
 @Module({
   controllers: [RoomsController],
   providers: [RoomsService, RoomCrudService, RoomMembershipService],
-  imports: [SwipesModule, SubscriptionModule, CacheModule.register(), forwardRef(() => MatchesModule)],
+  imports: [
+    SwipesModule,
+    SubscriptionModule,
+    CacheModule.register(),
+    forwardRef(() => MatchesModule),
+  ],
   exports: [RoomsService],
 })
 export class RoomsModule {}

@@ -90,9 +90,7 @@ export class RoomsController {
   ) {
     // Build pagination object only if params are provided
     const pagination =
-      page !== undefined || limit !== undefined
-        ? { page, limit }
-        : undefined;
+      page !== undefined || limit !== undefined ? { page, limit } : undefined;
 
     return this.service.getUserRooms(userId, pagination);
   }

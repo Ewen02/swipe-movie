@@ -4,7 +4,11 @@ import {
   DiscoverParams,
   DiscoverResponse,
 } from '../interfaces/movie-provider.interface';
-import { MovieBasicDto, MoviesGenresDto, MovieDetailsDto } from '../dtos/movie-response.dto';
+import {
+  MovieBasicDto,
+  MoviesGenresDto,
+  MovieDetailsDto,
+} from '../dtos/movie-response.dto';
 
 /**
  * OMDb API implementation of the movie provider interface
@@ -64,7 +68,11 @@ export class OMDbProvider implements IMovieProvider {
    *
    * OMDb endpoint: http://www.omdbapi.com/?s=query&type=movie&page=1
    */
-  async search(query: string, type: 'movie' | 'tv', page: number = 1): Promise<DiscoverResponse> {
+  async search(
+    query: string,
+    type: 'movie' | 'tv',
+    page: number = 1,
+  ): Promise<DiscoverResponse> {
     this.logger.warn('OMDbProvider.search() not yet implemented');
     throw new NotImplementedException(
       'OMDb provider is not yet implemented. Please use TMDB provider or implement this method.',
@@ -103,7 +111,11 @@ export class OMDbProvider implements IMovieProvider {
    * NOTE: OMDb doesn't provide watch provider information
    * May need to use a separate API like JustWatch or Streaming Availability API
    */
-  async getWatchProviders(id: string, type: 'movie' | 'tv', region: string): Promise<any> {
+  async getWatchProviders(
+    id: string,
+    type: 'movie' | 'tv',
+    region: string,
+  ): Promise<any> {
     this.logger.warn('OMDbProvider.getWatchProviders() not yet implemented');
 
     // OMDb doesn't support watch providers

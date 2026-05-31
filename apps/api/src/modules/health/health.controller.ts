@@ -48,13 +48,10 @@ export class HealthController {
     if (!apiKey) return 'not_configured';
 
     try {
-      const res = await fetch(
-        'https://api.themoviedb.org/3/genre/movie/list',
-        {
-          headers: { Authorization: `Bearer ${apiKey}` },
-          signal: AbortSignal.timeout(5000),
-        },
-      );
+      const res = await fetch('https://api.themoviedb.org/3/genre/movie/list', {
+        headers: { Authorization: `Bearer ${apiKey}` },
+        signal: AbortSignal.timeout(5000),
+      });
       return res.ok ? 'ok' : 'error';
     } catch {
       return 'error';

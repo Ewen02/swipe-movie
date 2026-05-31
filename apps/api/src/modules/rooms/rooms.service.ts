@@ -1,11 +1,5 @@
-import {
-  Injectable,
-  Logger,
-} from '@nestjs/common';
-import {
-  PaginationQueryDto,
-  PaginatedResponseDto,
-} from '../../common/dtos';
+import { Injectable, Logger } from '@nestjs/common';
+import { PaginationQueryDto, PaginatedResponseDto } from '../../common/dtos';
 import {
   CreateRoomDto,
   RoomJoinResponseDto,
@@ -41,22 +35,34 @@ export class RoomsService {
     return this.roomMembershipService.leave(userId, roomId);
   }
 
-  async members(roomId: string, userId?: string): Promise<RoomMembersResponseDto> {
+  async members(
+    roomId: string,
+    userId?: string,
+  ): Promise<RoomMembersResponseDto> {
     return this.roomMembershipService.members(roomId, userId);
   }
 
-  async getById(roomId: string, userId?: string): Promise<RoomWithMembersResponseDto> {
+  async getById(
+    roomId: string,
+    userId?: string,
+  ): Promise<RoomWithMembersResponseDto> {
     return this.roomCrudService.getById(roomId, userId);
   }
 
-  async getByCode(code: string, userId?: string): Promise<RoomWithMembersResponseDto> {
+  async getByCode(
+    code: string,
+    userId?: string,
+  ): Promise<RoomWithMembersResponseDto> {
     return this.roomCrudService.getByCode(code, userId);
   }
 
   async getUserRooms(
     userId: string,
     pagination?: PaginationQueryDto,
-  ): Promise<PaginatedResponseDto<MemberRoomsResponseDto['rooms'][0]> | MemberRoomsResponseDto> {
+  ): Promise<
+    | PaginatedResponseDto<MemberRoomsResponseDto['rooms'][0]>
+    | MemberRoomsResponseDto
+  > {
     return this.roomCrudService.getUserRooms(userId, pagination);
   }
 

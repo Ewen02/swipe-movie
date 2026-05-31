@@ -37,7 +37,9 @@ export class SubscriptionController {
    */
   @Get('me')
   async getMySubscription(@Req() req: Express.Request) {
-    return await this.subscriptionService.getSubscriptionOrNull((req.user as { id: string }).id);
+    return await this.subscriptionService.getSubscriptionOrNull(
+      (req.user as { id: string }).id,
+    );
   }
 
   /**
@@ -45,7 +47,9 @@ export class SubscriptionController {
    */
   @Get('me/limits')
   async getMyLimits(@Req() req: Express.Request) {
-    const plan = await this.subscriptionService.getUserPlan((req.user as { id: string }).id);
+    const plan = await this.subscriptionService.getUserPlan(
+      (req.user as { id: string }).id,
+    );
     return this.subscriptionService.getFeatureLimits(plan);
   }
 
@@ -54,7 +58,9 @@ export class SubscriptionController {
    */
   @Get('me/usage')
   async getMyUsage(@Req() req: Express.Request) {
-    return await this.subscriptionService.getUsageStats((req.user as { id: string }).id);
+    return await this.subscriptionService.getUsageStats(
+      (req.user as { id: string }).id,
+    );
   }
 
   /**

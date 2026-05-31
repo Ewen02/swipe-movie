@@ -39,7 +39,9 @@ export class CreateRoomDto {
   })
   @IsOptional()
   @IsString()
-  @ValidatorMaxLength(100, { message: 'Room name must not exceed 100 characters' })
+  @ValidatorMaxLength(100, {
+    message: 'Room name must not exceed 100 characters',
+  })
   @Sanitize() // Remove HTML tags and dangerous characters
   name?: string;
 

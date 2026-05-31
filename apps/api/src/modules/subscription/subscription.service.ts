@@ -22,7 +22,12 @@ import {
 } from '@swipe-movie/subscription';
 
 // Re-export for backward compatibility
-export { SubscriptionPlan, SubscriptionStatus, type SubscriptionPlanType, type SubscriptionStatusType };
+export {
+  SubscriptionPlan,
+  SubscriptionStatus,
+  type SubscriptionPlanType,
+  type SubscriptionStatusType,
+};
 
 /**
  * Subscription service handling subscription lifecycle and feature access
@@ -44,7 +49,9 @@ export class SubscriptionService {
   getFeatureLimits(plan: string): FeatureLimitsDto {
     const normalizedPlan = plan.toLowerCase() as SubscriptionPlanType;
     // Use shared FEATURE_LIMITS from @swipe-movie/subscription
-    return FEATURE_LIMITS[normalizedPlan] || FEATURE_LIMITS[SubscriptionPlan.FREE];
+    return (
+      FEATURE_LIMITS[normalizedPlan] || FEATURE_LIMITS[SubscriptionPlan.FREE]
+    );
   }
 
   /**
@@ -225,10 +232,7 @@ export class SubscriptionService {
   /**
    * Check if user has minimum required plan
    */
-  async hasMinimumPlan(
-    userId: string,
-    requiredPlan: string,
-  ): Promise<boolean> {
+  async hasMinimumPlan(userId: string, requiredPlan: string): Promise<boolean> {
     const userPlan = await this.getUserPlan(userId);
     // Use shared isPlanHigherOrEqual from @swipe-movie/subscription
     return isPlanHigherOrEqual(

@@ -55,7 +55,8 @@ export class SentryExceptionFilter implements ExceptionFilter {
           },
           user: {
             id: (request as unknown as { user?: { id?: string } }).user?.id,
-            email: (request as unknown as { user?: { email?: string } }).user?.email,
+            email: (request as unknown as { user?: { email?: string } }).user
+              ?.email,
           },
         });
       }
@@ -69,7 +70,8 @@ export class SentryExceptionFilter implements ExceptionFilter {
       message:
         typeof message === 'string'
           ? message
-          : ((message as Record<string, unknown>).message as string) || 'Internal server error',
+          : ((message as Record<string, unknown>).message as string) ||
+            'Internal server error',
     });
   }
 }

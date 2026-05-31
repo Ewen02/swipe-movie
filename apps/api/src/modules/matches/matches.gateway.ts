@@ -24,7 +24,10 @@ import {
 @SkipThrottle()
 @WebSocketGateway({
   cors: {
-    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    origin: (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void,
+    ) => {
       const allowedOrigins = [
         process.env.WEB_ORIGIN,
         process.env.API_ORIGIN,
@@ -47,7 +50,11 @@ import {
   transports: ['websocket', 'polling'],
 })
 export class MatchesGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect, OnModuleDestroy
+  implements
+    OnGatewayInit,
+    OnGatewayConnection,
+    OnGatewayDisconnect,
+    OnModuleDestroy
 {
   @WebSocketServer()
   server!: Server;
@@ -59,9 +66,7 @@ export class MatchesGateway
   >();
   private metricsInterval: ReturnType<typeof setInterval> | null = null;
 
-  constructor(
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   onModuleDestroy() {
     if (this.metricsInterval) {
@@ -76,13 +81,18 @@ export class MatchesGateway
     // Ensure server is fully initialized before starting metrics
     if (this.server && this.server.sockets) {
       // Monitor server metrics every 5 minutes
-      this.metricsInterval = setInterval(() => {
-        this.logServerMetrics();
-      }, 5 * 60 * 1000);
+      this.metricsInterval = setInterval(
+        () => {
+          this.logServerMetrics();
+        },
+        5 * 60 * 1000,
+      );
 
       this.logger.log('Server metrics monitoring started');
     } else {
-      this.logger.warn('Server not fully initialized, metrics monitoring disabled');
+      this.logger.warn(
+        'Server not fully initialized, metrics monitoring disabled',
+      );
     }
   }
 
@@ -103,7 +113,9 @@ export class MatchesGateway
 
     // Fall back to email header from handshake (browser clients)
     if (!userId) {
-      const email = client.handshake.auth?.email || client.handshake.headers?.['x-user-email'];
+      const email =
+        client.handshake.auth?.email ||
+        client.handshake.headers?.['x-user-email'];
       if (email) {
         userId = email as string; // Used for logging only
       }
@@ -174,7 +186,10 @@ export class MatchesGateway
       this.logger.log(`Client ${client.id} joined room: ${roomId}`);
 
       // Confirm join to client
-      client.emit('roomJoined', { roomId, timestamp: new Date().toISOString() });
+      client.emit('roomJoined', {
+        roomId,
+        timestamp: new Date().toISOString(),
+      });
 
       return { success: true, roomId };
     } catch (error) {
@@ -234,7 +249,9 @@ export class MatchesGateway
 
   // Method called by the service when a match is deleted (undo)
   emitMatchDeleted(roomId: string, movieId: string) {
-    this.logger.log(`Emitting match deleted for room: ${roomId}, movie: ${movieId}`);
+    this.logger.log(
+      `Emitting match deleted for room: ${roomId}, movie: ${movieId}`,
+    );
     this.server.to(`room:${roomId}`).emit(SocketEvents.MATCH_DELETED, {
       roomId,
       movieId,
@@ -244,7 +261,9 @@ export class MatchesGateway
 
   // Method called when a user joins the room (for member list sync)
   emitUserJoined(roomId: string, user: SocketUser) {
-    this.logger.log(`Emitting user joined for room: ${roomId}, user: ${user.id}`);
+    this.logger.log(
+      `Emitting user joined for room: ${roomId}, user: ${user.id}`,
+    );
     this.server.to(`room:${roomId}`).emit(SocketEvents.USER_JOINED, {
       roomId,
       user,

@@ -89,7 +89,12 @@ export class MoviesService {
     page = 1,
     filters?: MovieFilters,
   ): Promise<MovieBasicDto[]> {
-    return this.movieDiscoverService.getMoviesByGenre(genreId, type, page, filters);
+    return this.movieDiscoverService.getMoviesByGenre(
+      genreId,
+      type,
+      page,
+      filters,
+    );
   }
 
   async getGenres(): Promise<MoviesGenresDto[]> {

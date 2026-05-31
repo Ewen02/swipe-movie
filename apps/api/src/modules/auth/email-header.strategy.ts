@@ -12,7 +12,10 @@ import { PrismaService } from '../../infra/prisma.service';
  * 2. Come from an allowed origin (browser calls proxied through the web app)
  */
 @Injectable()
-export class EmailHeaderStrategy extends PassportStrategy(Strategy, 'email-header') {
+export class EmailHeaderStrategy extends PassportStrategy(
+  Strategy,
+  'email-header',
+) {
   private readonly internalSecret: string;
   private readonly allowedOrigins: string[];
 
@@ -22,12 +25,14 @@ export class EmailHeaderStrategy extends PassportStrategy(Strategy, 'email-heade
   ) {
     super();
     this.internalSecret = this.config.getOrThrow<string>('INTERNAL_API_SECRET');
-    this.allowedOrigins = [
-      this.config.get<string>('WEB_ORIGIN'),
-    ].filter(Boolean) as string[];
+    this.allowedOrigins = [this.config.get<string>('WEB_ORIGIN')].filter(
+      Boolean,
+    ) as string[];
   }
 
-  async validate(req: Request): Promise<{ sub: string; email: string; roles: string[] }> {
+  async validate(
+    req: Request,
+  ): Promise<{ sub: string; email: string; roles: string[] }> {
     // Accept if internal secret is provided (server-to-server)
     const secret = req.headers['x-internal-secret'] as string;
     const origin = req.headers['origin'] as string;
@@ -35,7 +40,8 @@ export class EmailHeaderStrategy extends PassportStrategy(Strategy, 'email-heade
 
     const hasValidSecret = secret && secret === this.internalSecret;
     const hasValidOrigin = origin && this.allowedOrigins.includes(origin);
-    const hasValidReferer = referer && this.allowedOrigins.some((o) => referer.startsWith(o));
+    const hasValidReferer =
+      referer && this.allowedOrigins.some((o) => referer.startsWith(o));
 
     if (!hasValidSecret && !hasValidOrigin && !hasValidReferer) {
       throw new UnauthorizedException('Request origin not allowed');
@@ -48,7 +54,8 @@ export class EmailHeaderStrategy extends PassportStrategy(Strategy, 'email-heade
     }
 
     // Validate email format (stricter: min 2-char TLD, max 254 chars)
-    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+    const emailRegex =
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
     if (!emailRegex.test(email) || email.length > 254) {
       throw new UnauthorizedException('Invalid email format');
     }

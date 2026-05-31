@@ -1,5 +1,9 @@
 import { AuthGuard } from '@nestjs/passport';
-import { Injectable, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 /**
  * Combined auth guard that tries JWT first, then falls back to email-header strategy.

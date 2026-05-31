@@ -3,10 +3,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import * as crypto from 'crypto';
 import type { MovieFilters } from '@swipe-movie/types';
-import {
-  MovieBasicDto,
-  MoviesGenresDto,
-} from './dtos/movie-response.dto';
+import { MovieBasicDto, MoviesGenresDto } from './dtos/movie-response.dto';
 import {
   TMDbDiscoverResponse,
   TMDbGenresResponse,

@@ -46,9 +46,7 @@ export class PrismaService
       // Log slow queries in all environments
       this.$on('query' as never, (e: any) => {
         if (e.duration > 1000) {
-          this.logger.warn(
-            `Slow query detected (${e.duration}ms): ${e.query}`,
-          );
+          this.logger.warn(`Slow query detected (${e.duration}ms): ${e.query}`);
         }
       });
 
@@ -105,7 +103,9 @@ export class PrismaService
    */
   async enableShutdownHooks() {
     process.on('beforeExit', async () => {
-      this.logger.log('Application shutting down, closing database connections');
+      this.logger.log(
+        'Application shutting down, closing database connections',
+      );
       await this.$disconnect();
     });
   }

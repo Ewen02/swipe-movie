@@ -1,4 +1,8 @@
-import { MovieBasicDto, MoviesGenresDto, MovieDetailsDto } from '../dtos/movie-response.dto';
+import {
+  MovieBasicDto,
+  MoviesGenresDto,
+  MovieDetailsDto,
+} from '../dtos/movie-response.dto';
 
 /**
  * Parameters for discovering movies/TV shows
@@ -54,7 +58,11 @@ export interface IMovieProvider {
    * @param page - Page number for pagination
    * @returns Paginated search results
    */
-  search(query: string, type: 'movie' | 'tv', page?: number): Promise<DiscoverResponse>;
+  search(
+    query: string,
+    type: 'movie' | 'tv',
+    page?: number,
+  ): Promise<DiscoverResponse>;
 
   /**
    * Get list of available genres
@@ -70,5 +78,9 @@ export interface IMovieProvider {
    * @param region - ISO 3166-1 region code (e.g., 'FR', 'US')
    * @returns List of watch providers with links
    */
-  getWatchProviders?(id: string, type: 'movie' | 'tv', region: string): Promise<any>;
+  getWatchProviders?(
+    id: string,
+    type: 'movie' | 'tv',
+    region: string,
+  ): Promise<any>;
 }

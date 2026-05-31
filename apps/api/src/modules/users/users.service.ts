@@ -1,9 +1,25 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { MediaType, MediaStatus, MediaSource } from '../../common/constants/media';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
+import {
+  MediaType,
+  MediaStatus,
+  MediaSource,
+} from '../../common/constants/media';
 import type { Prisma } from '@prisma/client';
 import { PrismaService } from '../../infra/prisma.service';
-import { UpdateUserPreferencesDto, UserPreferencesDto, OnboardingSwipeDto } from './dtos/user-preferences.dto';
-import { LibraryItemDto, LibraryResponseDto, LibraryQueryDto } from './dtos/library.dto';
+import {
+  UpdateUserPreferencesDto,
+  UserPreferencesDto,
+  OnboardingSwipeDto,
+} from './dtos/user-preferences.dto';
+import {
+  LibraryItemDto,
+  LibraryResponseDto,
+  LibraryQueryDto,
+} from './dtos/library.dto';
 
 @Injectable()
 export class UsersService {
@@ -41,11 +57,19 @@ export class UsersService {
     const user = await this.prisma.user.update({
       where: { id: userId },
       data: {
-        ...(dto.watchProviders !== undefined && { watchProviders: dto.watchProviders }),
+        ...(dto.watchProviders !== undefined && {
+          watchProviders: dto.watchProviders,
+        }),
         ...(dto.watchRegion !== undefined && { watchRegion: dto.watchRegion }),
-        ...(dto.favoriteGenreIds !== undefined && { favoriteGenreIds: dto.favoriteGenreIds }),
-        ...(dto.onboardingStep !== undefined && { onboardingStep: dto.onboardingStep }),
-        ...(dto.onboardingCompleted !== undefined && { onboardingCompleted: dto.onboardingCompleted }),
+        ...(dto.favoriteGenreIds !== undefined && {
+          favoriteGenreIds: dto.favoriteGenreIds,
+        }),
+        ...(dto.onboardingStep !== undefined && {
+          onboardingStep: dto.onboardingStep,
+        }),
+        ...(dto.onboardingCompleted !== undefined && {
+          onboardingCompleted: dto.onboardingCompleted,
+        }),
       },
       select: {
         watchProviders: true,
@@ -101,9 +125,12 @@ export class UsersService {
       const source = (swipe.source || 'onboarding') as MediaSource;
       const mediaType = swipe.mediaType as MediaType;
       // For manual imports, use 'watchlist' status. For swipes, use liked/disliked
-      const status: MediaStatus = source === 'manual'
-        ? MediaStatus.watchlist
-        : (swipe.liked ? MediaStatus.liked : MediaStatus.disliked);
+      const status: MediaStatus =
+        source === 'manual'
+          ? MediaStatus.watchlist
+          : swipe.liked
+            ? MediaStatus.liked
+            : MediaStatus.disliked;
 
       return this.prisma.userMediaLibrary.upsert({
         where: {
