@@ -6,8 +6,11 @@ import {
 } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
+import { Logger } from '@nestjs/common';
 import { PrismaService } from '../../infra/prisma.service';
 import { MatchesGateway } from './matches.gateway';
+import { MoviesService } from '../movies/movies.service';
+import { NestEmailService } from '../email/email.service';
 
 import { ResponseMatchDto } from './dtos';
 import {
@@ -23,11 +26,22 @@ const CACHE_TTL = {
 
 @Injectable()
 export class MatchesService {
+  private readonly logger = new Logger(MatchesService.name);
+
+  /**
+   * Tracks the in-flight match-notification side effect so tests can await it
+   * deterministically. Not part of the public API; production code never reads
+   * it (the notification stays fire-and-forget).
+   */
+  private notificationInFlight: Promise<void> = Promise.resolve();
+
   constructor(
     private prisma: PrismaService,
     @Inject(forwardRef(() => MatchesGateway))
     private matchesGateway: MatchesGateway,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    private readonly moviesService: MoviesService,
+    private readonly emailService: NestEmailService,
   ) {}
 
   /**
@@ -92,9 +106,116 @@ export class MatchesService {
     // Emit WebSocket event for real-time notification (only for new matches)
     if (isNew) {
       this.matchesGateway.emitMatchCreated(roomId, matchDto);
+
+      // Re-engage members who aren't live in the room right now: they miss the
+      // in-app celebration, and "ça a matché sur X !" is the single best reason
+      // to come back. Fire-and-forget — must never block or fail match creation.
+      this.notificationInFlight = this.notifyAbsentMembersOfMatch(
+        roomId,
+        movieId,
+      ).catch((err) => {
+        this.logger.error(
+          `Match notification emails failed for room ${roomId}, movie ${movieId}`,
+          err instanceof Error ? err.stack : String(err),
+        );
+      });
     }
 
     return matchDto;
+  }
+
+  /**
+   * Email members of a room who are NOT currently connected to its live
+   * WebSocket session when a new match is created. People present already get
+   * the real-time celebration; absent members get a "come back" trigger.
+   *
+   * Skips guests (no real inbox), the empty-email case, and never throws —
+   * this runs as fire-and-forget after the match transaction has committed.
+   *
+   * Protected (not private) so it can be exercised deterministically in tests
+   * without depending on the fire-and-forget timing in `createIfNeeded`.
+   */
+  protected async notifyAbsentMembersOfMatch(
+    roomId: string,
+    movieId: string,
+  ): Promise<void> {
+    const onlineUserIds = this.matchesGateway.getOnlineUserIdsInRoom(roomId);
+
+    const room = await this.prisma.room.findUnique({
+      where: { id: roomId },
+      select: {
+        name: true,
+        code: true,
+        members: {
+          select: {
+            user: {
+              select: { id: true, email: true, name: true, isGuest: true },
+            },
+          },
+        },
+      },
+    });
+
+    if (!room) return;
+
+    const absentMembers = room.members
+      .map((m) => m.user)
+      .filter(
+        (u) =>
+          !u.isGuest &&
+          !!u.email &&
+          // Guests use synthetic addresses (see trial.service: guest_*@trial.local)
+          !u.email.endsWith('@trial.local') &&
+          !onlineUserIds.has(u.id),
+      );
+
+    if (absentMembers.length === 0) return;
+
+    // One movie lookup shared across all recipients. movieId is a numeric TMDB
+    // id stored as a string (e.g. "550"); getMovieDetails expects a number.
+    let movieTitle = 'un film';
+    let moviePoster: string | undefined;
+    try {
+      const movie = await this.moviesService.getMovieDetails(
+        parseInt(movieId, 10),
+      );
+      movieTitle = movie.title || movieTitle;
+      moviePoster = movie.posterUrl || undefined;
+    } catch (err: unknown) {
+      // Title is best-effort; still send with a generic fallback rather than
+      // dropping the re-engagement opportunity entirely.
+      this.logger.warn(
+        `Could not resolve movie ${movieId} for match email: ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+      );
+    }
+
+    const baseUrl = (
+      process.env.FRONTEND_URL ||
+      process.env.WEB_ORIGIN ||
+      'https://swipe-movie.com'
+    ).replace(/\/$/, '');
+    const roomUrl = `${baseUrl}/rooms/${room.code}`;
+
+    const results = await Promise.allSettled(
+      absentMembers.map((u) =>
+        this.emailService.sendMatchNotification(u.email, {
+          userName: u.name || 'cinéphile',
+          movieTitle,
+          moviePoster,
+          roomName: room.name,
+          roomUrl,
+        }),
+      ),
+    );
+
+    const sent = results.filter(
+      (r) => r.status === 'fulfilled' && r.value === true,
+    ).length;
+    this.logger.log(
+      `Match in room ${roomId}: notified ${sent}/${absentMembers.length} absent member(s) about "${movieTitle}"`,
+    );
   }
 
   /**

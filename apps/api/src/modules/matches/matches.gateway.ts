@@ -154,6 +154,26 @@ export class MatchesGateway
     this.connectedClients.delete(client.id);
   }
 
+  /**
+   * Returns the set of userIds currently connected to a given room over the
+   * live WebSocket. Used to decide who is *absent* from the session and should
+   * therefore be re-engaged via email/push when a match happens (people present
+   * already see the in-app celebration in real time).
+   *
+   * Note: relies on the userId resolved at connection time (JWT or email
+   * header). Clients that never authenticated won't be counted as online —
+   * acceptable here since unauthenticated clients have no email to notify.
+   */
+  getOnlineUserIdsInRoom(roomId: string): Set<string> {
+    const online = new Set<string>();
+    for (const client of this.connectedClients.values()) {
+      if (client.userId && client.rooms.has(roomId)) {
+        online.add(client.userId);
+      }
+    }
+    return online;
+  }
+
   private logServerMetrics() {
     try {
       const totalClients = this.connectedClients.size;

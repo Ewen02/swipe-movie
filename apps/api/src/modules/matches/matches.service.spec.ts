@@ -4,12 +4,20 @@ import { NotFoundException } from '@nestjs/common';
 import { MatchesService } from './matches.service';
 import { MatchesGateway } from './matches.gateway';
 import { PrismaService } from '../../infra/prisma.service';
+import { MoviesService } from '../movies/movies.service';
+import { NestEmailService } from '../email/email.service';
 
 describe('MatchesService', () => {
   let service: MatchesService;
   let prisma: any;
-  let gateway: { emitMatchCreated: jest.Mock; emitMatchDeleted: jest.Mock };
+  let gateway: {
+    emitMatchCreated: jest.Mock;
+    emitMatchDeleted: jest.Mock;
+    getOnlineUserIdsInRoom: jest.Mock;
+  };
   let cacheManager: { get: jest.Mock; set: jest.Mock; del: jest.Mock };
+  let moviesService: { getMovieDetails: jest.Mock };
+  let emailService: { sendMatchNotification: jest.Mock };
 
   beforeEach(async () => {
     // The service uses prisma.$transaction, which receives a callback.
@@ -26,7 +34,9 @@ describe('MatchesService', () => {
     };
 
     prisma = {
-      $transaction: jest.fn((cb: (tx: typeof txMock) => Promise<any>) => cb(txMock)),
+      $transaction: jest.fn((cb: (tx: typeof txMock) => Promise<any>) =>
+        cb(txMock),
+      ),
       swipe: {
         count: jest.fn(),
         groupBy: jest.fn(),
@@ -48,6 +58,19 @@ describe('MatchesService', () => {
     gateway = {
       emitMatchCreated: jest.fn(),
       emitMatchDeleted: jest.fn(),
+      // Default: nobody online → all members are "absent". Tests that care
+      // about presence override this per-case.
+      getOnlineUserIdsInRoom: jest.fn().mockReturnValue(new Set<string>()),
+    };
+
+    moviesService = {
+      getMovieDetails: jest
+        .fn()
+        .mockResolvedValue({ title: 'Test Movie', posterUrl: '' }),
+    };
+
+    emailService = {
+      sendMatchNotification: jest.fn().mockResolvedValue(true),
     };
 
     cacheManager = {
@@ -56,12 +79,18 @@ describe('MatchesService', () => {
       del: jest.fn().mockResolvedValue(undefined),
     };
 
+    // Match-notification path reads room members; default to no members so the
+    // existing tests don't trigger emails. The dedicated test overrides this.
+    prisma.room.findUnique.mockResolvedValue(null);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MatchesService,
         { provide: PrismaService, useValue: prisma },
         { provide: MatchesGateway, useValue: gateway },
         { provide: CACHE_MANAGER, useValue: cacheManager },
+        { provide: MoviesService, useValue: moviesService },
+        { provide: NestEmailService, useValue: emailService },
       ],
     }).compile();
 
@@ -107,6 +136,85 @@ describe('MatchesService', () => {
         voteCount: 2,
       });
       expect(cacheManager.del).toHaveBeenCalledWith(`matches:room:${roomId}`);
+      // Let the fire-and-forget match notification settle so it doesn't log
+      // after the test finishes.
+      await (service as unknown as { notificationInFlight: Promise<void> })
+        .notificationInFlight;
+    });
+
+    it('emails absent (non-online, non-guest) members but not present/guest ones', async () => {
+      // "present" is connected to the live room; "absent" is not; "guest" has no
+      // real inbox. Only "absent" should receive an email. Calling the
+      // notification method directly avoids depending on the fire-and-forget
+      // timing in createIfNeeded.
+      gateway.getOnlineUserIdsInRoom.mockReturnValue(new Set(['present']));
+      prisma.room.findUnique.mockResolvedValue({
+        name: 'Movie Night',
+        code: 'ABC123',
+        members: [
+          {
+            user: {
+              id: 'present',
+              email: 'present@example.com',
+              name: 'Present',
+              isGuest: false,
+            },
+          },
+          {
+            user: {
+              id: 'absent',
+              email: 'absent@example.com',
+              name: 'Absent',
+              isGuest: false,
+            },
+          },
+          {
+            user: {
+              id: 'guest',
+              email: 'guest_abc@trial.local',
+              name: 'Guest',
+              isGuest: true,
+            },
+          },
+        ],
+      });
+
+      // notifyAbsentMembersOfMatch is protected; reach it via an index cast.
+      await (
+        service as unknown as {
+          notifyAbsentMembersOfMatch: (r: string, m: string) => Promise<void>;
+        }
+      ).notifyAbsentMembersOfMatch(roomId, '550');
+
+      expect(moviesService.getMovieDetails).toHaveBeenCalledWith(550);
+      expect(emailService.sendMatchNotification).toHaveBeenCalledTimes(1);
+      expect(emailService.sendMatchNotification).toHaveBeenCalledWith(
+        'absent@example.com',
+        expect.objectContaining({
+          movieTitle: 'Test Movie',
+          roomName: 'Movie Night',
+        }),
+      );
+    });
+
+    it('does not email anyone when all members are online', async () => {
+      gateway.getOnlineUserIdsInRoom.mockReturnValue(new Set(['a', 'b']));
+      prisma.room.findUnique.mockResolvedValue({
+        name: 'Room',
+        code: 'XYZ',
+        members: [
+          { user: { id: 'a', email: 'a@x.com', name: 'A', isGuest: false } },
+          { user: { id: 'b', email: 'b@x.com', name: 'B', isGuest: false } },
+        ],
+      });
+
+      await (
+        service as unknown as {
+          notifyAbsentMembersOfMatch: (r: string, m: string) => Promise<void>;
+        }
+      ).notifyAbsentMembersOfMatch(roomId, '550');
+
+      expect(emailService.sendMatchNotification).not.toHaveBeenCalled();
     });
 
     it('should return null and not create a match when fewer than 2 likes', async () => {
@@ -149,10 +257,9 @@ describe('MatchesService', () => {
 
       await service.createIfNeeded(roomId, movieId);
 
-      expect(prisma.$transaction).toHaveBeenCalledWith(
-        expect.any(Function),
-        { isolationLevel: 'Serializable' },
-      );
+      expect(prisma.$transaction).toHaveBeenCalledWith(expect.any(Function), {
+        isolationLevel: 'Serializable',
+      });
     });
   });
 
@@ -186,13 +293,21 @@ describe('MatchesService', () => {
     it('should throw NotFoundException when room does not exist', async () => {
       prisma.room.findUnique.mockResolvedValue(null);
 
-      await expect(service.findByRoom(roomId)).rejects.toThrow(NotFoundException);
+      await expect(service.findByRoom(roomId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should return cached matches when cache is available (no pagination)', async () => {
       prisma.room.findUnique.mockResolvedValue({ id: roomId });
       const cachedData = [
-        { id: 'match-1', movieId: 'movie-1', roomId, voteCount: 2, createdAt: new Date() },
+        {
+          id: 'match-1',
+          movieId: 'movie-1',
+          roomId,
+          voteCount: 2,
+          createdAt: new Date(),
+        },
       ];
       cacheManager.get.mockResolvedValue(cachedData);
 
