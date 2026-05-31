@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
@@ -30,6 +30,21 @@ export default function OnboardingPage() {
   const [selectedProviders, setSelectedProviders] = useState<number[]>([]);
   const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Track onboarding abandonment: fire on unmount if the user left before
+  // completing. Refs hold the latest step/completion so the unmount cleanup
+  // (which closes over initial state) reports accurate values.
+  const completedRef = useRef(false);
+  const stepRef = useRef(0);
+  stepRef.current = currentStep;
+
+  useEffect(() => {
+    return () => {
+      if (!completedRef.current) {
+        captureEvent('onboarding_abandoned', { step: stepRef.current });
+      }
+    };
+  }, []);
 
   // Load saved preferences if available
   useEffect(() => {
@@ -106,10 +121,12 @@ export default function OnboardingPage() {
       const trial = getTrialData();
       if (trial?.roomCode) {
         clearTrialData();
+        completedRef.current = true;
         captureEvent('onboarding_completed', { nextAction: 'trial_room' });
         router.push(`/rooms/${trial.roomCode}`);
         return;
       }
+      completedRef.current = true;
       captureEvent('onboarding_completed', { nextAction: 'create_room' });
       router.push('/rooms?create=true');
     } catch (error) {
@@ -123,6 +140,7 @@ export default function OnboardingPage() {
     setIsSaving(true);
     try {
       await complete();
+      completedRef.current = true;
       captureEvent('onboarding_completed', { nextAction: 'discover' });
       router.push('/discover');
     } catch (error) {
@@ -136,6 +154,7 @@ export default function OnboardingPage() {
     setIsSaving(true);
     try {
       await complete();
+      completedRef.current = true;
       captureEvent('onboarding_completed', { nextAction: 'import' });
       router.push('/connections');
     } catch (error) {

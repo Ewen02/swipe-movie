@@ -13,6 +13,7 @@ import { RatingBadge, VoteCountBadge, ProviderList } from "@/components/ui/movie
 import { TopMatch } from "./TopMatch"
 import { MovieDetailsModal } from "@/components/movies/MovieDetailsModal"
 import { MatchesListSkeleton } from "./MatchesListSkeleton"
+import { captureEvent } from "@/components/providers/PostHogProvider"
 
 interface MatchesListProps {
   roomId: string
@@ -81,6 +82,7 @@ export function MatchesList({ roomId, totalMembers = 2, refreshTrigger, roomFilt
   }
 
   const handleShowDetails = (movieId: number) => {
+    captureEvent("match_opened", { movieId: String(movieId), roomId })
     setSelectedMovieId(movieId)
     setShowMovieDetails(true)
   }

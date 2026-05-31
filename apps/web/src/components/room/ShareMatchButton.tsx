@@ -12,6 +12,7 @@ import {
 } from "@swipe-movie/ui"
 import { Share2, Copy, CheckCircle2 } from "lucide-react"
 import type { MovieBasic } from "@/schemas/movies"
+import { captureEvent } from "@/components/providers/PostHogProvider"
 
 interface ShareMatchButtonProps {
   movie: MovieBasic
@@ -35,10 +36,14 @@ export function ShareMatchButton({
 
   const shareText = `🎬 ${agreementPercentage}% de notre groupe ${roomName} (${totalMembers} personnes) ont matché sur "${movie.title}" ! 🎉\n\nTrouve ton prochain film sur Swipe Movie 🍿`
 
+  const trackShare = (method: string) =>
+    captureEvent("match_shared", { method, movieId: String(movie.id), roomName })
+
   const handleCopyText = async () => {
     try {
       await navigator.clipboard.writeText(shareText)
       setCopied(true)
+      trackShare("copy_text")
       setTimeout(() => setCopied(false), 2000)
     } catch (err) {
       console.error("Failed to copy:", err)
@@ -46,21 +51,25 @@ export function ShareMatchButton({
   }
 
   const shareToTwitter = () => {
+    trackShare("twitter")
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`
     window.open(twitterUrl, "_blank", "width=550,height=420")
   }
 
   const shareToFacebook = () => {
+    trackShare("facebook")
     const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(shareText)}`
     window.open(facebookUrl, "_blank", "width=550,height=420")
   }
 
   const shareToWhatsApp = () => {
+    trackShare("whatsapp")
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`
     window.open(whatsappUrl, "_blank")
   }
 
   const shareToTelegram = () => {
+    trackShare("telegram")
     const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(shareText)}`
     window.open(telegramUrl, "_blank")
   }
@@ -73,6 +82,7 @@ export function ShareMatchButton({
           text: shareText,
           url: window.location.href,
         })
+        trackShare("native_share")
       } catch (err) {
         console.error("Error sharing:", err)
       }

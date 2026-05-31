@@ -60,6 +60,7 @@ export function MediaPage({ movie, stats, locale, type, labels }: Props) {
         movie={movie}
         director={director}
         locale={locale}
+        mediaType={type}
         labels={{
           director: labels.director,
           runtime: labels.runtime,

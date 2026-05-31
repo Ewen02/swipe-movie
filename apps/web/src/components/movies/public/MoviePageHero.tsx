@@ -1,11 +1,12 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import type { MovieDetails } from '@swipe-movie/types';
+import { MovieCtaButton } from './MovieCtaButton';
 
 type Props = {
   movie: MovieDetails;
   locale: string;
   director?: string | null;
+  mediaType: 'film' | 'serie';
   labels: {
     director: string;
     runtime: (min: number) => string;
@@ -14,7 +15,7 @@ type Props = {
   };
 };
 
-export function MoviePageHero({ movie, director, labels }: Props) {
+export function MoviePageHero({ movie, director, locale, mediaType, labels }: Props) {
   const year = movie.releaseDate ? new Date(movie.releaseDate).getFullYear() : null;
 
   return (
@@ -83,12 +84,14 @@ export function MoviePageHero({ movie, director, labels }: Props) {
             <p className="text-base leading-relaxed mb-6 max-w-3xl">{movie.overview}</p>
           ) : null}
 
-          <Link
+          <MovieCtaButton
             href={labels.ctaHref}
-            className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-semibold text-white shadow-lg hover:opacity-90 transition"
-          >
-            {labels.cta}
-          </Link>
+            label={labels.cta}
+            mediaType={mediaType}
+            locale={locale}
+            tmdbId={movie.id}
+            title={movie.title}
+          />
         </div>
       </div>
     </header>

@@ -11,6 +11,7 @@ import {
 import { Share2, Copy, CheckCircle2, QrCode, Link2, Hash, Sparkles } from "lucide-react"
 import QRCode from "react-qr-code"
 import { cn } from "@/lib/utils"
+import { captureEvent } from "@/components/providers/PostHogProvider"
 
 interface ShareRoomButtonProps {
   roomCode: string
@@ -44,16 +45,18 @@ export function ShareRoomButton({
     try {
       await navigator.clipboard.writeText(roomUrl)
       setCopiedLink(true)
+      captureEvent("room_invite_shared", { method: "copy_link", roomCode })
       setTimeout(() => setCopiedLink(false), 2000)
     } catch (err) {
       console.error("Failed to copy link:", err)
     }
-  }, [roomUrl])
+  }, [roomUrl, roomCode])
 
   const handleCopyCode = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(roomCode)
       setCopiedCode(true)
+      captureEvent("room_invite_shared", { method: "copy_code", roomCode })
       setTimeout(() => setCopiedCode(false), 2000)
     } catch (err) {
       console.error("Failed to copy code:", err)
@@ -69,6 +72,7 @@ export function ShareRoomButton({
           text: `Hey! Rejoins ma room "${roomName}" sur Swipe Movie pour choisir un film ensemble!`,
           url: roomUrl,
         })
+        captureEvent("room_invite_shared", { method: "native_share", roomCode })
       } catch (err) {
         // User cancelled or share failed
         if ((err as Error).name !== "AbortError") {
@@ -76,7 +80,7 @@ export function ShareRoomButton({
         }
       }
     }
-  }, [roomUrl, roomName])
+  }, [roomUrl, roomName, roomCode])
 
   // Check if native share is available
   const canShare = typeof navigator !== "undefined" && !!navigator.share
