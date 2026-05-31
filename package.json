@@ -18,6 +18,7 @@
     "storybook": "pnpm --filter @swipe-movie/ui storybook",
     "db:generate": "pnpm --filter @swipe-movie/database db:generate",
     "db:migrate": "pnpm --filter @swipe-movie/database db:migrate",
+    "db:deploy": "pnpm --filter @swipe-movie/database db:deploy",
     "db:push": "pnpm --filter @swipe-movie/database db:push",
     "db:studio": "pnpm --filter @swipe-movie/database db:studio",
     "db:reset": "pnpm --filter @swipe-movie/database prisma migrate reset --force --skip-generate",

@@ -2,8 +2,13 @@
 // This is the single source of truth for the database schema
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  // Runtime queries go through the pooled (PgBouncer) endpoint on Vercel.
+  url       = env("DATABASE_URL")
+  // Migrations / introspection use the direct, non-pooled endpoint.
+  // PgBouncer in transaction mode cannot hold the advisory lock that
+  // `migrate deploy` needs (causes P1002). Falls back to DATABASE_URL locally.
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
