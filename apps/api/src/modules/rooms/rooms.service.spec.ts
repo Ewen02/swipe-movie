@@ -445,6 +445,10 @@ describe('RoomMembershipService', () => {
         { provide: SubscriptionService, useValue: subscriptionService },
         { provide: MatchesGateway, useValue: matchesGateway },
         { provide: RoomCrudService, useValue: roomCrudService },
+        {
+          provide: PushService,
+          useValue: { sendToUsers: jest.fn().mockResolvedValue(0) },
+        },
       ],
     }).compile();
 
