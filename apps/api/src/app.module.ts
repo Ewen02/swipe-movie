@@ -17,6 +17,7 @@ import { UsersModule } from './modules/users/users.module';
 import { EmailModule } from './modules/email/email.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { TrialModule } from './modules/trial/trial.module';
+import { DigestModule } from './modules/digest/digest.module';
 import { HealthController } from './modules/health/health.controller';
 import { HttpsRedirectMiddleware } from './common/middleware/https-redirect.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
@@ -59,6 +60,7 @@ import { PrismaModule } from './infra/prisma.module';
     EmailModule,
     AdminModule,
     TrialModule,
+    DigestModule,
   ],
   controllers: [HealthController],
   providers: [

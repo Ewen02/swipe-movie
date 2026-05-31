@@ -1,4 +1,9 @@
-import type { RoomInviteEmailData, MatchNotificationEmailData, WeeklyDigestEmailData } from './types';
+import type {
+  RoomInviteEmailData,
+  MatchNotificationEmailData,
+  WeeklyDigestEmailData,
+  RoomExpiryReminderEmailData,
+} from './types';
 
 export function buildBaseTemplate(content: string, baseUrl: string): string {
   return `
@@ -47,7 +52,8 @@ export function buildBaseTemplate(content: string, baseUrl: string): string {
 }
 
 export function buildRoomInviteEmail(data: RoomInviteEmailData, baseUrl: string): string {
-  return buildBaseTemplate(`
+  return buildBaseTemplate(
+    `
     <h2>Vous êtes invité(e) !</h2>
     <p>Bonjour ${data.inviteeName},</p>
     <p><strong>${data.inviterName}</strong> vous invite à rejoindre la room <strong>"${data.roomName}"</strong> sur Swipe Movie.</p>
@@ -59,15 +65,21 @@ export function buildRoomInviteEmail(data: RoomInviteEmailData, baseUrl: string)
       Code de la room : <strong>${data.roomCode}</strong><br>
       Ou copiez ce lien : ${data.joinUrl}
     </p>
-  `, baseUrl);
+  `,
+    baseUrl,
+  );
 }
 
-export function buildMatchNotificationEmail(data: MatchNotificationEmailData, baseUrl: string): string {
+export function buildMatchNotificationEmail(
+  data: MatchNotificationEmailData,
+  baseUrl: string,
+): string {
   const posterHtml = data.moviePoster
     ? `<img src="${data.moviePoster}" alt="${data.movieTitle}" class="movie-poster">`
     : '';
 
-  return buildBaseTemplate(`
+  return buildBaseTemplate(
+    `
     <h2>Nouveau match !</h2>
     <p>Bonjour ${data.userName},</p>
     <p>Bonne nouvelle ! Vous avez un nouveau match dans la room <strong>"${data.roomName}"</strong> :</p>
@@ -81,11 +93,14 @@ export function buildMatchNotificationEmail(data: MatchNotificationEmailData, ba
     <p style="text-align: center;">
       <a href="${data.roomUrl}" class="button">Voir les détails</a>
     </p>
-  `, baseUrl);
+  `,
+    baseUrl,
+  );
 }
 
 export function buildWeeklyDigestEmail(data: WeeklyDigestEmailData, baseUrl: string): string {
-  const topMatchHtml = data.topMatch ? `
+  const topMatchHtml = data.topMatch
+    ? `
     <h3>Film le plus matché</h3>
     <div class="movie-card">
       ${data.topMatch.poster ? `<img src="${data.topMatch.poster}" alt="${data.topMatch.title}" class="movie-poster">` : ''}
@@ -93,9 +108,11 @@ export function buildWeeklyDigestEmail(data: WeeklyDigestEmailData, baseUrl: str
         <h4 style="margin: 0;">${data.topMatch.title}</h4>
       </div>
     </div>
-  ` : '';
+  `
+    : '';
 
-  return buildBaseTemplate(`
+  return buildBaseTemplate(
+    `
     <h2>Votre semaine en résumé</h2>
     <p>Bonjour ${data.userName},</p>
     <p>Voici votre activité de la semaine sur Swipe Movie :</p>
@@ -117,11 +134,37 @@ export function buildWeeklyDigestEmail(data: WeeklyDigestEmailData, baseUrl: str
     <p style="text-align: center;">
       <a href="${baseUrl}/rooms" class="button">Continuer à swiper</a>
     </p>
-  `, baseUrl);
+  `,
+    baseUrl,
+  );
+}
+
+export function buildRoomExpiryReminderEmail(
+  data: RoomExpiryReminderEmailData,
+  baseUrl: string,
+): string {
+  const matchLine =
+    data.matchCount > 0
+      ? `<p>Vous avez déjà <strong>${data.matchCount} match${data.matchCount > 1 ? 's' : ''}</strong> dans cette room — ne les perdez pas !</p>`
+      : `<p>Vous n'avez pas encore de match. Il vous reste un peu de temps pour en trouver un !</p>`;
+
+  return buildBaseTemplate(
+    `
+    <h2>Votre room va bientôt expirer</h2>
+    <p>Bonjour ${data.userName},</p>
+    <p>Votre room <strong>"${data.roomName}"</strong> expire dans environ <strong>${data.timeLeft}</strong>.</p>
+    ${matchLine}
+    <p style="text-align: center;">
+      <a href="${data.roomUrl}" class="button">Retourner dans la room</a>
+    </p>
+  `,
+    baseUrl,
+  );
 }
 
 export function buildWelcomeEmail(userName: string, baseUrl: string): string {
-  return buildBaseTemplate(`
+  return buildBaseTemplate(
+    `
     <h2>Bienvenue sur Swipe Movie !</h2>
     <p>Bonjour ${userName},</p>
     <p>Merci de rejoindre Swipe Movie ! Vous êtes prêt(e) à découvrir une nouvelle façon de choisir vos films.</p>
@@ -137,7 +180,9 @@ export function buildWelcomeEmail(userName: string, baseUrl: string): string {
     <p style="color: #666; font-size: 14px;">
       Des questions ? Répondez simplement à cet email, nous sommes là pour vous aider.
     </p>
-  `, baseUrl);
+  `,
+    baseUrl,
+  );
 }
 
 export function htmlToText(html: string): string {

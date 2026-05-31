@@ -5,6 +5,7 @@ import {
   RoomInviteEmailData,
   MatchNotificationEmailData,
   WeeklyDigestEmailData,
+  RoomExpiryReminderEmailData,
 } from '@swipe-movie/email';
 
 @Injectable()
@@ -73,6 +74,19 @@ export class NestEmailService {
     if (!result.success) {
       this.logger.error(
         `Failed to send welcome email to ${email}: ${result.error}`,
+      );
+    }
+    return result.success;
+  }
+
+  async sendRoomExpiryReminder(
+    email: string,
+    data: RoomExpiryReminderEmailData,
+  ): Promise<boolean> {
+    const result = await this.emailService.sendRoomExpiryReminder(email, data);
+    if (!result.success) {
+      this.logger.error(
+        `Failed to send room expiry reminder to ${email}: ${result.error}`,
       );
     }
     return result.success;

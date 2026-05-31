@@ -33,6 +33,16 @@ export interface WeeklyDigestEmailData {
   roomsActive: number;
 }
 
+export interface RoomExpiryReminderEmailData {
+  userName: string;
+  roomName: string;
+  roomUrl: string;
+  /** Number of matches already found in the room, to make the reminder concrete. */
+  matchCount: number;
+  /** Human-readable time left, e.g. "4 heures". */
+  timeLeft: string;
+}
+
 export interface EmailConfig {
   apiKey?: string;
   fromEmail?: string;

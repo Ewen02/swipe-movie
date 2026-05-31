@@ -11,6 +11,7 @@ import { RoomsService } from './rooms.service';
 import { PrismaService } from '../../infra/prisma.service';
 import { SubscriptionService } from '../subscription/subscription.service';
 import { MatchesGateway } from '../matches/matches.gateway';
+import { NestEmailService } from '../email/email.service';
 import type { CreateRoomDto } from './dtos';
 
 // Mock generateRoomCode to return a deterministic value
@@ -88,6 +89,10 @@ describe('RoomCrudService', () => {
         { provide: PrismaService, useValue: prisma },
         { provide: CACHE_MANAGER, useValue: cacheManager },
         { provide: SubscriptionService, useValue: subscriptionService },
+        {
+          provide: NestEmailService,
+          useValue: { sendRoomExpiryReminder: jest.fn() },
+        },
       ],
     }).compile();
 
@@ -111,7 +116,9 @@ describe('RoomCrudService', () => {
           user: { findUnique: jest.fn().mockResolvedValue({ id: mockUserId }) },
           room: { create: jest.fn().mockResolvedValue(mockRoom) },
           roomMember: {
-            create: jest.fn().mockResolvedValue({ roomId: mockRoomId, userId: mockUserId }),
+            create: jest
+              .fn()
+              .mockResolvedValue({ roomId: mockRoomId, userId: mockUserId }),
           },
         };
         return cb(tx);
@@ -133,9 +140,14 @@ describe('RoomCrudService', () => {
 
     it('should throw ForbiddenException when room limit is reached', async () => {
       prisma.room.count.mockResolvedValue(3);
-      subscriptionService.checkLimit.mockResolvedValue({ allowed: false, limit: 3 });
+      subscriptionService.checkLimit.mockResolvedValue({
+        allowed: false,
+        limit: 3,
+      });
 
-      await expect(service.create(mockUserId, dto)).rejects.toThrow(ForbiddenException);
+      await expect(service.create(mockUserId, dto)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('should throw NotFoundException when user does not exist', async () => {
@@ -149,7 +161,9 @@ describe('RoomCrudService', () => {
         return cb(tx);
       });
 
-      await expect(service.create(mockUserId, dto)).rejects.toThrow(NotFoundException);
+      await expect(service.create(mockUserId, dto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -157,39 +171,46 @@ describe('RoomCrudService', () => {
     it('should pass when user is the owner', async () => {
       prisma.room.findUnique.mockResolvedValue({ createdBy: mockUserId });
 
-      await expect(service.verifyOwnership(mockRoomId, mockUserId)).resolves.toBeUndefined();
+      await expect(
+        service.verifyOwnership(mockRoomId, mockUserId),
+      ).resolves.toBeUndefined();
     });
 
     it('should throw ForbiddenException when user is not the owner', async () => {
       prisma.room.findUnique.mockResolvedValue({ createdBy: 'other-user' });
 
-      await expect(service.verifyOwnership(mockRoomId, mockUserId)).rejects.toThrow(
-        ForbiddenException,
-      );
+      await expect(
+        service.verifyOwnership(mockRoomId, mockUserId),
+      ).rejects.toThrow(ForbiddenException);
     });
 
     it('should throw NotFoundException when room does not exist', async () => {
       prisma.room.findUnique.mockResolvedValue(null);
 
-      await expect(service.verifyOwnership(mockRoomId, mockUserId)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(
+        service.verifyOwnership(mockRoomId, mockUserId),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('verifyMembership', () => {
     it('should pass when user is a member', async () => {
-      prisma.roomMember.findUnique.mockResolvedValue({ roomId: mockRoomId, userId: mockUserId });
+      prisma.roomMember.findUnique.mockResolvedValue({
+        roomId: mockRoomId,
+        userId: mockUserId,
+      });
 
-      await expect(service.verifyMembership(mockRoomId, mockUserId)).resolves.toBeUndefined();
+      await expect(
+        service.verifyMembership(mockRoomId, mockUserId),
+      ).resolves.toBeUndefined();
     });
 
     it('should throw ForbiddenException when user is not a member', async () => {
       prisma.roomMember.findUnique.mockResolvedValue(null);
 
-      await expect(service.verifyMembership(mockRoomId, mockUserId)).rejects.toThrow(
-        ForbiddenException,
-      );
+      await expect(
+        service.verifyMembership(mockRoomId, mockUserId),
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 
@@ -200,7 +221,10 @@ describe('RoomCrudService', () => {
         { user: { id: 'user-2', name: 'Bob' } },
       ];
 
-      prisma.roomMember.findUnique.mockResolvedValue({ roomId: mockRoomId, userId: mockUserId });
+      prisma.roomMember.findUnique.mockResolvedValue({
+        roomId: mockRoomId,
+        userId: mockUserId,
+      });
       prisma.$transaction.mockResolvedValue([mockRoom, roomMembers]);
 
       const result = await service.getById(mockRoomId, mockUserId);
@@ -212,22 +236,34 @@ describe('RoomCrudService', () => {
     });
 
     it('should throw NotFoundException when room not found', async () => {
-      prisma.roomMember.findUnique.mockResolvedValue({ roomId: mockRoomId, userId: mockUserId });
+      prisma.roomMember.findUnique.mockResolvedValue({
+        roomId: mockRoomId,
+        userId: mockUserId,
+      });
       prisma.$transaction.mockResolvedValue([null, []]);
 
-      await expect(service.getById(mockRoomId, mockUserId)).rejects.toThrow(NotFoundException);
+      await expect(service.getById(mockRoomId, mockUserId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw ForbiddenException when user is not a member', async () => {
       prisma.roomMember.findUnique.mockResolvedValue(null);
 
-      await expect(service.getById(mockRoomId, mockUserId)).rejects.toThrow(ForbiddenException);
+      await expect(service.getById(mockRoomId, mockUserId)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
   });
 
   describe('getByCode', () => {
     it('should return cached result when available and no userId', async () => {
-      const cachedResult = { id: mockRoomId, name: 'Cached Room', code: mockRoomCode, members: [] };
+      const cachedResult = {
+        id: mockRoomId,
+        name: 'Cached Room',
+        code: mockRoomCode,
+        members: [],
+      };
       cacheManager.get.mockResolvedValue(cachedResult);
 
       const result = await service.getByCode(mockRoomCode);
@@ -239,7 +275,9 @@ describe('RoomCrudService', () => {
     it('should skip cache when userId is provided', async () => {
       const roomWithMembers = {
         ...mockRoom,
-        members: [{ userId: mockUserId, user: { id: mockUserId, name: 'Alice' } }],
+        members: [
+          { userId: mockUserId, user: { id: mockUserId, name: 'Alice' } },
+        ],
       };
       prisma.room.findUnique.mockResolvedValue(roomWithMembers);
 
@@ -252,13 +290,17 @@ describe('RoomCrudService', () => {
     it('should throw NotFoundException when room not found', async () => {
       prisma.room.findUnique.mockResolvedValue(null);
 
-      await expect(service.getByCode('NOPE')).rejects.toThrow(NotFoundException);
+      await expect(service.getByCode('NOPE')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw ForbiddenException when user is not a member', async () => {
       const roomWithMembers = {
         ...mockRoom,
-        members: [{ userId: 'other-user', user: { id: 'other-user', name: 'Bob' } }],
+        members: [
+          { userId: 'other-user', user: { id: 'other-user', name: 'Bob' } },
+        ],
       };
       prisma.room.findUnique.mockResolvedValue(roomWithMembers);
 
@@ -425,7 +467,10 @@ describe('RoomMembershipService', () => {
         userId: mockUserId,
       });
 
-      prisma.user.findUnique.mockResolvedValue({ id: mockUserId, name: 'Test User' });
+      prisma.user.findUnique.mockResolvedValue({
+        id: mockUserId,
+        name: 'Test User',
+      });
 
       const result = await service.join(mockUserId, mockRoomCode);
 
@@ -453,7 +498,10 @@ describe('RoomMembershipService', () => {
         userId: mockUserId,
       });
 
-      prisma.user.findUnique.mockResolvedValue({ id: mockUserId, name: 'Test User' });
+      prisma.user.findUnique.mockResolvedValue({
+        id: mockUserId,
+        name: 'Test User',
+      });
 
       await service.join(mockUserId, mockRoomCode);
 
@@ -464,7 +512,9 @@ describe('RoomMembershipService', () => {
     it('should throw NotFoundException when room does not exist', async () => {
       prisma.room.findUnique.mockResolvedValue(null);
 
-      await expect(service.join(mockUserId, 'INVALID')).rejects.toThrow(NotFoundException);
+      await expect(service.join(mockUserId, 'INVALID')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw HttpException (GONE) when room is deleted', async () => {
@@ -473,14 +523,21 @@ describe('RoomMembershipService', () => {
         deletedAt: new Date(),
       });
 
-      await expect(service.join(mockUserId, mockRoomCode)).rejects.toThrow(HttpException);
+      await expect(service.join(mockUserId, mockRoomCode)).rejects.toThrow(
+        HttpException,
+      );
     });
 
     it('should throw ForbiddenException when room is full', async () => {
       prisma.room.findUnique.mockResolvedValue(roomWithMembers);
-      subscriptionService.checkLimit.mockResolvedValue({ allowed: false, limit: 1 });
+      subscriptionService.checkLimit.mockResolvedValue({
+        allowed: false,
+        limit: 1,
+      });
 
-      await expect(service.join(mockUserId, mockRoomCode)).rejects.toThrow(ForbiddenException);
+      await expect(service.join(mockUserId, mockRoomCode)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('should invalidate caches after joining', async () => {
@@ -488,12 +545,19 @@ describe('RoomMembershipService', () => {
         .mockResolvedValueOnce(roomWithMembers)
         .mockResolvedValueOnce(mockRoom);
       prisma.roomMember.upsert.mockResolvedValue({});
-      prisma.user.findUnique.mockResolvedValue({ id: mockUserId, name: 'Test' });
+      prisma.user.findUnique.mockResolvedValue({
+        id: mockUserId,
+        name: 'Test',
+      });
 
       await service.join(mockUserId, mockRoomCode);
 
-      expect(roomCrudService.invalidateUserRoomsCache).toHaveBeenCalledWith(mockUserId);
-      expect(roomCrudService.invalidateRoomCache).toHaveBeenCalledWith(mockRoomCode);
+      expect(roomCrudService.invalidateUserRoomsCache).toHaveBeenCalledWith(
+        mockUserId,
+      );
+      expect(roomCrudService.invalidateRoomCache).toHaveBeenCalledWith(
+        mockRoomCode,
+      );
     });
   });
 
@@ -509,14 +573,20 @@ describe('RoomMembershipService', () => {
       expect(prisma.roomMember.deleteMany).toHaveBeenCalledWith({
         where: { roomId: mockRoomId, userId: mockUserId },
       });
-      expect(matchesGateway.emitUserLeft).toHaveBeenCalledWith(mockRoomId, mockUserId);
+      expect(matchesGateway.emitUserLeft).toHaveBeenCalledWith(
+        mockRoomId,
+        mockUserId,
+      );
     });
 
     it('should soft-delete room when last member leaves', async () => {
       prisma.room.findUnique.mockResolvedValue(mockRoom);
       prisma.roomMember.deleteMany.mockResolvedValue({ count: 1 });
       prisma.roomMember.count.mockResolvedValue(0);
-      prisma.room.update.mockResolvedValue({ ...mockRoom, deletedAt: new Date() });
+      prisma.room.update.mockResolvedValue({
+        ...mockRoom,
+        deletedAt: new Date(),
+      });
 
       await service.leave(mockUserId, mockRoomId);
 
@@ -529,7 +599,9 @@ describe('RoomMembershipService', () => {
     it('should throw NotFoundException when room does not exist', async () => {
       prisma.room.findUnique.mockResolvedValue(null);
 
-      await expect(service.leave(mockUserId, mockRoomId)).rejects.toThrow(NotFoundException);
+      await expect(service.leave(mockUserId, mockRoomId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should invalidate caches after leaving', async () => {
@@ -539,8 +611,12 @@ describe('RoomMembershipService', () => {
 
       await service.leave(mockUserId, mockRoomId);
 
-      expect(roomCrudService.invalidateUserRoomsCache).toHaveBeenCalledWith(mockUserId);
-      expect(roomCrudService.invalidateRoomCache).toHaveBeenCalledWith(mockRoomCode);
+      expect(roomCrudService.invalidateUserRoomsCache).toHaveBeenCalledWith(
+        mockUserId,
+      );
+      expect(roomCrudService.invalidateRoomCache).toHaveBeenCalledWith(
+        mockRoomCode,
+      );
     });
   });
 
@@ -553,7 +629,10 @@ describe('RoomMembershipService', () => {
 
       const result = await service.members(mockRoomId, mockUserId);
 
-      expect(roomCrudService.verifyMembership).toHaveBeenCalledWith(mockRoomId, mockUserId);
+      expect(roomCrudService.verifyMembership).toHaveBeenCalledWith(
+        mockRoomId,
+        mockUserId,
+      );
       expect(result.members).toHaveLength(2);
       expect(result.members[0]).toEqual({ id: 'user-1', name: 'Alice' });
     });
@@ -613,7 +692,10 @@ describe('RoomsService (facade)', () => {
 
   it('should delegate leave to RoomMembershipService', async () => {
     await service.leave('user-1', 'room-1');
-    expect(roomMembershipService.leave).toHaveBeenCalledWith('user-1', 'room-1');
+    expect(roomMembershipService.leave).toHaveBeenCalledWith(
+      'user-1',
+      'room-1',
+    );
   });
 
   it('should delegate getById to RoomCrudService', async () => {
@@ -628,12 +710,18 @@ describe('RoomsService (facade)', () => {
 
   it('should delegate members to RoomMembershipService', async () => {
     await service.members('room-1', 'user-1');
-    expect(roomMembershipService.members).toHaveBeenCalledWith('room-1', 'user-1');
+    expect(roomMembershipService.members).toHaveBeenCalledWith(
+      'room-1',
+      'user-1',
+    );
   });
 
   it('should delegate getUserRooms to RoomCrudService', async () => {
     await service.getUserRooms('user-1');
-    expect(roomCrudService.getUserRooms).toHaveBeenCalledWith('user-1', undefined);
+    expect(roomCrudService.getUserRooms).toHaveBeenCalledWith(
+      'user-1',
+      undefined,
+    );
   });
 
   it('should delegate expireOldRooms to RoomCrudService', async () => {

@@ -27,8 +27,12 @@ import {
 import { RoomType, type RoomTypeValue, CacheTTL } from '@swipe-movie/types';
 
 import { generateRoomCode } from '../../common/utils/code';
+import { NestEmailService } from '../email/email.service';
 
 const ROOM_EXPIRATION_MS = 24 * 60 * 60 * 1000;
+// Send the "about to expire" reminder once a room has lived this long — i.e.
+// ~4h before the 24h cutoff. Short window because rooms are short-lived.
+const ROOM_REMINDER_AFTER_MS = 20 * 60 * 60 * 1000;
 
 @Injectable()
 export class RoomCrudService {
@@ -38,6 +42,7 @@ export class RoomCrudService {
     private prisma: PrismaService,
     private subscriptionService: SubscriptionService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    private readonly emailService: NestEmailService,
   ) {}
 
   /**
@@ -571,6 +576,93 @@ export class RoomCrudService {
     });
     if (result.count > 0) {
       this.logger.log(`Expired ${result.count} old rooms`);
+    }
+  }
+
+  /**
+   * Email members ~4h before their room is auto-expired, so an active group has
+   * a reason to come back and finish (or just so the matches aren't silently
+   * lost). Runs hourly; `expiryReminderSentAt` guarantees one reminder per room.
+   * Guests (synthetic @trial.local addresses) are skipped.
+   */
+  @Cron(CronExpression.EVERY_HOUR)
+  async sendExpiryReminders() {
+    const now = Date.now();
+    const reminderThreshold = new Date(now - ROOM_REMINDER_AFTER_MS);
+    const expirationThreshold = new Date(now - ROOM_EXPIRATION_MS);
+
+    // Rooms old enough to warn about but not yet expired, not already reminded.
+    const rooms = await this.prisma.room.findMany({
+      where: {
+        deletedAt: null,
+        expiryReminderSentAt: null,
+        createdAt: { lt: reminderThreshold, gt: expirationThreshold },
+      },
+      select: {
+        id: true,
+        name: true,
+        code: true,
+        createdAt: true,
+        _count: { select: { matches: true } },
+        members: {
+          select: {
+            user: {
+              select: { email: true, name: true, isGuest: true },
+            },
+          },
+        },
+      },
+    });
+
+    if (rooms.length === 0) return;
+
+    const baseUrl = (
+      process.env.FRONTEND_URL ||
+      process.env.WEB_ORIGIN ||
+      'https://swipe-movie.com'
+    ).replace(/\/$/, '');
+
+    let notifiedRooms = 0;
+    for (const room of rooms) {
+      const recipients = room.members
+        .map((m) => m.user)
+        .filter(
+          (u) => !u.isGuest && !!u.email && !u.email.endsWith('@trial.local'),
+        );
+
+      if (recipients.length > 0) {
+        // Hours left before the 24h cutoff, floored, min 1 so copy reads sanely.
+        const msLeft = ROOM_EXPIRATION_MS - (now - room.createdAt.getTime());
+        const hoursLeft = Math.max(1, Math.floor(msLeft / (60 * 60 * 1000)));
+        const timeLeft = `${hoursLeft} heure${hoursLeft > 1 ? 's' : ''}`;
+        const roomUrl = `${baseUrl}/rooms/${room.code}`;
+
+        await Promise.allSettled(
+          recipients.map((u) =>
+            this.emailService.sendRoomExpiryReminder(u.email, {
+              userName: u.name || 'cinéphile',
+              roomName: room.name,
+              roomUrl,
+              matchCount: room._count.matches,
+              timeLeft,
+            }),
+          ),
+        );
+        notifiedRooms++;
+      }
+
+      // Mark as reminded regardless of recipient count so we never re-scan a
+      // guest-only room every hour until it expires.
+      await this.prisma.room.update({
+        where: { id: room.id },
+        data: { expiryReminderSentAt: new Date() },
+      });
+    }
+
+    if (notifiedRooms > 0) {
+      this.logger.log(
+        `Sent expiry reminders for ${notifiedRooms}/${rooms.length} room(s)`,
+      );
     }
   }
 }

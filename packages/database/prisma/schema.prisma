@@ -149,6 +149,10 @@ model Room {
   updatedAt DateTime     @default(now()) @updatedAt
   deletedAt DateTime?
 
+  // Set once the "your room is about to expire" reminder has been emailed, so
+  // the hourly reminder cron never notifies the same room twice.
+  expiryReminderSentAt DateTime?
+
   @@index([type, genreId])
   @@index([deletedAt])
   @@index([createdBy])

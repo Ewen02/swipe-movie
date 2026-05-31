@@ -4,12 +4,14 @@ import type {
   RoomInviteEmailData,
   MatchNotificationEmailData,
   WeeklyDigestEmailData,
+  RoomExpiryReminderEmailData,
   EmailConfig,
 } from './types';
 import {
   buildRoomInviteEmail,
   buildMatchNotificationEmail,
   buildWeeklyDigestEmail,
+  buildRoomExpiryReminderEmail,
   buildWelcomeEmail,
   htmlToText,
 } from './templates';
@@ -38,7 +40,9 @@ export class EmailService {
 
     if (!this.resend) {
       if (this.debug) {
-        console.log(`[EmailService] Would send to ${Array.isArray(to) ? to.join(', ') : to}: ${subject}`);
+        console.log(
+          `[EmailService] Would send to ${Array.isArray(to) ? to.join(', ') : to}: ${subject}`,
+        );
       }
       return { success: true };
     }
@@ -64,7 +68,10 @@ export class EmailService {
     }
   }
 
-  async sendRoomInvite(email: string, data: RoomInviteEmailData): Promise<{ success: boolean; error?: string }> {
+  async sendRoomInvite(
+    email: string,
+    data: RoomInviteEmailData,
+  ): Promise<{ success: boolean; error?: string }> {
     const html = buildRoomInviteEmail(data, this.baseUrl);
     return this.sendEmail({
       to: email,
@@ -73,7 +80,10 @@ export class EmailService {
     });
   }
 
-  async sendMatchNotification(email: string, data: MatchNotificationEmailData): Promise<{ success: boolean; error?: string }> {
+  async sendMatchNotification(
+    email: string,
+    data: MatchNotificationEmailData,
+  ): Promise<{ success: boolean; error?: string }> {
     const html = buildMatchNotificationEmail(data, this.baseUrl);
     return this.sendEmail({
       to: email,
@@ -82,7 +92,10 @@ export class EmailService {
     });
   }
 
-  async sendWeeklyDigest(email: string, data: WeeklyDigestEmailData): Promise<{ success: boolean; error?: string }> {
+  async sendWeeklyDigest(
+    email: string,
+    data: WeeklyDigestEmailData,
+  ): Promise<{ success: boolean; error?: string }> {
     const html = buildWeeklyDigestEmail(data, this.baseUrl);
     return this.sendEmail({
       to: email,
@@ -91,11 +104,26 @@ export class EmailService {
     });
   }
 
-  async sendWelcomeEmail(email: string, userName: string): Promise<{ success: boolean; error?: string }> {
+  async sendWelcomeEmail(
+    email: string,
+    userName: string,
+  ): Promise<{ success: boolean; error?: string }> {
     const html = buildWelcomeEmail(userName, this.baseUrl);
     return this.sendEmail({
       to: email,
       subject: `Bienvenue sur Swipe Movie, ${userName} !`,
+      html,
+    });
+  }
+
+  async sendRoomExpiryReminder(
+    email: string,
+    data: RoomExpiryReminderEmailData,
+  ): Promise<{ success: boolean; error?: string }> {
+    const html = buildRoomExpiryReminderEmail(data, this.baseUrl);
+    return this.sendEmail({
+      to: email,
+      subject: `Votre room "${data.roomName}" expire bientôt`,
       html,
     });
   }
