@@ -45,17 +45,6 @@ USER nestjs
 
 EXPOSE 3001
 
-# Apply pending migrations (schema in packages/database) before starting.
-#
-# directUrl = env("DIRECT_URL") in the schema. Migrations MUST go through a
-# direct, non-pooled Postgres connection — Neon's PgBouncer pooler silently
-# fails to apply DDL / hold the migrate advisory lock, which leaves the DB on an
-# old schema while the app still boots (e.g. "column expiryReminderSentAt does
-# not exist"). So: require DIRECT_URL, fall back to DATABASE_URL only as a last
-# resort, and print migrate status so a desync is obvious in the deploy logs.
-CMD sh -c ': "${DIRECT_URL:=$DATABASE_URL}"; export DIRECT_URL; \
-  echo "[startup] running prisma migrate deploy…"; \
-  pnpm --filter @swipe-movie/database exec prisma migrate deploy && \
-  pnpm --filter @swipe-movie/database exec prisma migrate status; \
-  echo "[startup] starting API…"; \
-  pnpm --filter api start:prod'
+# Migrate (direct, non-pooled connection) then start. See scripts/start.sh — it
+# hard-fails the boot if migrations fail, so the DB can never silently desync.
+CMD ["sh", "apps/api/scripts/start.sh"]
