@@ -6,6 +6,7 @@ import { Button } from "@swipe-movie/ui"
 import { RoomsList } from "@/components/room/RoomsList"
 import { CreateRoomValues, JoinRoomValues } from "@/schemas/rooms"
 import { joinRoom, createRoom } from "@/lib/api/rooms"
+import { captureEvent, ANALYTICS_EVENTS } from "@/components/providers/PostHogProvider"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Plus, Users, Film, Heart, TrendingUp, Tv, Clock, ChevronLeft, ChevronRight } from "lucide-react"
@@ -114,6 +115,10 @@ function RoomsPageContent() {
       setActionError(null)
       setActionLoading(true)
       const room = await joinRoom(values)
+      // Fire at the action, not on the in-room JoinRoomScreen (which join traffic
+      // skips because the API already made the user a member). source lets us see
+      // which entry point actually drives joins.
+      captureEvent(ANALYTICS_EVENTS.ROOM_JOINED, { roomCode: room.code, source: "code_home" })
       setShowJoinDialog(false)
       refreshRooms()
       router.push(`/rooms/${room.code}`)

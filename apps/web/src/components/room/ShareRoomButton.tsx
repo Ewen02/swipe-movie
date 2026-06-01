@@ -35,10 +35,13 @@ export function ShareRoomButton({
   const [copiedCode, setCopiedCode] = useState(false)
   const [showQR, setShowQR] = useState(false)
 
+  // Always share the guest-friendly /try/join link. The /rooms/<code> form is
+  // auth-walled (proxy.ts), so a logged-out friend who clicks it gets bounced to
+  // /login before they can join — the main friction killing real joins. The
+  // /try/join page auto-joins logged-in users and starts a guest session for
+  // everyone else, so the same link works for both.
   const roomUrl = typeof window !== "undefined"
-    ? defaultOpen
-      ? `${window.location.origin}/try/join/${roomCode}`
-      : `${window.location.origin}/rooms/${roomCode}`
+    ? `${window.location.origin}/try/join/${roomCode}`
     : ""
 
   const handleCopyLink = useCallback(async () => {
@@ -193,9 +196,7 @@ export function ShareRoomButton({
                   </button>
                 </div>
                 <p className="text-xs text-muted-foreground text-center">
-                  {defaultOpen
-                    ? "Partage ce lien pour swiper ensemble"
-                    : "Tes amis peuvent rejoindre avec ce code depuis l'accueil"}
+                  Partage le lien ou le code pour swiper ensemble — pas besoin de compte
                 </p>
               </div>
 

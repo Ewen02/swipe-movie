@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { startTrial, trialApiFetch } from '@/lib/trial';
 import { getSession } from '@/lib/auth-client';
 import { joinRoom } from '@/lib/api/rooms';
+import { captureEvent, ANALYTICS_EVENTS } from '@/components/providers/PostHogProvider';
 
 export default function TrialJoinPage() {
   const t = useTranslations('trial');
@@ -24,6 +25,7 @@ export default function TrialJoinPage() {
     async function joinAsLoggedUser() {
       // Existing account: join the room directly, no ghost user creation.
       await joinRoom({ code });
+      captureEvent(ANALYTICS_EVENTS.ROOM_JOINED, { roomCode: code, source: 'invite_link' });
       router.replace(`/${locale}/rooms/${code}`);
     }
 
@@ -37,6 +39,7 @@ export default function TrialJoinPage() {
         const body = await joinRes.json().catch(() => ({}));
         throw new Error(body?.message || 'join_failed');
       }
+      captureEvent(ANALYTICS_EVENTS.ROOM_JOINED, { roomCode: code, source: 'invite_link_guest' });
       router.replace(`/${locale}/rooms/${code}`);
     }
 

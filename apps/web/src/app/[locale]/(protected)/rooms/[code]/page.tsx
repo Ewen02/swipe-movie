@@ -289,7 +289,7 @@ function RoomPageContent() {
       setJoiningRoom(true);
       await joinRoom({ code });
       await reloadRoom();
-      captureEvent('room_joined', { roomCode: code });
+      captureEvent('room_joined', { roomCode: code, source: 'in_room_screen' });
       toast({ title: t('welcomeTitle'), description: t('welcomeDescription') });
     } catch (err) {
       console.error('Failed to join room:', err);
