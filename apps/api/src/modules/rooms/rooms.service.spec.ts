@@ -12,6 +12,7 @@ import { PrismaService } from '../../infra/prisma.service';
 import { SubscriptionService } from '../subscription/subscription.service';
 import { MatchesGateway } from '../matches/matches.gateway';
 import { NestEmailService } from '../email/email.service';
+import { PushService } from '../push/push.service';
 import type { CreateRoomDto } from './dtos';
 
 // Mock generateRoomCode to return a deterministic value
@@ -92,6 +93,10 @@ describe('RoomCrudService', () => {
         {
           provide: NestEmailService,
           useValue: { sendRoomExpiryReminder: jest.fn() },
+        },
+        {
+          provide: PushService,
+          useValue: { sendToUsers: jest.fn().mockResolvedValue(0) },
         },
       ],
     }).compile();
@@ -419,6 +424,7 @@ describe('RoomMembershipService', () => {
     matchesGateway = {
       emitUserJoined: jest.fn(),
       emitUserLeft: jest.fn(),
+      getOnlineUserIdsInRoom: jest.fn().mockReturnValue(new Set<string>()),
     };
 
     roomCrudService = {
