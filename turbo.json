@@ -3,7 +3,30 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build", "^db:generate"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": [
+        "NODE_ENV",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
+        "INTERNAL_API_SECRET",
+        "DATABASE_URL",
+        "DIRECT_URL",
+        "EMAIL_FROM",
+        "RESEND_API_KEY",
+        "STRIPE_SECRET_KEY",
+        "STRIPE_WEBHOOK_SECRET",
+        "STRIPE_PRICE_PRO_MONTHLY",
+        "STRIPE_PRICE_PRO_ANNUAL",
+        "VERCEL_URL",
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_AUTH_URL",
+        "NEXT_PUBLIC_SITE_URL",
+        "NEXT_PUBLIC_GA_ID",
+        "NEXT_PUBLIC_POSTHOG_KEY",
+        "NEXT_PUBLIC_POSTHOG_HOST"
+      ]
     },
     "db:deploy": {
       "cache": false,
