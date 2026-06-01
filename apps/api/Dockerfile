@@ -46,5 +46,9 @@ USER nestjs
 EXPOSE 3001
 
 # Apply pending migrations (schema in packages/database) before starting.
+# The schema's datasource declares directUrl = env("DIRECT_URL"); Prisma fails
+# validation if it's unset. Default it to DATABASE_URL so a single-URL setup
+# still works (Neon poolers need a real non-pooled DIRECT_URL for migrations,
+# so set it explicitly in prod — this fallback just prevents a hard crash).
 # migrate deploy is a no-op when the DB is already up to date.
-CMD sh -c "pnpm --filter @swipe-movie/database exec prisma migrate deploy && pnpm --filter api start:prod"
+CMD sh -c ": \"\${DIRECT_URL:=\$DATABASE_URL}\"; export DIRECT_URL; pnpm --filter @swipe-movie/database exec prisma migrate deploy && pnpm --filter api start:prod"
