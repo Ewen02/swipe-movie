@@ -69,8 +69,16 @@ export class NestEmailService {
     return result.success;
   }
 
-  async sendWelcomeEmail(email: string, userName: string): Promise<boolean> {
-    const result = await this.emailService.sendWelcomeEmail(email, userName);
+  async sendWelcomeEmail(
+    email: string,
+    userName: string,
+    locale?: string | null,
+  ): Promise<boolean> {
+    const result = await this.emailService.sendWelcomeEmail(
+      email,
+      userName,
+      locale,
+    );
     if (!result.success) {
       this.logger.error(
         `Failed to send welcome email to ${email}: ${result.error}`,
@@ -87,8 +95,13 @@ export class NestEmailService {
   async sendWelcomeEmailWithResult(
     email: string,
     userName: string,
+    locale?: string | null,
   ): Promise<{ success: boolean; error?: string }> {
-    const result = await this.emailService.sendWelcomeEmail(email, userName);
+    const result = await this.emailService.sendWelcomeEmail(
+      email,
+      userName,
+      locale,
+    );
     if (!result.success) {
       this.logger.error(
         `Failed to send welcome email to ${email}: ${result.error}`,

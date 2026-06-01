@@ -35,6 +35,48 @@ async function fetchWithRetry(url: string, options: RequestInit, retries = 2): P
   throw new Error('Max retries reached');
 }
 
+const SUPPORTED_EMAIL_LOCALES = ['fr', 'en', 'es', 'de', 'it'];
+
+/**
+ * Best-effort resolution of the user's locale at signup, from the request that
+ * triggered account creation. Checks next-intl's NEXT_LOCALE cookie first, then
+ * the path prefix (/es/...), then Accept-Language. Returns undefined when
+ * nothing matches so the API can apply its own default.
+ */
+function resolveSignupLocale(request?: Request): string | undefined {
+  if (!request) return undefined;
+
+  const normalize = (value?: string | null): string | undefined => {
+    if (!value) return undefined;
+    const short = value.toLowerCase().split('-')[0] ?? '';
+    return SUPPORTED_EMAIL_LOCALES.includes(short) ? short : undefined;
+  };
+
+  // 1. NEXT_LOCALE cookie (set by next-intl when the user switches language)
+  const cookieHeader = request.headers.get('cookie');
+  if (cookieHeader) {
+    const match = cookieHeader.match(/(?:^|;\s*)NEXT_LOCALE=([^;]+)/);
+    const fromCookie = normalize(match?.[1]);
+    if (fromCookie) return fromCookie;
+  }
+
+  // 2. URL path prefix, e.g. https://swipe-movie.com/es/signin
+  try {
+    const segment = new URL(request.url).pathname.split('/')[1];
+    const fromPath = normalize(segment);
+    if (fromPath) return fromPath;
+  } catch {
+    // ignore malformed URL
+  }
+
+  // 3. Accept-Language header (first listed language)
+  const accept = request.headers.get('accept-language');
+  const fromAccept = normalize(accept?.split(',')[0]);
+  if (fromAccept) return fromAccept;
+
+  return undefined;
+}
+
 // Get the base URL for Better Auth
 const getAuthBaseURL = () => {
   if (process.env.BETTER_AUTH_URL) {
@@ -145,9 +187,15 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
-        after: async (user) => {
+        after: async (user, context) => {
           // Sync user with backend API when a new user is created
           try {
+            // Capture the signup locale so transactional emails (welcome,
+            // match, digest…) go out in the user's language. next-intl stores
+            // it in the NEXT_LOCALE cookie; fall back to the Accept-Language
+            // header, then to fr on the API side.
+            const locale = resolveSignupLocale(context?.request);
+
             await fetchWithRetry(
               `${process.env.NEXT_PUBLIC_API_URL}/auth/oauth-upsert`,
               {
@@ -161,6 +209,7 @@ export const auth = betterAuth({
                 body: JSON.stringify({
                   email: user.email,
                   name: user.name ?? user.email?.split('@')[0] ?? 'User',
+                  locale,
                 }),
               },
               2,

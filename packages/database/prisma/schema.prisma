@@ -49,6 +49,10 @@ model User {
   watchProviders      Int[]     @default([])
   watchRegion         String    @default("FR")
   favoriteGenreIds    Int[]     @default([])
+
+  // Preferred locale (fr/en/es/it/de), captured at signup from the app UI.
+  // Drives the language of transactional emails. Defaults to fr.
+  locale              String    @default("fr")
   onboardingStep      Int       @default(0) // 0=not started, 1=providers, 2=genres, 3=swipes, 4=completed
   onboardingCompleted Boolean   @default(false)
 

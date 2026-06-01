@@ -15,6 +15,7 @@ import {
   buildWelcomeEmail,
   htmlToText,
 } from './templates';
+import { t, fill, resolveEmailLocale } from './i18n';
 
 export class EmailService {
   private readonly resend: Resend | null;
@@ -72,10 +73,14 @@ export class EmailService {
     email: string,
     data: RoomInviteEmailData,
   ): Promise<{ success: boolean; error?: string }> {
-    const html = buildRoomInviteEmail(data, this.baseUrl);
+    const locale = resolveEmailLocale(data.locale);
+    const html = buildRoomInviteEmail(data, this.baseUrl, locale);
     return this.sendEmail({
       to: email,
-      subject: `${data.inviterName} vous invite à rejoindre "${data.roomName}" sur Swipe Movie`,
+      subject: fill(t(locale).invite_subject, {
+        inviterName: data.inviterName,
+        roomName: data.roomName,
+      }),
       html,
     });
   }
@@ -84,10 +89,11 @@ export class EmailService {
     email: string,
     data: MatchNotificationEmailData,
   ): Promise<{ success: boolean; error?: string }> {
-    const html = buildMatchNotificationEmail(data, this.baseUrl);
+    const locale = resolveEmailLocale(data.locale);
+    const html = buildMatchNotificationEmail(data, this.baseUrl, locale);
     return this.sendEmail({
       to: email,
-      subject: `Nouveau match : ${data.movieTitle}`,
+      subject: fill(t(locale).match_subject, { movieTitle: data.movieTitle }),
       html,
     });
   }
@@ -96,10 +102,11 @@ export class EmailService {
     email: string,
     data: WeeklyDigestEmailData,
   ): Promise<{ success: boolean; error?: string }> {
-    const html = buildWeeklyDigestEmail(data, this.baseUrl);
+    const locale = resolveEmailLocale(data.locale);
+    const html = buildWeeklyDigestEmail(data, this.baseUrl, locale);
     return this.sendEmail({
       to: email,
-      subject: `Votre semaine sur Swipe Movie`,
+      subject: t(locale).digest_subject,
       html,
     });
   }
@@ -107,11 +114,13 @@ export class EmailService {
   async sendWelcomeEmail(
     email: string,
     userName: string,
+    localeInput?: string | null,
   ): Promise<{ success: boolean; error?: string }> {
-    const html = buildWelcomeEmail(userName, this.baseUrl);
+    const locale = resolveEmailLocale(localeInput);
+    const html = buildWelcomeEmail(userName, this.baseUrl, locale);
     return this.sendEmail({
       to: email,
-      subject: `Bienvenue sur Swipe Movie, ${userName} !`,
+      subject: fill(t(locale).welcome_subject, { name: userName }),
       html,
     });
   }
@@ -120,10 +129,11 @@ export class EmailService {
     email: string,
     data: RoomExpiryReminderEmailData,
   ): Promise<{ success: boolean; error?: string }> {
-    const html = buildRoomExpiryReminderEmail(data, this.baseUrl);
+    const locale = resolveEmailLocale(data.locale);
+    const html = buildRoomExpiryReminderEmail(data, this.baseUrl, locale);
     return this.sendEmail({
       to: email,
-      subject: `Votre room "${data.roomName}" expire bientôt`,
+      subject: fill(t(locale).expiry_subject, { roomName: data.roomName }),
       html,
     });
   }

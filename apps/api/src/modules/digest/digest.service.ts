@@ -49,6 +49,7 @@ export class DigestService {
         id: true,
         email: true,
         name: true,
+        locale: true,
         members: { select: { roomId: true } },
       },
     });
@@ -84,6 +85,7 @@ export class DigestService {
         totalSwipes,
         newMatches,
         roomsActive: activeRooms,
+        locale: user.locale,
       });
       if (ok) sent++;
     }

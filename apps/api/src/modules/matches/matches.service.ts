@@ -149,7 +149,13 @@ export class MatchesService {
         members: {
           select: {
             user: {
-              select: { id: true, email: true, name: true, isGuest: true },
+              select: {
+                id: true,
+                email: true,
+                name: true,
+                isGuest: true,
+                locale: true,
+              },
             },
           },
         },
@@ -206,6 +212,7 @@ export class MatchesService {
           moviePoster,
           roomName: room.name,
           roomUrl,
+          locale: u.locale,
         }),
       ),
     );

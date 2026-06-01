@@ -6,12 +6,19 @@ export interface SendEmailOptions {
   replyTo?: string;
 }
 
+/**
+ * Recipient's preferred locale (e.g. "fr", "en-US"). Optional everywhere —
+ * unresolved/unknown values fall back to the default locale (fr).
+ */
+export type EmailLocaleInput = string | null | undefined;
+
 export interface RoomInviteEmailData {
   inviteeName: string;
   inviterName: string;
   roomName: string;
   roomCode: string;
   joinUrl: string;
+  locale?: EmailLocaleInput;
 }
 
 export interface MatchNotificationEmailData {
@@ -20,6 +27,7 @@ export interface MatchNotificationEmailData {
   moviePoster?: string;
   roomName: string;
   roomUrl: string;
+  locale?: EmailLocaleInput;
 }
 
 export interface WeeklyDigestEmailData {
@@ -31,6 +39,7 @@ export interface WeeklyDigestEmailData {
     poster?: string;
   };
   roomsActive: number;
+  locale?: EmailLocaleInput;
 }
 
 export interface RoomExpiryReminderEmailData {
@@ -41,6 +50,7 @@ export interface RoomExpiryReminderEmailData {
   matchCount: number;
   /** Human-readable time left, e.g. "4 heures". */
   timeLeft: string;
+  locale?: EmailLocaleInput;
 }
 
 export interface EmailConfig {

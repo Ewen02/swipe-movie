@@ -25,6 +25,7 @@ import {
 } from './dtos';
 
 import { RoomType, type RoomTypeValue, CacheTTL } from '@swipe-movie/types';
+import { formatHoursLeft, resolveEmailLocale } from '@swipe-movie/email';
 
 import { generateRoomCode } from '../../common/utils/code';
 import { NestEmailService } from '../email/email.service';
@@ -607,7 +608,7 @@ export class RoomCrudService {
         members: {
           select: {
             user: {
-              select: { email: true, name: true, isGuest: true },
+              select: { email: true, name: true, isGuest: true, locale: true },
             },
           },
         },
@@ -634,7 +635,6 @@ export class RoomCrudService {
         // Hours left before the 24h cutoff, floored, min 1 so copy reads sanely.
         const msLeft = ROOM_EXPIRATION_MS - (now - room.createdAt.getTime());
         const hoursLeft = Math.max(1, Math.floor(msLeft / (60 * 60 * 1000)));
-        const timeLeft = `${hoursLeft} heure${hoursLeft > 1 ? 's' : ''}`;
         const roomUrl = `${baseUrl}/rooms/${room.code}`;
 
         await Promise.allSettled(
@@ -644,7 +644,9 @@ export class RoomCrudService {
               roomName: room.name,
               roomUrl,
               matchCount: room._count.matches,
-              timeLeft,
+              // Localized per recipient ("3 heures" / "3 hours" / …).
+              timeLeft: formatHoursLeft(resolveEmailLocale(u.locale), hoursLeft),
+              locale: u.locale,
             }),
           ),
         );

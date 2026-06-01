@@ -56,14 +56,20 @@ export class AuthController {
       await this.prisma.user.upsert({
         where: { email: dto.email },
         update: { name: dto.name },
-        create: { email: dto.email, name: dto.name },
+        // Only set locale on creation so we don't overwrite a returning
+        // user's stored preference with whatever locale this request used.
+        create: {
+          email: dto.email,
+          name: dto.name,
+          ...(dto.locale ? { locale: dto.locale } : {}),
+        },
       });
       this.logger.log(`User upserted successfully: ${dto.email}`);
 
       // Send welcome email for new users (fire-and-forget)
       if (isNewUser) {
         this.emailService
-          .sendWelcomeEmail(dto.email, dto.name)
+          .sendWelcomeEmail(dto.email, dto.name, dto.locale)
           .catch((err) =>
             this.logger.error(
               `Failed to send welcome email to ${dto.email}`,
