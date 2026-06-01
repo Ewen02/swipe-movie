@@ -7,8 +7,13 @@ import { ROOMS_KEY } from "@/hooks/useRooms"
 import { GENRES_KEY } from "@/hooks/useGenres"
 import { USER_PREFERENCES_KEY } from "@/hooks/useUserPreferences"
 
-// Removed force-dynamic to enable Next.js caching
-// SWR handles data freshness on the client side with keepPreviousData
+// Protected pages depend on the authenticated session (cookies) and fetch
+// per-user data from the API in this layout. They must NOT be statically
+// pre-rendered at build time: doing so makes Next try to SSG /admin,
+// /connections, etc., which hang on the API call and fail the build with
+// "took more than 60 seconds". force-dynamic renders them per-request (SSR);
+// client-side freshness is still handled by SWR.
+export const dynamic = "force-dynamic"
 
 export default async function ProtectedLayout({
   children,
