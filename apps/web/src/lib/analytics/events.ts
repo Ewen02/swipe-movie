@@ -55,6 +55,12 @@ export const ANALYTICS_EVENTS = {
   MATCH_FOUND: 'match_found',
   MATCH_OPENED: 'match_opened',
   MATCH_SHARED: 'match_shared',
+  /**
+   * The group reached a final decision via the fortune wheel ("on regarde X ce
+   * soir"). Closes the core promise — tracking it lets us measure how often a
+   * session ends in an actual decision, not just a list of matches.
+   */
+  FINAL_DECISION_MADE: 'final_decision_made',
 } as const;
 
 /** Union of all valid event names. */
