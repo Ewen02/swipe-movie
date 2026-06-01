@@ -1,4 +1,13 @@
-import { Controller, Get, Query, Res, UseGuards, Logger } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  Body,
+  Res,
+  UseGuards,
+  Logger,
+} from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import type { Response } from 'express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -6,6 +15,8 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { User } from '../../common/decorators/user.decorator';
 import { AdminService } from './admin.service';
+import { NestEmailService } from '../email/email.service';
+import { TestEmailDto } from './dto/test-email.dto';
 
 @ApiTags('Admin')
 @ApiBearerAuth()
@@ -15,7 +26,32 @@ import { AdminService } from './admin.service';
 export class AdminController {
   private readonly logger = new Logger('Admin');
 
-  constructor(private readonly adminService: AdminService) {}
+  constructor(
+    private readonly adminService: AdminService,
+    private readonly emailService: NestEmailService,
+  ) {}
+
+  @Post('test-email')
+  @ApiOperation({
+    summary: 'Send a test welcome email to verify Resend config (admin only)',
+  })
+  async sendTestEmail(
+    @User('email') adminEmail: string,
+    @Body() dto: TestEmailDto,
+  ) {
+    const to = dto.to || adminEmail;
+    this.logger.log(`${adminEmail} triggered a test email to ${to}`);
+    // Reuses the real welcome template so success here proves the whole chain
+    // (RESEND_API_KEY present, verified from-domain, deliverability).
+    const ok = await this.emailService.sendWelcomeEmail(to, 'Test');
+    return {
+      sent: ok,
+      to,
+      note: ok
+        ? 'Email accepted by Resend (check the inbox + Resend dashboard).'
+        : 'Send failed — check API logs and that RESEND_API_KEY is set on the API service.',
+    };
+  }
 
   @Get('stats')
   @ApiOperation({ summary: 'Get global platform stats' })
