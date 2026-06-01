@@ -79,6 +79,24 @@ export class NestEmailService {
     return result.success;
   }
 
+  /**
+   * Like sendWelcomeEmail but surfaces the provider error. Used by the admin
+   * test endpoint so config issues (unverified domain, bad key) are visible
+   * without digging through server logs.
+   */
+  async sendWelcomeEmailWithResult(
+    email: string,
+    userName: string,
+  ): Promise<{ success: boolean; error?: string }> {
+    const result = await this.emailService.sendWelcomeEmail(email, userName);
+    if (!result.success) {
+      this.logger.error(
+        `Failed to send welcome email to ${email}: ${result.error}`,
+      );
+    }
+    return result;
+  }
+
   async sendRoomExpiryReminder(
     email: string,
     data: RoomExpiryReminderEmailData,

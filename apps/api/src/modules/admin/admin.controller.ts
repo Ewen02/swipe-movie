@@ -43,13 +43,16 @@ export class AdminController {
     this.logger.log(`${adminEmail} triggered a test email to ${to}`);
     // Reuses the real welcome template so success here proves the whole chain
     // (RESEND_API_KEY present, verified from-domain, deliverability).
-    const ok = await this.emailService.sendWelcomeEmail(to, 'Test');
+    const result = await this.emailService.sendWelcomeEmailWithResult(to, 'Test');
     return {
-      sent: ok,
+      sent: result.success,
       to,
-      note: ok
+      // Surface the provider error so misconfig (unverified domain, bad key) is
+      // obvious from the response itself. Admin-only route, safe to expose.
+      error: result.error ?? null,
+      note: result.success
         ? 'Email accepted by Resend (check the inbox + Resend dashboard).'
-        : 'Send failed — check API logs and that RESEND_API_KEY is set on the API service.',
+        : 'Send failed — see "error" for the Resend reason.',
     };
   }
 
