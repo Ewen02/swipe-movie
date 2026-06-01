@@ -41,9 +41,13 @@ async function publicFetch<T>(path: string, init: { revalidate?: number } = {}):
       headers['X-Internal-Secret'] = internalSecret;
     }
 
+    // Bound the request so a slow/unreachable API at build time can't hang the
+    // page past Next's 60s SSG limit. On timeout we fall back to null and the
+    // page renders without this data (ISR will refill it on a later request).
     const res = await fetch(`${API_URL}${path}`, {
       headers,
       next: { revalidate: init.revalidate ?? 86400 },
+      signal: AbortSignal.timeout(10_000),
     });
     if (!res.ok) return null;
     return (await res.json()) as T;
