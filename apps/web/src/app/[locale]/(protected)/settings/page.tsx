@@ -1,10 +1,21 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import Link from "next/link"
-import { useTranslations } from "next-intl"
-import { motion } from "framer-motion"
-import { ArrowLeft, Settings, User, Shield, Trash2, Download, LogOut, Loader2, AlertTriangle } from "lucide-react"
+import { useState } from 'react';
+import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { motion } from 'framer-motion';
+import {
+  ArrowLeft,
+  Settings,
+  User,
+  Shield,
+  Trash2,
+  Download,
+  LogOut,
+  Loader2,
+  AlertTriangle,
+  Bell,
+} from 'lucide-react';
 import {
   Button,
   AlertDialog,
@@ -16,82 +27,83 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@swipe-movie/ui"
-import { useSession, signOut } from "@/lib/auth-client"
-import { useToast } from "@/components/providers/toast-provider"
-import { Footer } from "@/components/layout/Footer"
-import { BackgroundOrbs } from "@/components/layout/BackgroundOrbs"
-import { fadeInUp, staggerContainer } from "@/lib/animations"
-import { exportUserData, deleteUserAccount } from "@/lib/api/users"
-import { SettingsPageSkeleton } from "./SettingsPageSkeleton"
+} from '@swipe-movie/ui';
+import { useSession, signOut } from '@/lib/auth-client';
+import { useToast } from '@/components/providers/toast-provider';
+import { Footer } from '@/components/layout/Footer';
+import { BackgroundOrbs } from '@/components/layout/BackgroundOrbs';
+import { fadeInUp, staggerContainer } from '@/lib/animations';
+import { exportUserData, deleteUserAccount } from '@/lib/api/users';
+import { NotificationSettings } from '@/components/notifications/NotificationSettings';
+import { SettingsPageSkeleton } from './SettingsPageSkeleton';
 
 export default function SettingsPage() {
-  const t = useTranslations("settings")
-  const { data: session, isPending } = useSession()
-  const { toast } = useToast()
-  const [isExporting, setIsExporting] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const t = useTranslations('settings');
+  const { data: session, isPending } = useSession();
+  const { toast } = useToast();
+  const [isExporting, setIsExporting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleExportData = async () => {
     try {
-      setIsExporting(true)
-      const data = await exportUserData()
+      setIsExporting(true);
+      const data = await exportUserData();
 
       // Create and download JSON file
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement("a")
-      a.href = url
-      a.download = `swipe-movie-data-${new Date().toISOString().split("T")[0]}.json`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `swipe-movie-data-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
 
       toast({
-        title: t("data.exportSuccess"),
-        description: t("data.exportSuccessDescription"),
-      })
+        title: t('data.exportSuccess'),
+        description: t('data.exportSuccessDescription'),
+      });
     } catch (error) {
-      console.error("Export error:", error)
+      console.error('Export error:', error);
       toast({
-        title: t("data.exportError"),
-        description: t("data.exportErrorDescription"),
-        type: "error",
-      })
+        title: t('data.exportError'),
+        description: t('data.exportErrorDescription'),
+        type: 'error',
+      });
     } finally {
-      setIsExporting(false)
+      setIsExporting(false);
     }
-  }
+  };
 
   const handleDeleteAccount = async () => {
     try {
-      setIsDeleting(true)
-      await deleteUserAccount()
+      setIsDeleting(true);
+      await deleteUserAccount();
 
       toast({
-        title: t("danger.deleteSuccess"),
-        description: t("danger.deleteSuccessDescription"),
-      })
+        title: t('danger.deleteSuccess'),
+        description: t('danger.deleteSuccessDescription'),
+      });
 
       // Sign out and redirect
-      await signOut()
+      await signOut();
     } catch (error) {
-      console.error("Delete error:", error)
+      console.error('Delete error:', error);
       toast({
-        title: t("danger.deleteError"),
-        description: t("danger.deleteErrorDescription"),
-        type: "error",
-      })
+        title: t('danger.deleteError'),
+        description: t('danger.deleteErrorDescription'),
+        type: 'error',
+      });
     } finally {
-      setIsDeleting(false)
-      setShowDeleteDialog(false)
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
     }
-  }
+  };
 
   if (isPending) {
-    return <SettingsPageSkeleton />
+    return <SettingsPageSkeleton />;
   }
 
   return (
@@ -111,16 +123,16 @@ export default function SettingsPage() {
             <Link href="/rooms">
               <Button variant="ghost" size="sm" className="mb-4 -ml-2 hover:bg-foreground/5">
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                {t("backToRooms")}
+                {t('backToRooms')}
               </Button>
             </Link>
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 rounded-xl bg-primary/10">
                 <Settings className="w-6 h-6 text-primary" />
               </div>
-              <h1 className="text-3xl font-bold">{t("title")}</h1>
+              <h1 className="text-3xl font-bold">{t('title')}</h1>
             </div>
-            <p className="text-muted-foreground">{t("subtitle")}</p>
+            <p className="text-muted-foreground">{t('subtitle')}</p>
           </motion.div>
 
           {/* Profile Section */}
@@ -132,33 +144,50 @@ export default function SettingsPage() {
               <div className="p-2 rounded-xl bg-blue-500/10">
                 <User className="w-5 h-5 text-blue-500" />
               </div>
-              <h2 className="text-lg font-semibold">{t("profile.title")}</h2>
+              <h2 className="text-lg font-semibold">{t('profile.title')}</h2>
             </div>
 
             <div className="space-y-4">
               <div className="flex items-center justify-between py-3 border-b border-border/50">
                 <div>
-                  <p className="text-sm font-medium">{t("profile.email")}</p>
-                  <p className="text-sm text-muted-foreground">{session?.user?.email || "-"}</p>
+                  <p className="text-sm font-medium">{t('profile.email')}</p>
+                  <p className="text-sm text-muted-foreground">{session?.user?.email || '-'}</p>
                 </div>
               </div>
               <div className="flex items-center justify-between py-3 border-b border-border/50">
                 <div>
-                  <p className="text-sm font-medium">{t("profile.name")}</p>
-                  <p className="text-sm text-muted-foreground">{session?.user?.name || t("profile.notSet")}</p>
+                  <p className="text-sm font-medium">{t('profile.name')}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {session?.user?.name || t('profile.notSet')}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center justify-between py-3">
                 <div>
-                  <p className="text-sm font-medium">{t("profile.createdAt")}</p>
+                  <p className="text-sm font-medium">{t('profile.createdAt')}</p>
                   <p className="text-sm text-muted-foreground">
                     {session?.user?.createdAt
                       ? new Date(session.user.createdAt).toLocaleDateString()
-                      : "-"}
+                      : '-'}
                   </p>
                 </div>
               </div>
             </div>
+          </motion.div>
+
+          {/* Notifications Section */}
+          <motion.div
+            className="rounded-2xl border border-border/50 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl p-6 mb-6"
+            variants={fadeInUp}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-xl bg-amber-500/10">
+                <Bell className="w-5 h-5 text-amber-500" />
+              </div>
+              <h2 className="text-lg font-semibold">{t('notifications.title')}</h2>
+            </div>
+            {/* Renders nothing on browsers without push support */}
+            <NotificationSettings />
           </motion.div>
 
           {/* Data & Privacy Section (RGPD) */}
@@ -170,10 +199,10 @@ export default function SettingsPage() {
               <div className="p-2 rounded-xl bg-green-500/10">
                 <Shield className="w-5 h-5 text-green-500" />
               </div>
-              <h2 className="text-lg font-semibold">{t("data.title")}</h2>
+              <h2 className="text-lg font-semibold">{t('data.title')}</h2>
             </div>
 
-            <p className="text-sm text-muted-foreground mb-4">{t("data.description")}</p>
+            <p className="text-sm text-muted-foreground mb-4">{t('data.description')}</p>
 
             <div className="space-y-3">
               <Button
@@ -187,12 +216,12 @@ export default function SettingsPage() {
                 ) : (
                   <Download className="w-4 h-4" />
                 )}
-                {isExporting ? t("data.exporting") : t("data.exportButton")}
+                {isExporting ? t('data.exporting') : t('data.exportButton')}
               </Button>
             </div>
 
             <div className="mt-4 p-3 rounded-lg bg-muted/50 text-xs text-muted-foreground">
-              <p>{t("data.exportInfo")}</p>
+              <p>{t('data.exportInfo')}</p>
             </div>
           </motion.div>
 
@@ -205,10 +234,10 @@ export default function SettingsPage() {
               <div className="p-2 rounded-xl bg-red-500/10">
                 <AlertTriangle className="w-5 h-5 text-red-500" />
               </div>
-              <h2 className="text-lg font-semibold text-red-500">{t("danger.title")}</h2>
+              <h2 className="text-lg font-semibold text-red-500">{t('danger.title')}</h2>
             </div>
 
-            <p className="text-sm text-muted-foreground mb-4">{t("danger.description")}</p>
+            <p className="text-sm text-muted-foreground mb-4">{t('danger.description')}</p>
 
             <div className="space-y-3">
               <Button
@@ -217,7 +246,7 @@ export default function SettingsPage() {
                 onClick={() => signOut()}
               >
                 <LogOut className="w-4 h-4" />
-                {t("danger.logout")}
+                {t('danger.logout')}
               </Button>
 
               <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
@@ -227,19 +256,19 @@ export default function SettingsPage() {
                     className="w-full justify-start gap-2 border-red-500/50 text-red-500 hover:bg-red-500/10 hover:text-red-500"
                   >
                     <Trash2 className="w-4 h-4" />
-                    {t("danger.deleteButton")}
+                    {t('danger.deleteButton')}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>{t("danger.deleteDialogTitle")}</AlertDialogTitle>
+                    <AlertDialogTitle>{t('danger.deleteDialogTitle')}</AlertDialogTitle>
                     <AlertDialogDescription>
-                      {t("danger.deleteDialogDescription")}
+                      {t('danger.deleteDialogDescription')}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel disabled={isDeleting}>
-                      {t("danger.cancel")}
+                      {t('danger.cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                       onClick={handleDeleteAccount}
@@ -249,10 +278,10 @@ export default function SettingsPage() {
                       {isDeleting ? (
                         <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          {t("danger.deleting")}
+                          {t('danger.deleting')}
                         </>
                       ) : (
-                        t("danger.confirmDelete")
+                        t('danger.confirmDelete')
                       )}
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -266,5 +295,5 @@ export default function SettingsPage() {
       {/* Footer */}
       <Footer />
     </div>
-  )
+  );
 }

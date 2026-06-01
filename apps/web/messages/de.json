@@ -343,15 +343,6 @@
     "share": "Teilen"
   },
   "error": {
-    "title": "Ein Fehler ist aufgetreten",
-    "description": "Es tut uns leid, etwas ist schiefgelaufen",
-    "retry": "Erneut versuchen",
-    "home": "Startseite",
-    "back": "Zurück",
-    "details": "Fehlerdetails",
-    "notFound": "Seite nicht gefunden",
-    "unauthorized": "Nicht autorisiert",
-    "forbidden": "Zugriff verweigert",
     "404": {
       "badge": "Seite nicht gefunden",
       "title": "Seite nicht gefunden",
@@ -361,7 +352,16 @@
       "badge": "Serverfehler",
       "title": "Ein Fehler ist aufgetreten",
       "description": "Es tut uns leid, etwas ist schiefgelaufen."
-    }
+    },
+    "title": "Ein Fehler ist aufgetreten",
+    "description": "Es tut uns leid, etwas ist schiefgelaufen",
+    "retry": "Erneut versuchen",
+    "home": "Startseite",
+    "back": "Zurück",
+    "details": "Fehlerdetails",
+    "notFound": "Seite nicht gefunden",
+    "unauthorized": "Nicht autorisiert",
+    "forbidden": "Zugriff verweigert"
   },
   "footer": {
     "madeWith": "Gemacht mit",
@@ -890,6 +890,9 @@
   "settings": {
     "title": "Einstellungen",
     "subtitle": "Verwalte dein Konto und deine Präferenzen",
+    "notifications": {
+      "title": "Benachrichtigungen"
+    },
     "backToRooms": "Zurück zu den Räumen",
     "profile": {
       "title": "Profil",

@@ -343,15 +343,6 @@
     "share": "Compartir"
   },
   "error": {
-    "title": "Se ha producido un error",
-    "description": "Lo sentimos, algo ha salido mal",
-    "retry": "Reintentar",
-    "home": "Inicio",
-    "back": "Volver",
-    "details": "Detalles del error",
-    "notFound": "Página no encontrada",
-    "unauthorized": "No autorizado",
-    "forbidden": "Acceso prohibido",
     "404": {
       "badge": "Página no encontrada",
       "title": "Página no encontrada",
@@ -361,7 +352,16 @@
       "badge": "Error del servidor",
       "title": "Se ha producido un error",
       "description": "Lo sentimos, algo ha salido mal."
-    }
+    },
+    "title": "Se ha producido un error",
+    "description": "Lo sentimos, algo ha salido mal",
+    "retry": "Reintentar",
+    "home": "Inicio",
+    "back": "Volver",
+    "details": "Detalles del error",
+    "notFound": "Página no encontrada",
+    "unauthorized": "No autorizado",
+    "forbidden": "Acceso prohibido"
   },
   "footer": {
     "madeWith": "Hecho con",
@@ -890,6 +890,9 @@
   "settings": {
     "title": "Ajustes",
     "subtitle": "Gestiona tu cuenta y tus preferencias",
+    "notifications": {
+      "title": "Notificaciones"
+    },
     "backToRooms": "Volver a las salas",
     "profile": {
       "title": "Perfil",

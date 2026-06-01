@@ -343,15 +343,6 @@
     "share": "Share"
   },
   "error": {
-    "title": "An error occurred",
-    "description": "We're sorry, something went wrong",
-    "retry": "Retry",
-    "home": "Home",
-    "back": "Back",
-    "details": "Error details",
-    "notFound": "Page not found",
-    "unauthorized": "Unauthorized",
-    "forbidden": "Access forbidden",
     "404": {
       "badge": "Page not found",
       "title": "Page not found",
@@ -361,7 +352,16 @@
       "badge": "Server error",
       "title": "An error occurred",
       "description": "We're sorry, something went wrong."
-    }
+    },
+    "title": "An error occurred",
+    "description": "We're sorry, something went wrong",
+    "retry": "Retry",
+    "home": "Home",
+    "back": "Back",
+    "details": "Error details",
+    "notFound": "Page not found",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Access forbidden"
   },
   "footer": {
     "madeWith": "Made with",
@@ -890,6 +890,9 @@
   "settings": {
     "title": "Settings",
     "subtitle": "Manage your account and preferences",
+    "notifications": {
+      "title": "Notifications"
+    },
     "backToRooms": "Back to rooms",
     "profile": {
       "title": "Profile",

@@ -343,15 +343,6 @@
     "share": "Partager"
   },
   "error": {
-    "title": "Une erreur est survenue",
-    "description": "Nous sommes désolés, quelque chose s'est mal passé",
-    "retry": "Réessayer",
-    "home": "Accueil",
-    "back": "Retour",
-    "details": "Détails de l'erreur",
-    "notFound": "Page non trouvée",
-    "unauthorized": "Non autorisé",
-    "forbidden": "Accès interdit",
     "404": {
       "badge": "Page non trouvée",
       "title": "Page introuvable",
@@ -361,7 +352,16 @@
       "badge": "Erreur serveur",
       "title": "Une erreur est survenue",
       "description": "Nous sommes désolés, quelque chose s'est mal passé."
-    }
+    },
+    "title": "Une erreur est survenue",
+    "description": "Nous sommes désolés, quelque chose s'est mal passé",
+    "retry": "Réessayer",
+    "home": "Accueil",
+    "back": "Retour",
+    "details": "Détails de l'erreur",
+    "notFound": "Page non trouvée",
+    "unauthorized": "Non autorisé",
+    "forbidden": "Accès interdit"
   },
   "footer": {
     "madeWith": "Fait avec",
@@ -890,6 +890,9 @@
   "settings": {
     "title": "Paramètres",
     "subtitle": "Gérez votre compte et vos préférences",
+    "notifications": {
+      "title": "Notifications"
+    },
     "backToRooms": "Retour aux rooms",
     "profile": {
       "title": "Profil",

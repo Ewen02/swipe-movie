@@ -343,15 +343,6 @@
     "share": "Condividi"
   },
   "error": {
-    "title": "Si è verificato un errore",
-    "description": "Ci dispiace, qualcosa è andato storto",
-    "retry": "Riprova",
-    "home": "Home",
-    "back": "Indietro",
-    "details": "Dettagli errore",
-    "notFound": "Pagina non trovata",
-    "unauthorized": "Non autorizzato",
-    "forbidden": "Accesso vietato",
     "404": {
       "badge": "Pagina non trovata",
       "title": "Pagina non trovata",
@@ -361,7 +352,16 @@
       "badge": "Errore del server",
       "title": "Si è verificato un errore",
       "description": "Ci dispiace, qualcosa è andato storto."
-    }
+    },
+    "title": "Si è verificato un errore",
+    "description": "Ci dispiace, qualcosa è andato storto",
+    "retry": "Riprova",
+    "home": "Home",
+    "back": "Indietro",
+    "details": "Dettagli errore",
+    "notFound": "Pagina non trovata",
+    "unauthorized": "Non autorizzato",
+    "forbidden": "Accesso vietato"
   },
   "footer": {
     "madeWith": "Fatto con",
@@ -890,6 +890,9 @@
   "settings": {
     "title": "Impostazioni",
     "subtitle": "Gestisci il tuo account e le tue preferenze",
+    "notifications": {
+      "title": "Notifiche"
+    },
     "backToRooms": "Torna alle stanze",
     "profile": {
       "title": "Profilo",
