@@ -1,0 +1,24 @@
+# Never copy host node_modules into the image: they contain platform-native
+# binaries (e.g. @rollup/rollup-*-darwin, prisma engines) that don't match the
+# Linux/musl image and break the build. pnpm install rebuilds the right ones.
+**/node_modules
+**/dist
+**/.next
+**/.turbo
+**/coverage
+
+# VCS / local / editor noise
+.git
+.gitignore
+**/.env
+**/.env.*
+*.log
+.DS_Store
+.vscode
+.idea
+
+# Tests & docs not needed to build/run the API
+**/*.spec.ts
+**/test
+docs
+*.md

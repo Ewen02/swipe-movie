@@ -1,57 +1,50 @@
-# Build stage
+# syntax=docker/dockerfile:1
+# Monorepo API image (pnpm workspaces). Build context is the REPO ROOT
+# (railway.json sets dockerfilePath to apps/api/Dockerfile but the build
+# context stays the repo root), so all workspace packages are available.
+
+# ---- Build stage ----
 FROM node:20-alpine AS builder
+RUN apk add --no-cache libc6-compat
+# pnpm via corepack, pinned to the repo's packageManager version.
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 
 WORKDIR /app
 
-# Copy package files (root and api workspace)
-COPY package*.json ./
-COPY apps/api/package*.json ./apps/api/
+# Copy the whole monorepo. Simpler and more robust than cherry-picking
+# package.json files; the build is not hot-path so the extra copy is fine.
+COPY . .
 
-# Install ALL dependencies
-RUN npm ci
+# Install all deps for all workspaces (needed: api depends on @swipe-movie/*).
+RUN pnpm install --frozen-lockfile
 
-# Copy source code
-COPY apps/api ./apps/api
+# Generate Prisma client (schema lives in packages/database).
+RUN pnpm --filter @swipe-movie/database db:generate
 
-# Generate Prisma Client
-WORKDIR /app/apps/api
-RUN npx prisma generate
+# Build workspace deps the API imports, then the API itself.
+RUN pnpm --filter @swipe-movie/types build \
+  && pnpm --filter @swipe-movie/database build \
+  && pnpm --filter @swipe-movie/email build \
+  && pnpm --filter @swipe-movie/subscription build \
+  && pnpm --filter api build
 
-# Build the application (run from root with workspace flag)
-WORKDIR /app
-RUN npm run build --workspace=apps/api
-
-# Production stage
-FROM node:20-alpine
-
-# Create non-root user
+# ---- Production stage ----
+FROM node:20-alpine AS runner
+RUN apk add --no-cache libc6-compat
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 RUN addgroup -g 1001 -S nodejs && adduser -S nestjs -u 1001
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-COPY apps/api/package*.json ./apps/api/
+# Bring the built monorepo over. Keeping node_modules from the builder avoids a
+# second resolution pass and guarantees the same tree that was built/tested.
+COPY --from=builder /app ./
 
-# Install production dependencies
-RUN npm ci --omit=dev
-
-# Copy built application
-COPY --from=builder /app/apps/api/dist ./apps/api/dist
-COPY --from=builder /app/apps/api/prisma ./apps/api/prisma
-
-# Change to api directory
-WORKDIR /app/apps/api
-
-# Generate Prisma Client in production stage
-RUN npx prisma generate
-
-# Set ownership and switch to non-root user
 RUN chown -R nestjs:nodejs /app
 USER nestjs
 
-# Expose port
 EXPOSE 3001
 
-# Start the application (run migrations first, then start)
-CMD sh -c "npx prisma migrate deploy && npm run start:prod"
+# Apply pending migrations (schema in packages/database) before starting.
+# migrate deploy is a no-op when the DB is already up to date.
+CMD sh -c "pnpm --filter @swipe-movie/database exec prisma migrate deploy && pnpm --filter api start:prod"
