@@ -953,7 +953,10 @@
     },
     "join": {
       "error": "Impossible de rejoindre la room. Le code est peut-être invalide ou expiré.",
-      "retry": "Réessayer"
+      "retry": "Réessayer",
+      "expiredTitle": "Cette room a expiré",
+      "expiredSubtitle": "Les rooms ne durent que quelques jours. Crée la tienne pour swiper avec tes amis !",
+      "createOwnRoom": "Créer ma room"
     },
     "invite": "Invite un ami",
     "inviteDescription": "Partage ce lien pour swiper à deux",

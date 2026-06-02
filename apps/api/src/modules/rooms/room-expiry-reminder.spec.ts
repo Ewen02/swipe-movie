@@ -57,7 +57,7 @@ describe('RoomCrudService.sendExpiryReminders', () => {
         id: 'room-1',
         name: 'Movie Night',
         code: 'ABC123',
-        createdAt: new Date(Date.now() - 21 * 60 * 60 * 1000), // 21h old
+        createdAt: new Date(Date.now() - 63 * 60 * 60 * 1000), // 63h old (inside the 60h–72h reminder window)
         _count: { matches: 2 },
         members: [
           { user: { email: 'a@example.com', name: 'A', isGuest: false } },
@@ -91,7 +91,7 @@ describe('RoomCrudService.sendExpiryReminders', () => {
         id: 'room-2',
         name: 'Guest Room',
         code: 'XYZ',
-        createdAt: new Date(Date.now() - 21 * 60 * 60 * 1000),
+        createdAt: new Date(Date.now() - 63 * 60 * 60 * 1000),
         _count: { matches: 0 },
         members: [
           {

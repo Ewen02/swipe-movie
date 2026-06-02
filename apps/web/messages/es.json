@@ -953,7 +953,10 @@
     },
     "join": {
       "error": "No se pudo unir a la sala. El código puede ser inválido o haber caducado.",
-      "retry": "Reintentar"
+      "retry": "Reintentar",
+      "expiredTitle": "Esta room ha expirado",
+      "expiredSubtitle": "Las rooms solo duran unos días. ¡Crea la tuya para deslizar con tus amigos!",
+      "createOwnRoom": "Crear mi room"
     },
     "invite": "Invita a un amigo",
     "inviteDescription": "Comparte este enlace para deslizar juntos",

@@ -953,7 +953,10 @@
     },
     "join": {
       "error": "Impossibile unirsi alla stanza. Il codice potrebbe non essere valido o essere scaduto.",
-      "retry": "Riprova"
+      "retry": "Riprova",
+      "expiredTitle": "Questa room è scaduta",
+      "expiredSubtitle": "Le room durano solo qualche giorno. Creane una tua per scorrere con i tuoi amici!",
+      "createOwnRoom": "Crea la mia room"
     },
     "invite": "Invita un amico",
     "inviteDescription": "Condividi questo link per swippare insieme",

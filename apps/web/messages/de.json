@@ -953,7 +953,10 @@
     },
     "join": {
       "error": "Raum konnte nicht beigetreten werden. Der Code ist möglicherweise ungültig oder abgelaufen.",
-      "retry": "Erneut versuchen"
+      "retry": "Erneut versuchen",
+      "expiredTitle": "Diese Room ist abgelaufen",
+      "expiredSubtitle": "Rooms bestehen nur ein paar Tage. Erstelle deine eigene, um mit Freunden zu swipen!",
+      "createOwnRoom": "Meine Room erstellen"
     },
     "invite": "Freund einladen",
     "inviteDescription": "Teile diesen Link, um zusammen zu swipen",

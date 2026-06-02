@@ -7,7 +7,14 @@ import { useTranslations } from 'next-intl';
 import { startTrial, trialApiFetch } from '@/lib/trial';
 import { getSession } from '@/lib/auth-client';
 import { joinRoom } from '@/lib/api/rooms';
+import { ApiError } from '@/lib/http/parseResponse';
 import { captureEvent, ANALYTICS_EVENTS } from '@/components/providers/PostHogProvider';
+
+// 410 GONE = the room was auto-expired before the invite link was opened. We
+// surface this distinctly from a generic failure so a friend opening a stale
+// link gets a clear message + a path forward (create their own room) instead of
+// a dead-end "retry" that can never succeed.
+type JoinFailure = 'expired' | 'generic';
 
 export default function TrialJoinPage() {
   const t = useTranslations('trial');
@@ -17,7 +24,7 @@ export default function TrialJoinPage() {
   const locale = (params?.locale as string) || 'fr';
   const code = params?.code as string;
 
-  const [error, setError] = useState<string | null>(null);
+  const [failure, setFailure] = useState<JoinFailure | null>(null);
 
   useEffect(() => {
     if (!code) return;
@@ -36,6 +43,7 @@ export default function TrialJoinPage() {
         body: JSON.stringify({ code }),
       });
       if (!joinRes.ok) {
+        if (joinRes.status === 410) throw new ApiError('expired', 410);
         const body = await joinRes.json().catch(() => ({}));
         throw new Error(body?.message || 'join_failed');
       }
@@ -53,25 +61,41 @@ export default function TrialJoinPage() {
         }
       } catch (err) {
         console.error('[TrialJoin] Error:', err);
-        setError(tJoin('error'));
+        const isExpired = err instanceof ApiError && err.status === 410;
+        setFailure(isExpired ? 'expired' : 'generic');
       }
     }
 
     run();
   }, [code, locale, router, tJoin]);
 
-  if (error) {
+  if (failure) {
+    const expired = failure === 'expired';
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="text-center max-w-sm mx-4">
           <Film className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-          <p className="text-foreground font-medium mb-2">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="text-primary hover:underline text-sm"
-          >
-            {tJoin('retry')}
-          </button>
+          <p className="text-foreground font-medium mb-2">
+            {expired ? tJoin('expiredTitle') : tJoin('error')}
+          </p>
+          {expired && (
+            <p className="text-sm text-muted-foreground mb-4">{tJoin('expiredSubtitle')}</p>
+          )}
+          {expired ? (
+            <button
+              onClick={() => router.push(`/${locale}/rooms`)}
+              className="text-primary hover:underline text-sm"
+            >
+              {tJoin('createOwnRoom')}
+            </button>
+          ) : (
+            <button
+              onClick={() => window.location.reload()}
+              className="text-primary hover:underline text-sm"
+            >
+              {tJoin('retry')}
+            </button>
+          )}
         </div>
       </div>
     );

@@ -30,10 +30,14 @@ import { formatHoursLeft, resolveEmailLocale } from '@swipe-movie/email';
 import { generateRoomCode } from '../../common/utils/code';
 import { NestEmailService } from '../email/email.service';
 
-const ROOM_EXPIRATION_MS = 24 * 60 * 60 * 1000;
+// Rooms live 72h. A 24h life killed shared invite links opened the next day
+// (the friend got a hard 410 GONE), suppressing real joins — the core social
+// action of the product. 72h gives a shared link a realistic window to be
+// opened over a weekend.
+const ROOM_EXPIRATION_MS = 72 * 60 * 60 * 1000;
 // Send the "about to expire" reminder once a room has lived this long — i.e.
-// ~4h before the 24h cutoff. Short window because rooms are short-lived.
-const ROOM_REMINDER_AFTER_MS = 20 * 60 * 60 * 1000;
+// ~12h before the 72h cutoff, so an active group still has time to come back.
+const ROOM_REMINDER_AFTER_MS = 60 * 60 * 60 * 1000;
 
 @Injectable()
 export class RoomCrudService {
