@@ -1,13 +1,13 @@
 "use client"
 
-import { lazy, Suspense, useState, useMemo } from "react"
+import { lazy, Suspense, useState, useMemo, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@swipe-movie/ui"
 import { RoomsList } from "@/components/room/RoomsList"
 import { CreateRoomValues, JoinRoomValues } from "@/schemas/rooms"
 import { joinRoom, createRoom } from "@/lib/api/rooms"
 import { captureEvent, ANALYTICS_EVENTS } from "@/components/providers/PostHogProvider"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Plus, Users, Film, Heart, TrendingUp, Tv, Clock, ChevronLeft, ChevronRight } from "lucide-react"
 import { Footer } from "@/components/layout/Footer"
@@ -37,12 +37,26 @@ const FILTERS: { id: FilterType; icon: React.ReactNode; color: string }[] = [
 function RoomsPageContent() {
   const t = useTranslations('rooms')
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [actionError, setActionError] = useState<string | null>(null)
   const [actionLoading, setActionLoading] = useState(false)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [showJoinDialog, setShowJoinDialog] = useState(false)
   const [activeFilter, setActiveFilter] = useState<FilterType>("all")
   const [currentPage, setCurrentPage] = useState(1)
+
+  // Activation handoff: onboarding (and the welcome email) sends create-intent
+  // users here with ?create=true. Auto-open the create dialog so they don't have
+  // to re-find the button — the dead param previously dropped them on the list
+  // and explained the onboarding→create leak (30 intended, 23 created).
+  useEffect(() => {
+    if (searchParams.get("create") === "true") {
+      setShowCreateDialog(true)
+      captureEvent(ANALYTICS_EVENTS.ROOM_CREATE_INTENT, { source: "onboarding_handoff" })
+      // Strip the param so a refresh/back doesn't reopen the dialog.
+      router.replace("/rooms")
+    }
+  }, [searchParams, router])
 
   const { rooms, isLoading: roomsLoading, error: roomsError, refresh: refreshRooms } = useRooms()
   const { genres, isLoading: genresLoading } = useGenres()
@@ -406,7 +420,10 @@ function RoomsPageContent() {
 export default function RoomsPage() {
   return (
     <RoomErrorBoundary>
-      <RoomsPageContent />
+      {/* useSearchParams (create-intent handoff) requires a Suspense boundary. */}
+      <Suspense fallback={<RoomsPageSkeleton />}>
+        <RoomsPageContent />
+      </Suspense>
     </RoomErrorBoundary>
   )
 }

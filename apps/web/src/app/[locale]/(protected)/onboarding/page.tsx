@@ -39,9 +39,21 @@ export default function OnboardingPage() {
   stepRef.current = currentStep;
 
   useEffect(() => {
-    return () => {
+    // The React unmount cleanup only fires on in-app navigation — it misses the
+    // most common abandonment (closing the tab / hard navigation away), which is
+    // why onboarding_abandoned had 0 events despite this code existing. Also
+    // capture on pagehide so we actually see WHICH step kills users.
+    const onPageHide = () => {
       if (!completedRef.current) {
-        captureEvent('onboarding_abandoned', { step: stepRef.current });
+        captureEvent('onboarding_abandoned', { step: stepRef.current, via: 'pagehide' });
+        completedRef.current = true; // avoid a duplicate from the unmount cleanup
+      }
+    };
+    window.addEventListener('pagehide', onPageHide);
+    return () => {
+      window.removeEventListener('pagehide', onPageHide);
+      if (!completedRef.current) {
+        captureEvent('onboarding_abandoned', { step: stepRef.current, via: 'unmount' });
       }
     };
   }, []);

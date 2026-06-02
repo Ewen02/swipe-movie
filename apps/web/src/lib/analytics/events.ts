@@ -44,6 +44,12 @@ export const ANALYTICS_EVENTS = {
   ROOM_CREATED: 'room_created',
   ROOM_JOINED: 'room_joined',
   ROOM_INVITE_SHARED: 'room_invite_shared',
+  /**
+   * The create-room dialog was auto-opened from a create-intent handoff (the
+   * ?create=true param set by onboarding / the welcome email). Lets us measure
+   * the activation handoff that used to silently break.
+   */
+  ROOM_CREATE_INTENT: 'room_create_intent',
 
   // --- Usage: swipes ---
   SWIPE: 'swipe',

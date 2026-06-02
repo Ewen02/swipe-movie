@@ -282,7 +282,7 @@ export function buildWelcomeEmail(
       ${step(2, s.welcome_step2_title, s.welcome_step2_desc)}
       ${step(3, s.welcome_step3_title, s.welcome_step3_desc)}
     </div>
-    ${button(s.welcome_cta, `${baseUrl}/rooms`)}
+    ${button(s.welcome_cta, `${baseUrl}/rooms?create=true`)}
     ${p(s.welcome_help, true)}
   `,
     baseUrl,
