@@ -21,9 +21,6 @@ import { BottomTabNav } from '@/components/room/BottomTabNav';
 import { JoinRoomScreen } from '@/components/room/JoinRoomScreen';
 import { RoomHeader } from '@/components/room/RoomHeader';
 import { RoomTabs } from '@/components/room/RoomTabs';
-const SaveGroupPrompt = lazy(() =>
-  import('@/components/groups').then((m) => ({ default: m.SaveGroupPrompt })),
-);
 import { TrialBanner } from '@/components/trial/TrialBanner';
 import { TrialHeader } from '@/components/trial/TrialHeader';
 import { LoginWallModal } from '@/components/trial/LoginWallModal';
@@ -36,6 +33,9 @@ import { useRouter } from 'next/navigation';
 // Lazy load heavy components that are not always visible
 const MovieDetailsModal = lazy(() =>
   import('@/components/movies/MovieDetailsModal').then((m) => ({ default: m.MovieDetailsModal })),
+);
+const SaveGroupPrompt = lazy(() =>
+  import('@/components/groups').then((m) => ({ default: m.SaveGroupPrompt })),
 );
 
 function RoomPageContent() {
