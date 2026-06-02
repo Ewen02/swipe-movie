@@ -63,6 +63,7 @@ model User {
   accounts          Account[]
   mediaLibrary      UserMediaLibrary[]
   pushSubscriptions PushSubscription[]
+  groupMembers      GroupMember[]
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
 
@@ -166,6 +167,12 @@ model Room {
   lastResetAt       DateTime?
   recurringInterval String?   @default("monthly") // "weekly", "monthly", or null
 
+  // Persistent group this room was spawned from, if any. Lets a stable set of
+  // friends re-launch a fresh session in one click. Nullable: most rooms are
+  // standalone and not tied to a group.
+  groupId String?
+  group   Group?  @relation(fields: [groupId], references: [id], onDelete: SetNull)
+
   members   RoomMember[]
   matches   Match[]
   swipes    Swipe[]
@@ -181,6 +188,7 @@ model Room {
   @@index([type, genreId])
   @@index([deletedAt])
   @@index([createdBy])
+  @@index([groupId])
 }
 
 model RoomMember {
@@ -224,6 +232,53 @@ model Match {
   @@index([roomId])
   @@index([createdAt])
   @@index([movieId])
+}
+
+// ==========================================
+// Groups (persistent friend groups)
+// ==========================================
+
+// A persistent set of friends that can re-launch a fresh swipe room in one
+// click. Unlike a Room (throwaway, 72h), a Group never expires — it's the
+// retention primitive: "my movie-night crew". It also carries a filter preset
+// so re-launching a session keeps the group's taste without re-configuring.
+model Group {
+  id        String @id @default(cuid())
+  name      String @default("Mon groupe")
+  createdBy String
+
+  // Swipe preset applied when spawning a room from this group. Mirrors the
+  // Room filter fields so "new session" pre-fills without re-asking.
+  type             RoomType @default(MOVIE)
+  genreId          Int      @default(0)
+  minRating        Float?
+  releaseYearMin   Int?
+  releaseYearMax   Int?
+  runtimeMin       Int?
+  runtimeMax       Int?
+  watchProviders   Int[]    @default([])
+  watchRegion      String?  @default("FR")
+  originalLanguage String?
+
+  members   GroupMember[]
+  rooms     Room[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @default(now()) @updatedAt
+
+  @@index([createdBy])
+}
+
+model GroupMember {
+  id      String @id @default(cuid())
+  groupId String
+  userId  String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([groupId, userId])
+  @@index([userId])
 }
 
 // ==========================================

@@ -51,6 +51,12 @@ export const ANALYTICS_EVENTS = {
    */
   ROOM_CREATE_INTENT: 'room_create_intent',
 
+  // --- Usage: persistent groups (retention) ---
+  /** A persistent group was saved (e.g. from a finished session). */
+  GROUP_CREATED: 'group_created',
+  /** The host re-launched a fresh session from a saved group ("movie night?"). */
+  GROUP_SESSION_STARTED: 'group_session_started',
+
   // --- Usage: swipes ---
   SWIPE: 'swipe',
   DISCOVER_SWIPE: 'discover_swipe',

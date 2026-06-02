@@ -991,5 +991,21 @@
     "migrationErrorDescription": "La tua stanza non è stata collegata al tuo account. Riprova o contatta il supporto.",
     "migrationRetry": "Riprova",
     "migrationGoToRooms": "Vai alle mie stanze"
+  },
+  "groups": {
+    "title": "I tuoi gruppi",
+    "memberCount": "{count} membri",
+    "newSession": "Nuova sessione",
+    "sessionStartedTitle": "Sessione avviata!",
+    "sessionStartedNotified": "{count} amico/i avvisato/i",
+    "sessionStartedSolo": "Condividi il link per far entrare i tuoi amici",
+    "sessionError": "Impossibile avviare la sessione",
+    "savedTitle": "Gruppo salvato!",
+    "savedDescription": "Rilancia una sessione con loro in un clic dalla home",
+    "saveError": "Impossibile salvare il gruppo",
+    "savePromptTitle": "Salvare questo gruppo?",
+    "savePromptSubtitle": "Rilancia una serata film insieme in un clic, quando vuoi",
+    "savePromptCta": "Salva",
+    "savePromptDismiss": "Ignora"
   }
 }

@@ -21,6 +21,9 @@ import { BottomTabNav } from '@/components/room/BottomTabNav';
 import { JoinRoomScreen } from '@/components/room/JoinRoomScreen';
 import { RoomHeader } from '@/components/room/RoomHeader';
 import { RoomTabs } from '@/components/room/RoomTabs';
+const SaveGroupPrompt = lazy(() =>
+  import('@/components/groups').then((m) => ({ default: m.SaveGroupPrompt })),
+);
 import { TrialBanner } from '@/components/trial/TrialBanner';
 import { TrialHeader } from '@/components/trial/TrialHeader';
 import { LoginWallModal } from '@/components/trial/LoginWallModal';
@@ -406,6 +409,18 @@ function RoomPageContent() {
               tvShowsType: t('tvShowsType'),
             }}
           />
+
+          {/* Offer to save this crew as a persistent group (retention hook).
+              Hidden for trials, solo rooms, and rooms already from a group. */}
+          {!isTrial && (
+            <Suspense fallback={null}>
+              <SaveGroupPrompt
+                roomId={room.id}
+                alreadyInGroup={!!room.groupId}
+                membersCount={room.members.length}
+              />
+            </Suspense>
+          )}
 
           <RoomTabs
             currentTab={currentTab}

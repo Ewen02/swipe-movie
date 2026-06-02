@@ -122,6 +122,9 @@ export class RoomCrudService {
     if (room.originalLanguage !== null) {
       response.originalLanguage = room.originalLanguage;
     }
+    if (room.groupId != null) {
+      response.groupId = room.groupId;
+    }
 
     return response as T;
   }
@@ -298,6 +301,7 @@ export class RoomCrudService {
         watchProviders: true,
         watchRegion: true,
         originalLanguage: true,
+        groupId: true,
         members: { include: { user: true } },
       },
     });

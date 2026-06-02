@@ -63,6 +63,9 @@ export const roomSchema = z.object({
   isRecurring: z.boolean().optional(),
   lastResetAt: z.string().nullable().optional(),
   recurringInterval: z.string().nullable().optional(),
+  // Set when the room was spawned from a persistent group; used to hide the
+  // "save this group" prompt for rooms that already belong to one.
+  groupId: z.string().nullable().optional(),
 })
 export type Room = z.infer<typeof roomSchema>
 

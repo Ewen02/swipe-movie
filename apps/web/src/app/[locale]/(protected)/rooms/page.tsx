@@ -24,6 +24,7 @@ const ROOMS_PER_PAGE = 12
 
 // Lazy load dialogs
 const CreateRoomStepper = lazy(() => import("@/components/room/create-room").then(m => ({ default: m.CreateRoomStepper })))
+const GroupsSection = lazy(() => import("@/components/groups").then(m => ({ default: m.GroupsSection })))
 const JoinRoomDialog = lazy(() => import("@/components/room/JoinRoomDialog").then(m => ({ default: m.JoinRoomDialog })))
 const OnboardingTutorial = lazy(() => import("@/components/onboarding").then(m => ({ default: m.OnboardingTutorial })))
 
@@ -189,6 +190,11 @@ function RoomsPageContent() {
             </Button>
           </div>
         </motion.div>
+
+        {/* Persistent groups — one-click re-launch with the same crew. */}
+        <Suspense fallback={null}>
+          <GroupsSection />
+        </Suspense>
 
         {/* Filters - Only show if there are rooms */}
         {rooms.length > 0 && (

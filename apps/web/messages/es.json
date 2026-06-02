@@ -991,5 +991,21 @@
     "migrationErrorDescription": "Tu sala no pudo vincularse a tu cuenta. Inténtalo de nuevo o contacta con soporte.",
     "migrationRetry": "Reintentar",
     "migrationGoToRooms": "Ver mis salas"
+  },
+  "groups": {
+    "title": "Tus grupos",
+    "memberCount": "{count} miembros",
+    "newSession": "Nueva sesión",
+    "sessionStartedTitle": "¡Sesión iniciada!",
+    "sessionStartedNotified": "{count} amigo(s) notificado(s)",
+    "sessionStartedSolo": "Comparte el enlace para que tus amigos se unan",
+    "sessionError": "No se pudo iniciar la sesión",
+    "savedTitle": "¡Grupo guardado!",
+    "savedDescription": "Reinicia una sesión con ellos en un clic desde el inicio",
+    "saveError": "No se pudo guardar el grupo",
+    "savePromptTitle": "¿Guardar este grupo?",
+    "savePromptSubtitle": "Reinicia una noche de cine juntos en un clic, cuando quieras",
+    "savePromptCta": "Guardar",
+    "savePromptDismiss": "Descartar"
   }
 }

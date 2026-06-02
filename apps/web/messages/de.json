@@ -991,5 +991,21 @@
     "migrationErrorDescription": "Dein Raum konnte nicht mit deinem Konto verknüpft werden. Bitte erneut versuchen oder den Support kontaktieren.",
     "migrationRetry": "Erneut versuchen",
     "migrationGoToRooms": "Zu meinen Räumen"
+  },
+  "groups": {
+    "title": "Deine Gruppen",
+    "memberCount": "{count} Mitglieder",
+    "newSession": "Neue Session",
+    "sessionStartedTitle": "Session gestartet!",
+    "sessionStartedNotified": "{count} Freund(e) benachrichtigt",
+    "sessionStartedSolo": "Teile den Link, damit deine Freunde beitreten können",
+    "sessionError": "Session konnte nicht gestartet werden",
+    "savedTitle": "Gruppe gespeichert!",
+    "savedDescription": "Starte mit ihnen eine Session in einem Klick von der Startseite",
+    "saveError": "Gruppe konnte nicht gespeichert werden",
+    "savePromptTitle": "Diese Gruppe behalten?",
+    "savePromptSubtitle": "Startet jederzeit mit einem Klick einen gemeinsamen Filmabend",
+    "savePromptCta": "Speichern",
+    "savePromptDismiss": "Verwerfen"
   }
 }

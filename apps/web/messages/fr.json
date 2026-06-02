@@ -991,5 +991,21 @@
     "migrationErrorDescription": "Ta room n'a pas pu être liée à ton compte. Réessaie ou contacte le support.",
     "migrationRetry": "Réessayer",
     "migrationGoToRooms": "Voir mes rooms"
+  },
+  "groups": {
+    "title": "Tes groupes",
+    "memberCount": "{count} membres",
+    "newSession": "Nouvelle soirée",
+    "sessionStartedTitle": "Soirée lancée !",
+    "sessionStartedNotified": "{count} ami(s) notifié(s)",
+    "sessionStartedSolo": "Partage le lien pour que tes amis te rejoignent",
+    "sessionError": "Impossible de lancer la soirée",
+    "savedTitle": "Groupe enregistré !",
+    "savedDescription": "Relance une soirée avec eux en un clic depuis l’accueil",
+    "saveError": "Impossible d'enregistrer le groupe",
+    "savePromptTitle": "Garder ce groupe ?",
+    "savePromptSubtitle": "Relancez une soirée film ensemble en un clic, quand vous voulez",
+    "savePromptCta": "Enregistrer",
+    "savePromptDismiss": "Ignorer"
   }
 }

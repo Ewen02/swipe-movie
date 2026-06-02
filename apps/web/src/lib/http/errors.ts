@@ -4,6 +4,10 @@ export const API_ERRORS = {
     404: "Room introuvable",
     410: "La room a expiré",
   },
+  GROUPS: {
+    403: "Tu n'es pas membre de ce groupe",
+    404: "Groupe introuvable",
+  },
   AUTH: {
     401: "Authentification requise",
     403: "Accès refusé",

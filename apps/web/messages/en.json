@@ -991,5 +991,21 @@
     "migrationErrorDescription": "Your room couldn't be linked to your account. Please retry or contact support.",
     "migrationRetry": "Retry",
     "migrationGoToRooms": "Go to my rooms"
+  },
+  "groups": {
+    "title": "Your groups",
+    "memberCount": "{count} members",
+    "newSession": "New session",
+    "sessionStartedTitle": "Session launched!",
+    "sessionStartedNotified": "{count} friend(s) notified",
+    "sessionStartedSolo": "Share the link so your friends can join",
+    "sessionError": "Could not start the session",
+    "savedTitle": "Group saved!",
+    "savedDescription": "Re-launch a session with them in one click from home",
+    "saveError": "Could not save the group",
+    "savePromptTitle": "Keep this group?",
+    "savePromptSubtitle": "Re-launch a movie night together in one click, anytime",
+    "savePromptCta": "Save",
+    "savePromptDismiss": "Dismiss"
   }
 }

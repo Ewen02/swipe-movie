@@ -54,6 +54,13 @@ export class RoomBaseResponseDto {
 
   @ApiProperty({ example: 'en', required: false })
   originalLanguage?: string | null;
+
+  @ApiProperty({
+    example: 'grp-123',
+    required: false,
+    description: 'Set when the room was spawned from a persistent group',
+  })
+  groupId?: string | null;
 }
 
 export class RoomJoinResponseDto extends RoomBaseResponseDto {}
