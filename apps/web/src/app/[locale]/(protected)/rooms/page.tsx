@@ -7,7 +7,7 @@ import { RoomsList } from "@/components/room/RoomsList"
 import { CreateRoomValues, JoinRoomValues } from "@/schemas/rooms"
 import { joinRoom, createRoom } from "@/lib/api/rooms"
 import { captureEvent, ANALYTICS_EVENTS } from "@/components/providers/PostHogProvider"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Plus, Users, Film, Heart, TrendingUp, Tv, Clock, ChevronLeft, ChevronRight } from "lucide-react"
 import { Footer } from "@/components/layout/Footer"
@@ -38,7 +38,6 @@ const FILTERS: { id: FilterType; icon: React.ReactNode; color: string }[] = [
 function RoomsPageContent() {
   const t = useTranslations('rooms')
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [actionError, setActionError] = useState<string | null>(null)
   const [actionLoading, setActionLoading] = useState(false)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
@@ -50,14 +49,18 @@ function RoomsPageContent() {
   // users here with ?create=true. Auto-open the create dialog so they don't have
   // to re-find the button — the dead param previously dropped them on the list
   // and explained the onboarding→create leak (30 intended, 23 created).
+  // Read the param client-side (window) instead of useSearchParams() so this
+  // page doesn't need a Suspense boundary — that boundary, under the
+  // force-dynamic protected layout, was 500-ing the page via the SSR
+  // suspense-cache. Stripping via history.replaceState avoids a navigation.
   useEffect(() => {
-    if (searchParams.get("create") === "true") {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get("create") === "true") {
       setShowCreateDialog(true)
       captureEvent(ANALYTICS_EVENTS.ROOM_CREATE_INTENT, { source: "onboarding_handoff" })
-      // Strip the param so a refresh/back doesn't reopen the dialog.
-      router.replace("/rooms")
+      window.history.replaceState(null, "", window.location.pathname)
     }
-  }, [searchParams, router])
+  }, [])
 
   const { rooms, isLoading: roomsLoading, error: roomsError, refresh: refreshRooms } = useRooms()
   const { genres, isLoading: genresLoading } = useGenres()
@@ -426,10 +429,7 @@ function RoomsPageContent() {
 export default function RoomsPage() {
   return (
     <RoomErrorBoundary>
-      {/* useSearchParams (create-intent handoff) requires a Suspense boundary. */}
-      <Suspense fallback={<RoomsPageSkeleton />}>
-        <RoomsPageContent />
-      </Suspense>
+      <RoomsPageContent />
     </RoomErrorBoundary>
   )
 }
