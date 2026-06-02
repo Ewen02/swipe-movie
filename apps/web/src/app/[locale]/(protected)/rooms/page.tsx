@@ -1,12 +1,11 @@
 "use client"
 
-import { lazy, Suspense, useState, useMemo, useEffect } from "react"
+import { lazy, Suspense, useState, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@swipe-movie/ui"
 import { RoomsList } from "@/components/room/RoomsList"
 import { CreateRoomValues, JoinRoomValues } from "@/schemas/rooms"
 import { joinRoom, createRoom } from "@/lib/api/rooms"
-import { captureEvent, ANALYTICS_EVENTS } from "@/components/providers/PostHogProvider"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Plus, Users, Film, Heart, TrendingUp, Tv, Clock, ChevronLeft, ChevronRight } from "lucide-react"
@@ -24,7 +23,6 @@ const ROOMS_PER_PAGE = 12
 
 // Lazy load dialogs
 const CreateRoomStepper = lazy(() => import("@/components/room/create-room").then(m => ({ default: m.CreateRoomStepper })))
-const GroupsSection = lazy(() => import("@/components/groups").then(m => ({ default: m.GroupsSection })))
 const JoinRoomDialog = lazy(() => import("@/components/room/JoinRoomDialog").then(m => ({ default: m.JoinRoomDialog })))
 const OnboardingTutorial = lazy(() => import("@/components/onboarding").then(m => ({ default: m.OnboardingTutorial })))
 
@@ -44,23 +42,6 @@ function RoomsPageContent() {
   const [showJoinDialog, setShowJoinDialog] = useState(false)
   const [activeFilter, setActiveFilter] = useState<FilterType>("all")
   const [currentPage, setCurrentPage] = useState(1)
-
-  // Activation handoff: onboarding (and the welcome email) sends create-intent
-  // users here with ?create=true. Auto-open the create dialog so they don't have
-  // to re-find the button — the dead param previously dropped them on the list
-  // and explained the onboarding→create leak (30 intended, 23 created).
-  // Read the param client-side (window) instead of useSearchParams() so this
-  // page doesn't need a Suspense boundary — that boundary, under the
-  // force-dynamic protected layout, was 500-ing the page via the SSR
-  // suspense-cache. Stripping via history.replaceState avoids a navigation.
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    if (params.get("create") === "true") {
-      setShowCreateDialog(true)
-      captureEvent(ANALYTICS_EVENTS.ROOM_CREATE_INTENT, { source: "onboarding_handoff" })
-      window.history.replaceState(null, "", window.location.pathname)
-    }
-  }, [])
 
   const { rooms, isLoading: roomsLoading, error: roomsError, refresh: refreshRooms } = useRooms()
   const { genres, isLoading: genresLoading } = useGenres()
@@ -133,10 +114,6 @@ function RoomsPageContent() {
       setActionError(null)
       setActionLoading(true)
       const room = await joinRoom(values)
-      // Fire at the action, not on the in-room JoinRoomScreen (which join traffic
-      // skips because the API already made the user a member). source lets us see
-      // which entry point actually drives joins.
-      captureEvent(ANALYTICS_EVENTS.ROOM_JOINED, { roomCode: room.code, source: "code_home" })
       setShowJoinDialog(false)
       refreshRooms()
       router.push(`/rooms/${room.code}`)
@@ -193,11 +170,6 @@ function RoomsPageContent() {
             </Button>
           </div>
         </motion.div>
-
-        {/* Persistent groups — one-click re-launch with the same crew. */}
-        <Suspense fallback={null}>
-          <GroupsSection />
-        </Suspense>
 
         {/* Filters - Only show if there are rooms */}
         {rooms.length > 0 && (

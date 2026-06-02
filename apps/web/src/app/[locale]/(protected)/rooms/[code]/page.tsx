@@ -34,9 +34,6 @@ import { useRouter } from 'next/navigation';
 const MovieDetailsModal = lazy(() =>
   import('@/components/movies/MovieDetailsModal').then((m) => ({ default: m.MovieDetailsModal })),
 );
-const SaveGroupPrompt = lazy(() =>
-  import('@/components/groups').then((m) => ({ default: m.SaveGroupPrompt })),
-);
 
 function RoomPageContent() {
   const t = useTranslations('room');
@@ -292,7 +289,7 @@ function RoomPageContent() {
       setJoiningRoom(true);
       await joinRoom({ code });
       await reloadRoom();
-      captureEvent('room_joined', { roomCode: code, source: 'in_room_screen' });
+      captureEvent('room_joined', { roomCode: code });
       toast({ title: t('welcomeTitle'), description: t('welcomeDescription') });
     } catch (err) {
       console.error('Failed to join room:', err);
@@ -409,18 +406,6 @@ function RoomPageContent() {
               tvShowsType: t('tvShowsType'),
             }}
           />
-
-          {/* Offer to save this crew as a persistent group (retention hook).
-              Hidden for trials, solo rooms, and rooms already from a group. */}
-          {!isTrial && (
-            <Suspense fallback={null}>
-              <SaveGroupPrompt
-                roomId={room.id}
-                alreadyInGroup={!!room.groupId}
-                membersCount={room.members.length}
-              />
-            </Suspense>
-          )}
 
           <RoomTabs
             currentTab={currentTab}
