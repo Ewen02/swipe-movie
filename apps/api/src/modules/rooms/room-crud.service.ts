@@ -336,7 +336,11 @@ export class RoomCrudService {
     | PaginatedResponseDto<MemberRoomsResponseDto['rooms'][0]>
     | MemberRoomsResponseDto
   > {
-    const where = { members: { some: { userId } } };
+    // Exclude soft-deleted (expired) rooms: rooms live 72h then get deletedAt
+    // set by the cron. Without this filter the list showed expired rooms and the
+    // "{count} rooms actives" header counted them, inflating the number and
+    // leaving the "Récentes" filter stuck at 0.
+    const where = { members: { some: { userId } }, deletedAt: null };
 
     // If pagination is provided, return paginated response
     if (pagination) {
