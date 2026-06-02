@@ -20,6 +20,8 @@ interface ShareRoomButtonProps {
   size?: "default" | "sm" | "lg" | "icon"
   className?: string
   defaultOpen?: boolean
+  /** Render only the share icon (no "Inviter" label) — used on dense room cards. */
+  iconOnly?: boolean
 }
 
 export function ShareRoomButton({
@@ -29,6 +31,7 @@ export function ShareRoomButton({
   size = "default",
   className,
   defaultOpen = false,
+  iconOnly = false,
 }: ShareRoomButtonProps) {
   const [open, setOpen] = useState(defaultOpen)
   const [copiedLink, setCopiedLink] = useState(false)
@@ -92,8 +95,8 @@ export function ShareRoomButton({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant={variant} size={size} className={className} aria-label="Inviter des amis à rejoindre la room">
-          <Share2 className="w-4 h-4 mr-2" />
-          Inviter
+          <Share2 className={iconOnly ? "w-4 h-4" : "w-4 h-4 mr-2"} />
+          {!iconOnly && "Inviter"}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md border-0 bg-transparent p-0 shadow-none">

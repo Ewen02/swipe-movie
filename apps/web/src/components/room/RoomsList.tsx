@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import { Badge, Button } from "@swipe-movie/ui"
 import { useRouter } from "next/navigation"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 import type { UserRoomsResponseDto } from "@/schemas/rooms"
 import { Film, Tv, ArrowRight, Users, Heart, Star, Sparkles, Plus } from "lucide-react"
 import { ShareRoomButton } from "./ShareRoomButton"
@@ -16,6 +16,7 @@ interface RoomsListProps {
 export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
   const router = useRouter()
   const t = useTranslations('rooms')
+  const locale = useLocale()
 
   if (rooms.rooms.length === 0) {
     return (
@@ -57,7 +58,13 @@ export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {rooms.rooms.map((room, index) => {
         const createdDate = new Date(room.createdAt)
-        const isRecent = Date.now() - createdDate.getTime() < 24 * 60 * 60 * 1000
+        const ageMs = Date.now() - createdDate.getTime()
+        const isRecent = ageMs < 24 * 60 * 60 * 1000
+        // Rooms live 72h. Surface "expire dans Xh" once under 24h left — the most
+        // useful per-card signal for a short-lived room.
+        const hoursLeft = Math.ceil((72 * 60 * 60 * 1000 - ageMs) / (60 * 60 * 1000))
+        const expiringSoon = hoursLeft > 0 && hoursLeft <= 24
+        const openRoom = () => router.push(`/rooms/${room.code}`)
 
         return (
           <motion.div
@@ -66,7 +73,16 @@ export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
             className="relative group cursor-pointer"
-            onClick={() => router.push(`/rooms/${room.code}`)}
+            role="button"
+            tabIndex={0}
+            aria-label={t('card.openRoom', { name: room.name || t('card.unnamed') })}
+            onClick={openRoom}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                openRoom()
+              }
+            }}
           >
             {/* Hover glow */}
             <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
@@ -99,7 +115,11 @@ export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
                       <h3 className="font-semibold text-lg truncate" title={room.name || t('card.unnamed')}>
                         {room.name || t('card.unnamed')}
                       </h3>
-                      {isRecent && (
+                      {expiringSoon ? (
+                        <Badge className="text-[10px] px-1.5 py-0 bg-orange-500/20 text-orange-500 border-orange-500/30 shrink-0">
+                          {t('card.expiresIn', { hours: hoursLeft })}
+                        </Badge>
+                      ) : isRecent && (
                         <Badge className="text-[10px] px-1.5 py-0 bg-green-500/20 text-green-500 border-green-500/30 shrink-0">
                           {t('card.new')}
                         </Badge>
@@ -108,14 +128,20 @@ export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
 
                     {/* Stats row */}
                     <div className="flex items-center gap-3 text-sm">
-                      <div className="flex items-center gap-1 text-blue-400">
-                        <Users className="w-3.5 h-3.5" />
+                      <div
+                        className="flex items-center gap-1 text-blue-400"
+                        aria-label={t('card.membersLabel', { count: room.memberCount || 0 })}
+                      >
+                        <Users className="w-3.5 h-3.5" aria-hidden="true" />
                         <span>{room.memberCount || 0}</span>
                       </div>
-                      <div className={`flex items-center gap-1 ${
-                        (room.matchCount || 0) > 0 ? "text-pink-400" : "text-muted-foreground"
-                      }`}>
-                        <Heart className={`w-3.5 h-3.5 ${(room.matchCount || 0) > 0 ? "fill-pink-400" : ""}`} />
+                      <div
+                        className={`flex items-center gap-1 ${
+                          (room.matchCount || 0) > 0 ? "text-pink-400" : "text-muted-foreground"
+                        }`}
+                        aria-label={t('card.matchesLabel', { count: room.matchCount || 0 })}
+                      >
+                        <Heart className={`w-3.5 h-3.5 ${(room.matchCount || 0) > 0 ? "fill-pink-400" : ""}`} aria-hidden="true" />
                         <span>{room.matchCount || 0}</span>
                       </div>
                       <Badge variant="outline" className="font-mono text-[10px] px-1.5 py-0 border-border text-muted-foreground">
@@ -131,8 +157,12 @@ export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
                     {room.type === "movie" ? t('card.movies') : t('card.series')}
                   </Badge>
                   {room.minRating && room.minRating > 0 && (
-                    <div className="flex items-center gap-1">
-                      <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                    <div
+                      className="flex items-center gap-1"
+                      title={t('card.minRating', { rating: room.minRating })}
+                      aria-label={t('card.minRating', { rating: room.minRating })}
+                    >
+                      <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" aria-hidden="true" />
                       <span>{room.minRating}+</span>
                     </div>
                   )}
@@ -142,22 +172,25 @@ export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
                       <span>{t('card.filtered')}</span>
                     </div>
                   )}
-                  <span className="text-muted-foreground/60">
-                    {createdDate.toLocaleDateString(undefined, {
+                  <span className="text-muted-foreground/70">
+                    {createdDate.toLocaleDateString(locale, {
                       day: "numeric",
                       month: "short",
                     })}
                   </span>
                 </div>
 
-                {/* Actions */}
+                {/* Actions — "Accéder" is the primary action (full width); invite
+                    is demoted to an icon button (it's also available inside the
+                    room and the whole card already opens the room). */}
                 <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                   <ShareRoomButton
                     roomCode={room.code}
                     roomName={room.name || t('card.unnamed')}
                     variant="outline"
-                    size="sm"
-                    className="flex-1 border-border hover:bg-foreground/5 text-xs h-9"
+                    size="icon"
+                    iconOnly
+                    className="border-border hover:bg-foreground/5 h-9 w-9 shrink-0"
                   />
                   <motion.div
                     className="flex-1"
@@ -166,10 +199,10 @@ export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
                   >
                     <Button
                       size="sm"
-                      className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-md text-xs h-9"
+                      className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-md text-sm h-9"
                       onClick={(e) => {
                         e.stopPropagation()
-                        router.push(`/rooms/${room.code}`)
+                        openRoom()
                       }}
                     >
                       {t('card.access')}

@@ -220,7 +220,14 @@
       "movies": "Film",
       "series": "Serie",
       "filtered": "Filtrato",
-      "access": "Accedi"
+      "access": "Accedi",
+      "expiresIn": "scade tra {hours}h",
+      "expired": "scaduta",
+      "minRating": "voto min. {rating}+",
+      "membersLabel": "{count} membri",
+      "matchesLabel": "{count} match",
+      "invite": "Invita",
+      "openRoom": "Apri la room {name}"
     }
   },
   "room": {

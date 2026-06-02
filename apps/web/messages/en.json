@@ -220,7 +220,14 @@
       "movies": "Movies",
       "series": "Series",
       "filtered": "Filtered",
-      "access": "Access"
+      "access": "Access",
+      "expiresIn": "expires in {hours}h",
+      "expired": "expired",
+      "minRating": "min. rating {rating}+",
+      "membersLabel": "{count} members",
+      "matchesLabel": "{count} matches",
+      "invite": "Invite",
+      "openRoom": "Open room {name}"
     }
   },
   "room": {
