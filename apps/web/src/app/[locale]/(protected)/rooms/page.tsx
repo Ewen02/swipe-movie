@@ -1,12 +1,13 @@
 "use client"
 
-import { lazy, Suspense, useState, useMemo } from "react"
+import { lazy, Suspense, useState, useMemo, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@swipe-movie/ui"
 import { RoomsList } from "@/components/room/RoomsList"
 import { CreateRoomValues, JoinRoomValues } from "@/schemas/rooms"
 import { joinRoom, createRoom } from "@/lib/api/rooms"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
+import { captureEvent } from "@/components/providers/PostHogProvider"
 import { useTranslations } from "next-intl"
 import { Plus, Users, Film, Tv, Clock, ChevronLeft, ChevronRight } from "lucide-react"
 import { Footer } from "@/components/layout/Footer"
@@ -35,6 +36,7 @@ const FILTERS: { id: FilterType; icon: React.ReactNode; color: string }[] = [
 function RoomsPageContent() {
   const t = useTranslations('rooms')
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [actionError, setActionError] = useState<string | null>(null)
   const [actionLoading, setActionLoading] = useState(false)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
@@ -49,6 +51,17 @@ function RoomsPageContent() {
   const error = actionError || roomsError
 
   const { showOnboarding, completeOnboarding, skipOnboarding } = useOnboarding()
+
+  // Activation handoff: onboarding and the welcome email send users here with
+  // ?create=true to drop them straight into room creation. Auto-open the
+  // dialog, track the intent so we can measure how well the handoff converts,
+  // then strip the param so a refresh/back doesn't re-open it.
+  useEffect(() => {
+    if (searchParams.get('create') !== 'true') return
+    setShowCreateDialog(true)
+    captureEvent('room_create_intent')
+    router.replace('/rooms')
+  }, [searchParams, router])
 
   // Filter rooms based on active filter
   const filteredRooms = useMemo(() => {
@@ -396,7 +409,10 @@ function RoomsPageContent() {
 export default function RoomsPage() {
   return (
     <RoomErrorBoundary>
-      <RoomsPageContent />
+      {/* useSearchParams (?create=true handoff) needs a Suspense boundary. */}
+      <Suspense fallback={<RoomsPageSkeleton />}>
+        <RoomsPageContent />
+      </Suspense>
     </RoomErrorBoundary>
   )
 }

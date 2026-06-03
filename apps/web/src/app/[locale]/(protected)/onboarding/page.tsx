@@ -89,6 +89,10 @@ export default function OnboardingPage() {
         watchProviders: selectedProviders,
         onboardingStep: 1,
       });
+      captureEvent('onboarding_providers_selected', {
+        count: selectedProviders.length,
+        providerIds: selectedProviders,
+      });
       setCurrentStep(1);
     } catch (error) {
       console.error('Failed to save providers:', error);
@@ -103,6 +107,10 @@ export default function OnboardingPage() {
       await update({
         favoriteGenreIds: selectedGenres,
         onboardingStep: 2,
+      });
+      captureEvent('onboarding_genres_selected', {
+        count: selectedGenres.length,
+        genreIds: selectedGenres,
       });
       setCurrentStep(2);
     } catch (error) {

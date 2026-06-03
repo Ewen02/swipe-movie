@@ -43,6 +43,10 @@ export const ANALYTICS_EVENTS = {
 
   // --- Onboarding ---
   ONBOARDING_STARTED: 'onboarding_started',
+  /** Streaming providers picked (step 1). Fills a previously blind step. */
+  ONBOARDING_PROVIDERS_SELECTED: 'onboarding_providers_selected',
+  /** Favorite genres picked (step 2). Fills a previously blind step. */
+  ONBOARDING_GENRES_SELECTED: 'onboarding_genres_selected',
   ONBOARDING_COMPLETED: 'onboarding_completed',
   ONBOARDING_ABANDONED: 'onboarding_abandoned',
 
@@ -66,6 +70,16 @@ export const ANALYTICS_EVENTS = {
   GROUP_CREATED: 'group_created',
   /** The host re-launched a fresh session from a saved group ("movie night?"). */
   GROUP_SESSION_STARTED: 'group_session_started',
+
+  // --- Usage: sessions ---
+  /** A user started actively swiping in a room (deck ready). */
+  SESSION_STARTED: 'session_started',
+  /**
+   * The room session ended (leave / tab close), with duration, swipe count,
+   * whether it matched, and an outcome (matched | deck_finished | left). Turns
+   * isolated swipe/match events into a measurable "movie night".
+   */
+  SESSION_ENDED: 'session_ended',
 
   // --- Usage: swipes ---
   SWIPE: 'swipe',

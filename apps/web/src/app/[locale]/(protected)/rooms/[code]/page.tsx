@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, lazy, Suspense } from 'react';
+import { useState, useCallback, useEffect, useRef, lazy, Suspense } from 'react';
 import { useParams } from 'next/navigation';
 import { useSession } from '@/lib/auth-client';
 import { useTranslations } from 'next-intl';
@@ -109,6 +109,55 @@ function RoomPageContent() {
     resetUserLeft,
   } = useMatchNotifications({ roomId: room?.id || null });
 
+  // --- Session tracking ---------------------------------------------------
+  // A "session" is one stretch of a user actively in a room. We open it once
+  // the room + a deck are ready, and close it on leave (in-app nav or tab
+  // close) with how long it lasted, how much they swiped, and how it ended.
+  // This is what turns isolated swipe/match events into a measurable "movie
+  // night". Refs hold the latest values so the unmount/pagehide cleanup, which
+  // closes over initial state, reports accurate numbers.
+  const sessionStartedRef = useRef(false);
+  const sessionStartMsRef = useRef(0);
+  const sessionSwipeCountRef = useRef(0);
+  const sessionMatchedRef = useRef(false);
+  const sessionDeckFinishedRef = useRef(false);
+
+  useEffect(() => {
+    if (sessionStartedRef.current || !room || movies.length === 0) return;
+    sessionStartedRef.current = true;
+    sessionStartMsRef.current = Date.now();
+    captureEvent('session_started', { roomId: room.id, isTrial });
+  }, [room, movies.length, isTrial]);
+
+  useEffect(() => {
+    const emitSessionEnded = () => {
+      if (!sessionStartedRef.current) return;
+      sessionStartedRef.current = false; // guard against double-emit
+      captureEvent('session_ended', {
+        roomId: room?.id,
+        isTrial,
+        durationMs: Date.now() - sessionStartMsRef.current,
+        swipeCount: sessionSwipeCountRef.current,
+        matched: sessionMatchedRef.current,
+        // Why the session ended: a decision/match, a content dead-end, or the
+        // user simply leaving — the three outcomes we care about separating.
+        outcome: sessionMatchedRef.current
+          ? 'matched'
+          : sessionDeckFinishedRef.current
+            ? 'deck_finished'
+            : 'left',
+      });
+    };
+    window.addEventListener('pagehide', emitSessionEnded);
+    return () => {
+      window.removeEventListener('pagehide', emitSessionEnded);
+      emitSessionEnded();
+    };
+    // Intentionally empty deps: bind once; values are read from refs at fire
+    // time so we capture the final state, not the mount-time snapshot.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Notify when a member joins the room
   useEffect(() => {
     if (!userJoined) return;
@@ -141,6 +190,27 @@ function RoomPageContent() {
     }
   }, [movies.length, hasMoreMovies, moviesLoading, room, handleLoadMoreMovies]);
 
+  // Dead-end: the deck is genuinely exhausted (empty, nothing more to load).
+  // This is where a session stalls for lack of content — track it once per
+  // exhaustion so we can see how often sessions end this way vs in a decision.
+  const deckFinishedTracked = useRef(false);
+  useEffect(() => {
+    const exhausted =
+      !!room && movies.length === 0 && !hasMoreMovies && !moviesLoading;
+    if (exhausted && !deckFinishedTracked.current) {
+      deckFinishedTracked.current = true;
+      sessionDeckFinishedRef.current = true;
+      captureEvent('deck_finished', {
+        roomId: room.id,
+        swipedCount: swipedMovieIds.size,
+        isTrial,
+      });
+    } else if (!exhausted && movies.length > 0) {
+      // Deck refilled (loaded more / new room) — allow tracking again.
+      deckFinishedTracked.current = false;
+    }
+  }, [room, movies.length, hasMoreMovies, moviesLoading, swipedMovieIds, isTrial]);
+
   const handleSwipe = useCallback(
     async (movie: MovieBasic, direction: 'left' | 'right') => {
       if (!room) return;
@@ -156,6 +226,7 @@ function RoomPageContent() {
 
       try {
         const result = await createSwipe(room.id, movieIdStr, value);
+        sessionSwipeCountRef.current += 1;
         captureEvent('swipe', { direction, movieId: movieIdStr, roomId: room.id });
         if (isTrial) {
           setTrialSwipeCount((prev) => prev + 1);
@@ -169,6 +240,7 @@ function RoomPageContent() {
           });
         }
         if (result.matchCreated) {
+          sessionMatchedRef.current = true;
           if (isTrial) {
             setTrialHasMatch(true);
           }
