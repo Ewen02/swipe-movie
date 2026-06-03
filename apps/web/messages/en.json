@@ -390,7 +390,13 @@
   "footer": {
     "madeWith": "Made with",
     "by": "by",
-    "rights": "All rights reserved"
+    "rights": "All rights reserved",
+    "discoverTitle": "Discover",
+    "discoverFilms": "All movies",
+    "discoverGuide": "How to pick a movie",
+    "discoverTonight": "What to watch tonight",
+    "discoverCouple": "Movie for couples",
+    "discoverFamily": "Family movie"
   },
   "about": {
     "title": "About Swipe Movie",

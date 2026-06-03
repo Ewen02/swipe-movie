@@ -390,7 +390,13 @@
   "footer": {
     "madeWith": "Gemacht mit",
     "by": "von",
-    "rights": "Alle Rechte vorbehalten"
+    "rights": "Alle Rechte vorbehalten",
+    "discoverTitle": "Entdecken",
+    "discoverFilms": "Alle Filme",
+    "discoverGuide": "Wie man einen Film wählt",
+    "discoverTonight": "Was heute Abend schauen",
+    "discoverCouple": "Film für Paare",
+    "discoverFamily": "Familienfilm"
   },
   "about": {
     "title": "Über Swipe Movie",

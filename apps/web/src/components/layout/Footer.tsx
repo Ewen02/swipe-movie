@@ -16,6 +16,14 @@ export function Footer() {
     { href: "/terms", label: t('nav.terms') },
   ]
 
+  const discoverLinks = [
+    { href: "/films", label: t('footer.discoverFilms') },
+    { href: "/guide/choisir-un-film-a-plusieurs", label: t('footer.discoverGuide') },
+    { href: "/contexte/quoi-regarder-ce-soir", label: t('footer.discoverTonight') },
+    { href: "/contexte/soiree-couple", label: t('footer.discoverCouple') },
+    { href: "/contexte/en-famille", label: t('footer.discoverFamily') },
+  ]
+
   return (
     <footer className="relative overflow-hidden">
       {/* Background gradient */}
@@ -121,6 +129,34 @@ export function Footer() {
                   </p>
                 </motion.div>
               </div>
+
+              {/* Discover — SEO internal links */}
+              <motion.nav
+                aria-label={t('footer.discoverTitle')}
+                className="mt-10 pt-8 border-t border-border"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4 text-center md:text-left">
+                  {t('footer.discoverTitle')}
+                </p>
+                <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-3">
+                  {discoverLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="group relative text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <span>{link.label}</span>
+                      <motion.span
+                        className="absolute -bottom-1 left-0 w-0 h-px bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300"
+                        initial={false}
+                      />
+                    </Link>
+                  ))}
+                </div>
+              </motion.nav>
             </div>
           </div>
 
