@@ -1,10 +1,23 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import posthog from 'posthog-js';
+import type { PostHog } from 'posthog-js';
 import { authClient } from '@/lib/auth-client';
 import { ANALYTICS_EVENTS, type AnalyticsEvent } from '@/lib/analytics/events';
 import { getTrialData } from '@/lib/trial';
+
+// posthog-js (~57KB gzip) is loaded lazily — only once the user grants
+// analytics consent — so it stays out of the initial bundle. Until then this
+// reference is null and the capture helpers no-op. `import type` above keeps
+// the type without pulling the runtime into the entry chunk.
+let posthog: PostHog | null = null;
+
+async function loadPostHog(): Promise<PostHog> {
+  if (posthog) return posthog;
+  const mod = await import('posthog-js');
+  posthog = mod.default;
+  return posthog;
+}
 
 const COOKIE_CONSENT_KEY = 'cookie-consent';
 const POSTHOG_IDENTIFIED_KEY = 'posthog-user-identified';
@@ -61,25 +74,29 @@ export function PostHogProvider() {
 
     if (analyticsEnabled) {
       if (!initialized.current) {
-        posthog.init(posthogKey, {
-          api_host: posthogHost,
-          capture_pageview: true,
-          capture_pageleave: true,
-          capture_performance: true,
-          autocapture: false,
-          persistence: 'localStorage+cookie',
-          loaded: (ph) => {
-            if (process.env.NODE_ENV === 'development') {
-              ph.debug();
-            }
-          },
+        // Loading the SDK here (rather than at module top) keeps posthog-js out
+        // of the initial bundle until the user has opted in.
+        loadPostHog().then((ph) => {
+          ph.init(posthogKey, {
+            api_host: posthogHost,
+            capture_pageview: true,
+            capture_pageleave: true,
+            capture_performance: true,
+            autocapture: false,
+            persistence: 'localStorage+cookie',
+            loaded: (loaded) => {
+              if (process.env.NODE_ENV === 'development') {
+                loaded.debug();
+              }
+            },
+          });
+          initialized.current = true;
         });
-        initialized.current = true;
       } else {
-        posthog.opt_in_capturing();
+        posthog?.opt_in_capturing();
       }
     } else if (initialized.current) {
-      posthog.opt_out_capturing();
+      posthog?.opt_out_capturing();
     }
   }, [analyticsEnabled, posthogKey, posthogHost]);
 
@@ -88,6 +105,9 @@ export function PostHogProvider() {
     if (!analyticsEnabled || !initialized.current) return;
 
     const identifyUser = async () => {
+      // initialized.current is true here, so the SDK has loaded.
+      const ph = posthog;
+      if (!ph) return;
       try {
         const session = await authClient.getSession();
         if (session?.data?.user) {
@@ -100,13 +120,13 @@ export function PostHogProvider() {
           const isStandalone =
             typeof window !== 'undefined' &&
             window.matchMedia?.('(display-mode: standalone)').matches;
-          posthog.register({
+          ph.register({
             platform: 'web',
             is_pwa: Boolean(isStandalone),
             app_locale: document.documentElement.lang || undefined,
           });
 
-          posthog.identify(user.id, {
+          ph.identify(user.id, {
             email: user.email,
             name: user.name,
             // A guest-promoted account still carries trial data at first
@@ -121,7 +141,7 @@ export function PostHogProvider() {
             // through /try, otherwise it's a direct signup. (We dropped the old
             // user_signed_up, which fired on every new device and only
             // duplicated this without the localStorage guard.)
-            posthog.capture(ANALYTICS_EVENTS.SIGNUP_COMPLETED, {
+            ph.capture(ANALYTICS_EVENTS.SIGNUP_COMPLETED, {
               source: getTrialData() ? 'trial' : 'direct',
             });
             localStorage.setItem(POSTHOG_IDENTIFIED_KEY, 'true');
@@ -147,7 +167,7 @@ export function captureEvent(
   event: AnalyticsEvent | (string & {}),
   properties?: Record<string, unknown>,
 ) {
-  if (typeof window !== 'undefined' && posthog.__loaded) {
+  if (typeof window !== 'undefined' && posthog?.__loaded) {
     posthog.capture(event, properties);
   }
 }
@@ -163,7 +183,7 @@ export function captureGroup(
   groupKey: string,
   properties?: Record<string, unknown>,
 ) {
-  if (typeof window !== 'undefined' && posthog.__loaded) {
+  if (typeof window !== 'undefined' && posthog?.__loaded) {
     posthog.group(groupType, groupKey, properties);
   }
 }

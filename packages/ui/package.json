@@ -7,9 +7,11 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./atoms/*": "./src/atoms/*",
-    "./molecules/*": "./src/molecules/*",
-    "./organisms/*": "./src/organisms/*",
+    "./atoms/*": "./src/atoms/*.tsx",
+    "./molecules/*": "./src/molecules/*.tsx",
+    "./organisms/*": "./src/organisms/*.tsx",
+    "./hooks/*": "./src/hooks/*.ts",
+    "./utils/*": "./src/utils/*.ts",
     "./styles.css": "./src/styles.css"
   },
   "scripts": {

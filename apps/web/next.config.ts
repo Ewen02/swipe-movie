@@ -31,6 +31,9 @@ const nextConfig = {
   experimental: {
     // Enable optimistic client cache for faster navigation
     optimisticClientCache: true,
+    // Rewrite lucide-react barrel imports to per-icon paths so unused icons
+    // are tree-shaken out of every bundle.
+    optimizePackageImports: ['lucide-react'],
   },
   async headers() {
     return [
