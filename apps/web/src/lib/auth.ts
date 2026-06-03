@@ -77,6 +77,19 @@ function resolveSignupLocale(request?: Request): string | undefined {
   return undefined;
 }
 
+/** Build an EmailService configured from env. Shared by the auth email plugins. */
+function createAuthEmailService() {
+  return new EmailService(
+    {
+      apiKey: process.env.RESEND_API_KEY,
+      fromEmail: process.env.EMAIL_FROM || 'noreply@swipe-movie.com',
+      fromName: 'Swipe Movie',
+      baseUrl: getAuthBaseURL(),
+    },
+    process.env.NODE_ENV !== 'production',
+  );
+}
+
 // Get the base URL for Better Auth
 const getAuthBaseURL = () => {
   if (process.env.BETTER_AUTH_URL) {
@@ -131,33 +144,9 @@ export const auth = betterAuth({
     ...(process.env.RESEND_API_KEY
       ? [
           magicLink({
-            sendMagicLink: async ({ email, url }) => {
-              const emailService = new EmailService(
-                {
-                  apiKey: process.env.RESEND_API_KEY,
-                  fromEmail: process.env.EMAIL_FROM || 'noreply@swipe-movie.com',
-                  fromName: 'Swipe Movie',
-                  baseUrl: getAuthBaseURL(),
-                },
-                process.env.NODE_ENV !== 'production',
-              );
-              await emailService.sendEmail({
-                to: email,
-                subject: 'Connecte-toi à Swipe Movie',
-                html: `
-                  <div style="font-family: system-ui, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
-                    <h1 style="font-size: 22px;">Ton lien de connexion</h1>
-                    <p>Clique sur le bouton ci-dessous pour te connecter. Le lien expire dans 5 minutes.</p>
-                    <p style="margin: 32px 0;">
-                      <a href="${url}" style="background:#000; color:#fff; padding:12px 24px; border-radius:8px; text-decoration:none; display:inline-block;">
-                        Me connecter
-                      </a>
-                    </p>
-                    <p style="color:#666; font-size:13px;">Si tu n'as pas demandé ce lien, ignore cet email.</p>
-                  </div>
-                `,
-                text: `Connecte-toi à Swipe Movie : ${url}`,
-              });
+            sendMagicLink: async ({ email, url }, context) => {
+              const locale = resolveSignupLocale(context?.request);
+              await createAuthEmailService().sendMagicLink(email, url, locale);
             },
           }),
           // Email OTP — six-digit code as a lower-friction alternative to the
@@ -167,38 +156,14 @@ export const auth = betterAuth({
           emailOTP({
             otpLength: 6,
             expiresIn: 60 * 10, // 10 minutes
-            sendVerificationOTP: async ({ email, otp, type }) => {
-              const emailService = new EmailService(
-                {
-                  apiKey: process.env.RESEND_API_KEY,
-                  fromEmail: process.env.EMAIL_FROM || 'noreply@swipe-movie.com',
-                  fromName: 'Swipe Movie',
-                  baseUrl: getAuthBaseURL(),
-                },
-                process.env.NODE_ENV !== 'production',
-              );
+            sendVerificationOTP: async ({ email, otp, type }, context) => {
+              const locale = resolveSignupLocale(context?.request);
               // We only drive the "sign-in" flow from the UI; other types
-              // (email-verification, forget-password) reuse the same template.
-              const subject =
-                type === 'forget-password'
-                  ? 'Ton code de réinitialisation Swipe Movie'
-                  : 'Ton code de connexion Swipe Movie';
-              await emailService.sendEmail({
-                to: email,
-                subject,
-                html: `
-                  <div style="font-family: system-ui, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
-                    <h1 style="font-size: 22px;">Ton code de connexion</h1>
-                    <p>Saisis ce code dans Swipe Movie pour te connecter. Il expire dans 10 minutes.</p>
-                    <p style="margin: 32px 0; text-align:center;">
-                      <span style="font-size:34px; font-weight:700; letter-spacing:8px; background:#f4f4f5; padding:14px 24px; border-radius:10px; display:inline-block;">
-                        ${otp}
-                      </span>
-                    </p>
-                    <p style="color:#666; font-size:13px;">Si tu n'as pas demandé ce code, ignore cet email.</p>
-                  </div>
-                `,
-                text: `Ton code de connexion Swipe Movie : ${otp} (expire dans 10 minutes)`,
+              // (email-verification, forget-password) reuse the same template,
+              // with a distinct subject for password reset.
+              await createAuthEmailService().sendOtp(email, otp, {
+                isReset: type === 'forget-password',
+                locale,
               });
             },
           }),

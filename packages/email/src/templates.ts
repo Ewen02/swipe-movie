@@ -290,6 +290,61 @@ export function buildWelcomeEmail(
   );
 }
 
+export function buildMagicLinkEmail(
+  url: string,
+  baseUrl: string,
+  localeInput?: string,
+): string {
+  const locale = resolveEmailLocale(localeInput);
+  const s = t(locale);
+  return buildBaseTemplate(
+    `
+    ${h2(s.magiclink_title)}
+    ${p(s.magiclink_body)}
+    ${button(s.magiclink_cta, url)}
+    ${p(s.magiclink_expiry, true)}
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:${C.cardAlt}; border:1px solid ${C.border}; border-radius:10px; margin:20px 0 8px;">
+      <tr><td style="padding:14px 16px;">
+        <p style="margin:0 0 8px; font-family:${FONT}; font-size:13px; color:${C.textMuted};">${s.magiclink_fallback}</p>
+        <a href="${url}" target="_blank" style="font-family:${FONT}; font-size:13px; color:${C.pink}; text-decoration:none; word-break:break-all;">${url}</a>
+      </td></tr>
+    </table>
+    ${p(s.magiclink_ignore, true)}
+  `,
+    baseUrl,
+    locale,
+  );
+}
+
+export function buildOtpEmail(
+  otp: string,
+  baseUrl: string,
+  localeInput?: string,
+): string {
+  const locale = resolveEmailLocale(localeInput);
+  const s = t(locale);
+  const digits = otp
+    .split('')
+    .map(
+      (d) =>
+        `<span style="display:inline-block; min-width:18px; padding:14px 10px; margin:0 4px; font-family:${FONT}; font-size:32px; font-weight:800; color:${C.white}; background-color:${C.cardAlt}; border:1px solid ${C.border}; border-radius:10px;">${d}</span>`,
+    )
+    .join('');
+  return buildBaseTemplate(
+    `
+    ${h2(s.otp_title)}
+    ${p(s.otp_body)}
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0;">
+      <tr><td align="center">${digits}</td></tr>
+    </table>
+    ${p(s.otp_expiry, true)}
+    ${p(s.otp_ignore, true)}
+  `,
+    baseUrl,
+    locale,
+  );
+}
+
 export function htmlToText(html: string): string {
   return html
     .replace(/<style[^>]*>.*?<\/style>/gi, '')

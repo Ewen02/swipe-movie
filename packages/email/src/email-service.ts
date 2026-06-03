@@ -13,6 +13,8 @@ import {
   buildWeeklyDigestEmail,
   buildRoomExpiryReminderEmail,
   buildWelcomeEmail,
+  buildMagicLinkEmail,
+  buildOtpEmail,
   htmlToText,
 } from './templates';
 import { t, fill, resolveEmailLocale } from './i18n';
@@ -122,6 +124,37 @@ export class EmailService {
       to: email,
       subject: fill(t(locale).welcome_subject, { name: userName }),
       html,
+    });
+  }
+
+  async sendMagicLink(
+    email: string,
+    url: string,
+    localeInput?: string | null,
+  ): Promise<{ success: boolean; error?: string }> {
+    const locale = resolveEmailLocale(localeInput);
+    const html = buildMagicLinkEmail(url, this.baseUrl, locale);
+    return this.sendEmail({
+      to: email,
+      subject: t(locale).magiclink_subject,
+      html,
+      text: `${t(locale).magiclink_body}\n${url}\n${t(locale).magiclink_expiry}`,
+    });
+  }
+
+  async sendOtp(
+    email: string,
+    otp: string,
+    options?: { isReset?: boolean; locale?: string | null },
+  ): Promise<{ success: boolean; error?: string }> {
+    const locale = resolveEmailLocale(options?.locale);
+    const html = buildOtpEmail(otp, this.baseUrl, locale);
+    const strings = t(locale);
+    return this.sendEmail({
+      to: email,
+      subject: options?.isReset ? strings.otp_reset_subject : strings.otp_subject,
+      html,
+      text: `${strings.otp_body} ${otp}\n${strings.otp_expiry}`,
     });
   }
 

@@ -60,6 +60,19 @@ type EmailStrings = {
   digest_cta: string;
   time_hours_one: string;
   time_hours_other: string;
+  magiclink_subject: string;
+  magiclink_title: string;
+  magiclink_body: string;
+  magiclink_cta: string;
+  magiclink_expiry: string;
+  magiclink_fallback: string;
+  magiclink_ignore: string;
+  otp_subject: string;
+  otp_reset_subject: string;
+  otp_title: string;
+  otp_body: string;
+  otp_expiry: string;
+  otp_ignore: string;
 };
 
 /** Localized "{n} hour(s)" string for the expiry reminder's time-left copy. */
@@ -120,6 +133,22 @@ export const EMAIL_TRANSLATIONS: Record<EmailLocale, EmailStrings> = {
     digest_cta: 'Continuer à swiper',
     time_hours_one: 'heure',
     time_hours_other: 'heures',
+    magiclink_subject: 'Votre lien de connexion Swipe Movie',
+    magiclink_title: 'Connexion en un clic 🔑',
+    magiclink_body:
+      'Appuyez sur le bouton ci-dessous pour vous connecter à Swipe Movie. Aucun mot de passe à retenir.',
+    magiclink_cta: 'Me connecter',
+    magiclink_expiry: 'Ce lien expire dans 5 minutes et ne fonctionne qu\'une seule fois.',
+    magiclink_fallback: 'Le bouton ne fonctionne pas&nbsp;? Copiez-collez ce lien dans votre navigateur&nbsp;:',
+    magiclink_ignore:
+      'Si vous n\'avez pas demandé ce lien, vous pouvez ignorer cet email en toute sécurité.',
+    otp_subject: 'Votre code de connexion Swipe Movie',
+    otp_reset_subject: 'Votre code de réinitialisation Swipe Movie',
+    otp_title: 'Votre code de connexion 🔐',
+    otp_body: 'Saisissez ce code dans Swipe Movie pour vous connecter&nbsp;:',
+    otp_expiry: 'Ce code expire dans 10 minutes.',
+    otp_ignore:
+      'Si vous n\'avez pas demandé ce code, vous pouvez ignorer cet email en toute sécurité.',
   },
   en: {
     footer_tagline: 'Find your next movie with friends 🍿',
@@ -167,6 +196,20 @@ export const EMAIL_TRANSLATIONS: Record<EmailLocale, EmailStrings> = {
     digest_cta: 'Keep swiping',
     time_hours_one: 'hour',
     time_hours_other: 'hours',
+    magiclink_subject: 'Your Swipe Movie sign-in link',
+    magiclink_title: 'Sign in with one tap 🔑',
+    magiclink_body:
+      'Tap the button below to sign in to Swipe Movie. No password to remember.',
+    magiclink_cta: 'Sign me in',
+    magiclink_expiry: 'This link expires in 5 minutes and only works once.',
+    magiclink_fallback: 'Button not working? Copy and paste this link into your browser:',
+    magiclink_ignore: "If you didn't request this link, you can safely ignore this email.",
+    otp_subject: 'Your Swipe Movie sign-in code',
+    otp_reset_subject: 'Your Swipe Movie reset code',
+    otp_title: 'Your sign-in code 🔐',
+    otp_body: 'Enter this code in Swipe Movie to sign in:',
+    otp_expiry: 'This code expires in 10 minutes.',
+    otp_ignore: "If you didn't request this code, you can safely ignore this email.",
   },
   es: {
     footer_tagline: 'Encuentra tu próxima película entre amigos 🍿',
@@ -215,6 +258,20 @@ export const EMAIL_TRANSLATIONS: Record<EmailLocale, EmailStrings> = {
     digest_cta: 'Seguir deslizando',
     time_hours_one: 'hora',
     time_hours_other: 'horas',
+    magiclink_subject: 'Tu enlace de acceso a Swipe Movie',
+    magiclink_title: 'Inicia sesión con un toque 🔑',
+    magiclink_body:
+      'Pulsa el botón de abajo para iniciar sesión en Swipe Movie. Sin contraseñas que recordar.',
+    magiclink_cta: 'Iniciar sesión',
+    magiclink_expiry: 'Este enlace caduca en 5 minutos y solo funciona una vez.',
+    magiclink_fallback: '¿El botón no funciona? Copia y pega este enlace en tu navegador:',
+    magiclink_ignore: 'Si no solicitaste este enlace, puedes ignorar este correo con tranquilidad.',
+    otp_subject: 'Tu código de acceso a Swipe Movie',
+    otp_reset_subject: 'Tu código de restablecimiento de Swipe Movie',
+    otp_title: 'Tu código de acceso 🔐',
+    otp_body: 'Introduce este código en Swipe Movie para iniciar sesión:',
+    otp_expiry: 'Este código caduca en 10 minutos.',
+    otp_ignore: 'Si no solicitaste este código, puedes ignorar este correo con tranquilidad.',
   },
   it: {
     footer_tagline: 'Trova il tuo prossimo film tra amici 🍿',
@@ -263,6 +320,20 @@ export const EMAIL_TRANSLATIONS: Record<EmailLocale, EmailStrings> = {
     digest_cta: 'Continua a scorrere',
     time_hours_one: 'ora',
     time_hours_other: 'ore',
+    magiclink_subject: 'Il tuo link di accesso a Swipe Movie',
+    magiclink_title: 'Accedi con un tocco 🔑',
+    magiclink_body:
+      'Tocca il pulsante qui sotto per accedere a Swipe Movie. Nessuna password da ricordare.',
+    magiclink_cta: 'Accedi',
+    magiclink_expiry: 'Questo link scade tra 5 minuti e funziona una sola volta.',
+    magiclink_fallback: 'Il pulsante non funziona? Copia e incolla questo link nel tuo browser:',
+    magiclink_ignore: 'Se non hai richiesto questo link, puoi ignorare questa email in tutta sicurezza.',
+    otp_subject: 'Il tuo codice di accesso a Swipe Movie',
+    otp_reset_subject: 'Il tuo codice di reimpostazione di Swipe Movie',
+    otp_title: 'Il tuo codice di accesso 🔐',
+    otp_body: 'Inserisci questo codice in Swipe Movie per accedere:',
+    otp_expiry: 'Questo codice scade tra 10 minuti.',
+    otp_ignore: 'Se non hai richiesto questo codice, puoi ignorare questa email in tutta sicurezza.',
   },
   de: {
     footer_tagline: 'Findet euren nächsten Film mit Freunden 🍿',
@@ -312,6 +383,23 @@ export const EMAIL_TRANSLATIONS: Record<EmailLocale, EmailStrings> = {
     digest_cta: 'Weiter swipen',
     time_hours_one: 'Stunde',
     time_hours_other: 'Stunden',
+    magiclink_subject: 'Ihr Swipe-Movie-Anmeldelink',
+    magiclink_title: 'Mit einem Tippen anmelden 🔑',
+    magiclink_body:
+      'Tippen Sie auf die Schaltfläche unten, um sich bei Swipe Movie anzumelden. Kein Passwort nötig.',
+    magiclink_cta: 'Jetzt anmelden',
+    magiclink_expiry: 'Dieser Link läuft in 5 Minuten ab und funktioniert nur einmal.',
+    magiclink_fallback:
+      'Schaltfläche funktioniert nicht? Kopieren Sie diesen Link in Ihren Browser:',
+    magiclink_ignore:
+      'Wenn Sie diesen Link nicht angefordert haben, können Sie diese E-Mail ignorieren.',
+    otp_subject: 'Ihr Swipe-Movie-Anmeldecode',
+    otp_reset_subject: 'Ihr Swipe-Movie-Zurücksetzungscode',
+    otp_title: 'Ihr Anmeldecode 🔐',
+    otp_body: 'Geben Sie diesen Code in Swipe Movie ein, um sich anzumelden:',
+    otp_expiry: 'Dieser Code läuft in 10 Minuten ab.',
+    otp_ignore:
+      'Wenn Sie diesen Code nicht angefordert haben, können Sie diese E-Mail ignorieren.',
   },
 };
 
