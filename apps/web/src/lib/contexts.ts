@@ -1387,6 +1387,758 @@ export const CONTEXTS: Record<string, ContextEntry> = {
       ],
     },
   }),
+
+  'quoi-regarder-ce-soir': entry({
+    slug: 'quoi-regarder-ce-soir',
+    genreIds: [18, 35, 28, 53],
+    minRating: 6.5,
+    relatedGenres: ['comedie', 'drame', 'thriller', 'action'],
+    relatedProviders: ['netflix', 'prime-video', 'disney-plus'],
+    title: {
+      fr: 'Quel film regarder ce soir ? Notre sélection pour décider en 2 minutes',
+      en: 'What to watch tonight? A pick to decide in 2 minutes',
+      es: '¿Qué película ver esta noche? Una selección para decidir en 2 minutos',
+      de: 'Was heute Abend schauen? Eine Auswahl, um in 2 Minuten zu entscheiden',
+      it: 'Che film guardare stasera? Una selezione per decidere in 2 minuti',
+    },
+    description: {
+      fr: "Tu ne sais pas quoi regarder ce soir ? Une sélection grand public — drame, comédie, action, thriller — pour décider vite, seul ou à plusieurs, sans scroller.",
+      en: "Don't know what to watch tonight? A mainstream pick — drama, comedy, action, thriller — to decide fast, alone or together, without scrolling for 40 minutes.",
+      es: '¿No sabes qué ver esta noche? Una selección generalista — drama, comedia, acción, thriller — para decidir rápido, solo o en grupo, sin scrollear 40 minutos.',
+      de: 'Du weißt nicht, was du heute Abend schauen sollst? Eine Mainstream-Auswahl — Drama, Komödie, Action, Thriller — um schnell zu entscheiden, allein oder zusammen.',
+      it: 'Non sai che film guardare stasera? Una selezione generalista — dramma, commedia, azione, thriller — per decidere in fretta, da solo o in gruppo.',
+    },
+    intro: {
+      fr: "\"Je sais pas quoi regarder ce soir.\" C'est devenu le vrai problème de l'ère du streaming : entre Netflix, Prime, Disney+ et Max, tu as accès à des dizaines de milliers de films — et tu passes plus de temps à chercher qu'à regarder. Le paradoxe du choix te paralyse, et tu finis souvent par relancer une série déjà vue.\n\nCette page est faite pour casser ce syndrome de l'indécision. La sélection ci-dessous mélange les valeurs sûres grand public — drame, comédie, action, thriller — toutes notées au-dessus de 6.5 sur TMDb. Lance une room Swipe Movie, swipe quelques minutes (seul ou avec les autres), et laisse l'algo trancher à ta place.",
+      en: "\"I don't know what to watch tonight.\" It's become the real problem of the streaming era: between Netflix, Prime, Disney+ and Max, you have access to tens of thousands of films — and you spend more time searching than watching. The paradox of choice paralyzes you, and you often end up re-running a show you've already seen.\n\nThis page exists to break that indecision loop. The selection below blends mainstream safe bets — drama, comedy, action, thriller — all rated above 6.5 on TMDb. Start a Swipe Movie room, swipe for a few minutes (alone or with others), and let the algorithm decide for you.",
+      es: "\"No sé qué ver esta noche.\" Se ha convertido en el verdadero problema de la era del streaming: entre Netflix, Prime, Disney+ y Max, tienes acceso a decenas de miles de películas — y pasas más tiempo buscando que viendo. La paradoja de la elección te paraliza y acabas reponiendo una serie que ya viste.\n\nEsta página existe para romper ese síndrome de la indecisión. La selección de abajo mezcla apuestas seguras generalistas — drama, comedia, acción, thriller — todas con nota superior a 6.5 en TMDb. Abre una sala Swipe Movie, desliza unos minutos (solo o con los demás) y deja que el algoritmo decida por ti.",
+      de: "\"Ich weiß nicht, was ich heute Abend schauen soll.\" Das ist das eigentliche Problem der Streaming-Ära geworden: Zwischen Netflix, Prime, Disney+ und Max hast du Zugriff auf Zehntausende Filme — und verbringst mehr Zeit mit Suchen als mit Schauen. Das Paradox der Wahl lähmt dich, und am Ende startest du oft eine schon gesehene Serie neu.\n\nDiese Seite soll dieses Unentschlossenheits-Syndrom durchbrechen. Die Auswahl unten mischt Mainstream-Sicherheiten — Drama, Komödie, Action, Thriller — alle über 6.5 auf TMDb bewertet. Starte einen Swipe-Movie-Raum, swipe ein paar Minuten (allein oder mit anderen) und lass den Algorithmus für dich entscheiden.",
+      it: "\"Non so che film guardare stasera.\" È diventato il vero problema dell'era dello streaming: tra Netflix, Prime, Disney+ e Max hai accesso a decine di migliaia di film — e passi più tempo a cercare che a guardare. Il paradosso della scelta ti paralizza, e spesso finisci per rilanciare una serie già vista.\n\nQuesta pagina serve a rompere questa sindrome dell'indecisione. La selezione qui sotto mescola le sicurezze generaliste — dramma, commedia, azione, thriller — tutte valutate sopra il 6.5 su TMDb. Apri una room Swipe Movie, swippa qualche minuto (da solo o con gli altri) e lascia che l'algoritmo decida per te.",
+    },
+    sections: {
+      fr: [
+        {
+          heading: 'Comment décider vite quand on ne sait pas quoi regarder',
+          body: "La pire stratégie : ouvrir Netflix et scroller en espérant qu'un titre te saute aux yeux. À la place, fixe-toi une contrainte (un genre, une humeur, une durée max) et lance une room Swipe Movie. Le swipe binaire — j'ai envie / pas envie — court-circuite la paralysie : en 2 minutes tu as éliminé 80% du catalogue et le film qui reste est celui que tu veux vraiment.",
+        },
+        {
+          heading: 'Décider seul vs à plusieurs',
+          body: "Seul, l'enjeu c'est de battre ta propre indécision : Swipe Movie te propose une file de films adaptés et tu valides le premier qui te fait vraiment envie. À plusieurs, le problème change — il faut un film qui plaise à tout le monde. Là, chacun swipe de son côté et l'algo ne garde que les films validés par tous. Dans les deux cas, fini le \"vas-y choisis, toi\".",
+        },
+        {
+          heading: 'Choisir par humeur plutôt que par genre',
+          body: "Souvent tu ne cherches pas un genre, tu cherches une humeur : te détendre, rire, pleurer un bon coup, ou prendre une claque. Swipe Movie te laisse filtrer par contexte (feel-good, film pour pleurer, action adrénaline...) plutôt que par étiquette de genre. C'est plus proche de ce que tu ressens vraiment un soir donné.",
+        },
+      ],
+      en: [
+        {
+          heading: "How to decide fast when you don't know what to watch",
+          body: 'The worst strategy: open Netflix and scroll, hoping a title jumps out. Instead, set yourself a constraint (a genre, a mood, a max runtime) and start a Swipe Movie room. Binary swiping — want it / skip it — short-circuits the paralysis: in 2 minutes you have ruled out 80% of the catalog and the film that remains is the one you actually want.',
+        },
+        {
+          heading: 'Deciding alone vs together',
+          body: 'Alone, the challenge is beating your own indecision: Swipe Movie hands you a queue of fitting films and you validate the first one you genuinely want. Together, the problem changes — you need a film everyone likes. There, each person swipes separately and the algorithm only keeps films everyone validated. Either way, no more "you pick".',
+        },
+        {
+          heading: 'Choosing by mood rather than genre',
+          body: "Often you're not after a genre, you're after a mood: to unwind, to laugh, to have a good cry, or to be floored. Swipe Movie lets you filter by context (feel-good, tearjerker, action adrenaline...) instead of by genre label. It's closer to what you actually feel on a given evening.",
+        },
+      ],
+      es: [
+        {
+          heading: 'Cómo decidir rápido cuando no sabes qué ver',
+          body: 'La peor estrategia: abrir Netflix y scrollear esperando que un título te salte a la vista. En su lugar, ponte una restricción (un género, un estado de ánimo, una duración máxima) y abre una sala Swipe Movie. El swipe binario — me apetece / paso — cortocircuita la parálisis: en 2 minutos has descartado el 80% del catálogo y la película que queda es la que realmente quieres.',
+        },
+        {
+          heading: 'Decidir solo vs en grupo',
+          body: 'Solo, el reto es vencer tu propia indecisión: Swipe Movie te ofrece una cola de películas adaptadas y validas la primera que de verdad te apetece. En grupo, el problema cambia — hace falta una película que guste a todos. Ahí cada uno desliza por su cuenta y el algoritmo solo conserva las películas validadas por todos. En ambos casos, se acabó el "elige tú".',
+        },
+        {
+          heading: 'Elegir por estado de ánimo en vez de por género',
+          body: 'A menudo no buscas un género, buscas un estado de ánimo: relajarte, reír, llorar a gusto o quedarte sin palabras. Swipe Movie te deja filtrar por contexto (feel-good, película para llorar, acción con adrenalina...) en vez de por etiqueta de género. Está más cerca de lo que realmente sientes una noche dada.',
+        },
+      ],
+      de: [
+        {
+          heading: 'Wie man schnell entscheidet, wenn man nicht weiß, was man schauen will',
+          body: 'Die schlechteste Strategie: Netflix öffnen und scrollen in der Hoffnung, dass ein Titel ins Auge springt. Setz dir stattdessen eine Vorgabe (ein Genre, eine Stimmung, eine maximale Laufzeit) und starte einen Swipe-Movie-Raum. Binäres Swipen — will ich / weg damit — umgeht die Lähmung: In 2 Minuten hast du 80% des Katalogs ausgeschlossen, und der übrige Film ist der, den du wirklich willst.',
+        },
+        {
+          heading: 'Allein vs gemeinsam entscheiden',
+          body: 'Allein geht es darum, deine eigene Unentschlossenheit zu schlagen: Swipe Movie gibt dir eine Reihe passender Filme, und du bestätigst den ersten, den du wirklich willst. Gemeinsam ändert sich das Problem — ihr braucht einen Film, der allen gefällt. Da swipt jeder für sich, und der Algorithmus behält nur Filme, die alle bestätigt haben. So oder so: kein „such du aus“ mehr.',
+        },
+        {
+          heading: 'Nach Stimmung statt nach Genre wählen',
+          body: 'Oft suchst du kein Genre, sondern eine Stimmung: entspannen, lachen, mal richtig weinen oder umgehauen werden. Swipe Movie lässt dich nach Kontext filtern (Feel-Good, Film zum Weinen, Action-Adrenalin...) statt nach Genre-Etikett. Das kommt dem näher, was du an einem bestimmten Abend wirklich fühlst.',
+        },
+      ],
+      it: [
+        {
+          heading: 'Come decidere in fretta quando non sai cosa guardare',
+          body: 'La strategia peggiore: aprire Netflix e scrollare sperando che un titolo salti all\'occhio. Datti invece un vincolo (un genere, un umore, una durata massima) e apri una room Swipe Movie. Lo swipe binario — mi va / passo — cortocircuita la paralisi: in 2 minuti hai scartato l\'80% del catalogo e il film che resta è quello che vuoi davvero.',
+        },
+        {
+          heading: 'Decidere da soli vs in gruppo',
+          body: 'Da solo, la sfida è battere la tua stessa indecisione: Swipe Movie ti propone una coda di film adatti e tu validi il primo che ti va davvero. In gruppo il problema cambia — serve un film che piaccia a tutti. Lì ognuno swippa per conto suo e l\'algoritmo tiene solo i film validati da tutti. In entrambi i casi, basta col "scegli tu".',
+        },
+        {
+          heading: "Scegliere per umore invece che per genere",
+          body: "Spesso non cerchi un genere, cerchi un umore: rilassarti, ridere, farti un bel pianto o restare a bocca aperta. Swipe Movie ti lascia filtrare per contesto (feel-good, film per piangere, azione adrenalina...) invece che per etichetta di genere. È più vicino a ciò che senti davvero una certa sera.",
+        },
+      ],
+    },
+    faq: {
+      fr: [
+        {
+          question: 'Quel film regarder ce soir ?',
+          answer:
+            "Plutôt que de chercher LE bon film, lance une room Swipe Movie : tu swipes sur une sélection grand public (drame, comédie, action, thriller) et tu valides en 2 minutes le premier qui te fait envie. À plusieurs, l'algo trouve le film qui plaît à tout le monde.",
+        },
+        {
+          question: "Comment arrêter de scroller sans rien lancer ?",
+          answer:
+            "Le scroll infini entretient l'indécision. Swipe Movie inverse la logique : au lieu de tout parcourir, tu réagis film par film (envie / pas envie). Le cerveau décide beaucoup plus vite en binaire — la plupart des gens matchent en moins de 3 minutes.",
+        },
+        {
+          question: 'Est-ce que ça marche aussi quand je suis seul ?',
+          answer:
+            "Oui. En solo, Swipe Movie te propose une file de films adaptés à ton humeur et tu valides le premier qui te tente vraiment, sans repasser par le menu Netflix. C'est conçu pour battre ta propre indécision, pas seulement pour les groupes.",
+        },
+      ],
+      en: [
+        {
+          question: 'What movie should I watch tonight?',
+          answer:
+            'Instead of hunting for the one right film, start a Swipe Movie room: you swipe on a mainstream selection (drama, comedy, action, thriller) and validate in 2 minutes the first one you fancy. Together, the algorithm finds the film everyone likes.',
+        },
+        {
+          question: 'How do I stop scrolling without ever pressing play?',
+          answer:
+            'Infinite scroll feeds indecision. Swipe Movie flips the logic: instead of browsing everything, you react film by film (want it / skip it). The brain decides far faster in binary — most people match in under 3 minutes.',
+        },
+        {
+          question: 'Does it work when I am on my own?',
+          answer:
+            "Yes. Solo, Swipe Movie hands you a queue of films matched to your mood and you validate the first one you genuinely want, without going back to the Netflix menu. It's built to beat your own indecision, not just for groups.",
+        },
+      ],
+      es: [
+        {
+          question: '¿Qué película ver esta noche?',
+          answer:
+            'En vez de buscar LA película correcta, abre una sala Swipe Movie: deslizas en una selección generalista (drama, comedia, acción, thriller) y validas en 2 minutos la primera que te apetece. En grupo, el algoritmo encuentra la que gusta a todos.',
+        },
+        {
+          question: '¿Cómo dejar de scrollear sin poner nada?',
+          answer:
+            'El scroll infinito alimenta la indecisión. Swipe Movie invierte la lógica: en vez de recorrerlo todo, reaccionas película a película (me apetece / paso). El cerebro decide mucho más rápido en binario — la mayoría hace match en menos de 3 minutos.',
+        },
+        {
+          question: '¿Funciona también cuando estoy solo?',
+          answer:
+            'Sí. En solitario, Swipe Movie te ofrece una cola de películas adaptadas a tu estado de ánimo y validas la primera que de verdad te tienta, sin volver al menú de Netflix. Está pensado para vencer tu propia indecisión, no solo para grupos.',
+        },
+      ],
+      de: [
+        {
+          question: 'Welchen Film soll ich heute Abend schauen?',
+          answer:
+            'Statt nach DEM richtigen Film zu suchen, starte einen Swipe-Movie-Raum: Du swipst durch eine Mainstream-Auswahl (Drama, Komödie, Action, Thriller) und bestätigst in 2 Minuten den ersten, auf den du Lust hast. Zu mehreren findet der Algorithmus den Film, der allen gefällt.',
+        },
+        {
+          question: 'Wie höre ich auf zu scrollen, ohne je etwas zu starten?',
+          answer:
+            'Endloses Scrollen nährt die Unentschlossenheit. Swipe Movie dreht die Logik um: Statt alles zu durchstöbern, reagierst du Film für Film (will ich / weg). Das Gehirn entscheidet binär viel schneller — die meisten matchen in unter 3 Minuten.',
+        },
+        {
+          question: 'Funktioniert das auch, wenn ich allein bin?',
+          answer:
+            'Ja. Allein gibt dir Swipe Movie eine Reihe von Filmen passend zu deiner Stimmung, und du bestätigst den ersten, den du wirklich willst, ohne zurück ins Netflix-Menü. Es ist gemacht, um deine eigene Unentschlossenheit zu schlagen, nicht nur für Gruppen.',
+        },
+      ],
+      it: [
+        {
+          question: 'Che film guardare stasera?',
+          answer:
+            "Invece di cercare IL film giusto, apri una room Swipe Movie: swippi su una selezione generalista (dramma, commedia, azione, thriller) e validi in 2 minuti il primo che ti va. In gruppo, l'algoritmo trova il film che piace a tutti.",
+        },
+        {
+          question: 'Come smettere di scrollare senza far partire niente?',
+          answer:
+            "Lo scroll infinito alimenta l'indecisione. Swipe Movie inverte la logica: invece di sfogliare tutto, reagisci film per film (mi va / passo). Il cervello decide molto più in fretta in binario — la maggior parte matcha in meno di 3 minuti.",
+        },
+        {
+          question: 'Funziona anche quando sono da solo?',
+          answer:
+            "Sì. Da solo, Swipe Movie ti propone una coda di film adatti al tuo umore e validi il primo che ti tenta davvero, senza tornare al menu di Netflix. È pensato per battere la tua stessa indecisione, non solo per i gruppi.",
+        },
+      ],
+    },
+  }),
+
+  'film-pour-pleurer': entry({
+    slug: 'film-pour-pleurer',
+    genreIds: [18, 10749],
+    minRating: 7,
+    relatedGenres: ['drame', 'romance'],
+    relatedProviders: ['netflix', 'prime-video', 'disney-plus'],
+    title: {
+      fr: 'Film pour pleurer : les meilleurs films tristes et émouvants',
+      en: 'Movies to cry to: the saddest, most moving films',
+      es: 'Películas para llorar: las más tristes y emotivas',
+      de: 'Filme zum Weinen: die traurigsten, bewegendsten Filme',
+      it: 'Film per piangere: i più tristi ed emozionanti',
+    },
+    description: {
+      fr: "Envie d'un bon film pour pleurer ? Notre sélection de films tristes et émouvants — drames et romances notés 7+ qui garantissent les larmes. Mouchoirs requis.",
+      en: 'In the mood for a good cry? Our pick of the saddest, most moving films — dramas and romances rated 7+ that guarantee the tears. Bring tissues and watch tonight.',
+      es: '¿Te apetece llorar a gusto? Nuestra selección de películas tristes y emotivas — dramas y romances con nota 7+ que garantizan las lágrimas. Con pañuelos.',
+      de: 'Lust auf einen guten Heulanfall? Unsere Auswahl trauriger, bewegender Filme — Dramen und Romanzen mit 7+, die Tränen garantieren. Taschentücher bereithalten.',
+      it: 'Voglia di un bel pianto? La nostra selezione di film tristi ed emozionanti — drammi e romance valutati 7+ che garantiscono le lacrime. Con i fazzoletti.',
+    },
+    intro: {
+      fr: "Il y a des soirs où on cherche exactement le contraire d'un feel-good : un film qui serre la gorge, qui fait monter les larmes et qui vide la tête. Pleurer devant un film, c'est cathartique — et parfois c'est précisément ce dont on a besoin après une longue semaine.\n\nCette sélection regroupe les plus grands tire-larmes du cinéma : drames bouleversants et romances déchirantes, tous notés au moins 7 sur TMDb. Hachiko, La Ligne verte, Titanic, Marley & Me... des films dont on ressort les yeux rouges mais le cœur un peu plus léger. Lance une room et prépare les mouchoirs.",
+      en: "Some evenings you want the exact opposite of a feel-good: a film that tightens your throat, brings the tears and empties your head. Crying at a movie is cathartic — and sometimes it's precisely what you need after a long week.\n\nThis selection gathers cinema's greatest tearjerkers: devastating dramas and heartbreaking romances, all rated at least 7 on TMDb. Hachi, The Green Mile, Titanic, Marley & Me... films you leave with red eyes but a slightly lighter heart. Start a room and grab the tissues.",
+      es: "Hay noches en que buscas justo lo contrario de un feel-good: una película que te haga un nudo en la garganta, que saque las lágrimas y vacíe la cabeza. Llorar con una película es catártico — y a veces es exactamente lo que necesitas tras una semana larga.\n\nEsta selección reúne los mayores tira-lágrimas del cine: dramas demoledores y romances desgarradores, todos con nota mínima 7 en TMDb. Hachiko, La milla verde, Titanic, Marley y yo... películas de las que sales con los ojos rojos pero el corazón más ligero. Abre una sala y prepara los pañuelos.",
+      de: "An manchen Abenden willst du genau das Gegenteil von Feel-Good: einen Film, der dir die Kehle zuschnürt, die Tränen kommen lässt und den Kopf leert. Bei einem Film zu weinen ist kathartisch — und manchmal genau das, was du nach einer langen Woche brauchst.\n\nDiese Auswahl versammelt die größten Tränendrücker des Kinos: erschütternde Dramen und herzzerreißende Romanzen, alle mit mindestens 7 auf TMDb. Hachiko, The Green Mile, Titanic, Marley & Me... Filme, aus denen du mit roten Augen, aber etwas leichterem Herzen herauskommst. Starte einen Raum und halt die Taschentücher bereit.",
+      it: "Ci sono sere in cui cerchi l'esatto contrario di un feel-good: un film che stringe la gola, fa salire le lacrime e svuota la testa. Piangere davanti a un film è catartico — e a volte è esattamente ciò di cui hai bisogno dopo una settimana lunga.\n\nQuesta selezione raccoglie i più grandi strappalacrime del cinema: drammi sconvolgenti e romance strazianti, tutti valutati almeno 7 su TMDb. Hachiko, Il miglio verde, Titanic, Io & Marley... film da cui esci con gli occhi rossi ma il cuore un po' più leggero. Apri una room e prepara i fazzoletti.",
+    },
+    sections: {
+      fr: [
+        {
+          heading: 'Les films tire-larmes incontournables',
+          body: "Certains titres sont devenus des références absolues du genre. Hachiko (la fidélité d'un chien après la mort de son maître), La Ligne verte (l'innocence face à la peine de mort), Marley & Me (toute une vie de famille avec un chien), Titanic (l'amour et la perte) — impossible de les regarder sans craquer. Ajoute à ça Une bouteille à la mer, Nos étoiles contraires ou Si je reste pour les profils romance.",
+        },
+        {
+          heading: 'Drame poignant ou romance déchirante ?',
+          body: "Tous les tire-larmes ne se valent pas selon ton humeur. Les drames poignants (La Ligne verte, Philadelphia, La vie est belle) jouent sur l'injustice et le sacrifice. Les romances déchirantes (Titanic, Nos étoiles contraires, La La Land) sur l'amour impossible ou perdu. Swipe Movie te laisse pondérer les deux : tu swipes, et la sélection s'ajuste au type d'émotion que tu cherches ce soir.",
+        },
+        {
+          heading: 'Pleurer à deux, ça rapproche',
+          body: "Regarder un film triste en couple ou avec un ami proche crée un moment de complicité rare. Lance une room à deux : vous swipez sur la sélection tire-larmes et matchez sur le film qui va vous démolir tous les deux. Bonus : c'est l'excuse parfaite pour un câlin sur le canapé.",
+        },
+      ],
+      en: [
+        {
+          heading: 'The essential tearjerkers',
+          body: "Some titles have become absolute references of the genre. Hachi (a dog's loyalty after his master's death), The Green Mile (innocence facing the death penalty), Marley & Me (a whole family life with a dog), Titanic (love and loss) — impossible to watch without breaking down. Add Message in a Bottle, The Fault in Our Stars or If I Stay for romance profiles.",
+        },
+        {
+          heading: 'Poignant drama or heartbreaking romance?',
+          body: "Not all tearjerkers fit the same mood. Poignant dramas (The Green Mile, Philadelphia, Life Is Beautiful) play on injustice and sacrifice. Heartbreaking romances (Titanic, The Fault in Our Stars, La La Land) on impossible or lost love. Swipe Movie lets you weigh both: you swipe, and the selection adjusts to the kind of emotion you're after tonight.",
+        },
+        {
+          heading: 'Crying together brings you closer',
+          body: 'Watching a sad film as a couple or with a close friend creates a rare moment of intimacy. Start a room for two: you swipe on the tearjerker selection and match on the film that will destroy you both. Bonus: it\'s the perfect excuse for a cuddle on the couch.',
+        },
+      ],
+      es: [
+        {
+          heading: 'Los tira-lágrimas imprescindibles',
+          body: 'Algunos títulos se han vuelto referencias absolutas del género. Hachiko (la lealtad de un perro tras la muerte de su dueño), La milla verde (la inocencia frente a la pena de muerte), Marley y yo (toda una vida en familia con un perro), Titanic (el amor y la pérdida) — imposible verlas sin derrumbarse. Añade Mensaje en una botella, Bajo la misma estrella o Si decido quedarme para perfiles romance.',
+        },
+        {
+          heading: '¿Drama desgarrador o romance demoledor?',
+          body: 'No todos los tira-lágrimas encajan con el mismo estado de ánimo. Los dramas desgarradores (La milla verde, Philadelphia, La vida es bella) juegan con la injusticia y el sacrificio. Los romances demoledores (Titanic, Bajo la misma estrella, La La Land) con el amor imposible o perdido. Swipe Movie te deja ponderar ambos: deslizas y la selección se ajusta al tipo de emoción que buscas esta noche.',
+        },
+        {
+          heading: 'Llorar juntos acerca',
+          body: 'Ver una película triste en pareja o con un amigo cercano crea un momento de complicidad poco común. Abre una sala de dos: deslizáis en la selección tira-lágrimas y hacéis match en la película que os va a destrozar a ambos. Bonus: es la excusa perfecta para un abrazo en el sofá.',
+        },
+      ],
+      de: [
+        {
+          heading: 'Die unverzichtbaren Tränendrücker',
+          body: 'Manche Titel sind zu absoluten Referenzen des Genres geworden. Hachiko (die Treue eines Hundes nach dem Tod seines Herrchens), The Green Mile (Unschuld angesichts der Todesstrafe), Marley & Me (ein ganzes Familienleben mit einem Hund), Titanic (Liebe und Verlust) — unmöglich, sie ohne Zusammenbruch zu schauen. Dazu Message in a Bottle, Das Schicksal ist ein mieser Verräter oder Wenn ich bleibe für Romance-Profile.',
+        },
+        {
+          heading: 'Ergreifendes Drama oder herzzerreißende Romanze?',
+          body: 'Nicht jeder Tränendrücker passt zur selben Stimmung. Ergreifende Dramen (The Green Mile, Philadelphia, Das Leben ist schön) spielen mit Ungerechtigkeit und Opfer. Herzzerreißende Romanzen (Titanic, Das Schicksal ist ein mieser Verräter, La La Land) mit unmöglicher oder verlorener Liebe. Swipe Movie lässt dich beide gewichten: Du swipst, und die Auswahl passt sich der Emotion an, die du heute Abend suchst.',
+        },
+        {
+          heading: 'Gemeinsam weinen verbindet',
+          body: 'Einen traurigen Film als Paar oder mit einem engen Freund zu schauen schafft einen seltenen Moment der Verbundenheit. Starte einen Raum für zwei: Ihr swipt durch die Tränendrücker-Auswahl und matched auf den Film, der euch beide zerstören wird. Bonus: die perfekte Ausrede für eine Kuscheleinheit auf dem Sofa.',
+        },
+      ],
+      it: [
+        {
+          heading: 'Gli strappalacrime imprescindibili',
+          body: "Alcuni titoli sono diventati riferimenti assoluti del genere. Hachiko (la fedeltà di un cane dopo la morte del padrone), Il miglio verde (l'innocenza davanti alla pena di morte), Io & Marley (un'intera vita di famiglia con un cane), Titanic (l'amore e la perdita) — impossibile guardarli senza crollare. Aggiungi Le pagine della nostra vita, Colpa delle stelle o Se resto per i profili romance.",
+        },
+        {
+          heading: 'Dramma struggente o romance straziante?',
+          body: "Non tutti gli strappalacrime si adattano allo stesso umore. I drammi struggenti (Il miglio verde, Philadelphia, La vita è bella) giocano sull'ingiustizia e il sacrificio. I romance strazianti (Titanic, Colpa delle stelle, La La Land) sull'amore impossibile o perduto. Swipe Movie ti lascia pesare entrambi: swippi, e la selezione si adatta al tipo di emozione che cerchi stasera.",
+        },
+        {
+          heading: 'Piangere insieme avvicina',
+          body: "Guardare un film triste in coppia o con un amico stretto crea un raro momento di intimità. Apri una room a due: swippate sulla selezione strappalacrime e matchate sul film che vi distruggerà entrambi. Bonus: è la scusa perfetta per una coccola sul divano.",
+        },
+      ],
+    },
+    faq: {
+      fr: [
+        {
+          question: 'Quel est le meilleur film pour pleurer ?',
+          answer:
+            "Difficile d'en désigner un seul, mais Hachiko, La Ligne verte, Marley & Me et Titanic sont les tire-larmes les plus cités. Lance une room Swipe Movie sur la sélection \"film pour pleurer\" et matche sur celui qui correspond à ton humeur du soir.",
+        },
+        {
+          question: 'Pourquoi ça fait du bien de pleurer devant un film ?',
+          answer:
+            "C'est une catharsis : pleurer devant une fiction libère des tensions sans le poids du réel. Beaucoup de gens cherchent volontairement un film triste après une semaine difficile — c'est une façon saine d'évacuer ses émotions.",
+        },
+        {
+          question: 'Ces films sont-ils dispos sur Netflix ou Prime ?',
+          answer:
+            "La sélection vient du catalogue TMDb, mais la disponibilité dépend de ta région et de tes abonnements. Swipe Movie t'indique sur quelle plateforme (Netflix, Prime, Disney+...) chaque film matché est regardable chez toi.",
+        },
+      ],
+      en: [
+        {
+          question: "What's the best movie to cry to?",
+          answer:
+            'Hard to name just one, but Hachi, The Green Mile, Marley & Me and Titanic are the most-cited tearjerkers. Start a Swipe Movie room on the "movies to cry to" selection and match on the one that fits your mood tonight.',
+        },
+        {
+          question: 'Why does crying at a film feel good?',
+          answer:
+            "It's catharsis: crying at fiction releases tension without the weight of real life. Many people deliberately seek out a sad film after a hard week — it's a healthy way to let emotions out.",
+        },
+        {
+          question: 'Are these films available on Netflix or Prime?',
+          answer:
+            'The selection comes from the TMDb catalog, but availability depends on your region and subscriptions. Swipe Movie shows you which platform (Netflix, Prime, Disney+...) each matched film is watchable on where you are.',
+        },
+      ],
+      es: [
+        {
+          question: '¿Cuál es la mejor película para llorar?',
+          answer:
+            'Difícil elegir una sola, pero Hachiko, La milla verde, Marley y yo y Titanic son los tira-lágrimas más citados. Abre una sala Swipe Movie en la selección "película para llorar" y haz match en la que encaje con tu estado de ánimo de esta noche.',
+        },
+        {
+          question: '¿Por qué sienta bien llorar con una película?',
+          answer:
+            'Es catarsis: llorar con la ficción libera tensión sin el peso de la vida real. Mucha gente busca a propósito una película triste tras una semana dura — es una forma sana de soltar las emociones.',
+        },
+        {
+          question: '¿Están estas películas en Netflix o Prime?',
+          answer:
+            'La selección viene del catálogo de TMDb, pero la disponibilidad depende de tu región y tus suscripciones. Swipe Movie te indica en qué plataforma (Netflix, Prime, Disney+...) puedes ver cada película matcheada donde estés.',
+        },
+      ],
+      de: [
+        {
+          question: 'Was ist der beste Film zum Weinen?',
+          answer:
+            'Schwer, nur einen zu nennen, aber Hachiko, The Green Mile, Marley & Me und Titanic sind die meistgenannten Tränendrücker. Starte einen Swipe-Movie-Raum auf der Auswahl „Film zum Weinen“ und matche auf den, der zu deiner Stimmung heute Abend passt.',
+        },
+        {
+          question: 'Warum tut es gut, bei einem Film zu weinen?',
+          answer:
+            'Es ist Katharsis: Bei Fiktion zu weinen löst Spannung, ohne das Gewicht des echten Lebens. Viele suchen nach einer harten Woche bewusst einen traurigen Film — eine gesunde Art, Emotionen rauszulassen.',
+        },
+        {
+          question: 'Sind diese Filme auf Netflix oder Prime verfügbar?',
+          answer:
+            'Die Auswahl stammt aus dem TMDb-Katalog, aber die Verfügbarkeit hängt von deiner Region und deinen Abos ab. Swipe Movie zeigt dir, auf welcher Plattform (Netflix, Prime, Disney+...) jeder gematchte Film bei dir schaubar ist.',
+        },
+      ],
+      it: [
+        {
+          question: 'Qual è il miglior film per piangere?',
+          answer:
+            'Difficile sceglierne uno solo, ma Hachiko, Il miglio verde, Io & Marley e Titanic sono gli strappalacrime più citati. Apri una room Swipe Movie sulla selezione "film per piangere" e matcha su quello adatto al tuo umore di stasera.',
+        },
+        {
+          question: 'Perché fa bene piangere davanti a un film?',
+          answer:
+            "È catarsi: piangere davanti alla finzione libera tensione senza il peso della vita reale. Molti cercano apposta un film triste dopo una settimana difficile — è un modo sano di sfogare le emozioni.",
+        },
+        {
+          question: 'Questi film sono disponibili su Netflix o Prime?',
+          answer:
+            'La selezione viene dal catalogo TMDb, ma la disponibilità dipende dalla tua regione e dai tuoi abbonamenti. Swipe Movie ti indica su quale piattaforma (Netflix, Prime, Disney+...) ogni film matchato è guardabile da te.',
+        },
+      ],
+    },
+  }),
+
+  'film-histoire-vraie': entry({
+    slug: 'film-histoire-vraie',
+    genreIds: [18, 36, 80],
+    minRating: 6.8,
+    relatedGenres: ['drame', 'histoire', 'crime'],
+    relatedProviders: ['netflix', 'prime-video', 'max'],
+    title: {
+      fr: "Films basés sur une histoire vraie : les incontournables",
+      en: 'Movies based on a true story: the must-sees',
+      es: 'Películas basadas en hechos reales: las imprescindibles',
+      de: 'Filme nach wahren Begebenheiten: die Must-sees',
+      it: 'Film basati su una storia vera: gli imperdibili',
+    },
+    description: {
+      fr: "Les meilleurs films basés sur une histoire vraie : drames, biopics, faits réels et scandales. Sélection notée 6.8+ sur TMDb. Le réel dépasse souvent la fiction.",
+      en: 'The best movies based on a true story: dramas, biopics, real events and scandals. Selection rated 6.8+ on TMDb. Truth is often stranger than fiction.',
+      es: 'Las mejores películas basadas en hechos reales: dramas, biopics, sucesos y escándalos. Selección con nota 6.8+ en TMDb. La realidad supera a la ficción.',
+      de: 'Die besten Filme nach wahren Begebenheiten: Dramen, Biopics, reale Ereignisse und Skandale. Auswahl mit 6.8+ auf TMDb. Wahrheit schlägt oft die Fiktion.',
+      it: 'I migliori film basati su una storia vera: drammi, biopic, fatti reali e scandali. Selezione valutata 6.8+ su TMDb. La realtà supera spesso la finzione.',
+    },
+    intro: {
+      fr: "Il y a quelque chose de plus puissant dans un film quand on sait que \"c'est vraiment arrivé\". Les histoires vraies ajoutent un poids que la fiction pure n'atteint pas toujours : on sait que ces gens ont existé, que ces injustices ont eu lieu, que ce courage était réel.\n\nCette sélection regroupe les meilleurs films basés sur des faits réels, tous notés au moins 6.8 sur TMDb. Le Loup de Wall Street (l'ascension et la chute de Jordan Belfort), 12 Years a Slave (l'esclavage raconté de l'intérieur), Spotlight (l'enquête qui a fait tomber l'Église de Boston), Le Discours d'un roi (un monarque face à son bégaiement)... Lance une room et plonge dans des récits que personne n'aurait osé inventer.",
+      en: "There's something more powerful about a film when you know it \"really happened\". True stories carry a weight that pure fiction doesn't always reach: you know these people existed, these injustices took place, this courage was real.\n\nThis selection gathers the best films based on real events, all rated at least 6.8 on TMDb. The Wolf of Wall Street (the rise and fall of Jordan Belfort), 12 Years a Slave (slavery told from within), Spotlight (the investigation that brought down the Boston Church), The King's Speech (a monarch facing his stammer)... Start a room and dive into stories no one would have dared to invent.",
+      es: 'Hay algo más poderoso en una película cuando sabes que "ocurrió de verdad". Las historias reales cargan un peso que la ficción pura no siempre alcanza: sabes que esa gente existió, que esas injusticias pasaron, que ese coraje fue real.\n\nEsta selección reúne las mejores películas basadas en hechos reales, todas con nota mínima 6.8 en TMDb. El lobo de Wall Street (el ascenso y caída de Jordan Belfort), 12 años de esclavitud (la esclavitud contada desde dentro), Spotlight (la investigación que tumbó a la Iglesia de Boston), El discurso del rey (un monarca frente a su tartamudez)... Abre una sala y sumérgete en relatos que nadie se habría atrevido a inventar.',
+      de: 'Ein Film hat etwas Stärkeres, wenn man weiß, dass es „wirklich passiert ist“. Wahre Geschichten tragen ein Gewicht, das reine Fiktion nicht immer erreicht: Man weiß, dass diese Menschen existierten, diese Ungerechtigkeiten geschahen, dieser Mut echt war.\n\nDiese Auswahl versammelt die besten Filme nach realen Ereignissen, alle mit mindestens 6.8 auf TMDb. The Wolf of Wall Street (Aufstieg und Fall von Jordan Belfort), 12 Years a Slave (Sklaverei von innen erzählt), Spotlight (die Recherche, die die Kirche von Boston zu Fall brachte), The King\'s Speech (ein Monarch im Kampf mit seinem Stottern)... Starte einen Raum und tauche in Geschichten ein, die sich niemand zu erfinden gewagt hätte.',
+      it: "C'è qualcosa di più potente in un film quando sai che \"è successo davvero\". Le storie vere portano un peso che la finzione pura non sempre raggiunge: sai che quelle persone sono esistite, che quelle ingiustizie sono accadute, che quel coraggio era reale.\n\nQuesta selezione raccoglie i migliori film basati su fatti reali, tutti valutati almeno 6.8 su TMDb. The Wolf of Wall Street (ascesa e caduta di Jordan Belfort), 12 anni schiavo (la schiavitù raccontata dall'interno), Il caso Spotlight (l'inchiesta che fece cadere la Chiesa di Boston), Il discorso del re (un monarca alle prese con la balbuzie)... Apri una room e immergiti in racconti che nessuno avrebbe osato inventare.",
+    },
+    sections: {
+      fr: [
+        {
+          heading: 'Biopic, fait divers ou enquête ?',
+          body: "Le \"basé sur une histoire vraie\" couvre des registres très différents. Les biopics retracent une vie (Le Loup de Wall Street, Bohemian Rhapsody, Le Discours d'un roi). Les faits divers reconstituent un événement (127 Heures, Sully, Captain Phillips). Les films d'enquête démontent une affaire (Spotlight, Les Hommes du président, Le Stratège). Swipe Movie te laisse pondérer le registre que tu préfères ce soir.",
+        },
+        {
+          heading: 'Quand le réel dépasse la fiction',
+          body: "Certains films sont presque incroyables alors qu'ils sont vrais. L'arnaque de Jordan Belfort dans Le Loup de Wall Street, l'évasion d'Argo, la survie d'Aron Ralston dans 127 Heures, l'amerrissage du vol 1549 dans Sully — autant d'histoires qu'aucun scénariste n'aurait osé écrire. C'est ce qui rend le genre si addictif.",
+        },
+        {
+          heading: 'À regarder seul ou pour lancer le débat',
+          body: "Les films d'histoire vraie sont parfaits pour une soirée à plusieurs : ils déclenchent presque toujours une discussion après le générique (\"c'était vraiment comme ça ?\", \"qu'est-ce qu'ils sont devenus ?\"). Lance une room avec des amis ou ton partenaire, matchez sur un fait réel marquant, et gardez Wikipédia ouvert pour la suite.",
+        },
+      ],
+      en: [
+        {
+          heading: 'Biopic, true crime or investigation?',
+          body: '"Based on a true story" spans very different registers. Biopics trace a life (The Wolf of Wall Street, Bohemian Rhapsody, The King\'s Speech). True-event films reconstruct a moment (127 Hours, Sully, Captain Phillips). Investigation films unpack a case (Spotlight, All the President\'s Men, Moneyball). Swipe Movie lets you weight the register you prefer tonight.',
+        },
+        {
+          heading: 'When reality outdoes fiction',
+          body: "Some films are almost unbelievable yet true. Jordan Belfort's scam in The Wolf of Wall Street, the escape in Argo, Aron Ralston's survival in 127 Hours, the ditching of Flight 1549 in Sully — stories no screenwriter would have dared to write. That's what makes the genre so addictive.",
+        },
+        {
+          heading: 'Watch alone or to spark debate',
+          body: 'True-story films are perfect for a group night: they almost always trigger a discussion after the credits ("was it really like that?", "what happened to them?"). Start a room with friends or your partner, match on a striking real event, and keep Wikipedia open for the aftermath.',
+        },
+      ],
+      es: [
+        {
+          heading: '¿Biopic, crimen real o investigación?',
+          body: 'El "basado en hechos reales" abarca registros muy distintos. Los biopics trazan una vida (El lobo de Wall Street, Bohemian Rhapsody, El discurso del rey). Los sucesos reconstruyen un momento (127 horas, Sully, Capitán Phillips). Las películas de investigación desmontan un caso (Spotlight, Todos los hombres del presidente, Moneyball). Swipe Movie te deja ponderar el registro que prefieras esta noche.',
+        },
+        {
+          heading: 'Cuando la realidad supera a la ficción',
+          body: 'Algunas películas son casi increíbles y sin embargo ciertas. La estafa de Jordan Belfort en El lobo de Wall Street, la huida de Argo, la supervivencia de Aron Ralston en 127 horas, el amerizaje del vuelo 1549 en Sully — historias que ningún guionista se habría atrevido a escribir. Eso es lo que hace el género tan adictivo.',
+        },
+        {
+          heading: 'Para ver solo o para abrir debate',
+          body: 'Las películas basadas en hechos reales son perfectas para una noche en grupo: casi siempre desatan una conversación tras los créditos ("¿fue de verdad así?", "¿qué fue de ellos?"). Abre una sala con amigos o tu pareja, haced match en un suceso real impactante, y deja Wikipedia abierta para después.',
+        },
+      ],
+      de: [
+        {
+          heading: 'Biopic, True Crime oder Recherche?',
+          body: '„Nach einer wahren Geschichte“ umfasst sehr unterschiedliche Register. Biopics zeichnen ein Leben nach (The Wolf of Wall Street, Bohemian Rhapsody, The King\'s Speech). Tatsachenfilme rekonstruieren einen Moment (127 Hours, Sully, Captain Phillips). Recherchefilme zerlegen einen Fall (Spotlight, Die Unbestechlichen, Moneyball). Swipe Movie lässt dich das Register gewichten, das du heute Abend bevorzugst.',
+        },
+        {
+          heading: 'Wenn die Realität die Fiktion übertrifft',
+          body: 'Manche Filme sind fast unglaublich und doch wahr. Jordan Belforts Betrug in The Wolf of Wall Street, die Flucht in Argo, Aron Ralstons Überleben in 127 Hours, die Notwasserung von Flug 1549 in Sully — Geschichten, die kein Drehbuchautor zu schreiben gewagt hätte. Genau das macht das Genre so süchtig.',
+        },
+        {
+          heading: 'Allein schauen oder die Debatte starten',
+          body: 'Filme nach wahren Begebenheiten sind perfekt für einen Gruppenabend: Sie lösen fast immer eine Diskussion nach dem Abspann aus („war das wirklich so?“, „was wurde aus ihnen?“). Starte einen Raum mit Freunden oder deinem Partner, matche auf ein eindrückliches reales Ereignis und halte Wikipedia für danach offen.',
+        },
+      ],
+      it: [
+        {
+          heading: 'Biopic, true crime o inchiesta?',
+          body: 'Il "basato su una storia vera" copre registri molto diversi. I biopic ripercorrono una vita (The Wolf of Wall Street, Bohemian Rhapsody, Il discorso del re). I fatti reali ricostruiscono un momento (127 ore, Sully, Captain Phillips). I film d\'inchiesta smontano un caso (Il caso Spotlight, Tutti gli uomini del presidente, L\'arte di vincere). Swipe Movie ti lascia pesare il registro che preferisci stasera.',
+        },
+        {
+          heading: 'Quando la realtà supera la finzione',
+          body: "Alcuni film sono quasi incredibili eppure veri. La truffa di Jordan Belfort in The Wolf of Wall Street, la fuga di Argo, la sopravvivenza di Aron Ralston in 127 ore, l'ammaraggio del volo 1549 in Sully — storie che nessuno sceneggiatore avrebbe osato scrivere. È questo che rende il genere così avvincente.",
+        },
+        {
+          heading: 'Da guardare da soli o per aprire il dibattito',
+          body: 'I film tratti da storie vere sono perfetti per una serata in gruppo: scatenano quasi sempre una discussione dopo i titoli di coda ("era davvero così?", "che fine hanno fatto?"). Apri una room con amici o il tuo partner, matchate su un fatto reale marcante, e tieni Wikipedia aperta per dopo.',
+        },
+      ],
+    },
+    faq: {
+      fr: [
+        {
+          question: 'Quels sont les meilleurs films basés sur une histoire vraie ?',
+          answer:
+            "Parmi les plus salués : Le Loup de Wall Street, 12 Years a Slave, Spotlight, Le Discours d'un roi, Sully ou 127 Heures. Lance une room Swipe Movie sur la sélection \"histoire vraie\" et matche sur celui qui t'intrigue le plus.",
+        },
+        {
+          question: '"Basé sur une histoire vraie" veut dire que tout est vrai ?',
+          answer:
+            "Pas toujours. La plupart des films prennent des libertés (dialogues recréés, personnages fusionnés, raccourcis dramatiques) tout en respectant la trame réelle. C'est \"inspiré de\" plutôt que documentaire — le générique précise souvent le degré de fidélité.",
+        },
+        {
+          question: 'Où regarder ces films ?',
+          answer:
+            "La sélection est issue du catalogue TMDb ; la disponibilité varie selon ta région et tes abonnements. Swipe Movie t'indique pour chaque film matché la plateforme (Netflix, Prime, Max...) où le regarder chez toi.",
+        },
+      ],
+      en: [
+        {
+          question: 'What are the best movies based on a true story?',
+          answer:
+            'Among the most acclaimed: The Wolf of Wall Street, 12 Years a Slave, Spotlight, The King\'s Speech, Sully or 127 Hours. Start a Swipe Movie room on the "true story" selection and match on the one that intrigues you most.',
+        },
+        {
+          question: 'Does "based on a true story" mean everything is true?',
+          answer:
+            'Not always. Most films take liberties (recreated dialogue, merged characters, dramatic shortcuts) while respecting the real arc. It\'s "inspired by" rather than documentary — the credits often state how faithful it is.',
+        },
+        {
+          question: 'Where can I watch these films?',
+          answer:
+            'The selection comes from the TMDb catalog; availability varies by region and subscriptions. For each matched film, Swipe Movie shows the platform (Netflix, Prime, Max...) where you can watch it where you are.',
+        },
+      ],
+      es: [
+        {
+          question: '¿Cuáles son las mejores películas basadas en hechos reales?',
+          answer:
+            'Entre las más aclamadas: El lobo de Wall Street, 12 años de esclavitud, Spotlight, El discurso del rey, Sully o 127 horas. Abre una sala Swipe Movie en la selección "hechos reales" y haz match en la que más te intrigue.',
+        },
+        {
+          question: '¿"Basada en hechos reales" significa que todo es verdad?',
+          answer:
+            'No siempre. La mayoría de las películas se toman licencias (diálogos recreados, personajes fusionados, atajos dramáticos) respetando la trama real. Es "inspirada en" más que un documental — los créditos suelen aclarar el grado de fidelidad.',
+        },
+        {
+          question: '¿Dónde ver estas películas?',
+          answer:
+            'La selección viene del catálogo de TMDb; la disponibilidad varía según tu región y tus suscripciones. Para cada película matcheada, Swipe Movie te indica la plataforma (Netflix, Prime, Max...) donde verla donde estés.',
+        },
+      ],
+      de: [
+        {
+          question: 'Was sind die besten Filme nach einer wahren Geschichte?',
+          answer:
+            'Zu den gefeiertsten zählen: The Wolf of Wall Street, 12 Years a Slave, Spotlight, The King\'s Speech, Sully oder 127 Hours. Starte einen Swipe-Movie-Raum auf der Auswahl „wahre Geschichte“ und matche auf den, der dich am meisten reizt.',
+        },
+        {
+          question: 'Heißt „nach einer wahren Geschichte“, dass alles wahr ist?',
+          answer:
+            'Nicht immer. Die meisten Filme nehmen sich Freiheiten (nachgestellte Dialoge, zusammengelegte Figuren, dramatische Abkürzungen), achten aber auf den realen Verlauf. Es ist „inspiriert von“ statt Dokumentation — der Abspann nennt oft den Grad der Treue.',
+        },
+        {
+          question: 'Wo kann ich diese Filme schauen?',
+          answer:
+            'Die Auswahl stammt aus dem TMDb-Katalog; die Verfügbarkeit variiert je nach Region und Abos. Für jeden gematchten Film zeigt dir Swipe Movie die Plattform (Netflix, Prime, Max...), auf der du ihn bei dir schauen kannst.',
+        },
+      ],
+      it: [
+        {
+          question: 'Quali sono i migliori film basati su una storia vera?',
+          answer:
+            'Tra i più acclamati: The Wolf of Wall Street, 12 anni schiavo, Il caso Spotlight, Il discorso del re, Sully o 127 ore. Apri una room Swipe Movie sulla selezione "storia vera" e matcha su quello che ti incuriosisce di più.',
+        },
+        {
+          question: '"Basato su una storia vera" vuol dire che è tutto vero?',
+          answer:
+            'Non sempre. La maggior parte dei film si prende licenze (dialoghi ricreati, personaggi fusi, scorciatoie drammatiche) rispettando la trama reale. È "ispirato a" più che un documentario — i titoli di coda spesso chiariscono il grado di fedeltà.',
+        },
+        {
+          question: 'Dove guardare questi film?',
+          answer:
+            'La selezione viene dal catalogo TMDb; la disponibilità varia per regione e abbonamenti. Per ogni film matchato, Swipe Movie ti indica la piattaforma (Netflix, Prime, Max...) dove guardarlo da te.',
+        },
+      ],
+    },
+  }),
+
+  'film-action-adrenaline': entry({
+    slug: 'film-action-adrenaline',
+    genreIds: [28, 53, 12],
+    minRating: 6.5,
+    relatedGenres: ['action', 'thriller', 'aventure'],
+    relatedProviders: ['netflix', 'prime-video', 'max'],
+    title: {
+      fr: "Films d'action : les meilleurs pour une dose d'adrénaline",
+      en: 'Action movies: the best for an adrenaline hit',
+      es: 'Películas de acción: las mejores para una dosis de adrenalina',
+      de: 'Actionfilme: die besten für einen Adrenalin-Kick',
+      it: "Film d'azione: i migliori per una dose di adrenalina",
+    },
+    description: {
+      fr: "Les meilleurs films d'action pour une montée d'adrénaline : courses-poursuites, fusillades, cascades dingues. Action, thriller, aventure notés 6.5+ sur TMDb.",
+      en: 'The best action movies for a guaranteed adrenaline rush: car chases, shootouts, insane stunts. Action, thriller and adventure rated 6.5+ on TMDb.',
+      es: 'Las mejores películas de acción para una subida de adrenalina: persecuciones, tiroteos, acrobacias de locura. Acción, thriller, aventura con nota 6.5+ en TMDb.',
+      de: 'Die besten Actionfilme für einen Adrenalinschub: Verfolgungsjagden, Schießereien, irre Stunts. Action, Thriller, Abenteuer mit 6.5+ auf TMDb.',
+      it: "I migliori film d'azione per una scarica di adrenalina: inseguimenti, sparatorie, stunt folli. Azione, thriller, avventura valutati 6.5+ su TMDb.",
+    },
+    intro: {
+      fr: "Parfois tu n'as pas envie de réfléchir, tu veux juste te prendre une claque visuelle : des poursuites, des explosions, des cascades qui défient la mort et un rythme qui ne lâche jamais. Le film d'action, c'est la montée d'adrénaline garantie, le pop-corn movie qui te scotche au canapé.\n\nCette sélection regroupe les meilleurs films d'action, tous notés au moins 6.5 sur TMDb. Mad Max: Fury Road (la course-poursuite la plus folle jamais filmée), John Wick (le ballet de gunfights le plus stylé), Mission: Impossible (Tom Cruise qui risque sa vie pour de vrai), Top Gun: Maverick (le dogfight aérien ultime)... Lance une room, swipe, et choisis ta dose d'adrénaline du soir.",
+      en: "Sometimes you don't want to think, you just want a visual punch: chases, explosions, death-defying stunts and a pace that never lets up. The action movie is the guaranteed adrenaline rush, the popcorn movie that glues you to the couch.\n\nThis selection gathers the best action films, all rated at least 6.5 on TMDb. Mad Max: Fury Road (the wildest chase ever filmed), John Wick (the most stylish gunfight ballet), Mission: Impossible (Tom Cruise risking his life for real), Top Gun: Maverick (the ultimate aerial dogfight)... Start a room, swipe, and pick tonight's adrenaline hit.",
+      es: "A veces no te apetece pensar, solo quieres un puñetazo visual: persecuciones, explosiones, acrobacias que desafían la muerte y un ritmo que no afloja. La película de acción es la subida de adrenalina garantizada, el peliculón de palomitas que te clava al sofá.\n\nEsta selección reúne las mejores películas de acción, todas con nota mínima 6.5 en TMDb. Mad Max: Furia en la carretera (la persecución más loca jamás rodada), John Wick (el ballet de tiroteos más estiloso), Misión Imposible (Tom Cruise jugándose la vida de verdad), Top Gun: Maverick (el combate aéreo definitivo)... Abre una sala, desliza y elige tu dosis de adrenalina de la noche.",
+      de: "Manchmal willst du nicht nachdenken, du willst nur einen visuellen Schlag: Verfolgungsjagden, Explosionen, todesmutige Stunts und ein Tempo, das nie nachlässt. Der Actionfilm ist der garantierte Adrenalinschub, der Popcorn-Film, der dich aufs Sofa nagelt.\n\nDiese Auswahl versammelt die besten Actionfilme, alle mit mindestens 6.5 auf TMDb. Mad Max: Fury Road (die wildeste je gefilmte Verfolgungsjagd), John Wick (das stilvollste Gunfight-Ballett), Mission: Impossible (Tom Cruise riskiert echt sein Leben), Top Gun: Maverick (der ultimative Luftkampf)... Starte einen Raum, swipe und wähle deinen Adrenalin-Kick für heute Abend.",
+      it: "A volte non hai voglia di pensare, vuoi solo un pugno visivo: inseguimenti, esplosioni, stunt che sfidano la morte e un ritmo che non molla mai. Il film d'azione è la scarica di adrenalina garantita, il popcorn movie che ti inchioda al divano.\n\nQuesta selezione raccoglie i migliori film d'azione, tutti valutati almeno 6.5 su TMDb. Mad Max: Fury Road (l'inseguimento più folle mai filmato), John Wick (il balletto di sparatorie più stiloso), Mission: Impossible (Tom Cruise che rischia la vita davvero), Top Gun: Maverick (il duello aereo definitivo)... Apri una room, swippa e scegli la tua dose di adrenalina della serata.",
+    },
+    sections: {
+      fr: [
+        {
+          heading: 'Action pure, thriller nerveux ou blockbuster ?',
+          body: "Tous les films d'action ne donnent pas la même montée. L'action pure mise sur les cascades et le rythme (Mad Max: Fury Road, John Wick, The Raid). Le thriller nerveux ajoute la tension et le suspense (Heat, Sicario, Mission: Impossible). Le blockbuster spectaculaire vise le grand divertissement (Top Gun: Maverick, Mad Max, les Marvel). Swipe Movie te laisse pondérer ces nuances selon ton envie du soir.",
+        },
+        {
+          heading: 'Les films d\'action récents qui valent le coup',
+          body: "Le genre s'est renouvelé ces dernières années. Top Gun: Maverick a relancé le blockbuster aérien, la saga John Wick a redéfini la chorégraphie de combat, Mad Max: Fury Road reste une référence visuelle, et les derniers Mission: Impossible repoussent les limites des cascades réelles. Tous notés haut sur TMDb et plébiscités par les amateurs d'action.",
+        },
+        {
+          heading: 'Le film d\'action, roi des soirées entre amis',
+          body: "L'action est l'un des genres qui matchent le plus vite en groupe : pas besoin d'être d'humeur particulière pour apprécier une bonne course-poursuite. Lance une room avec tes potes, swipez sur la sélection adrénaline, et matchez sur un film qui mettra tout le monde d'accord — idéal aussi avec de la pizza et une bière.",
+        },
+      ],
+      en: [
+        {
+          heading: 'Pure action, tense thriller or blockbuster?',
+          body: "Not every action film delivers the same rush. Pure action leans on stunts and pace (Mad Max: Fury Road, John Wick, The Raid). The tense thriller adds suspense (Heat, Sicario, Mission: Impossible). The spectacle blockbuster aims for big entertainment (Top Gun: Maverick, Mad Max, the Marvels). Swipe Movie lets you weight these nuances depending on tonight's craving.",
+        },
+        {
+          heading: 'Recent action films worth your time',
+          body: 'The genre has reinvented itself in recent years. Top Gun: Maverick revived the aerial blockbuster, the John Wick saga redefined fight choreography, Mad Max: Fury Road remains a visual benchmark, and the latest Mission: Impossible entries push real-stunt limits. All rated high on TMDb and championed by action fans.',
+        },
+        {
+          heading: 'The action movie, king of nights with friends',
+          body: "Action is one of the fastest-matching genres in a group: you don't need a particular mood to enjoy a great chase. Start a room with your friends, swipe on the adrenaline selection, and match on a film everyone agrees on — also ideal with pizza and a beer.",
+        },
+      ],
+      es: [
+        {
+          heading: '¿Acción pura, thriller tenso o blockbuster?',
+          body: 'No toda película de acción da la misma subida. La acción pura apuesta por las acrobacias y el ritmo (Mad Max: Furia en la carretera, John Wick, The Raid). El thriller tenso añade suspense (Heat, Sicario, Misión Imposible). El blockbuster espectacular busca el gran entretenimiento (Top Gun: Maverick, Mad Max, las de Marvel). Swipe Movie te deja ponderar estos matices según tu antojo de la noche.',
+        },
+        {
+          heading: 'Películas de acción recientes que valen la pena',
+          body: 'El género se ha reinventado en los últimos años. Top Gun: Maverick relanzó el blockbuster aéreo, la saga John Wick redefinió la coreografía de combate, Mad Max: Furia en la carretera sigue siendo un referente visual, y las últimas Misión Imposible llevan al límite las acrobacias reales. Todas con nota alta en TMDb y aclamadas por los fans de la acción.',
+        },
+        {
+          heading: 'La película de acción, reina de las noches entre amigos',
+          body: 'La acción es uno de los géneros que más rápido matchean en grupo: no hace falta un estado de ánimo concreto para disfrutar una buena persecución. Abre una sala con tus colegas, deslizad en la selección de adrenalina, y haced match en una película que ponga a todos de acuerdo — ideal también con pizza y cerveza.',
+        },
+      ],
+      de: [
+        {
+          heading: 'Reine Action, nervenaufreibender Thriller oder Blockbuster?',
+          body: 'Nicht jeder Actionfilm liefert denselben Kick. Reine Action setzt auf Stunts und Tempo (Mad Max: Fury Road, John Wick, The Raid). Der nervenaufreibende Thriller fügt Spannung hinzu (Heat, Sicario, Mission: Impossible). Der spektakuläre Blockbuster zielt auf große Unterhaltung (Top Gun: Maverick, Mad Max, die Marvels). Swipe Movie lässt dich diese Nuancen je nach Lust am Abend gewichten.',
+        },
+        {
+          heading: 'Aktuelle Actionfilme, die sich lohnen',
+          body: 'Das Genre hat sich in den letzten Jahren neu erfunden. Top Gun: Maverick belebte den Luft-Blockbuster, die John-Wick-Saga definierte die Kampfchoreografie neu, Mad Max: Fury Road bleibt eine visuelle Referenz, und die neuesten Mission: Impossible loten die Grenzen echter Stunts aus. Alle hoch auf TMDb bewertet und von Action-Fans gefeiert.',
+        },
+        {
+          heading: 'Der Actionfilm, König der Abende mit Freunden',
+          body: 'Action ist eines der am schnellsten matchenden Genres in der Gruppe: Du brauchst keine bestimmte Stimmung, um eine großartige Verfolgungsjagd zu genießen. Starte einen Raum mit deinen Freunden, swipt durch die Adrenalin-Auswahl und matched auf einen Film, auf den sich alle einigen — auch ideal mit Pizza und Bier.',
+        },
+      ],
+      it: [
+        {
+          heading: 'Azione pura, thriller teso o blockbuster?',
+          body: "Non ogni film d'azione dà la stessa scarica. L'azione pura punta su stunt e ritmo (Mad Max: Fury Road, John Wick, The Raid). Il thriller teso aggiunge suspense (Heat, Sicario, Mission: Impossible). Il blockbuster spettacolare punta al grande intrattenimento (Top Gun: Maverick, Mad Max, i Marvel). Swipe Movie ti lascia pesare queste sfumature secondo la voglia della serata.",
+        },
+        {
+          heading: "Film d'azione recenti che valgono",
+          body: "Il genere si è reinventato negli ultimi anni. Top Gun: Maverick ha rilanciato il blockbuster aereo, la saga di John Wick ha ridefinito la coreografia di combattimento, Mad Max: Fury Road resta un riferimento visivo, e gli ultimi Mission: Impossible spingono al limite gli stunt reali. Tutti valutati alti su TMDb e acclamati dagli appassionati d'azione.",
+        },
+        {
+          heading: "Il film d'azione, re delle serate tra amici",
+          body: "L'azione è uno dei generi che matchano più in fretta in gruppo: non serve un umore particolare per godersi un bell'inseguimento. Apri una room con i tuoi amici, swippate sulla selezione adrenalina, e matchate su un film che mette tutti d'accordo — ideale anche con pizza e birra.",
+        },
+      ],
+    },
+    faq: {
+      fr: [
+        {
+          question: "Quel est le meilleur film d'action à regarder ?",
+          answer:
+            "Parmi les références : Mad Max: Fury Road, John Wick, Mission: Impossible et Top Gun: Maverick. Lance une room Swipe Movie sur la sélection \"action adrénaline\" et matche sur celui qui correspond à ton envie — action pure, thriller nerveux ou blockbuster.",
+        },
+        {
+          question: "Quels films d'action récents valent le coup ?",
+          answer:
+            "Top Gun: Maverick, les derniers John Wick et Mission: Impossible sont parmi les meilleurs films d'action récents, tous notés haut sur TMDb. Swipe Movie filtre la sélection pour ne garder que les films d'action vraiment bien notés.",
+        },
+        {
+          question: 'Où regarder ces films d\'action ?',
+          answer:
+            "La sélection provient du catalogue TMDb ; la disponibilité dépend de ta région et de tes abonnements. Swipe Movie t'indique pour chaque film matché la plateforme (Netflix, Prime, Max...) où le regarder chez toi.",
+        },
+      ],
+      en: [
+        {
+          question: "What's the best action movie to watch?",
+          answer:
+            'Among the references: Mad Max: Fury Road, John Wick, Mission: Impossible and Top Gun: Maverick. Start a Swipe Movie room on the "action adrenaline" selection and match on the one fitting your craving — pure action, tense thriller or blockbuster.',
+        },
+        {
+          question: 'Which recent action films are worth it?',
+          answer:
+            'Top Gun: Maverick, the latest John Wick and Mission: Impossible entries are among the best recent action films, all rated high on TMDb. Swipe Movie filters the selection to keep only genuinely well-rated action movies.',
+        },
+        {
+          question: 'Where can I watch these action films?',
+          answer:
+            'The selection comes from the TMDb catalog; availability depends on your region and subscriptions. For each matched film, Swipe Movie shows the platform (Netflix, Prime, Max...) where you can watch it where you are.',
+        },
+      ],
+      es: [
+        {
+          question: '¿Cuál es la mejor película de acción para ver?',
+          answer:
+            'Entre las referencias: Mad Max: Furia en la carretera, John Wick, Misión Imposible y Top Gun: Maverick. Abre una sala Swipe Movie en la selección "acción adrenalina" y haz match en la que encaje con tu antojo — acción pura, thriller tenso o blockbuster.',
+        },
+        {
+          question: '¿Qué películas de acción recientes valen la pena?',
+          answer:
+            'Top Gun: Maverick, las últimas John Wick y Misión Imposible están entre las mejores películas de acción recientes, todas con nota alta en TMDb. Swipe Movie filtra la selección para conservar solo las películas de acción realmente bien valoradas.',
+        },
+        {
+          question: '¿Dónde ver estas películas de acción?',
+          answer:
+            'La selección viene del catálogo de TMDb; la disponibilidad depende de tu región y tus suscripciones. Para cada película matcheada, Swipe Movie te indica la plataforma (Netflix, Prime, Max...) donde verla donde estés.',
+        },
+      ],
+      de: [
+        {
+          question: 'Was ist der beste Actionfilm zum Schauen?',
+          answer:
+            'Zu den Referenzen: Mad Max: Fury Road, John Wick, Mission: Impossible und Top Gun: Maverick. Starte einen Swipe-Movie-Raum auf der Auswahl „Action-Adrenalin“ und matche auf den, der zu deiner Lust passt — reine Action, nervenaufreibender Thriller oder Blockbuster.',
+        },
+        {
+          question: 'Welche aktuellen Actionfilme lohnen sich?',
+          answer:
+            'Top Gun: Maverick sowie die neuesten John Wick und Mission: Impossible gehören zu den besten aktuellen Actionfilmen, alle hoch auf TMDb bewertet. Swipe Movie filtert die Auswahl, um nur wirklich gut bewertete Actionfilme zu behalten.',
+        },
+        {
+          question: 'Wo kann ich diese Actionfilme schauen?',
+          answer:
+            'Die Auswahl stammt aus dem TMDb-Katalog; die Verfügbarkeit hängt von deiner Region und deinen Abos ab. Für jeden gematchten Film zeigt dir Swipe Movie die Plattform (Netflix, Prime, Max...), auf der du ihn bei dir schauen kannst.',
+        },
+      ],
+      it: [
+        {
+          question: "Qual è il miglior film d'azione da guardare?",
+          answer:
+            'Tra i riferimenti: Mad Max: Fury Road, John Wick, Mission: Impossible e Top Gun: Maverick. Apri una room Swipe Movie sulla selezione "azione adrenalina" e matcha su quello adatto alla tua voglia — azione pura, thriller teso o blockbuster.',
+        },
+        {
+          question: "Quali film d'azione recenti valgono la pena?",
+          answer:
+            "Top Gun: Maverick, gli ultimi John Wick e Mission: Impossible sono tra i migliori film d'azione recenti, tutti valutati alti su TMDb. Swipe Movie filtra la selezione per tenere solo i film d'azione davvero ben valutati.",
+        },
+        {
+          question: "Dove guardare questi film d'azione?",
+          answer:
+            'La selezione viene dal catalogo TMDb; la disponibilità dipende dalla tua regione e dai tuoi abbonamenti. Per ogni film matchato, Swipe Movie ti indica la piattaforma (Netflix, Prime, Max...) dove guardarlo da te.',
+        },
+      ],
+    },
+  }),
 };
 
 export type ContextSlug = keyof typeof CONTEXTS;
