@@ -110,8 +110,7 @@ export const EMAIL_TRANSLATIONS: Record<EmailLocale, EmailStrings> = {
     invite_title: 'Vous êtes invité(e)&nbsp;! 🎟️',
     invite_body:
       '{inviterName} vous invite à rejoindre la room «&nbsp;{roomName}&nbsp;» sur Swipe Movie.',
-    invite_sub:
-      'Swipez ensemble, en temps réel, pour trouver le film parfait à regarder ce soir.',
+    invite_sub: 'Swipez ensemble, en temps réel, pour trouver le film parfait à regarder ce soir.',
     invite_cta: 'Rejoindre la room',
     invite_code_label: 'Code de la room&nbsp;:',
     expiry_subject: 'Votre room « {roomName} » expire bientôt',
@@ -138,17 +137,18 @@ export const EMAIL_TRANSLATIONS: Record<EmailLocale, EmailStrings> = {
     magiclink_body:
       'Appuyez sur le bouton ci-dessous pour vous connecter à Swipe Movie. Aucun mot de passe à retenir.',
     magiclink_cta: 'Me connecter',
-    magiclink_expiry: 'Ce lien expire dans 5 minutes et ne fonctionne qu\'une seule fois.',
-    magiclink_fallback: 'Le bouton ne fonctionne pas&nbsp;? Copiez-collez ce lien dans votre navigateur&nbsp;:',
+    magiclink_expiry: "Ce lien expire dans 5 minutes et ne fonctionne qu'une seule fois.",
+    magiclink_fallback:
+      'Le bouton ne fonctionne pas&nbsp;? Copiez-collez ce lien dans votre navigateur&nbsp;:',
     magiclink_ignore:
-      'Si vous n\'avez pas demandé ce lien, vous pouvez ignorer cet email en toute sécurité.',
+      "Si vous n'avez pas demandé ce lien, vous pouvez ignorer cet email en toute sécurité.",
     otp_subject: 'Votre code de connexion Swipe Movie',
     otp_reset_subject: 'Votre code de réinitialisation Swipe Movie',
     otp_title: 'Votre code de connexion 🔐',
     otp_body: 'Saisissez ce code dans Swipe Movie pour vous connecter&nbsp;:',
     otp_expiry: 'Ce code expire dans 10 minutes.',
     otp_ignore:
-      'Si vous n\'avez pas demandé ce code, vous pouvez ignorer cet email en toute sécurité.',
+      "Si vous n'avez pas demandé ce code, vous pouvez ignorer cet email en toute sécurité.",
   },
   en: {
     footer_tagline: 'Find your next movie with friends 🍿',
@@ -198,8 +198,7 @@ export const EMAIL_TRANSLATIONS: Record<EmailLocale, EmailStrings> = {
     time_hours_other: 'hours',
     magiclink_subject: 'Your Swipe Movie sign-in link',
     magiclink_title: 'Sign in with one tap 🔑',
-    magiclink_body:
-      'Tap the button below to sign in to Swipe Movie. No password to remember.',
+    magiclink_body: 'Tap the button below to sign in to Swipe Movie. No password to remember.',
     magiclink_cta: 'Sign me in',
     magiclink_expiry: 'This link expires in 5 minutes and only works once.',
     magiclink_fallback: 'Button not working? Copy and paste this link into your browser:',
@@ -327,13 +326,15 @@ export const EMAIL_TRANSLATIONS: Record<EmailLocale, EmailStrings> = {
     magiclink_cta: 'Accedi',
     magiclink_expiry: 'Questo link scade tra 5 minuti e funziona una sola volta.',
     magiclink_fallback: 'Il pulsante non funziona? Copia e incolla questo link nel tuo browser:',
-    magiclink_ignore: 'Se non hai richiesto questo link, puoi ignorare questa email in tutta sicurezza.',
+    magiclink_ignore:
+      'Se non hai richiesto questo link, puoi ignorare questa email in tutta sicurezza.',
     otp_subject: 'Il tuo codice di accesso a Swipe Movie',
     otp_reset_subject: 'Il tuo codice di reimpostazione di Swipe Movie',
     otp_title: 'Il tuo codice di accesso 🔐',
     otp_body: 'Inserisci questo codice in Swipe Movie per accedere:',
     otp_expiry: 'Questo codice scade tra 10 minuti.',
-    otp_ignore: 'Se non hai richiesto questo codice, puoi ignorare questa email in tutta sicurezza.',
+    otp_ignore:
+      'Se non hai richiesto questo codice, puoi ignorare questa email in tutta sicurezza.',
   },
   de: {
     footer_tagline: 'Findet euren nächsten Film mit Freunden 🍿',
@@ -398,8 +399,7 @@ export const EMAIL_TRANSLATIONS: Record<EmailLocale, EmailStrings> = {
     otp_title: 'Ihr Anmeldecode 🔐',
     otp_body: 'Geben Sie diesen Code in Swipe Movie ein, um sich anzumelden:',
     otp_expiry: 'Dieser Code läuft in 10 Minuten ab.',
-    otp_ignore:
-      'Wenn Sie diesen Code nicht angefordert haben, können Sie diese E-Mail ignorieren.',
+    otp_ignore: 'Wenn Sie diesen Code nicht angefordert haben, können Sie diese E-Mail ignorieren.',
   },
 };
 
@@ -410,7 +410,5 @@ export function t(locale: EmailLocale): EmailStrings {
 
 /** Substitute {placeholders} in a translated string. */
 export function fill(str: string, vars: Record<string, string | number>): string {
-  return str.replace(/\{(\w+)\}/g, (_, k) =>
-    k in vars ? String(vars[k]) : `{${k}}`,
-  );
+  return str.replace(/\{(\w+)\}/g, (_, k) => (k in vars ? String(vars[k]) : `{${k}}`));
 }

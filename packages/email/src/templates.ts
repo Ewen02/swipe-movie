@@ -4,12 +4,7 @@ import type {
   WeeklyDigestEmailData,
   RoomExpiryReminderEmailData,
 } from './types';
-import {
-  t,
-  fill,
-  resolveEmailLocale,
-  type EmailLocale,
-} from './i18n';
+import { t, fill, resolveEmailLocale, type EmailLocale } from './i18n';
 
 /**
  * Brand palette (from the app's globals.css):
@@ -32,8 +27,7 @@ const C = {
   white: '#ffffff',
 };
 
-const FONT =
-  "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+const FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 
 function button(label: string, href: string): string {
   return `
@@ -253,11 +247,7 @@ export function buildRoomExpiryReminderEmail(
   );
 }
 
-export function buildWelcomeEmail(
-  userName: string,
-  baseUrl: string,
-  localeInput?: string,
-): string {
+export function buildWelcomeEmail(userName: string, baseUrl: string, localeInput?: string): string {
   const locale = resolveEmailLocale(localeInput);
   const s = t(locale);
   const step = (n: number, title: string, desc: string) => `
@@ -290,11 +280,7 @@ export function buildWelcomeEmail(
   );
 }
 
-export function buildMagicLinkEmail(
-  url: string,
-  baseUrl: string,
-  localeInput?: string,
-): string {
+export function buildMagicLinkEmail(url: string, baseUrl: string, localeInput?: string): string {
   const locale = resolveEmailLocale(localeInput);
   const s = t(locale);
   return buildBaseTemplate(
@@ -316,11 +302,7 @@ export function buildMagicLinkEmail(
   );
 }
 
-export function buildOtpEmail(
-  otp: string,
-  baseUrl: string,
-  localeInput?: string,
-): string {
+export function buildOtpEmail(otp: string, baseUrl: string, localeInput?: string): string {
   const locale = resolveEmailLocale(localeInput);
   const s = t(locale);
   const digits = otp
