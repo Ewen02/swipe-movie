@@ -22,6 +22,7 @@ const COPY = {
     cta: 'Trouve ton prochain film en swipant',
     empty: 'Aucun film trouvé pour ce genre.',
     related: 'Voir aussi par plateforme',
+    sectionFaq: 'Questions fréquentes',
     descTpl: (genre: string, intro: string) =>
       `${intro} Meilleurs films ${genre.toLowerCase()} à regarder : sélection mise à jour, plateformes de streaming et matching collaboratif sur Swipe Movie.`,
   },
@@ -32,6 +33,7 @@ const COPY = {
     cta: 'Find your next movie by swiping',
     empty: 'No movies found for this genre.',
     related: 'Also browse by platform',
+    sectionFaq: 'Frequently asked questions',
     descTpl: (genre: string, intro: string) =>
       `${intro} Best ${genre.toLowerCase()} movies to watch: up-to-date selection, streaming platforms and collaborative matching on Swipe Movie.`,
   },
@@ -42,6 +44,7 @@ const COPY = {
     cta: 'Encuentra tu próxima película deslizando',
     empty: 'No se han encontrado películas para este género.',
     related: 'Explora también por plataforma',
+    sectionFaq: 'Preguntas frecuentes',
     descTpl: (genre: string, intro: string) =>
       `${intro} Mejores películas ${genre.toLowerCase()} para ver: selección actualizada, plataformas de streaming y matching colaborativo en Swipe Movie.`,
   },
@@ -52,6 +55,7 @@ const COPY = {
     cta: 'Finde deinen nächsten Film durch Swipen',
     empty: 'Keine Filme für dieses Genre gefunden.',
     related: 'Auch nach Plattform stöbern',
+    sectionFaq: 'Häufig gestellte Fragen',
     descTpl: (genre: string, intro: string) =>
       `${intro} Beste ${genre} Filme: aktuelle Auswahl, Streaming-Plattformen und kollaboratives Matching auf Swipe Movie.`,
   },
@@ -62,6 +66,7 @@ const COPY = {
     cta: 'Trova il tuo prossimo film swippando',
     empty: 'Nessun film trovato per questo genere.',
     related: 'Esplora anche per piattaforma',
+    sectionFaq: 'Domande frequenti',
     descTpl: (genre: string, intro: string) =>
       `${intro} Migliori film ${genre.toLowerCase()} da guardare: selezione aggiornata, piattaforme di streaming e matching collaborativo su Swipe Movie.`,
   },
@@ -119,6 +124,8 @@ export default async function GenrePage({ params }: { params: Promise<Params> })
   const t = getCopy(locale);
   const name = genre.name[locale as Locale] ?? genre.name.fr;
   const intro = genre.intro[locale as Locale] ?? genre.intro.fr;
+  const sections = genre.sections?.[locale as Locale] ?? genre.sections?.fr;
+  const faq = genre.faq?.[locale as Locale] ?? genre.faq?.fr;
 
   const movies = await getMoviesByGenrePublic(genre.tmdbId, locale, {
     page: 1,
@@ -153,6 +160,18 @@ export default async function GenrePage({ params }: { params: Promise<Params> })
       { '@type': 'ListItem', position: 3, name, item: `${SITE_URL}/${locale}/genre/${slug}` },
     ],
   };
+
+  const faqLd = faq
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faq.map((f) => ({
+          '@type': 'Question',
+          name: f.question,
+          acceptedAnswer: { '@type': 'Answer', text: f.answer },
+        })),
+      }
+    : null;
 
   // Internal-link facets: link this genre to the major streaming providers,
   // mirroring the combo route /plateforme/[provider]/[genre].
@@ -191,6 +210,12 @@ export default async function GenrePage({ params }: { params: Promise<Params> })
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      {faqLd ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+        />
+      ) : null}
       <SEOPageTracker pageType="genre" locale={locale} slug={slug} title={name} genre={slug} />
       <ListingPage
         title={`${t.titleSuffix} ${name.toLowerCase()}`}
@@ -207,6 +232,32 @@ export default async function GenrePage({ params }: { params: Promise<Params> })
         ctaHref={`/${locale}/try`}
         facets={facets}
       />
+      {(sections && sections.length > 0) || (faq && faq.length > 0) ? (
+        <div className="container mx-auto px-4 pb-12 md:pb-16 space-y-10 max-w-4xl">
+          {sections?.map((s, i) => (
+            <section key={i} className="space-y-3">
+              <h2 className="text-2xl font-semibold">{s.heading}</h2>
+              <p className="text-base text-muted-foreground leading-relaxed">{s.body}</p>
+            </section>
+          ))}
+
+          {faq && faq.length > 0 ? (
+            <section aria-labelledby="faq" className="space-y-4">
+              <h2 id="faq" className="text-2xl font-semibold">
+                {t.sectionFaq}
+              </h2>
+              <dl className="space-y-4">
+                {faq.map((f, i) => (
+                  <div key={i} className="rounded-2xl border border-border/60 bg-card/40 p-5">
+                    <dt className="font-medium mb-2">{f.question}</dt>
+                    <dd className="text-muted-foreground leading-relaxed">{f.answer}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          ) : null}
+        </div>
+      ) : null}
     </>
   );
 }
