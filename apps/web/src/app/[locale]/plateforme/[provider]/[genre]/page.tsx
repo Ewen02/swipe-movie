@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { setRequestLocale } from 'next-intl/server';
 import { locales, type Locale } from '@/i18n';
 import { buildLanguageAlternates, SITE_NAME, SITE_URL } from '@/lib/seo';
 import { getProviderBySlug, getGenreBySlug, PROVIDERS, GENRES } from '@/lib/catalog';
@@ -131,6 +132,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 export default async function PlatformGenrePage({ params }: { params: Promise<Params> }) {
   const { locale, provider, genre } = await params;
   if (!locales.includes(locale as Locale)) notFound();
+  setRequestLocale(locale);
   const p = getProviderBySlug(provider);
   const g = getGenreBySlug(genre);
   if (!p || !g) notFound();

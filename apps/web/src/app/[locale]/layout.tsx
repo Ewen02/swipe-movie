@@ -8,7 +8,7 @@ import { CookieConsent } from '@/components/gdpr/CookieConsent';
 import { ConditionalAnalytics } from '@/components/gdpr/ConditionalAnalytics';
 import { PostHogProvider } from '@/components/providers/PostHogProvider';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { locales, type Locale } from '@/i18n';
 import {
@@ -366,6 +366,11 @@ export default async function LocaleLayout({
   if (!locales.includes(locale as Locale)) {
     notFound();
   }
+
+  // Required for static rendering with next-intl: without it, reading
+  // translations falls back to request headers and opts every page into
+  // dynamic rendering (ƒ), defeating generateStaticParams + revalidate.
+  setRequestLocale(locale);
 
   const messages = await getMessages();
   const jsonLd = getStructuredData(locale as Locale);

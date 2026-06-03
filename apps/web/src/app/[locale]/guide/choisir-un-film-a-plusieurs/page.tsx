@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { setRequestLocale } from 'next-intl/server';
 import { locales, type Locale } from '@/i18n';
 import { buildLanguageAlternates, SITE_NAME, SITE_URL } from '@/lib/seo';
 import { SEOPageTracker } from '@/components/seo/SEOPageTracker';
@@ -610,6 +611,7 @@ export async function generateMetadata({
 export default async function GuidePage({ params }: { params: Promise<Params> }) {
   const { locale } = await params;
   if (!locales.includes(locale as Locale)) notFound();
+  setRequestLocale(locale);
 
   const content = getContent(locale);
 

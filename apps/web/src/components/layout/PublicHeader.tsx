@@ -38,11 +38,12 @@ export function PublicHeader({ variant = "back", isAuthenticated }: PublicHeader
             <Link href="/" className="group flex items-center gap-3">
               <div className="relative transition-transform duration-200 ease-out hover:scale-[1.02] active:scale-[0.98]">
                 <Image
-                  src="/logo.png"
+                  src="/logo.webp"
                   alt="Swipe Movie"
                   width={180}
-                  height={40}
+                  height={65}
                   className="h-10 w-auto"
+                  priority
                 />
               </div>
             </Link>

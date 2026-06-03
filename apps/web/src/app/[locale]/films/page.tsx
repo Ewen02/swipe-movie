@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { setRequestLocale } from 'next-intl/server';
 import { locales, type Locale } from '@/i18n';
 import { buildLanguageAlternates, SITE_NAME, SITE_URL } from '@/lib/seo';
 import { listGenres, listProviders } from '@/lib/catalog';
@@ -118,6 +119,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 export default async function FilmsHubPage({ params }: { params: Promise<Params> }) {
   const { locale } = await params;
   if (!locales.includes(locale as Locale)) notFound();
+  setRequestLocale(locale);
 
   const t = getCopy(locale);
   const genres = listGenres();

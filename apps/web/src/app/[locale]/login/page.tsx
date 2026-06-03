@@ -73,10 +73,10 @@ function LoginPageContent() {
             {/* Logo - desktop only */}
             <Link href="/" className="hidden lg:block mb-12">
               <Image
-                src="/logo.png"
+                src="/logo.webp"
                 alt="Swipe Movie"
                 width={160}
-                height={40}
+                height={58}
                 priority
                 className="h-10 w-auto"
               />

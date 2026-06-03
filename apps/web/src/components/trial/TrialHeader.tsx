@@ -20,10 +20,10 @@ export function TrialHeader({ locale, roomCode }: TrialHeaderProps) {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <Image
-            src="/logo.png"
+            src="/logo.webp"
             alt="Swipe Movie"
             width={140}
-            height={32}
+            height={50}
             className="h-8 w-auto"
             priority
           />
