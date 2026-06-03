@@ -53,11 +53,11 @@ export function EmailAuthForm({
   // doesn't drop the user back to the empty email screen. Scoped per namespace
   // so the login page and the login wall don't clobber each other.
   const storageKey = `swipe-otp-flow:${namespace}`;
-  const readPersisted = (): { step: Step; email: string } | null => {
+  const readPersisted = (): { step: Step; email: string; code?: string } | null => {
     if (typeof window === 'undefined') return null;
     try {
       const raw = window.sessionStorage.getItem(storageKey);
-      return raw ? (JSON.parse(raw) as { step: Step; email: string }) : null;
+      return raw ? (JSON.parse(raw) as { step: Step; email: string; code?: string }) : null;
     } catch {
       return null;
     }
@@ -65,7 +65,10 @@ export function EmailAuthForm({
 
   const [step, setStep] = useState<Step>(() => readPersisted()?.step ?? 'email');
   const [email, setEmail] = useState(() => readPersisted()?.email ?? '');
-  const [code, setCode] = useState('');
+  // The partially-typed code is persisted too: leaving the tab to read the code
+  // in a mail app can remount this component (a session refetch on window focus
+  // re-renders the parent), which would otherwise reset the input to empty.
+  const [code, setCode] = useState(() => readPersisted()?.code ?? '');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -77,12 +80,12 @@ export function EmailAuthForm({
       if (step === 'email') {
         window.sessionStorage.removeItem(storageKey);
       } else {
-        window.sessionStorage.setItem(storageKey, JSON.stringify({ step, email }));
+        window.sessionStorage.setItem(storageKey, JSON.stringify({ step, email, code }));
       }
     } catch {
       // sessionStorage may be unavailable (private mode); ignore.
     }
-  }, [step, email, storageKey]);
+  }, [step, email, code, storageKey]);
 
   const isValidEmail = email.includes('@') && email.includes('.');
 
