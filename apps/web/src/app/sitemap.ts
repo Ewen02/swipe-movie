@@ -5,6 +5,7 @@ import { buildMovieSlug } from '@/lib/slug';
 import { getPopularMoviesForSitemap } from '@/lib/movies-public';
 import { listGenres, listProviders } from '@/lib/catalog';
 import { listContexts } from '@/lib/contexts';
+import { listComparisons } from '@/lib/comparisons';
 
 type PageDef = {
   path: string;
@@ -73,6 +74,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     emit(`/contexte/${c.slug}`, 'monthly', 0.8, now),
   );
 
+  const comparisonEntries = listComparisons().flatMap((c) =>
+    emit(`/comparatif/${c.slug}`, 'monthly', 0.7, now),
+  );
+
+  const guideEntries = emit('/guide/choisir-un-film-a-plusieurs', 'monthly', 0.8, now);
+
   let movieEntries: MetadataRoute.Sitemap = [];
   try {
     const popular = await getPopularMoviesForSitemap(500);
@@ -89,6 +96,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...genreEntries,
     ...platformEntries,
     ...contextEntries,
+    ...comparisonEntries,
+    ...guideEntries,
     ...movieEntries,
   ];
 }

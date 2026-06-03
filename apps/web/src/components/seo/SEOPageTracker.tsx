@@ -10,6 +10,8 @@ export type SEOPageType =
   | "plateforme"
   | "combo"
   | "contexte"
+  | "comparatif"
+  | "guide"
   | "hub"
 
 export type SEOPageProps = {
