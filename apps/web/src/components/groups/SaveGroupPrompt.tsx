@@ -6,7 +6,6 @@ import { Bookmark, Check, X, Loader2 } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { createGroup } from "@/lib/api/groups"
 import { useToast } from "@/components/providers/toast-provider"
-import { captureEvent, ANALYTICS_EVENTS } from "@/components/providers/PostHogProvider"
 
 interface SaveGroupPromptProps {
   roomId: string
@@ -38,12 +37,8 @@ export function SaveGroupPrompt({
   const handleSave = async () => {
     setState("saving")
     try {
-      const group = await createGroup({ fromRoomId: roomId })
-      captureEvent(ANALYTICS_EVENTS.GROUP_CREATED, {
-        groupId: group.id,
-        memberCount: group.memberCount,
-        source: "room_prompt",
-      })
+      // group_created is emitted server-side from GroupsService.create.
+      await createGroup({ fromRoomId: roomId })
       setState("saved")
       toast({ title: t("savedTitle"), description: t("savedDescription") })
     } catch (e) {

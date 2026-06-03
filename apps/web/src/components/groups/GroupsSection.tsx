@@ -9,7 +9,6 @@ import { useTranslations } from "next-intl"
 import { useGroups } from "@/hooks/useGroups"
 import { startGroupSession } from "@/lib/api/groups"
 import { useToast } from "@/components/providers/toast-provider"
-import { captureEvent, ANALYTICS_EVENTS } from "@/components/providers/PostHogProvider"
 
 /**
  * "Tes groupes" — the retention surface. A saved crew can be re-launched into a
@@ -28,11 +27,10 @@ export function GroupsSection() {
   const handleStart = async (groupId: string) => {
     setStartingId(groupId)
     try {
+      // group_session_started (+ per-recipient reengagement_sent) is emitted
+      // server-side from GroupsService.startSession, which knows the real
+      // email/push split.
       const res = await startGroupSession(groupId)
-      captureEvent(ANALYTICS_EVENTS.GROUP_SESSION_STARTED, {
-        groupId,
-        notified: res.notified,
-      })
       refresh()
       toast({
         title: t("sessionStartedTitle"),

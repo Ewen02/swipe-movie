@@ -10,6 +10,8 @@ import { PushService } from '../push/push.service';
 import { generateRoomCode } from '../../common/utils/code';
 import { CreateGroupDto, GroupResponseDto, GroupsResponseDto } from './dtos';
 import type { RoomTypeValue } from '@swipe-movie/types';
+import { AnalyticsService } from '../analytics/analytics.service';
+import { SERVER_ANALYTICS_EVENTS } from '../analytics/analytics.events';
 
 @Injectable()
 export class GroupsService {
@@ -19,6 +21,7 @@ export class GroupsService {
     private readonly prisma: PrismaService,
     private readonly emailService: NestEmailService,
     private readonly pushService: PushService,
+    private readonly analytics: AnalyticsService,
   ) {}
 
   private get baseUrl(): string {
@@ -125,6 +128,13 @@ export class GroupsService {
     this.logger.log(
       `Group ${group.id} created by ${userId} with ${group.members.length} members`,
     );
+
+    this.analytics.capture(userId, SERVER_ANALYTICS_EVENTS.GROUP_CREATED, {
+      group_id: group.id,
+      member_count: group.members.length,
+      from_room: Boolean(dto.fromRoomId),
+    });
+
     return this.toResponse(group);
   }
 
@@ -266,10 +276,36 @@ export class GroupsService {
       `Group ${group.id} session ${room.code}: emailed ${emailed}, pushed ${pushed} of ${recipients.length} member(s)`,
     );
 
+    const notified = Math.max(emailed, pushed);
+    this.analytics.capture(
+      userId,
+      SERVER_ANALYTICS_EVENTS.GROUP_SESSION_STARTED,
+      {
+        group_id: group.id,
+        room_id: room.id,
+        room_code: room.code,
+        recipients: recipients.length,
+        emailed,
+        pushed,
+        notified,
+      },
+    );
+
+    // Attribute the re-engagement to each recipient (not the host) so we can
+    // measure who actually comes back after being pulled — the retention loop
+    // that was previously fire-and-forget with nothing measured downstream.
+    for (const m of recipients) {
+      this.analytics.capture(
+        m.userId,
+        SERVER_ANALYTICS_EVENTS.REENGAGEMENT_SENT,
+        { group_id: group.id, room_code: room.code, source: 'group_session' },
+      );
+    }
+
     return {
       code: room.code,
       roomId: room.id,
-      notified: Math.max(emailed, pushed),
+      notified,
     };
   }
 

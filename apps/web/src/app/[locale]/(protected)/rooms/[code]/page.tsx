@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { isTrialActive, getTrialData } from '@/lib/trial';
 import { createSwipe, deleteSwipe } from '@/lib/api/swipes';
 import { ApiError } from '@/lib/http';
-import { captureEvent } from '@/components/providers/PostHogProvider';
+import { captureEvent, captureGroup } from '@/components/providers/PostHogProvider';
 import { joinRoom } from '@/lib/api/rooms';
 import { useRoomData, useMoviesData, useMatchNotifications } from '@/hooks/room';
 import type { MovieBasic } from '@/schemas/movies';
@@ -126,6 +126,9 @@ function RoomPageContent() {
     if (sessionStartedRef.current || !room || movies.length === 0) return;
     sessionStartedRef.current = true;
     sessionStartMsRef.current = Date.now();
+    // Associate events with this room as a PostHog group so we can answer
+    // room-level questions ("what % of rooms reach a match") not just per-user.
+    captureGroup('room', room.id, { name: room.name, type: room.type });
     captureEvent('session_started', { roomId: room.id, isTrial });
   }, [room, movies.length, isTrial]);
 

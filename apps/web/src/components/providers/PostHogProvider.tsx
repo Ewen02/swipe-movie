@@ -94,9 +94,24 @@ export function PostHogProvider() {
           const user = session.data.user;
           const alreadyIdentified = localStorage.getItem(POSTHOG_IDENTIFIED_KEY);
 
+          // Stable super-properties attached to every subsequent event, so we
+          // can break any funnel down by surface (installed PWA vs browser tab)
+          // and UI language without re-sending them per event.
+          const isStandalone =
+            typeof window !== 'undefined' &&
+            window.matchMedia?.('(display-mode: standalone)').matches;
+          posthog.register({
+            platform: 'web',
+            is_pwa: Boolean(isStandalone),
+            app_locale: document.documentElement.lang || undefined,
+          });
+
           posthog.identify(user.id, {
             email: user.email,
             name: user.name,
+            // A guest-promoted account still carries trial data at first
+            // identify; lets us segment trial-origin users on the person.
+            is_trial_origin: Boolean(getTrialData()),
           });
 
           if (!alreadyIdentified) {
@@ -134,6 +149,22 @@ export function captureEvent(
 ) {
   if (typeof window !== 'undefined' && posthog.__loaded) {
     posthog.capture(event, properties);
+  }
+}
+
+/**
+ * Associate the current person with a PostHog group (e.g. a room or a crew),
+ * so events can be aggregated and funneled at the group level — "how many
+ * rooms reach a match" rather than "how many users". Cheap and idempotent;
+ * call it whenever the user enters a group's context.
+ */
+export function captureGroup(
+  groupType: string,
+  groupKey: string,
+  properties?: Record<string, unknown>,
+) {
+  if (typeof window !== 'undefined' && posthog.__loaded) {
+    posthog.group(groupType, groupKey, properties);
   }
 }
 

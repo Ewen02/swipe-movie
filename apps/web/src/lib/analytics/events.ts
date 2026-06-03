@@ -66,10 +66,19 @@ export const ANALYTICS_EVENTS = {
   ROOM_CREATE_INTENT: 'room_create_intent',
 
   // --- Usage: persistent groups (retention) ---
+  // GROUP_CREATED / GROUP_SESSION_STARTED are now emitted SERVER-SIDE from
+  // GroupsService (which knows the real member count and email/push split).
+  // The client no longer captures them.
   /** A persistent group was saved (e.g. from a finished session). */
   GROUP_CREATED: 'group_created',
   /** The host re-launched a fresh session from a saved group ("movie night?"). */
   GROUP_SESSION_STARTED: 'group_session_started',
+  /**
+   * SERVER-SIDE: a re-engagement notification was dispatched to a crew member
+   * when a group session launched (one per recipient). The retention loop the
+   * memory flagged as "débranché" — now measurable downstream of the send.
+   */
+  REENGAGEMENT_SENT: 'reengagement_sent',
 
   // --- Usage: sessions ---
   /** A user started actively swiping in a room (deck ready). */
