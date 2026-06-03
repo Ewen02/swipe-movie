@@ -202,7 +202,11 @@
     "stats": {
       "total": "Räume gesamt",
       "matches": "Matches gefunden",
-      "swipesToday": "Swipes heute"
+      "swipesToday": "Swipes heute",
+      "resumeTitle": "Fortsetzen",
+      "resume": "„{name}\" fortsetzen",
+      "createAnother": "Neue Room erstellen",
+      "quickActions": "Setze deine letzte Session fort oder starte eine neue"
     },
     "filters": {
       "all": "Alle",

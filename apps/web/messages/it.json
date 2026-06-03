@@ -202,7 +202,11 @@
     "stats": {
       "total": "Stanze totali",
       "matches": "Match trovati",
-      "swipesToday": "Swipe di oggi"
+      "swipesToday": "Swipe di oggi",
+      "resumeTitle": "Riprendi",
+      "resume": "Riprendi «{name}»",
+      "createAnother": "Crea una nuova room",
+      "quickActions": "Riprendi la tua ultima sessione o avviane una nuova"
     },
     "filters": {
       "all": "Tutte",

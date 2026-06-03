@@ -5,7 +5,7 @@ import { Badge, Button } from "@swipe-movie/ui"
 import { useRouter } from "next/navigation"
 import { useTranslations, useLocale } from "next-intl"
 import type { UserRoomsResponseDto } from "@/schemas/rooms"
-import { Film, Tv, ArrowRight, Users, Heart, Star, Sparkles, Plus } from "lucide-react"
+import { Film, Tv, ArrowRight, Users, Heart, Star, Plus } from "lucide-react"
 import { ShareRoomButton } from "./ShareRoomButton"
 
 interface RoomsListProps {
@@ -108,24 +108,24 @@ export function RoomsList({ rooms, onCreateRoom, onJoinRoom }: RoomsListProps) {
                   : "bg-gradient-to-r from-accent to-purple-500"
               }`} />
 
-              <div className="p-5">
-                {/* Header */}
-                <div className="flex items-start gap-3 mb-4">
-                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center shadow-lg shrink-0 ${
+              <div className="p-4">
+                {/* Header: icon + title/badge + meta on one tight block. */}
+                <div className="flex items-center gap-3 mb-3">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shrink-0 ${
                     room.type === "movie"
                       ? "bg-gradient-to-br from-primary to-blue-500"
                       : "bg-gradient-to-br from-accent to-purple-500"
                   }`}>
                     {room.type === "movie" ? (
-                      <Film className="w-5 h-5 text-white" />
+                      <Film className="w-5 h-5 text-white" aria-hidden="true" />
                     ) : (
-                      <Tv className="w-5 h-5 text-white" />
+                      <Tv className="w-5 h-5 text-white" aria-hidden="true" />
                     )}
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-lg truncate" title={room.name || t('card.unnamed')}>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-base truncate" title={room.name || t('card.unnamed')}>
                         {room.name || t('card.unnamed')}
                       </h3>
                       {expiringSoon ? (
@@ -139,61 +139,44 @@ export function RoomsList({ rooms, onCreateRoom, onJoinRoom }: RoomsListProps) {
                       )}
                     </div>
 
-                    {/* Stats row */}
-                    <div className="flex items-center gap-3 text-sm">
-                      <div
+                    {/* One compact meta line: members · matches · (rating) · date */}
+                    <div className="flex items-center gap-2.5 text-xs text-muted-foreground mt-0.5">
+                      <span
                         className="flex items-center gap-1 text-blue-400"
                         aria-label={t('card.membersLabel', { count: room.memberCount || 0 })}
                       >
                         <Users className="w-3.5 h-3.5" aria-hidden="true" />
-                        <span>{room.memberCount || 0}</span>
-                      </div>
-                      <div
+                        {room.memberCount || 0}
+                      </span>
+                      <span
                         className={`flex items-center gap-1 ${
-                          (room.matchCount || 0) > 0 ? "text-pink-400" : "text-muted-foreground"
+                          (room.matchCount || 0) > 0 ? "text-pink-400" : ""
                         }`}
                         aria-label={t('card.matchesLabel', { count: room.matchCount || 0 })}
                       >
                         <Heart className={`w-3.5 h-3.5 ${(room.matchCount || 0) > 0 ? "fill-pink-400" : ""}`} aria-hidden="true" />
-                        <span>{room.matchCount || 0}</span>
-                      </div>
+                        {room.matchCount || 0}
+                      </span>
+                      {room.minRating && room.minRating > 0 && (
+                        <span
+                          className="flex items-center gap-1"
+                          title={t('card.minRating', { rating: room.minRating })}
+                          aria-label={t('card.minRating', { rating: room.minRating })}
+                        >
+                          <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" aria-hidden="true" />
+                          {room.minRating}+
+                        </span>
+                      )}
+                      <span className="text-muted-foreground/70">·</span>
+                      <span className="text-muted-foreground/70">
+                        {createdDate.toLocaleDateString(locale, { day: "numeric", month: "short" })}
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Details row — type is already conveyed by the colored icon
-                    tile + accent bar, so no redundant "Films/Séries" badge here.
-                    The room code lives here, de-emphasized (it's rarely needed on
-                    the list; the invite flow shares a link, not the code). */}
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mb-4 pb-4 border-b border-border">
-                  {room.minRating && room.minRating > 0 && (
-                    <div
-                      className="flex items-center gap-1"
-                      title={t('card.minRating', { rating: room.minRating })}
-                      aria-label={t('card.minRating', { rating: room.minRating })}
-                    >
-                      <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" aria-hidden="true" />
-                      <span>{room.minRating}+</span>
-                    </div>
-                  )}
-                  {room.genreId && room.genreId > 0 && (
-                    <div className="flex items-center gap-1 text-primary">
-                      <Sparkles className="w-3 h-3" aria-hidden="true" />
-                      <span>{t('card.filtered')}</span>
-                    </div>
-                  )}
-                  <span>
-                    {createdDate.toLocaleDateString(locale, {
-                      day: "numeric",
-                      month: "short",
-                    })}
-                  </span>
-                  <span className="font-mono text-muted-foreground/50 ml-auto">{room.code}</span>
-                </div>
-
                 {/* Actions — "Accéder" is the primary action (full width); invite
-                    is demoted to an icon button (it's also available inside the
-                    room and the whole card already opens the room). */}
+                    is demoted to an icon button. */}
                 <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                   <ShareRoomButton
                     roomCode={room.code}

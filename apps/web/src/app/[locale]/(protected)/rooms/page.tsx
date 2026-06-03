@@ -8,12 +8,11 @@ import { CreateRoomValues, JoinRoomValues } from "@/schemas/rooms"
 import { joinRoom, createRoom } from "@/lib/api/rooms"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { Plus, Users, Film, Heart, TrendingUp, Tv, Clock, ChevronLeft, ChevronRight } from "lucide-react"
+import { Plus, Users, Film, Tv, Clock, ChevronLeft, ChevronRight } from "lucide-react"
 import { Footer } from "@/components/layout/Footer"
 import { BackgroundOrbs } from "@/components/layout/BackgroundOrbs"
 import { RoomErrorBoundary } from "@/components/error"
 import { RoomsPageSkeleton } from "./RoomsPageSkeleton"
-import { useUserStats } from "@/hooks/useUserStats"
 import { useOnboarding } from "@/hooks/useOnboarding"
 import { useRooms } from "@/hooks/useRooms"
 import { useGenres } from "@/hooks/useGenres"
@@ -49,7 +48,6 @@ function RoomsPageContent() {
   const loading = roomsLoading || genresLoading
   const error = actionError || roomsError
 
-  const userStats = useUserStats(rooms.length > 0)
   const { showOnboarding, completeOnboarding, skipOnboarding } = useOnboarding()
 
   // Filter rooms based on active filter
@@ -321,44 +319,36 @@ function RoomsPageContent() {
           </motion.div>
         )}
 
-        {/* Stats en bas - discret */}
-        {rooms.length > 0 && (
+        {/* Quick actions — replaces the old passive stat bar (which showed
+            cross-room totals that contradicted the filtered list, plus a
+            demotivating "0 swipes today"). Actionable: resume the most recent
+            room in one tap, or start a new one. */}
+        {rooms[0] && (
           <motion.div
             className="mt-12 pt-8 border-t border-border"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Film className="w-4 h-4 text-primary" />
-                </div>
-                <div>
-                  <span className="font-semibold text-foreground">{rooms.length}</span>
-                  <span className="ml-1">{t('stats.total')}</span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center">
-                  <Heart className="w-4 h-4 text-pink-500" />
-                </div>
-                <div>
-                  <span className="font-semibold text-foreground">{userStats.totalMatches}</span>
-                  <span className="ml-1">{t('stats.matches')}</span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-green-500" />
-                </div>
-                <div>
-                  <span className="font-semibold text-foreground">{userStats.totalSwipesToday}</span>
-                  <span className="ml-1">{t('stats.swipesToday')}</span>
-                </div>
-              </div>
+            <p className="text-center text-sm text-muted-foreground mb-4">
+              {t('stats.quickActions')}
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Button
+                variant="outline"
+                onClick={() => router.push(`/rooms/${rooms[0]!.code}`)}
+                className="border-border hover:bg-foreground/5"
+              >
+                <Clock className="w-4 h-4 mr-2" />
+                {t('stats.resume', { name: rooms[0].name || t('card.unnamed') })}
+              </Button>
+              <Button
+                onClick={() => setShowCreateDialog(true)}
+                className="bg-gradient-to-r from-primary to-accent hover:opacity-90"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                {t('stats.createAnother')}
+              </Button>
             </div>
           </motion.div>
         )}

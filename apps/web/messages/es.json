@@ -202,7 +202,11 @@
     "stats": {
       "total": "Total de salas",
       "matches": "Matches encontrados",
-      "swipesToday": "Swipes de hoy"
+      "swipesToday": "Swipes de hoy",
+      "resumeTitle": "Reanudar",
+      "resume": "Reanudar «{name}»",
+      "createAnother": "Crear una nueva room",
+      "quickActions": "Retoma tu última sesión o empieza una nueva"
     },
     "filters": {
       "all": "Todas",

@@ -202,7 +202,11 @@
     "stats": {
       "total": "Total rooms",
       "matches": "Matches found",
-      "swipesToday": "Swipes today"
+      "swipesToday": "Swipes today",
+      "resumeTitle": "Resume",
+      "resume": "Resume \"{name}\"",
+      "createAnother": "Create a new room",
+      "quickActions": "Pick up your last session or start a new one"
     },
     "filters": {
       "all": "All",
