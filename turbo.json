@@ -28,6 +28,10 @@
         "NEXT_PUBLIC_POSTHOG_HOST"
       ]
     },
+    "@swipe-movie/database#build": {
+      "dependsOn": ["db:generate"],
+      "outputs": ["dist/**"]
+    },
     "db:deploy": {
       "cache": false,
       "env": ["DATABASE_URL"]
