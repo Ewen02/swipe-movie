@@ -717,7 +717,8 @@
       "codeBack": "Change email",
       "codeError": "Invalid or expired code. Try again.",
       "emailSentTitle": "Check your inbox",
-      "emailSentDescription": "We sent you a sign-in link. It expires in 5 minutes."
+      "emailSentDescription": "We sent you a sign-in link. It expires in 5 minutes.",
+      "noAccountNeeded": "No need to create an account — it’s automatic."
     }
   },
   "preview": {
@@ -1042,7 +1043,8 @@
         "codeBack": "Change email",
         "codeError": "Invalid or expired code. Try again.",
         "emailSentTitle": "Check your inbox",
-        "emailSentDescription": "We've sent you a login link. It expires in 5 minutes."
+        "emailSentDescription": "We've sent you a login link. It expires in 5 minutes.",
+        "noAccountNeeded": "No need to create an account — it’s automatic."
       }
     },
     "join": {

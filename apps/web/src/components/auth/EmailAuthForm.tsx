@@ -202,15 +202,22 @@ export function EmailAuthForm({
       >
         {busy ? t('emailSending') : t('codeRequest')}
       </Button>
-      <button
-        type="button"
-        onClick={handleSendMagicLink}
-        disabled={busy || !isValidEmail}
-        className="w-full text-center text-xs text-muted-foreground hover:text-foreground py-1 transition-colors disabled:opacity-50"
-      >
-        {t('useMagicLink')}
-      </button>
+      {/* Only offered once a valid email is entered — the magic link is sent to
+          it, so a disabled-looking link before then reads as "broken". */}
+      {isValidEmail && (
+        <button
+          type="button"
+          onClick={handleSendMagicLink}
+          disabled={busy}
+          className="w-full text-center text-xs text-muted-foreground hover:text-foreground py-1 transition-colors disabled:opacity-50"
+        >
+          {t('useMagicLink')}
+        </button>
+      )}
       {error && <p className="text-xs text-red-500 text-center">{error}</p>}
+      {!compact && (
+        <p className="text-xs text-muted-foreground text-center pt-1">{t('noAccountNeeded')}</p>
+      )}
     </form>
   );
 }

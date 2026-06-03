@@ -717,7 +717,8 @@
       "codeBack": "E-Mail ändern",
       "codeError": "Ungültiger oder abgelaufener Code. Versuch es erneut.",
       "emailSentTitle": "Prüfe dein Postfach",
-      "emailSentDescription": "Wir haben dir einen Anmeldelink geschickt. Er läuft in 5 Minuten ab."
+      "emailSentDescription": "Wir haben dir einen Anmeldelink geschickt. Er läuft in 5 Minuten ab.",
+      "noAccountNeeded": "Kein Konto nötig — es wird automatisch erstellt."
     }
   },
   "preview": {
@@ -1042,7 +1043,8 @@
         "codeBack": "E-Mail ändern",
         "codeError": "Ungültiger oder abgelaufener Code. Versuch es erneut.",
         "emailSentTitle": "Prüfe deinen Posteingang",
-        "emailSentDescription": "Wir haben dir einen Login-Link geschickt. Er läuft in 5 Minuten ab."
+        "emailSentDescription": "Wir haben dir einen Login-Link geschickt. Er läuft in 5 Minuten ab.",
+        "noAccountNeeded": "Kein Konto nötig — es wird automatisch erstellt."
       }
     },
     "join": {

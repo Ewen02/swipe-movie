@@ -717,7 +717,8 @@
       "codeBack": "Cambia email",
       "codeError": "Codice non valido o scaduto. Riprova.",
       "emailSentTitle": "Controlla la posta",
-      "emailSentDescription": "Ti abbiamo inviato un link di accesso. Scade tra 5 minuti."
+      "emailSentDescription": "Ti abbiamo inviato un link di accesso. Scade tra 5 minuti.",
+      "noAccountNeeded": "Non serve creare un account: si crea da solo."
     }
   },
   "preview": {
@@ -1042,7 +1043,8 @@
         "codeBack": "Cambia email",
         "codeError": "Codice non valido o scaduto. Riprova.",
         "emailSentTitle": "Controlla la tua casella",
-        "emailSentDescription": "Ti abbiamo inviato un link di accesso. Scade tra 5 minuti."
+        "emailSentDescription": "Ti abbiamo inviato un link di accesso. Scade tra 5 minuti.",
+        "noAccountNeeded": "Non serve creare un account: si crea da solo."
       }
     },
     "join": {

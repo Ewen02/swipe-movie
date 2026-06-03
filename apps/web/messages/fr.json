@@ -717,7 +717,8 @@
       "codeBack": "Modifier mon email",
       "codeError": "Code invalide ou expiré. Réessaie.",
       "emailSentTitle": "Vérifie ta boîte mail",
-      "emailSentDescription": "On t’a envoyé un lien de connexion. Il expire dans 5 minutes."
+      "emailSentDescription": "On t’a envoyé un lien de connexion. Il expire dans 5 minutes.",
+      "noAccountNeeded": "Pas besoin de créer un compte — il se crée tout seul."
     }
   },
   "preview": {
@@ -1042,7 +1043,8 @@
         "codeBack": "Modifier mon email",
         "codeError": "Code invalide ou expiré. Réessaie.",
         "emailSentTitle": "Vérifie ta boîte mail",
-        "emailSentDescription": "On t'a envoyé un lien de connexion. Il expire dans 5 minutes."
+        "emailSentDescription": "On t'a envoyé un lien de connexion. Il expire dans 5 minutes.",
+        "noAccountNeeded": "Pas besoin de créer un compte — il se crée tout seul."
       }
     },
     "join": {

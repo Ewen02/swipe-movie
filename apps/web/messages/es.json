@@ -717,7 +717,8 @@
       "codeBack": "Cambiar correo",
       "codeError": "Código no válido o caducado. Inténtalo de nuevo.",
       "emailSentTitle": "Revisa tu correo",
-      "emailSentDescription": "Te enviamos un enlace de acceso. Caduca en 5 minutos."
+      "emailSentDescription": "Te enviamos un enlace de acceso. Caduca en 5 minutos.",
+      "noAccountNeeded": "No necesitas crear una cuenta: se crea sola."
     }
   },
   "preview": {
@@ -1042,7 +1043,8 @@
         "codeBack": "Cambiar correo",
         "codeError": "Código no válido o caducado. Inténtalo de nuevo.",
         "emailSentTitle": "Revisa tu bandeja",
-        "emailSentDescription": "Te enviamos un enlace de acceso. Caduca en 5 minutos."
+        "emailSentDescription": "Te enviamos un enlace de acceso. Caduca en 5 minutos.",
+        "noAccountNeeded": "No necesitas crear una cuenta: se crea sola."
       }
     },
     "join": {
