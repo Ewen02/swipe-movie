@@ -1,7 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { nextCookies } from 'better-auth/next-js';
-import { magicLink } from 'better-auth/plugins';
+import { magicLink, emailOTP } from 'better-auth/plugins';
 import { stripe } from '@better-auth/stripe';
 import Stripe from 'stripe';
 import { prisma } from '@swipe-movie/database';
@@ -157,6 +157,48 @@ export const auth = betterAuth({
                   </div>
                 `,
                 text: `Connecte-toi à Swipe Movie : ${url}`,
+              });
+            },
+          }),
+          // Email OTP — six-digit code as a lower-friction alternative to the
+          // magic link (no app switch on mobile). Shares the same Resend gating.
+          // With sign-in OTP and disableSignUp left false, verifying a code for
+          // an unknown email creates the account, matching magic-link behaviour.
+          emailOTP({
+            otpLength: 6,
+            expiresIn: 60 * 10, // 10 minutes
+            sendVerificationOTP: async ({ email, otp, type }) => {
+              const emailService = new EmailService(
+                {
+                  apiKey: process.env.RESEND_API_KEY,
+                  fromEmail: process.env.EMAIL_FROM || 'noreply@swipe-movie.com',
+                  fromName: 'Swipe Movie',
+                  baseUrl: getAuthBaseURL(),
+                },
+                process.env.NODE_ENV !== 'production',
+              );
+              // We only drive the "sign-in" flow from the UI; other types
+              // (email-verification, forget-password) reuse the same template.
+              const subject =
+                type === 'forget-password'
+                  ? 'Ton code de réinitialisation Swipe Movie'
+                  : 'Ton code de connexion Swipe Movie';
+              await emailService.sendEmail({
+                to: email,
+                subject,
+                html: `
+                  <div style="font-family: system-ui, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
+                    <h1 style="font-size: 22px;">Ton code de connexion</h1>
+                    <p>Saisis ce code dans Swipe Movie pour te connecter. Il expire dans 10 minutes.</p>
+                    <p style="margin: 32px 0; text-align:center;">
+                      <span style="font-size:34px; font-weight:700; letter-spacing:8px; background:#f4f4f5; padding:14px 24px; border-radius:10px; display:inline-block;">
+                        ${otp}
+                      </span>
+                    </p>
+                    <p style="color:#666; font-size:13px;">Si tu n'as pas demandé ce code, ignore cet email.</p>
+                  </div>
+                `,
+                text: `Ton code de connexion Swipe Movie : ${otp} (expire dans 10 minutes)`,
               });
             },
           }),

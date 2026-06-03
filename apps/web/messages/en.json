@@ -687,7 +687,8 @@
       "and": "and our",
       "privacyLink": "Privacy Policy",
       "ready": "Ready in 30s",
-      "error": "Sign-in failed. Try again or contact support."
+      "error": "Sign-in failed. Try again or contact support.",
+      "or": "or"
     },
     "badge": "Sign in with 1 click",
     "brand": {
@@ -702,6 +703,21 @@
       "movies": "Movies",
       "platforms": "Platforms",
       "toDecide": "To decide"
+    },
+    "email": {
+      "emailPlaceholder": "you@email.com",
+      "codeRequest": "Get a code",
+      "emailSending": "Sending...",
+      "useMagicLink": "Get a link instead",
+      "error": "Couldn't send the email. Try again or use Google.",
+      "codeSentTo": "We sent a code to {email}",
+      "codePlaceholder": "------",
+      "codeSubmit": "Sign in",
+      "codeVerifying": "Verifying...",
+      "codeBack": "Change email",
+      "codeError": "Invalid or expired code. Try again.",
+      "emailSentTitle": "Check your inbox",
+      "emailSentDescription": "We sent you a sign-in link. It expires in 5 minutes."
     }
   },
   "preview": {
@@ -1012,7 +1028,22 @@
       "emailSending": "Sending...",
       "emailSentTitle": "Check your inbox",
       "emailSentDescription": "We've sent you a login link. It expires in 5 minutes.",
-      "emailError": "Couldn't send the link. Retry or use Google."
+      "emailError": "Couldn't send the link. Retry or use Google.",
+      "email": {
+        "emailPlaceholder": "you@email.com",
+        "codeRequest": "Get a code",
+        "emailSending": "Sending...",
+        "useMagicLink": "Get a link instead",
+        "error": "Couldn't send the email. Try again or use Google.",
+        "codeSentTo": "We sent a code to {email}",
+        "codePlaceholder": "------",
+        "codeSubmit": "Sign in",
+        "codeVerifying": "Verifying...",
+        "codeBack": "Change email",
+        "codeError": "Invalid or expired code. Try again.",
+        "emailSentTitle": "Check your inbox",
+        "emailSentDescription": "We've sent you a login link. It expires in 5 minutes."
+      }
     },
     "join": {
       "error": "Unable to join the room. The code may be invalid or expired.",

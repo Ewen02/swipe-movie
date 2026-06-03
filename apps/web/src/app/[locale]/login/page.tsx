@@ -10,6 +10,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@swipe-movie/ui';
 import { Film, Sparkles, Heart, X, CheckCircle2, Shield, Zap } from 'lucide-react';
 import { PublicHeader } from '@/components/layout/PublicHeader';
+import { EmailAuthForm } from '@/components/auth/EmailAuthForm';
 
 function LoginPageContent() {
   const t = useTranslations('login');
@@ -140,6 +141,20 @@ function LoginPageContent() {
               </motion.div>
 
               {error && <p className="text-sm text-red-500 mt-3 text-center">{error}</p>}
+
+              {/* Divider */}
+              <div className="flex items-center gap-3 my-5">
+                <div className="h-px flex-1 bg-border" />
+                <span className="text-xs text-muted-foreground">{t('card.or')}</span>
+                <div className="h-px flex-1 bg-border" />
+              </div>
+
+              {/* Email auth (OTP code + magic link) */}
+              <EmailAuthForm
+                callbackUrl={callbackUrl}
+                namespace="login.email"
+                analyticsContext={{ surface: 'login_page' }}
+              />
 
               {/* Trust badges */}
               <div className="mt-6 flex flex-wrap gap-4 text-sm">

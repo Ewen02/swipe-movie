@@ -687,7 +687,8 @@
       "and": "e la nostra",
       "privacyLink": "Informativa sulla privacy",
       "ready": "Pronto in 30s",
-      "error": "Accesso non riuscito. Riprova o contatta il supporto."
+      "error": "Accesso non riuscito. Riprova o contatta il supporto.",
+      "or": "o"
     },
     "badge": "Accedi con 1 clic",
     "brand": {
@@ -702,6 +703,21 @@
       "movies": "Film",
       "platforms": "Piattaforme",
       "toDecide": "Per decidere"
+    },
+    "email": {
+      "emailPlaceholder": "tu@email.com",
+      "codeRequest": "Ricevi un codice",
+      "emailSending": "Invio...",
+      "useMagicLink": "Ricevi un link",
+      "error": "Impossibile inviare l'email. Riprova o usa Google.",
+      "codeSentTo": "Abbiamo inviato un codice a {email}",
+      "codePlaceholder": "------",
+      "codeSubmit": "Accedi",
+      "codeVerifying": "Verifica...",
+      "codeBack": "Cambia email",
+      "codeError": "Codice non valido o scaduto. Riprova.",
+      "emailSentTitle": "Controlla la posta",
+      "emailSentDescription": "Ti abbiamo inviato un link di accesso. Scade tra 5 minuti."
     }
   },
   "preview": {
@@ -1012,7 +1028,22 @@
       "emailSending": "Invio...",
       "emailSentTitle": "Controlla la tua casella",
       "emailSentDescription": "Ti abbiamo inviato un link di accesso. Scade tra 5 minuti.",
-      "emailError": "Impossibile inviare il link. Riprova o usa Google."
+      "emailError": "Impossibile inviare il link. Riprova o usa Google.",
+      "email": {
+        "emailPlaceholder": "tu@email.com",
+        "codeRequest": "Ricevi un codice",
+        "emailSending": "Invio...",
+        "useMagicLink": "Ricevi un link",
+        "error": "Impossibile inviare l'email. Riprova o usa Google.",
+        "codeSentTo": "Abbiamo inviato un codice a {email}",
+        "codePlaceholder": "------",
+        "codeSubmit": "Accedi",
+        "codeVerifying": "Verifica...",
+        "codeBack": "Cambia email",
+        "codeError": "Codice non valido o scaduto. Riprova.",
+        "emailSentTitle": "Controlla la tua casella",
+        "emailSentDescription": "Ti abbiamo inviato un link di accesso. Scade tra 5 minuti."
+      }
     },
     "join": {
       "error": "Impossibile unirsi alla stanza. Il codice potrebbe non essere valido o essere scaduto.",

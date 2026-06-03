@@ -687,7 +687,8 @@
       "and": "et notre",
       "privacyLink": "politique de confidentialité",
       "ready": "Prêt en 30s",
-      "error": "La connexion a échoué. Réessaie ou contacte le support."
+      "error": "La connexion a échoué. Réessaie ou contacte le support.",
+      "or": "ou"
     },
     "badge": "Connexion en 1 clic",
     "brand": {
@@ -702,6 +703,21 @@
       "movies": "Films",
       "platforms": "Plateformes",
       "toDecide": "Pour décider"
+    },
+    "email": {
+      "emailPlaceholder": "ton@email.com",
+      "codeRequest": "Recevoir un code",
+      "emailSending": "Envoi...",
+      "useMagicLink": "Recevoir un lien plutôt",
+      "error": "Impossible d'envoyer l'email. Réessaie ou utilise Google.",
+      "codeSentTo": "On a envoyé un code à {email}",
+      "codePlaceholder": "------",
+      "codeSubmit": "Se connecter",
+      "codeVerifying": "Vérification...",
+      "codeBack": "Modifier mon email",
+      "codeError": "Code invalide ou expiré. Réessaie.",
+      "emailSentTitle": "Vérifie ta boîte mail",
+      "emailSentDescription": "On t’a envoyé un lien de connexion. Il expire dans 5 minutes."
     }
   },
   "preview": {
@@ -1012,7 +1028,22 @@
       "emailSending": "Envoi...",
       "emailSentTitle": "Vérifie ta boîte mail",
       "emailSentDescription": "On t'a envoyé un lien de connexion. Il expire dans 5 minutes.",
-      "emailError": "Impossible d'envoyer le lien. Réessaie ou utilise Google."
+      "emailError": "Impossible d'envoyer le lien. Réessaie ou utilise Google.",
+      "email": {
+        "emailPlaceholder": "ton@email.com",
+        "codeRequest": "Recevoir un code",
+        "emailSending": "Envoi...",
+        "useMagicLink": "Recevoir un lien plutôt",
+        "error": "Impossible d'envoyer l'email. Réessaie ou utilise Google.",
+        "codeSentTo": "On a envoyé un code à {email}",
+        "codePlaceholder": "------",
+        "codeSubmit": "Se connecter",
+        "codeVerifying": "Vérification...",
+        "codeBack": "Modifier mon email",
+        "codeError": "Code invalide ou expiré. Réessaie.",
+        "emailSentTitle": "Vérifie ta boîte mail",
+        "emailSentDescription": "On t'a envoyé un lien de connexion. Il expire dans 5 minutes."
+      }
     },
     "join": {
       "error": "Impossible de rejoindre la room. Le code est peut-être invalide ou expiré.",

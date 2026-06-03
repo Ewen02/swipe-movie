@@ -687,7 +687,8 @@
       "and": "y nuestra",
       "privacyLink": "Política de privacidad",
       "ready": "Listo en 30s",
-      "error": "Error al iniciar sesión. Inténtalo de nuevo o contacta con soporte."
+      "error": "Error al iniciar sesión. Inténtalo de nuevo o contacta con soporte.",
+      "or": "o"
     },
     "badge": "Inicia sesión con 1 clic",
     "brand": {
@@ -702,6 +703,21 @@
       "movies": "Películas",
       "platforms": "Plataformas",
       "toDecide": "Para decidir"
+    },
+    "email": {
+      "emailPlaceholder": "tu@email.com",
+      "codeRequest": "Recibir un código",
+      "emailSending": "Enviando...",
+      "useMagicLink": "Recibir un enlace",
+      "error": "No se pudo enviar el correo. Inténtalo de nuevo o usa Google.",
+      "codeSentTo": "Enviamos un código a {email}",
+      "codePlaceholder": "------",
+      "codeSubmit": "Entrar",
+      "codeVerifying": "Verificando...",
+      "codeBack": "Cambiar correo",
+      "codeError": "Código no válido o caducado. Inténtalo de nuevo.",
+      "emailSentTitle": "Revisa tu correo",
+      "emailSentDescription": "Te enviamos un enlace de acceso. Caduca en 5 minutos."
     }
   },
   "preview": {
@@ -1012,7 +1028,22 @@
       "emailSending": "Enviando...",
       "emailSentTitle": "Revisa tu bandeja",
       "emailSentDescription": "Te enviamos un enlace de acceso. Caduca en 5 minutos.",
-      "emailError": "No se pudo enviar el enlace. Reintenta o usa Google."
+      "emailError": "No se pudo enviar el enlace. Reintenta o usa Google.",
+      "email": {
+        "emailPlaceholder": "tu@email.com",
+        "codeRequest": "Recibir un código",
+        "emailSending": "Enviando...",
+        "useMagicLink": "Recibir un enlace",
+        "error": "No se pudo enviar el correo. Inténtalo de nuevo o usa Google.",
+        "codeSentTo": "Enviamos un código a {email}",
+        "codePlaceholder": "------",
+        "codeSubmit": "Entrar",
+        "codeVerifying": "Verificando...",
+        "codeBack": "Cambiar correo",
+        "codeError": "Código no válido o caducado. Inténtalo de nuevo.",
+        "emailSentTitle": "Revisa tu bandeja",
+        "emailSentDescription": "Te enviamos un enlace de acceso. Caduca en 5 minutos."
+      }
     },
     "join": {
       "error": "No se pudo unir a la sala. El código puede ser inválido o haber caducado.",

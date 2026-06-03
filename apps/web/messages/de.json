@@ -687,7 +687,8 @@
       "and": "und unsere",
       "privacyLink": "Datenschutzerklärung",
       "ready": "In 30s bereit",
-      "error": "Anmeldung fehlgeschlagen. Versuche es erneut oder kontaktiere den Support."
+      "error": "Anmeldung fehlgeschlagen. Versuche es erneut oder kontaktiere den Support.",
+      "or": "oder"
     },
     "badge": "Mit 1 Klick anmelden",
     "brand": {
@@ -702,6 +703,21 @@
       "movies": "Filme",
       "platforms": "Plattformen",
       "toDecide": "Zum Entscheiden"
+    },
+    "email": {
+      "emailPlaceholder": "du@email.com",
+      "codeRequest": "Code erhalten",
+      "emailSending": "Senden...",
+      "useMagicLink": "Stattdessen Link erhalten",
+      "error": "E-Mail konnte nicht gesendet werden. Versuch es erneut oder nutze Google.",
+      "codeSentTo": "Wir haben einen Code an {email} gesendet",
+      "codePlaceholder": "------",
+      "codeSubmit": "Anmelden",
+      "codeVerifying": "Wird geprüft...",
+      "codeBack": "E-Mail ändern",
+      "codeError": "Ungültiger oder abgelaufener Code. Versuch es erneut.",
+      "emailSentTitle": "Prüfe dein Postfach",
+      "emailSentDescription": "Wir haben dir einen Anmeldelink geschickt. Er läuft in 5 Minuten ab."
     }
   },
   "preview": {
@@ -1012,7 +1028,22 @@
       "emailSending": "Wird gesendet...",
       "emailSentTitle": "Prüfe deinen Posteingang",
       "emailSentDescription": "Wir haben dir einen Login-Link geschickt. Er läuft in 5 Minuten ab.",
-      "emailError": "Link konnte nicht gesendet werden. Erneut versuchen oder Google verwenden."
+      "emailError": "Link konnte nicht gesendet werden. Erneut versuchen oder Google verwenden.",
+      "email": {
+        "emailPlaceholder": "du@email.com",
+        "codeRequest": "Code erhalten",
+        "emailSending": "Senden...",
+        "useMagicLink": "Stattdessen Link erhalten",
+        "error": "E-Mail konnte nicht gesendet werden. Versuch es erneut oder nutze Google.",
+        "codeSentTo": "Wir haben einen Code an {email} gesendet",
+        "codePlaceholder": "------",
+        "codeSubmit": "Anmelden",
+        "codeVerifying": "Wird geprüft...",
+        "codeBack": "E-Mail ändern",
+        "codeError": "Ungültiger oder abgelaufener Code. Versuch es erneut.",
+        "emailSentTitle": "Prüfe deinen Posteingang",
+        "emailSentDescription": "Wir haben dir einen Login-Link geschickt. Er läuft in 5 Minuten ab."
+      }
     },
     "join": {
       "error": "Raum konnte nicht beigetreten werden. Der Code ist möglicherweise ungültig oder abgelaufen.",

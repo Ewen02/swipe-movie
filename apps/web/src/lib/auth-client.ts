@@ -1,6 +1,6 @@
 import { createAuthClient } from 'better-auth/react';
 import { stripeClient } from '@better-auth/stripe/client';
-import { magicLinkClient } from 'better-auth/client/plugins';
+import { magicLinkClient, emailOTPClient } from 'better-auth/client/plugins';
 import { clearSessionCache } from '@/lib/session-cache';
 
 // Use NEXT_PUBLIC_AUTH_URL if set, otherwise auto-detect from VERCEL_URL or fallback to localhost
@@ -21,6 +21,7 @@ export const authClient = createAuthClient({
   baseURL: getBaseURL(),
   plugins: [
     magicLinkClient(),
+    emailOTPClient(),
     stripeClient({
       subscription: true,
     }),
