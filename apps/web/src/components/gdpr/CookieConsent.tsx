@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
 import { useTranslations } from "next-intl"
 import { Button } from "@swipe-movie/ui"
 import { Cookie, Shield, X } from "lucide-react"
@@ -80,16 +79,10 @@ export function CookieConsent() {
     }
   }
 
+  if (!showBanner) return null
+
   return (
-    <AnimatePresence>
-      {showBanner && (
-        <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="fixed bottom-0 left-0 right-0 z-50 p-4 sm:p-6"
-        >
+    <div className="lp-slide-up fixed bottom-0 left-0 right-0 z-50 p-4 sm:p-6">
           <div className="max-w-4xl mx-auto">
             <div className="relative bg-gradient-to-br from-background/98 to-background/95 backdrop-blur-xl border border-border rounded-2xl shadow-2xl overflow-hidden">
               {/* Accent bar */}
@@ -218,8 +211,6 @@ export function CookieConsent() {
               </div>
             </div>
           </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    </div>
   )
 }

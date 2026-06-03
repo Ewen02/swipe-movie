@@ -3,7 +3,6 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { motion } from "framer-motion"
 import { Heart, Film, Github, Twitter, Cookie } from "lucide-react"
 
 export function Footer() {
@@ -42,12 +41,7 @@ export function Footer() {
             <div className="p-8 md:p-12">
               <div className="grid md:grid-cols-3 gap-12 items-center">
                 {/* Logo & tagline */}
-                <motion.div
-                  className="text-center md:text-left"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
+                <div className="lp-reveal text-center md:text-left">
                   <Link href="/" className="inline-block mb-4">
                     <Image
                       src="/logo.png"
@@ -62,14 +56,12 @@ export function Footer() {
                     <Heart className="w-4 h-4 text-red-500 fill-red-500" />
                     <span>pour les cinéphiles</span>
                   </p>
-                </motion.div>
+                </div>
 
                 {/* Navigation links */}
-                <motion.div
-                  className="flex flex-wrap justify-center gap-x-6 gap-y-3"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
+                <div
+                  className="lp-reveal flex flex-wrap justify-center gap-x-6 gap-y-3"
+                  style={{ animationDelay: "0.1s" }}
                 >
                   {footerLinks.map((link) => (
                     <Link
@@ -78,10 +70,7 @@ export function Footer() {
                       className="group relative text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
                       <span>{link.label}</span>
-                      <motion.span
-                        className="absolute -bottom-1 left-0 w-0 h-px bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300"
-                        initial={false}
-                      />
+                      <span className="absolute -bottom-1 left-0 w-0 h-px bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300" />
                     </Link>
                   ))}
                   {/* Cookie consent link */}
@@ -91,52 +80,41 @@ export function Footer() {
                   >
                     <Cookie className="w-3.5 h-3.5" />
                     <span>{t('nav.cookies')}</span>
-                    <motion.span
-                      className="absolute -bottom-1 left-0 w-0 h-px bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300"
-                      initial={false}
-                    />
+                    <span className="absolute -bottom-1 left-0 w-0 h-px bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300" />
                   </button>
-                </motion.div>
+                </div>
 
                 {/* Social & copyright */}
-                <motion.div
-                  className="text-center md:text-right"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
+                <div
+                  className="lp-reveal text-center md:text-right"
+                  style={{ animationDelay: "0.2s" }}
                 >
                   {/* Social icons */}
                   <div className="flex items-center justify-center md:justify-end gap-3 mb-4">
-                    <motion.a
+                    <a
                       href="#"
-                      className="w-10 h-10 rounded-xl bg-foreground/5 border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-foreground/10 hover:border-border transition-colors"
-                      whileHover={{ scale: 1.1, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
+                      className="w-10 h-10 rounded-xl bg-foreground/5 border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-foreground/10 hover:border-border transition-all duration-200 ease-out hover:scale-110 hover:-translate-y-0.5 active:scale-95"
                     >
                       <Twitter className="w-4 h-4" />
-                    </motion.a>
-                    <motion.a
+                    </a>
+                    <a
                       href="#"
-                      className="w-10 h-10 rounded-xl bg-foreground/5 border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-foreground/10 hover:border-border transition-colors"
-                      whileHover={{ scale: 1.1, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
+                      className="w-10 h-10 rounded-xl bg-foreground/5 border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-foreground/10 hover:border-border transition-all duration-200 ease-out hover:scale-110 hover:-translate-y-0.5 active:scale-95"
                     >
                       <Github className="w-4 h-4" />
-                    </motion.a>
+                    </a>
                   </div>
                   <p className="text-xs text-muted-foreground">
                     © 2025 Swipe Movie. {t('footer.rights')}
                   </p>
-                </motion.div>
+                </div>
               </div>
 
               {/* Discover — SEO internal links */}
-              <motion.nav
+              <nav
                 aria-label={t('footer.discoverTitle')}
-                className="mt-10 pt-8 border-t border-border"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
+                className="lp-reveal mt-10 pt-8 border-t border-border"
+                style={{ animationDelay: "0.3s" }}
               >
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4 text-center md:text-left">
                   {t('footer.discoverTitle')}
@@ -149,28 +127,23 @@ export function Footer() {
                       className="group relative text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
                       <span>{link.label}</span>
-                      <motion.span
-                        className="absolute -bottom-1 left-0 w-0 h-px bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300"
-                        initial={false}
-                      />
+                      <span className="absolute -bottom-1 left-0 w-0 h-px bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300" />
                     </Link>
                   ))}
                 </div>
-              </motion.nav>
+              </nav>
             </div>
           </div>
 
           {/* Bottom decorative element */}
-          <motion.div
-            className="mt-8 flex items-center justify-center gap-3 text-sm text-muted-foreground"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+          <div
+            className="lp-reveal mt-8 flex items-center justify-center gap-3 text-sm text-muted-foreground"
+            style={{ animationDelay: "0.3s" }}
           >
             <Film className="w-4 h-4 text-primary" />
             <span>Trouvez le film parfait, ensemble</span>
             <Film className="w-4 h-4 text-accent" />
-          </motion.div>
+          </div>
         </div>
       </div>
 

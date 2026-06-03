@@ -1,6 +1,5 @@
-import { motion } from "framer-motion"
 import { Zap } from "lucide-react"
-import { ScrollReveal } from "@/components/animations/ScrollAnimations"
+import { Reveal } from "@/components/landing/Reveal"
 import { type LucideIcon } from "lucide-react"
 
 interface StepItem {
@@ -37,28 +36,22 @@ export function HowItWorksSection({
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <ScrollReveal className="text-center mb-16">
-            <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-medium mb-6"
-            >
+          <Reveal className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-medium mb-6">
               <Zap className="w-4 h-4" />
               {badge}
-            </motion.div>
+            </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               <span className="text-foreground">{title}</span>
               <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{titleHighlight}</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{subtitle}</p>
-          </ScrollReveal>
+          </Reveal>
 
           <div className="grid md:grid-cols-3 gap-8">
             {steps.map((item, index) => (
-              <ScrollReveal key={index} delay={item.delay}>
-                <motion.div
-                  className="relative group"
-                  whileHover={{ y: -8 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                >
+              <Reveal key={index} delay={item.delay}>
+                <div className="relative group transition-transform duration-300 ease-out hover:-translate-y-2">
                   {/* Decorative orb */}
                   <div className={`absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br ${item.color} rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity`} />
 
@@ -77,8 +70,8 @@ export function HowItWorksSection({
                       <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
                     </div>
                   </div>
-                </motion.div>
-              </ScrollReveal>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>

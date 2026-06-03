@@ -1,5 +1,5 @@
-import { ScrollReveal } from "@/components/animations/ScrollAnimations"
-import { CountUp } from "@/components/animations/TextReveal"
+import { Reveal } from "@/components/landing/Reveal"
+import { CountUp } from "@/components/landing/CountUp"
 
 interface StatItem {
   value: number
@@ -24,14 +24,14 @@ export function StatsSection({ stats }: StatsSectionProps) {
             <div className="p-8 md:p-12">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                 {stats.map((stat, index) => (
-                  <ScrollReveal key={index} delay={index * 0.1}>
+                  <Reveal key={index} delay={index * 0.1}>
                     <div className="text-center">
                       <div className={`text-4xl md:text-5xl font-bold ${stat.color} mb-2`}>
                         <CountUp end={stat.value} suffix={stat.suffix} />
                       </div>
                       <p className="text-muted-foreground">{stat.label}</p>
                     </div>
-                  </ScrollReveal>
+                  </Reveal>
                 ))}
               </div>
             </div>

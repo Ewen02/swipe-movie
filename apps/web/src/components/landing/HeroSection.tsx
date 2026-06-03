@@ -1,11 +1,8 @@
-import Link from "next/link"
-import { motion } from "framer-motion"
-import { Button } from "@swipe-movie/ui"
-import { ArrowRight, Sparkles, Heart, X, Star, CheckCircle2, Clock, Shield } from "lucide-react"
-import { ShimmerEffect } from "@/components/animations/AnimatedGradient"
+import { Sparkles, Heart, X, Star, CheckCircle2, Clock, Shield } from "lucide-react"
+import { Reveal } from "@/components/landing/Reveal"
+import { AuthAwareCTA } from "@/components/landing/AuthAwareCTA"
 
 interface HeroSectionProps {
-  isAuthenticated: boolean
   badge: string
   title: string
   titleHighlight: string
@@ -18,7 +15,6 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({
-  isAuthenticated,
   badge,
   title,
   titleHighlight,
@@ -38,12 +34,7 @@ export function HeroSection({
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-6xl mx-auto">
           {/* Main hero card */}
-          <motion.div
-            className="relative"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <Reveal className="relative">
             {/* Decorative orbs */}
             <div className="absolute -top-10 -left-10 w-32 h-32 bg-primary/20 rounded-full blur-2xl hidden md:block" />
             <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-accent/20 rounded-full blur-2xl hidden md:block" />
@@ -56,57 +47,38 @@ export function HeroSection({
                 <div className="grid lg:grid-cols-2 gap-12 items-center">
                   {/* Left content */}
                   <div className="text-center lg:text-left">
-                    <motion.div
+                    <Reveal
+                      delay={0.2}
                       className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-medium mb-6"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
                     >
                       <Sparkles className="w-4 h-4" />
                       {badge}
-                    </motion.div>
+                    </Reveal>
 
-                    <motion.h1
-                      className="text-5xl md:text-7xl font-bold mb-6"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 }}
-                    >
-                      <span className="text-foreground">{title}</span>
-                      <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{titleHighlight}</span>
-                    </motion.h1>
+                    <Reveal as="div" delay={0.3}>
+                      <h1 className="text-5xl md:text-7xl font-bold mb-6">
+                        <span className="text-foreground">{title}</span>
+                        <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{titleHighlight}</span>
+                      </h1>
+                    </Reveal>
 
-                    <motion.p
-                      className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed"
-                      initial={{ opacity: 0, y: 15 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                    >
-                      {subtitle}
-                    </motion.p>
+                    <Reveal as="div" delay={0.4}>
+                      <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
+                        {subtitle}
+                      </p>
+                    </Reveal>
 
-                    <motion.div
+                    <Reveal
+                      delay={0.5}
                       className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
-                      initial={{ opacity: 0, y: 15 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 }}
                     >
-                      <Link href={isAuthenticated ? "/rooms" : "/try"}>
-                        <ShimmerEffect delay={3}>
-                          <Button size="lg" className="text-lg px-8 py-7 shadow-xl shadow-primary/25 w-full sm:w-auto">
-                            {isAuthenticated ? ctaAuth : cta}
-                            <ArrowRight className="ml-2 h-5 w-5" />
-                          </Button>
-                        </ShimmerEffect>
-                      </Link>
-                    </motion.div>
+                      <AuthAwareCTA cta={cta} ctaAuth={ctaAuth} />
+                    </Reveal>
 
                     {/* Trust indicators */}
-                    <motion.div
+                    <Reveal
+                      delay={0.6}
                       className="mt-8 flex flex-wrap gap-4 justify-center lg:justify-start text-sm text-muted-foreground"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.6 }}
                     >
                       <span className="flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4 text-green-500" />
@@ -120,43 +92,31 @@ export function HeroSection({
                         <Shield className="w-4 h-4 text-green-500" />
                         {trustNoCard}
                       </span>
-                    </motion.div>
+                    </Reveal>
                   </div>
 
                   {/* Right content - Demo cards */}
-                  <motion.div
-                    className="hidden lg:block relative"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.4, type: "spring", stiffness: 100 }}
-                  >
+                  <Reveal delay={0.4} className="hidden lg:block relative">
                     <div className="relative w-72 h-96 mx-auto">
                       {/* Background cards */}
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-red-500/10 rounded-2xl border border-border"
-                        style={{ transform: "rotate(8deg) translateX(30px)" }}
-                        animate={{ rotate: [8, 10, 8] }}
-                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                      <div
+                        className="lp-card-wobble absolute inset-0 bg-gradient-to-br from-red-500/20 to-red-500/10 rounded-2xl border border-border"
+                        style={{ ["--lp-base-transform" as string]: "rotate(8deg) translateX(30px)", transform: "rotate(8deg) translateX(30px)" }}
                       >
                         <div className="absolute top-4 left-4 px-3 py-1 bg-red-500/20 rounded-full">
                           <X className="w-5 h-5 text-red-500" />
                         </div>
-                      </motion.div>
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-2xl border border-border"
-                        style={{ transform: "rotate(-5deg) translateX(-20px)" }}
-                        animate={{ rotate: [-5, -7, -5] }}
-                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                      </div>
+                      <div
+                        className="lp-card-wobble absolute inset-0 bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-2xl border border-border"
+                        style={{ ["--lp-base-transform" as string]: "rotate(-5deg) translateX(-20px)", transform: "rotate(-5deg) translateX(-20px)", animationDelay: "0.5s" }}
                       >
                         <div className="absolute top-4 right-4 px-3 py-1 bg-green-500/20 rounded-full">
                           <Heart className="w-5 h-5 text-green-500" />
                         </div>
-                      </motion.div>
+                      </div>
                       {/* Front card */}
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-br from-background to-muted rounded-2xl border border-border shadow-2xl overflow-hidden"
-                        whileHover={{ scale: 1.02 }}
-                      >
+                      <div className="absolute inset-0 bg-gradient-to-br from-background to-muted rounded-2xl border border-border shadow-2xl overflow-hidden transition-transform duration-300 ease-out hover:scale-[1.02]">
                         <div className="h-2/3 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
                           <span className="text-8xl">🎬</span>
                         </div>
@@ -168,13 +128,13 @@ export function HeroSection({
                             <span className="text-sm font-medium">8.8</span>
                           </div>
                         </div>
-                      </motion.div>
+                      </div>
                     </div>
-                  </motion.div>
+                  </Reveal>
                 </div>
               </div>
             </div>
-          </motion.div>
+          </Reveal>
         </div>
       </div>
     </section>

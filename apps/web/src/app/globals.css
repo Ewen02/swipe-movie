@@ -133,3 +133,143 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ── Landing animations (CSS-only, no JS runtime) ──────────────────────────
+   These replace the framer-motion effects that previously shipped on the
+   homepage. Entrance reveals run once on mount; ambient effects loop. All are
+   GPU-friendly transforms/opacity and disabled under reduced-motion. */
+
+@keyframes lp-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lp-reveal-left {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes lp-reveal-right {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes lp-card-wobble {
+  0%,
+  100% {
+    transform: var(--lp-base-transform) rotate(0deg);
+  }
+  50% {
+    transform: var(--lp-base-transform) rotate(2deg);
+  }
+}
+
+@keyframes lp-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lp-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes lp-shimmer {
+  0% {
+    transform: translateX(-100%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-12deg);
+  }
+}
+
+/* Entrance: applied to sections/items; reveal once on mount. */
+.lp-reveal {
+  opacity: 0;
+  animation: lp-reveal 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+.lp-reveal-left {
+  opacity: 0;
+  animation: lp-reveal-left 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+.lp-reveal-right {
+  opacity: 0;
+  animation: lp-reveal-right 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+
+/* Ambient loops. lp-card-wobble reads --lp-base-transform so the existing
+   rotate/translate offset of each stacked card is preserved. */
+.lp-card-wobble {
+  animation: lp-card-wobble 4s ease-in-out infinite;
+}
+.lp-pulse {
+  animation: lp-pulse 2s ease-in-out infinite;
+}
+/* Slide-up banner entrance (cookie consent, PWA install). */
+.lp-slide-up {
+  animation: lp-slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.lp-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 0.05),
+    transparent
+  );
+  animation: lp-shimmer 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: 3s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-reveal,
+  .lp-reveal-left,
+  .lp-reveal-right {
+    animation: none;
+    opacity: 1;
+  }
+  .lp-card-wobble,
+  .lp-pulse {
+    animation: none;
+  }
+  .lp-slide-up {
+    animation: none;
+    opacity: 1;
+  }
+  .lp-shimmer::after {
+    animation: none;
+    display: none;
+  }
+}

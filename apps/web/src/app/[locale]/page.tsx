@@ -1,5 +1,3 @@
-'use client';
-
 import {
   Users,
   Film,
@@ -12,8 +10,7 @@ import {
   X,
   Sparkles,
 } from 'lucide-react';
-import { useSession } from '@/lib/auth-client';
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { Footer } from '@/components/layout/Footer';
 import {
@@ -27,12 +24,11 @@ import {
   FinalCTA,
 } from '@/components/landing';
 
-export default function LandingPage() {
-  const { data: session } = useSession();
-  const t = useTranslations('landing');
-  // Render landing eagerly during SSR for SEO; session state simply
-  // toggles a few CTAs once the client hydrates.
-  const isAuthenticated = !!session;
+// Server Component: the landing renders entirely on the server for SEO and
+// ships almost no JS. Auth-dependent CTAs are isolated in a tiny client island
+// (AuthAwareCTA); all animations are CSS-only.
+export default async function LandingPage() {
+  const t = await getTranslations('landing');
 
   const stats = [
     { value: 10000, suffix: '+', label: t('stats.movies'), color: 'text-green-500' },
@@ -158,9 +154,8 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background overflow-hidden">
-      <PublicHeader variant="landing" isAuthenticated={isAuthenticated} />
+      <PublicHeader variant="landing" />
       <HeroSection
-        isAuthenticated={isAuthenticated}
         badge={t('hero.badge')}
         title={t('hero.title')}
         titleHighlight={t('hero.titleHighlight')}
@@ -203,7 +198,6 @@ export default function LandingPage() {
       />
       <TrustBadges badges={badges} />
       <FinalCTA
-        isAuthenticated={isAuthenticated}
         badge={t('cta.badge')}
         title={t('cta.title')}
         titleHighlight={t('cta.titleHighlight')}

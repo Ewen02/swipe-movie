@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@swipe-movie/ui"
 import { Download, X, Share, Plus } from "lucide-react"
 import { usePWAInstall } from "@/hooks/usePWAInstall"
@@ -34,15 +33,7 @@ export function PWAInstallBanner() {
   if (isInstalled || !visible) return null
 
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          transition={{ type: "spring", damping: 25, stiffness: 500 }}
-          className="fixed bottom-4 left-4 right-4 z-50 md:left-auto md:right-4 md:max-w-sm"
-        >
+    <div className="lp-slide-up fixed bottom-4 left-4 right-4 z-50 md:left-auto md:right-4 md:max-w-sm">
           <div className="bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl p-4 shadow-2xl">
             <button
               onClick={handleDismiss}
@@ -99,8 +90,6 @@ export function PWAInstallBanner() {
               </div>
             </div>
           </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    </div>
   )
 }

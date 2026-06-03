@@ -1,5 +1,4 @@
-import { motion } from "framer-motion"
-import { ScrollReveal } from "@/components/animations/ScrollAnimations"
+import { Reveal } from "@/components/landing/Reveal"
 import { type LucideIcon } from "lucide-react"
 
 interface BadgeItem {
@@ -21,12 +20,8 @@ export function TrustBadges({ badges }: TrustBadgesProps) {
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {badges.map((badge, index) => (
-              <ScrollReveal key={index} delay={index * 0.08}>
-                <motion.div
-                  className="relative group"
-                  whileHover={{ y: -4, scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                >
+              <Reveal key={index} delay={index * 0.08}>
+                <div className="relative group transition-transform duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02]">
                   <div className={`absolute -inset-1 bg-gradient-to-r ${badge.color} rounded-2xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-500`} />
 
                   <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-2xl overflow-hidden">
@@ -39,8 +34,8 @@ export function TrustBadges({ badges }: TrustBadgesProps) {
                       <p className="text-sm text-muted-foreground">{badge.subtext}</p>
                     </div>
                   </div>
-                </motion.div>
-              </ScrollReveal>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>

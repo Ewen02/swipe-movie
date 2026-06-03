@@ -1,6 +1,5 @@
-import { motion } from "framer-motion"
 import { Zap } from "lucide-react"
-import { ScrollReveal } from "@/components/animations/ScrollAnimations"
+import { Reveal } from "@/components/landing/Reveal"
 import { type LucideIcon } from "lucide-react"
 
 interface FeatureItem {
@@ -32,28 +31,22 @@ export function FeaturesSection({
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <ScrollReveal className="text-center mb-16">
-            <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-full text-accent text-sm font-medium mb-6"
-            >
+          <Reveal className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-full text-accent text-sm font-medium mb-6">
               <Zap className="w-4 h-4" />
               {badge}
-            </motion.div>
+            </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               <span className="text-foreground">{title}</span>
               <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{titleHighlight}</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{subtitle}</p>
-          </ScrollReveal>
+          </Reveal>
 
           <div className="grid md:grid-cols-2 gap-6">
             {features.map((feature, index) => (
-              <ScrollReveal key={index} delay={feature.delay}>
-                <motion.div
-                  className="relative group"
-                  whileHover={{ x: 8 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                >
+              <Reveal key={index} delay={feature.delay}>
+                <div className="relative group transition-transform duration-300 ease-out hover:translate-x-2">
                   <div className={`absolute -inset-1 bg-gradient-to-r ${feature.color} rounded-3xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-500`} />
 
                   <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
@@ -70,8 +63,8 @@ export function FeaturesSection({
                       </div>
                     </div>
                   </div>
-                </motion.div>
-              </ScrollReveal>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>

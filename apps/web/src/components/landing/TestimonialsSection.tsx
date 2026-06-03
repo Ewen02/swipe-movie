@@ -1,6 +1,5 @@
-import { motion } from "framer-motion"
 import { Star, Quote } from "lucide-react"
-import { ScrollReveal } from "@/components/animations/ScrollAnimations"
+import { Reveal } from "@/components/landing/Reveal"
 
 interface TestimonialItem {
   name: string
@@ -33,28 +32,22 @@ export function TestimonialsSection({
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <ScrollReveal className="text-center mb-16">
-            <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500/10 rounded-full text-yellow-500 text-sm font-medium mb-6"
-            >
+          <Reveal className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500/10 rounded-full text-yellow-500 text-sm font-medium mb-6">
               <Star className="w-4 h-4 fill-yellow-500" />
               {badge}
-            </motion.div>
+            </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               <span className="text-foreground">{title}</span>
               <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{titleHighlight}</span>
             </h2>
             <p className="text-lg text-muted-foreground">{subtitle}</p>
-          </ScrollReveal>
+          </Reveal>
 
           <div className="grid md:grid-cols-3 gap-6">
             {testimonials.map((testimonial, index) => (
-              <ScrollReveal key={index} delay={testimonial.delay}>
-                <motion.div
-                  className="relative group h-full"
-                  whileHover={{ y: -8 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                >
+              <Reveal key={index} delay={testimonial.delay}>
+                <div className="relative group h-full transition-transform duration-300 ease-out hover:-translate-y-2">
                   <div className="absolute -inset-1 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-3xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
 
                   <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden h-full">
@@ -80,8 +73,8 @@ export function TestimonialsSection({
                       </div>
                     </div>
                   </div>
-                </motion.div>
-              </ScrollReveal>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>

@@ -1,7 +1,6 @@
-import { motion } from "framer-motion"
-import { Heart, X, Sparkles, Play } from "lucide-react"
-import { ScrollReveal } from "@/components/animations/ScrollAnimations"
-import { InteractiveSwipeDemo } from "@/components/demo/InteractiveSwipeDemo"
+import { Play } from "lucide-react"
+import { Reveal } from "@/components/landing/Reveal"
+import { LazyInteractiveSwipeDemo } from "@/components/demo/LazyInteractiveSwipeDemo"
 import { type LucideIcon } from "lucide-react"
 
 interface DemoInstruction {
@@ -44,14 +43,12 @@ export function DemoSection({
               <div className="p-8 md:p-16">
                 <div className="grid lg:grid-cols-2 gap-12 items-center">
                   {/* Text content */}
-                  <ScrollReveal direction="left">
+                  <Reveal direction="left">
                     <div className="text-center lg:text-left">
-                      <motion.div
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 rounded-full text-green-500 text-sm font-medium mb-6"
-                      >
+                      <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 rounded-full text-green-500 text-sm font-medium mb-6">
                         <Play className="w-4 h-4" />
                         {badge}
-                      </motion.div>
+                      </div>
 
                       <h2 className="text-4xl md:text-5xl font-bold mb-6">
                         <span className="text-foreground">{title}</span>
@@ -63,32 +60,31 @@ export function DemoSection({
 
                       <div className="space-y-4">
                         {instructions.map((item, i) => (
-                          <motion.div
+                          <Reveal
                             key={i}
+                            direction="left"
+                            delay={0.2 + i * 0.1}
                             className="flex items-center gap-3 justify-center lg:justify-start"
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.2 + i * 0.1 }}
                           >
                             <div className={`w-10 h-10 rounded-full ${item.color} flex items-center justify-center`}>
                               <item.icon className="w-5 h-5" />
                             </div>
                             <span className="text-muted-foreground">{item.text}</span>
-                          </motion.div>
+                          </Reveal>
                         ))}
                       </div>
                     </div>
-                  </ScrollReveal>
+                  </Reveal>
 
                   {/* Interactive demo */}
-                  <ScrollReveal direction="right" delay={0.2}>
+                  <Reveal direction="right" delay={0.2}>
                     <div className="relative">
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-green-500/20 rounded-3xl blur-2xl" />
                       <div className="relative bg-background/50 backdrop-blur-sm rounded-3xl p-4 border border-border">
-                        <InteractiveSwipeDemo />
+                        <LazyInteractiveSwipeDemo />
                       </div>
                     </div>
-                  </ScrollReveal>
+                  </Reveal>
                 </div>
               </div>
             </div>
