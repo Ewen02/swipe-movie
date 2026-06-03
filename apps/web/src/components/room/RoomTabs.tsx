@@ -72,7 +72,7 @@ export function RoomTabs({
     <>
       {/* Desktop Tabs */}
       <div className="hidden sm:block mb-6">
-        <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-2xl p-1.5">
+        <div className="relative bg-card border border-border rounded-2xl p-1.5">
           <div className="grid grid-cols-5 gap-1.5">
             {TABS.map((tab) => {
               const Icon = tab.icon
@@ -232,9 +232,8 @@ function SwipeTabContent({
   }
 
   return (
-    <div className="relative group">
-      <div className="absolute -inset-1 bg-gradient-to-r from-pink-500/20 to-rose-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border-2 border-dashed border-border rounded-3xl">
+    <div className="relative">
+      <div className="relative bg-card border-2 border-dashed border-border rounded-3xl">
         <div className="text-center py-16 px-6">
           <div className="text-6xl mb-4">🎬</div>
           <h3 className="text-xl font-semibold mb-2">

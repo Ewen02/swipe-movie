@@ -22,8 +22,7 @@ export function RoomsList({ rooms, onCreateRoom, onJoinRoom }: RoomsListProps) {
   if (rooms.rooms.length === 0) {
     return (
       <div className="relative group">
-        <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-lg opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
-        <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border-2 border-dashed border-border rounded-3xl overflow-hidden">
+        <div className="relative bg-card border-2 border-dashed border-border rounded-3xl overflow-hidden">
           <div className="p-12 text-center">
             <div className="mb-6">
               <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 mb-4">
@@ -100,7 +99,7 @@ export function RoomsList({ rooms, onCreateRoom, onJoinRoom }: RoomsListProps) {
                 a call to action. */}
             <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-lg opacity-0 group-hover:opacity-15 transition-opacity duration-500" />
 
-            <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden group-hover:border-primary/40 transition-all duration-300">
+            <div className="relative bg-card border border-border rounded-3xl overflow-hidden group-hover:border-primary/40 transition-all duration-300">
               {/* Top accent bar */}
               <div className={`h-1 ${
                 room.type === "movie"

@@ -48,10 +48,8 @@ export function RoomHeader({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <div className="relative group">
-        <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-accent/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
-          <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
+      <div className="relative">
+        <div className="relative bg-card border border-border rounded-3xl overflow-hidden">
           <div className="p-5">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">

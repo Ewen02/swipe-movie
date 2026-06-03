@@ -116,9 +116,8 @@ export function MatchesList({
 
   if (matches.length === 0) {
     return (
-      <div className="relative group">
-        <div className="absolute -inset-1 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border-2 border-dashed border-border rounded-3xl">
+      <div className="relative">
+        <div className="relative bg-card border-2 border-dashed border-border rounded-3xl">
           <div className="text-center py-16 px-6">
             <div className="text-6xl mb-4">🎬</div>
             <h3 className="text-xl font-semibold mb-2">{t('noMatches')}</h3>
@@ -196,10 +195,8 @@ export function MatchesList({
 
         {/* Other Matches Section */}
         {otherMatches.length > 0 && (
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
-              <div className="h-1 bg-gradient-to-r from-green-500 to-emerald-500" />
+          <div className="relative">
+            <div className="relative bg-card border border-border rounded-3xl overflow-hidden">
               <div className="p-5">
                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                   <span className="w-6 h-6 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400 text-sm">

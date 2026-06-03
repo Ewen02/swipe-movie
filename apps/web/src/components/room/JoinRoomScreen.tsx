@@ -37,9 +37,7 @@ export function JoinRoomScreen({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-lg opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
-        <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
-          <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
+        <div className="relative bg-card border border-border rounded-3xl overflow-hidden">
           <div className="p-8 text-center">
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg mb-6">
               <UserPlus className="w-10 h-10 text-white" />
