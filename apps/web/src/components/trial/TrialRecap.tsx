@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { signIn } from '@/lib/auth-client'
 import { clearTrialData } from '@/lib/trial'
@@ -11,11 +12,13 @@ import type { MovieBasic } from '@/schemas/movies'
 interface TrialRecapProps {
   likedMovies: MovieBasic[]
   locale: string
+  swipeCount: number
   onSignUp: () => void
   onRetry: () => void
 }
 
-export function TrialRecap({ likedMovies, locale, onSignUp, onRetry }: TrialRecapProps) {
+export function TrialRecap({ likedMovies, locale, swipeCount, onSignUp, onRetry }: TrialRecapProps) {
+  const t = useTranslations('trial.recap')
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
@@ -64,10 +67,10 @@ export function TrialRecap({ likedMovies, locale, onSignUp, onRetry }: TrialReca
             🎬🎉
           </motion.div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Tu as swipe 25 films !
+            {t('swipedCount', { count: swipeCount })}
           </h1>
           <p className="text-muted-foreground text-lg">
-            Ces films t&apos;attendent dans ta room
+            {t('subtitle')}
           </p>
         </motion.div>
 
@@ -80,7 +83,7 @@ export function TrialRecap({ likedMovies, locale, onSignUp, onRetry }: TrialReca
             className="w-full mb-8"
           >
             <p className="text-sm text-muted-foreground text-center mb-3">
-              Tes films likes ({likedMovies.length})
+              {t('likedMovies', { count: likedMovies.length })}
             </p>
             <div className="grid grid-cols-4 gap-2 sm:gap-3 max-w-md mx-auto">
               {likedMovies.slice(0, 12).map((movie, index) => (
@@ -108,7 +111,7 @@ export function TrialRecap({ likedMovies, locale, onSignUp, onRetry }: TrialReca
             </div>
             {likedMovies.length > 12 && (
               <p className="text-xs text-muted-foreground text-center mt-2">
-                +{likedMovies.length - 12} autres
+                {t('moreCount', { count: likedMovies.length - 12 })}
               </p>
             )}
           </motion.div>
@@ -130,7 +133,7 @@ export function TrialRecap({ likedMovies, locale, onSignUp, onRetry }: TrialReca
             {isLoading ? (
               <div className="flex items-center gap-3">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary" />
-                <span>Connexion...</span>
+                <span>{t('connecting')}</span>
               </div>
             ) : (
               <>
@@ -156,7 +159,7 @@ export function TrialRecap({ likedMovies, locale, onSignUp, onRetry }: TrialReca
                     fill="#EA4335"
                   />
                 </svg>
-                Creer mon compte
+                {t('createAccount')}
               </>
             )}
           </Button>
@@ -165,7 +168,7 @@ export function TrialRecap({ likedMovies, locale, onSignUp, onRetry }: TrialReca
             onClick={handleRetry}
             className="w-full text-center text-sm text-muted-foreground hover:text-foreground py-3 transition-colors"
           >
-            Ou recommence depuis le debut
+            {t('retry')}
           </button>
         </motion.div>
       </div>

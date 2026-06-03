@@ -338,7 +338,10 @@
         "matches": "Les matchs apparaissent quand tous likent",
         "learning": "Plus vous swipez, mieux on vous connait"
       }
-    }
+    },
+    "seenBadge": "Déjà vu",
+    "watchlistBadge": "Watchlist",
+    "viewDetails": "Voir les détails"
   },
   "match": {
     "title": "C'est un match !",
@@ -351,7 +354,17 @@
     "agreement": "{percent}% d'accord",
     "watchOn": "Regarder sur",
     "tmdb": "Voir sur TMDb",
-    "share": "Partager"
+    "share": "Partager",
+    "retry": "Réessayer",
+    "otherMatchesTitle": "Autres matchs",
+    "wheel": {
+      "triggerButton": "Laisser le hasard choisir",
+      "title": "Roue du destin",
+      "spinButton": "Faire tourner !",
+      "spinningText": "La roue tourne...",
+      "resultTitle": "Ce soir, on regarde…",
+      "resultSubtitle": "Bon visionnage à tous !"
+    }
   },
   "error": {
     "404": {
@@ -672,7 +685,23 @@
       "terms": "En vous connectant, vous acceptez nos",
       "termsLink": "CGU",
       "and": "et notre",
-      "privacyLink": "politique de confidentialité"
+      "privacyLink": "politique de confidentialité",
+      "ready": "Prêt en 30s",
+      "error": "La connexion a échoué. Réessaie ou contacte le support."
+    },
+    "badge": "Connexion en 1 clic",
+    "brand": {
+      "tagline": "Swipe. Match. Watch.",
+      "taglineHighlight": "Together.",
+      "subtitle": "Fini les débats interminables ! Swipez, matchez et regardez ensemble en quelques secondes."
+    },
+    "demo": {
+      "movieMeta": "2010 • Sci-Fi • 2h28"
+    },
+    "stats": {
+      "movies": "Films",
+      "platforms": "Plateformes",
+      "toDecide": "Pour décider"
     }
   },
   "preview": {
@@ -711,7 +740,30 @@
     "next": "Suivant",
     "previous": "Précédent",
     "skip": "Passer le tutorial",
-    "finish": "C'est parti !"
+    "finish": "C'est parti !",
+    "flow": {
+      "saving": "Enregistrement...",
+      "steps": {
+        "providers": "Plateformes",
+        "genres": "Genres",
+        "validation": "Validation",
+        "done": "Terminé"
+      },
+      "providersStep": {
+        "title": "Quelles plateformes avez-vous ?",
+        "subtitle": "On ne vous montrera que les films que vous pouvez regarder",
+        "loading": "Chargement des plateformes...",
+        "loadError": "Impossible de charger les plateformes",
+        "errorHint": "Vous pouvez continuer sans filtrer par plateforme",
+        "selectedCount": "{count} plateforme(s) sélectionnée(s)",
+        "clear": "Effacer",
+        "hideOthers": "Masquer les autres plateformes",
+        "showOthers": "Voir {count} autres plateformes",
+        "continue": "Continuer",
+        "continueCount": "({count} sélectionnée(s))",
+        "skip": "Passer cette étape"
+      }
+    }
   },
   "pricing": {
     "title": "Choisissez votre forfait",
@@ -1001,7 +1053,16 @@
     "migrationErrorTitle": "Impossible de finaliser ton compte",
     "migrationErrorDescription": "Ta room n'a pas pu être liée à ton compte. Réessaie ou contacte le support.",
     "migrationRetry": "Réessayer",
-    "migrationGoToRooms": "Voir mes rooms"
+    "migrationGoToRooms": "Voir mes rooms",
+    "recap": {
+      "swipedCount": "Tu as swipé {count} films !",
+      "subtitle": "Ces films t'attendent dans ta room",
+      "likedMovies": "Tes films likés ({count})",
+      "moreCount": "+{count} autres",
+      "connecting": "Connexion...",
+      "createAccount": "Créer mon compte",
+      "retry": "Ou recommence depuis le début"
+    }
   },
   "groups": {
     "title": "Tes groupes",

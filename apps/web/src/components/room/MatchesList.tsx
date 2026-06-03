@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { Button, FortuneWheel, type FortuneWheelItem } from '@swipe-movie/ui';
 import { RefreshCw } from 'lucide-react';
 import { Match } from '@/schemas/swipes';
@@ -19,6 +20,8 @@ interface MatchesListProps {
   roomId: string;
   totalMembers?: number;
   refreshTrigger?: number;
+  /** Reports the real match count up so the Matches tab badge is accurate. */
+  onMatchCountChange?: (count: number) => void;
   roomFilters?: RoomWithMembersResponseDto;
 }
 
@@ -31,8 +34,10 @@ export function MatchesList({
   roomId,
   totalMembers = 2,
   refreshTrigger,
+  onMatchCountChange,
   roomFilters,
 }: MatchesListProps) {
+  const t = useTranslations('match');
   const [matches, setMatches] = useState<MatchWithMovie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -79,6 +84,7 @@ export function MatchesList({
       matchesWithMovies.sort((a, b) => (b.rankingScore || 0) - (a.rankingScore || 0));
 
       setMatches(matchesWithMovies);
+      onMatchCountChange?.(matchesWithMovies.length);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load matches');
     } finally {
@@ -102,7 +108,7 @@ export function MatchesList({
         <p className="text-red-500 mb-4">{error}</p>
         <Button variant="outline" size="sm" onClick={loadMatches} className="gap-2">
           <RefreshCw className="w-4 h-4" />
-          Réessayer
+          {t('retry')}
         </Button>
       </div>
     );
@@ -115,9 +121,9 @@ export function MatchesList({
         <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border-2 border-dashed border-border rounded-3xl">
           <div className="text-center py-16 px-6">
             <div className="text-6xl mb-4">🎬</div>
-            <h3 className="text-xl font-semibold mb-2">Aucun match pour le moment</h3>
+            <h3 className="text-xl font-semibold mb-2">{t('noMatches')}</h3>
             <p className="text-muted-foreground">
-              Continuez à swiper pour trouver un film que tout le monde aime !
+              {t('noMatchesDescription')}
             </p>
           </div>
         </div>
@@ -177,12 +183,12 @@ export function MatchesList({
                 }
               }}
               translations={{
-                triggerButton: 'Laisser le hasard choisir',
-                title: 'Roue du destin',
-                spinButton: 'Faire tourner !',
-                spinningText: 'La roue tourne...',
-                resultTitle: 'Ce soir, on regarde…',
-                resultSubtitle: 'Bon visionnage à tous !',
+                triggerButton: t('wheel.triggerButton'),
+                title: t('wheel.title'),
+                spinButton: t('wheel.spinButton'),
+                spinningText: t('wheel.spinningText'),
+                resultTitle: t('wheel.resultTitle'),
+                resultSubtitle: t('wheel.resultSubtitle'),
               }}
             />
           </div>
@@ -199,7 +205,7 @@ export function MatchesList({
                   <span className="w-6 h-6 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400 text-sm">
                     {otherMatches.length}
                   </span>
-                  Autres Matches
+                  {t('otherMatchesTitle')}
                 </h3>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

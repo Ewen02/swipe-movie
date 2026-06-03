@@ -38,7 +38,7 @@ function LoginPageContent() {
       });
     } catch (error) {
       console.error('Sign in error:', error);
-      setError('La connexion a échoué. Réessaie ou contacte le support.');
+      setError(t('card.error'));
       setIsLoading(false);
     }
   };
@@ -89,7 +89,7 @@ function LoginPageContent() {
               {/* Badge */}
               <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full text-primary text-xs font-medium mb-6">
                 <Sparkles className="w-3.5 h-3.5" />
-                Connexion en 1 clic
+                {t('badge')}
               </div>
 
               {/* Title */}
@@ -153,7 +153,7 @@ function LoginPageContent() {
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Zap className="w-4 h-4 text-purple-500" />
-                  <span>Prêt en 30s</span>
+                  <span>{t('card.ready')}</span>
                 </div>
               </div>
 
@@ -187,14 +187,13 @@ function LoginPageContent() {
             >
               {/* Tagline */}
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                <span className="text-foreground">Swipe. Match. Watch. </span>
+                <span className="text-foreground">{t('brand.tagline')} </span>
                 <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  Together.
+                  {t('brand.taglineHighlight')}
                 </span>
               </h2>
               <p className="text-xl text-muted-foreground mb-12 leading-relaxed">
-                Fini les débats interminables ! Swipez, matchez et regardez ensemble en quelques
-                secondes.
+                {t('brand.subtitle')}
               </p>
 
               {/* Demo Cards Visual */}
@@ -247,7 +246,7 @@ function LoginPageContent() {
                   </div>
                   <div className="p-4 text-center">
                     <p className="font-bold text-lg">Inception</p>
-                    <p className="text-sm text-muted-foreground">2010 • Sci-Fi • 2h28</p>
+                    <p className="text-sm text-muted-foreground">{t('demo.movieMeta')}</p>
                     <div className="flex items-center justify-center gap-1 mt-2">
                       <span className="text-yellow-500">★</span>
                       <span className="text-sm font-medium">8.8</span>
@@ -260,15 +259,15 @@ function LoginPageContent() {
               <div className="mt-16 grid grid-cols-3 gap-8 text-center">
                 <div>
                   <div className="text-3xl font-bold text-primary">10K+</div>
-                  <div className="text-sm text-muted-foreground mt-1">Films</div>
+                  <div className="text-sm text-muted-foreground mt-1">{t('stats.movies')}</div>
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-accent">50+</div>
-                  <div className="text-sm text-muted-foreground mt-1">Plateformes</div>
+                  <div className="text-sm text-muted-foreground mt-1">{t('stats.platforms')}</div>
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-green-500">30s</div>
-                  <div className="text-sm text-muted-foreground mt-1">Pour décider</div>
+                  <div className="text-sm text-muted-foreground mt-1">{t('stats.toDecide')}</div>
                 </div>
               </div>
             </motion.div>

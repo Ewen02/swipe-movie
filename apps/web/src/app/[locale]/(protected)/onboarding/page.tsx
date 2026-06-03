@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { StepProviders, StepGenres, StepSwipe, StepComplete } from './components';
@@ -12,13 +13,14 @@ import { captureEvent } from '@/components/providers/PostHogProvider';
 import { getTrialData, clearTrialData } from '@/lib/trial';
 
 const STEPS = [
-  { id: 'providers', title: 'Plateformes' },
-  { id: 'genres', title: 'Genres' },
-  { id: 'swipe', title: 'Validation' },
-  { id: 'complete', title: 'Termine' },
-];
+  { id: 'providers', titleKey: 'steps.providers' },
+  { id: 'genres', titleKey: 'steps.genres' },
+  { id: 'swipe', titleKey: 'steps.validation' },
+  { id: 'complete', titleKey: 'steps.done' },
+] as const;
 
 export default function OnboardingPage() {
+  const t = useTranslations('onboarding.flow');
   const router = useRouter();
   const searchParams = useSearchParams();
   const { preferences, isLoading, update, saveSwipes, complete } = useUserPreferences();
@@ -201,7 +203,7 @@ export default function OnboardingPage() {
                     {index + 1}
                   </div>
                   <span className="text-xs text-muted-foreground mt-2 whitespace-nowrap">
-                    {step.title}
+                    {t(step.titleKey)}
                   </span>
                 </div>
                 {index < 2 && (
@@ -222,7 +224,7 @@ export default function OnboardingPage() {
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            <span className="text-sm text-muted-foreground">Enregistrement...</span>
+            <span className="text-sm text-muted-foreground">{t('saving')}</span>
           </div>
         </div>
       )}

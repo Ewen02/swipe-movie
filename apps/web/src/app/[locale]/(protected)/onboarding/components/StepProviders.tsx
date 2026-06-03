@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { useTranslations } from "next-intl"
 import { Button } from "@swipe-movie/ui"
 import { Loader2, Check, ChevronDown, ChevronUp } from "lucide-react"
 import { getAllWatchProviders } from "@/lib/api/movies"
@@ -82,6 +83,7 @@ export function StepProviders({
   onProvidersChange,
   onNext,
 }: StepProvidersProps) {
+  const t = useTranslations("onboarding.flow.providersStep")
   const [providers, setProviders] = useState<MovieWatchProvider[]>([])
   const [loadingProviders, setLoadingProviders] = useState(true)
   const [providersError, setProvidersError] = useState<string | null>(null)
@@ -96,7 +98,7 @@ export function StepProviders({
         setProviders(data)
       } catch (error) {
         console.error("Failed to load watch providers:", error)
-        setProvidersError("Impossible de charger les plateformes")
+        setProvidersError(t("loadError"))
         setProviders([])
       } finally {
         setLoadingProviders(false)
@@ -133,10 +135,10 @@ export function StepProviders({
         className="text-center mb-8"
       >
         <h1 className="text-3xl font-bold mb-3">
-          Quelles plateformes avez-vous ?
+          {t("title")}
         </h1>
         <p className="text-muted-foreground text-lg">
-          On ne vous montrera que les films que vous pouvez regarder
+          {t("subtitle")}
         </p>
       </motion.div>
 
@@ -144,22 +146,22 @@ export function StepProviders({
         {loadingProviders ? (
           <div className="flex items-center justify-center py-12 text-muted-foreground">
             <Loader2 className="w-5 h-5 animate-spin mr-2" />
-            Chargement des plateformes...
+            {t("loading")}
           </div>
         ) : providersError ? (
           <div className="flex flex-col items-center justify-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
             <p className="text-sm text-red-500 mb-2">{providersError}</p>
-            <p className="text-xs">Vous pouvez continuer sans filtrer par plateforme</p>
+            <p className="text-xs">{t("errorHint")}</p>
           </div>
         ) : (
           <>
             <div className="flex justify-between items-center mb-4">
               <span className="text-sm text-muted-foreground">
-                {selectedProviders.length} plateforme(s) selectionnee(s)
+                {t("selectedCount", { count: selectedProviders.length })}
               </span>
               {selectedProviders.length > 0 && (
                 <Button variant="ghost" size="sm" onClick={clearAll}>
-                  Effacer
+                  {t("clear")}
                 </Button>
               )}
             </div>
@@ -187,12 +189,12 @@ export function StepProviders({
                   {showAllProviders ? (
                     <>
                       <ChevronUp className="w-4 h-4" />
-                      Masquer les autres plateformes
+                      {t("hideOthers")}
                     </>
                   ) : (
                     <>
                       <ChevronDown className="w-4 h-4" />
-                      Voir {otherProviders.length} autres plateformes
+                      {t("showOthers", { count: otherProviders.length })}
                     </>
                   )}
                 </button>
@@ -222,15 +224,15 @@ export function StepProviders({
           onClick={onNext}
           className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
         >
-          Continuer
-          {selectedProviders.length > 0 && ` (${selectedProviders.length} selectionnees)`}
+          {t("continue")}
+          {selectedProviders.length > 0 && ` ${t("continueCount", { count: selectedProviders.length })}`}
         </Button>
         <button
           type="button"
           onClick={onNext}
           className="text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
-          Passer cette etape
+          {t("skip")}
         </button>
       </div>
     </div>

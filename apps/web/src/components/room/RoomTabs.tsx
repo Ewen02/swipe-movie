@@ -36,6 +36,7 @@ interface RoomTabsProps {
   onShowDetails: (movieId: number) => void
   setSwipedMovieIds: React.Dispatch<React.SetStateAction<Set<string>>>
   setRefreshMatches: React.Dispatch<React.SetStateAction<number>>
+  onMatchCountChange?: (count: number) => void
   translations: {
     tabs: Record<string, string>
     unnamedRoom: string
@@ -64,6 +65,7 @@ export function RoomTabs({
   onShowDetails,
   setSwipedMovieIds,
   setRefreshMatches,
+  onMatchCountChange,
   translations: t,
 }: RoomTabsProps) {
   return (
@@ -122,6 +124,7 @@ export function RoomTabs({
             roomId={room.id}
             totalMembers={room.members.length}
             refreshTrigger={refreshMatches}
+            onMatchCountChange={onMatchCountChange}
             roomFilters={room}
           />
         )}

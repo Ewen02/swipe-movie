@@ -48,6 +48,10 @@ function RoomPageContent() {
   const [joiningRoom, setJoiningRoom] = useState(false);
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
   const [showMovieDetails, setShowMovieDetails] = useState(false);
+  // Real match count, reported up from MatchesList. Used for the Matches tab
+  // badge — previously the badge was wrongly fed `refreshMatches` (a refresh
+  // counter), so it showed meaningless, never-clearing numbers.
+  const [matchCount, setMatchCount] = useState(0);
   const [trialSwipeCount, setTrialSwipeCount] = useState(() => {
     if (typeof window === 'undefined') return 0;
     try {
@@ -342,6 +346,7 @@ function RoomPageContent() {
       <TrialRecap
         likedMovies={trialLikedMovies}
         locale={locale}
+        swipeCount={trialSwipeCount}
         onSignUp={() => {}}
         onRetry={() => {
           clearTrialData();
@@ -421,6 +426,7 @@ function RoomPageContent() {
             onShowDetails={handleShowDetails}
             setSwipedMovieIds={setSwipedMovieIds}
             setRefreshMatches={setRefreshMatches}
+            onMatchCountChange={setMatchCount}
             translations={{
               tabs: {
                 swipe: t('tabs.swipe'),
@@ -449,7 +455,7 @@ function RoomPageContent() {
         <BottomTabNav
           currentTab={currentTab}
           onTabChange={handleTabChange}
-          matchCount={refreshMatches}
+          matchCount={matchCount}
           translations={{
             swipe: t('tabs.swipe'),
             matches: t('tabs.matches'),

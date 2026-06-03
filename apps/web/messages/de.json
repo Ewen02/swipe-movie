@@ -338,7 +338,10 @@
         "matches": "Matches erscheinen, wenn alle liken",
         "learning": "Je mehr du swipst, desto besser kennen wir dich"
       }
-    }
+    },
+    "seenBadge": "Schon gesehen",
+    "watchlistBadge": "Merkliste",
+    "viewDetails": "Details ansehen"
   },
   "match": {
     "title": "Es ist ein Match!",
@@ -351,7 +354,17 @@
     "agreement": "{percent}% Übereinstimmung",
     "watchOn": "Ansehen auf",
     "tmdb": "Auf TMDb ansehen",
-    "share": "Teilen"
+    "share": "Teilen",
+    "retry": "Erneut versuchen",
+    "otherMatchesTitle": "Weitere Matches",
+    "wheel": {
+      "triggerButton": "Den Zufall entscheiden lassen",
+      "title": "Glücksrad",
+      "spinButton": "Drehen!",
+      "spinningText": "Das Rad dreht sich...",
+      "resultTitle": "Heute Abend schauen wir…",
+      "resultSubtitle": "Viel Spaß beim Anschauen!"
+    }
   },
   "error": {
     "404": {
@@ -672,7 +685,23 @@
       "terms": "Mit der Anmeldung akzeptierst du unsere",
       "termsLink": "Nutzungsbedingungen",
       "and": "und unsere",
-      "privacyLink": "Datenschutzerklärung"
+      "privacyLink": "Datenschutzerklärung",
+      "ready": "In 30s bereit",
+      "error": "Anmeldung fehlgeschlagen. Versuche es erneut oder kontaktiere den Support."
+    },
+    "badge": "Mit 1 Klick anmelden",
+    "brand": {
+      "tagline": "Swipe. Match. Watch.",
+      "taglineHighlight": "Together.",
+      "subtitle": "Schluss mit endlosen Debatten! Swipe, matche und schaut in Sekunden gemeinsam."
+    },
+    "demo": {
+      "movieMeta": "2010 • Sci-Fi • 2h28"
+    },
+    "stats": {
+      "movies": "Filme",
+      "platforms": "Plattformen",
+      "toDecide": "Zum Entscheiden"
     }
   },
   "preview": {
@@ -711,7 +740,30 @@
     "next": "Weiter",
     "previous": "Zurück",
     "skip": "Tutorial überspringen",
-    "finish": "Los geht's!"
+    "finish": "Los geht's!",
+    "flow": {
+      "saving": "Wird gespeichert...",
+      "steps": {
+        "providers": "Plattformen",
+        "genres": "Genres",
+        "validation": "Bestätigung",
+        "done": "Fertig"
+      },
+      "providersStep": {
+        "title": "Welche Plattformen hast du?",
+        "subtitle": "Wir zeigen dir nur Filme, die du ansehen kannst",
+        "loading": "Plattformen werden geladen...",
+        "loadError": "Plattformen konnten nicht geladen werden",
+        "errorHint": "Du kannst ohne Plattformfilter fortfahren",
+        "selectedCount": "{count} Plattform(en) ausgewählt",
+        "clear": "Löschen",
+        "hideOthers": "Andere Plattformen ausblenden",
+        "showOthers": "{count} weitere Plattformen anzeigen",
+        "continue": "Weiter",
+        "continueCount": "({count} ausgewählt)",
+        "skip": "Diesen Schritt überspringen"
+      }
+    }
   },
   "pricing": {
     "title": "Wähle deinen Plan",
@@ -1001,7 +1053,16 @@
     "migrationErrorTitle": "Konto konnte nicht finalisiert werden",
     "migrationErrorDescription": "Dein Raum konnte nicht mit deinem Konto verknüpft werden. Bitte erneut versuchen oder den Support kontaktieren.",
     "migrationRetry": "Erneut versuchen",
-    "migrationGoToRooms": "Zu meinen Räumen"
+    "migrationGoToRooms": "Zu meinen Räumen",
+    "recap": {
+      "swipedCount": "Du hast {count} Filme geswipt!",
+      "subtitle": "Diese Filme warten in deinem Raum auf dich",
+      "likedMovies": "Deine gelikten Filme ({count})",
+      "moreCount": "+{count} weitere",
+      "connecting": "Anmeldung...",
+      "createAccount": "Mein Konto erstellen",
+      "retry": "Oder von vorne beginnen"
+    }
   },
   "groups": {
     "title": "Deine Gruppen",

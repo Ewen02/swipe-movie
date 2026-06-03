@@ -338,7 +338,10 @@
         "matches": "I match appaiono quando tutti mettono like",
         "learning": "Più swippi, meglio ti conosciamo"
       }
-    }
+    },
+    "seenBadge": "Già visto",
+    "watchlistBadge": "Lista",
+    "viewDetails": "Vedi dettagli"
   },
   "match": {
     "title": "È un match!",
@@ -351,7 +354,17 @@
     "agreement": "{percent}% di accordo",
     "watchOn": "Guarda su",
     "tmdb": "Vedi su TMDb",
-    "share": "Condividi"
+    "share": "Condividi",
+    "retry": "Riprova",
+    "otherMatchesTitle": "Altri match",
+    "wheel": {
+      "triggerButton": "Lascia decidere al caso",
+      "title": "Ruota del destino",
+      "spinButton": "Gira!",
+      "spinningText": "La ruota gira...",
+      "resultTitle": "Stasera guardiamo…",
+      "resultSubtitle": "Buona visione a tutti!"
+    }
   },
   "error": {
     "404": {
@@ -672,7 +685,23 @@
       "terms": "Accedendo, accetti le nostre",
       "termsLink": "Condizioni d'uso",
       "and": "e la nostra",
-      "privacyLink": "Informativa sulla privacy"
+      "privacyLink": "Informativa sulla privacy",
+      "ready": "Pronto in 30s",
+      "error": "Accesso non riuscito. Riprova o contatta il supporto."
+    },
+    "badge": "Accedi con 1 clic",
+    "brand": {
+      "tagline": "Swipe. Match. Watch.",
+      "taglineHighlight": "Together.",
+      "subtitle": "Basta dibattiti infiniti! Swipa, trova un match e guardate insieme in pochi secondi."
+    },
+    "demo": {
+      "movieMeta": "2010 • Sci-Fi • 2h28"
+    },
+    "stats": {
+      "movies": "Film",
+      "platforms": "Piattaforme",
+      "toDecide": "Per decidere"
     }
   },
   "preview": {
@@ -711,7 +740,30 @@
     "next": "Avanti",
     "previous": "Precedente",
     "skip": "Salta il tutorial",
-    "finish": "Andiamo!"
+    "finish": "Andiamo!",
+    "flow": {
+      "saving": "Salvataggio...",
+      "steps": {
+        "providers": "Piattaforme",
+        "genres": "Generi",
+        "validation": "Convalida",
+        "done": "Fatto"
+      },
+      "providersStep": {
+        "title": "Quali piattaforme hai?",
+        "subtitle": "Ti mostreremo solo i film che puoi guardare",
+        "loading": "Caricamento delle piattaforme...",
+        "loadError": "Impossibile caricare le piattaforme",
+        "errorHint": "Puoi continuare senza filtrare per piattaforma",
+        "selectedCount": "{count} piattaforma/e selezionata/e",
+        "clear": "Cancella",
+        "hideOthers": "Nascondi le altre piattaforme",
+        "showOthers": "Vedi altre {count} piattaforme",
+        "continue": "Continua",
+        "continueCount": "({count} selezionata/e)",
+        "skip": "Salta questo passaggio"
+      }
+    }
   },
   "pricing": {
     "title": "Scegli il tuo piano",
@@ -1001,7 +1053,16 @@
     "migrationErrorTitle": "Impossibile finalizzare il tuo account",
     "migrationErrorDescription": "La tua stanza non è stata collegata al tuo account. Riprova o contatta il supporto.",
     "migrationRetry": "Riprova",
-    "migrationGoToRooms": "Vai alle mie stanze"
+    "migrationGoToRooms": "Vai alle mie stanze",
+    "recap": {
+      "swipedCount": "Hai swipato {count} film!",
+      "subtitle": "Questi film ti aspettano nella tua stanza",
+      "likedMovies": "I film che ti sono piaciuti ({count})",
+      "moreCount": "+{count} altri",
+      "connecting": "Accesso in corso...",
+      "createAccount": "Crea il mio account",
+      "retry": "Oppure ricomincia dall’inizio"
+    }
   },
   "groups": {
     "title": "I tuoi gruppi",

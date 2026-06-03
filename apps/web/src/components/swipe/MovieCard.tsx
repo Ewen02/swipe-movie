@@ -2,6 +2,7 @@
 
 import { useState, useEffect, memo } from "react"
 import Image from "next/image"
+import { useTranslations } from "next-intl"
 import { motion, type PanInfo, useMotionValue, useTransform, animate } from "framer-motion"
 import { Badge } from "@swipe-movie/ui"
 import { Heart, X, Star, Info, Eye, Bookmark } from "lucide-react"
@@ -19,6 +20,7 @@ export const MovieCard = memo(function MovieCard({
   onButtonSwipeRef,
   onButtonHoverRef,
 }: MovieCardProps) {
+  const t = useTranslations("swipe")
   const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null)
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
@@ -255,7 +257,7 @@ export const MovieCard = memo(function MovieCard({
             <div className="absolute top-3 left-3 z-10">
               <Badge className="bg-green-500/90 text-white text-xs font-semibold px-2.5 py-1 flex items-center gap-1.5 shadow-lg backdrop-blur-sm border border-green-400/30">
                 <Eye className="w-3.5 h-3.5" />
-                Deja vu
+                {t("seenBadge")}
               </Badge>
             </div>
           )}
@@ -264,7 +266,7 @@ export const MovieCard = memo(function MovieCard({
             <div className="absolute top-3 left-3 z-10">
               <Badge className="bg-purple-500/90 text-white text-xs font-semibold px-2.5 py-1 flex items-center gap-1.5 shadow-lg backdrop-blur-sm border border-purple-400/30">
                 <Bookmark className="w-3.5 h-3.5" />
-                Watchlist
+                {t("watchlistBadge")}
                 {movie.watchlistMemberCount && movie.watchlistMemberCount > 1 && (
                   <span className="text-[10px] opacity-80">({movie.watchlistMemberCount})</span>
                 )}
@@ -373,7 +375,7 @@ export const MovieCard = memo(function MovieCard({
               }}
             >
               <Info className="w-4 h-4" />
-              Voir les détails
+              {t("viewDetails")}
             </button>
           )}
         </div>

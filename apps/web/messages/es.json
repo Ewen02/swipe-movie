@@ -338,7 +338,10 @@
         "matches": "Los matches aparecen cuando todos dan like",
         "learning": "Cuanto más deslizas, mejor te conocemos"
       }
-    }
+    },
+    "seenBadge": "Ya vista",
+    "watchlistBadge": "Lista",
+    "viewDetails": "Ver detalles"
   },
   "match": {
     "title": "¡Es un match!",
@@ -351,7 +354,17 @@
     "agreement": "{percent}% de acuerdo",
     "watchOn": "Ver en",
     "tmdb": "Ver en TMDb",
-    "share": "Compartir"
+    "share": "Compartir",
+    "retry": "Reintentar",
+    "otherMatchesTitle": "Otras coincidencias",
+    "wheel": {
+      "triggerButton": "Dejar que decida el azar",
+      "title": "Ruleta del destino",
+      "spinButton": "¡Girar!",
+      "spinningText": "Girando...",
+      "resultTitle": "Esta noche vemos…",
+      "resultSubtitle": "¡Que la disfrutéis!"
+    }
   },
   "error": {
     "404": {
@@ -672,7 +685,23 @@
       "terms": "Al iniciar sesión, aceptas nuestras",
       "termsLink": "Condiciones de uso",
       "and": "y nuestra",
-      "privacyLink": "Política de privacidad"
+      "privacyLink": "Política de privacidad",
+      "ready": "Listo en 30s",
+      "error": "Error al iniciar sesión. Inténtalo de nuevo o contacta con soporte."
+    },
+    "badge": "Inicia sesión con 1 clic",
+    "brand": {
+      "tagline": "Swipe. Match. Watch.",
+      "taglineHighlight": "Together.",
+      "subtitle": "¡Se acabaron los debates interminables! Desliza, haz match y ved juntos en segundos."
+    },
+    "demo": {
+      "movieMeta": "2010 • Sci-Fi • 2h28"
+    },
+    "stats": {
+      "movies": "Películas",
+      "platforms": "Plataformas",
+      "toDecide": "Para decidir"
     }
   },
   "preview": {
@@ -711,7 +740,30 @@
     "next": "Siguiente",
     "previous": "Anterior",
     "skip": "Saltar tutorial",
-    "finish": "¡Vamos!"
+    "finish": "¡Vamos!",
+    "flow": {
+      "saving": "Guardando...",
+      "steps": {
+        "providers": "Plataformas",
+        "genres": "Géneros",
+        "validation": "Validación",
+        "done": "Listo"
+      },
+      "providersStep": {
+        "title": "¿Qué plataformas tienes?",
+        "subtitle": "Solo te mostraremos películas que puedas ver",
+        "loading": "Cargando plataformas...",
+        "loadError": "No se pudieron cargar las plataformas",
+        "errorHint": "Puedes continuar sin filtrar por plataforma",
+        "selectedCount": "{count} plataforma(s) seleccionada(s)",
+        "clear": "Borrar",
+        "hideOthers": "Ocultar las demás plataformas",
+        "showOthers": "Ver {count} plataformas más",
+        "continue": "Continuar",
+        "continueCount": "({count} seleccionada(s))",
+        "skip": "Saltar este paso"
+      }
+    }
   },
   "pricing": {
     "title": "Elige tu plan",
@@ -1001,7 +1053,16 @@
     "migrationErrorTitle": "No se pudo finalizar tu cuenta",
     "migrationErrorDescription": "Tu sala no pudo vincularse a tu cuenta. Inténtalo de nuevo o contacta con soporte.",
     "migrationRetry": "Reintentar",
-    "migrationGoToRooms": "Ver mis salas"
+    "migrationGoToRooms": "Ver mis salas",
+    "recap": {
+      "swipedCount": "¡Has deslizado {count} pelis!",
+      "subtitle": "Estas pelis te esperan en tu sala",
+      "likedMovies": "Tus pelis favoritas ({count})",
+      "moreCount": "+{count} más",
+      "connecting": "Conectando...",
+      "createAccount": "Crear mi cuenta",
+      "retry": "O empieza de nuevo desde el principio"
+    }
   },
   "groups": {
     "title": "Tus grupos",
