@@ -11,6 +11,8 @@ import { PrismaService } from '../../infra/prisma.service';
 import { MatchesGateway } from './matches.gateway';
 import { MoviesService } from '../movies/movies.service';
 import { NestEmailService } from '../email/email.service';
+import { AnalyticsService } from '../analytics/analytics.service';
+import { SERVER_ANALYTICS_EVENTS } from '../analytics/analytics.events';
 
 import { ResponseMatchDto } from './dtos';
 import {
@@ -42,6 +44,7 @@ export class MatchesService {
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     private readonly moviesService: MoviesService,
     private readonly emailService: NestEmailService,
+    private readonly analytics: AnalyticsService,
   ) {}
 
   /**
@@ -107,6 +110,17 @@ export class MatchesService {
     if (isNew) {
       this.matchesGateway.emitMatchCreated(roomId, matchDto);
 
+      // Server-side match_found: the one place that *knows* a match really
+      // happened (this serializable transaction). Replaces the client-side
+      // match_found / trial_match pair — one event per member, with is_trial
+      // as a property instead of a separate event. Fire-and-forget.
+      this.trackMatchFound(roomId, movieId, matchDto.voteCount).catch((err) => {
+        this.logger.error(
+          `match_found tracking failed for room ${roomId}, movie ${movieId}`,
+          err instanceof Error ? err.stack : String(err),
+        );
+      });
+
       // Re-engage members who aren't live in the room right now: they miss the
       // in-app celebration, and "ça a matché sur X !" is the single best reason
       // to come back. Fire-and-forget — must never block or fail match creation.
@@ -122,6 +136,32 @@ export class MatchesService {
     }
 
     return matchDto;
+  }
+
+  /**
+   * Capture match_found once per room member. A match is a room-level event, so
+   * we attribute it to every member's PostHog person — this is what makes it
+   * show up in each user's funnel. is_trial lets us segment trial vs real
+   * matches without emitting a separate event (the client used to do both).
+   */
+  private async trackMatchFound(
+    roomId: string,
+    movieId: string,
+    voteCount: number,
+  ): Promise<void> {
+    const members = await this.prisma.roomMember.findMany({
+      where: { roomId },
+      select: { user: { select: { id: true, isGuest: true } } },
+    });
+    const isTrial = members.some((m) => m.user.isGuest);
+    for (const { user } of members) {
+      this.analytics.capture(user.id, SERVER_ANALYTICS_EVENTS.MATCH_FOUND, {
+        room_id: roomId,
+        movie_id: movieId,
+        vote_count: voteCount,
+        is_trial: isTrial,
+      });
+    }
   }
 
   /**

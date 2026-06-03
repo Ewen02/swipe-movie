@@ -8,7 +8,6 @@ import { startTrial, trialApiFetch } from '@/lib/trial';
 import { getSession } from '@/lib/auth-client';
 import { joinRoom } from '@/lib/api/rooms';
 import { ApiError } from '@/lib/http/parseResponse';
-import { captureEvent, ANALYTICS_EVENTS } from '@/components/providers/PostHogProvider';
 
 // 410 GONE = the room was auto-expired before the invite link was opened. We
 // surface this distinctly from a generic failure so a friend opening a stale
@@ -31,8 +30,9 @@ export default function TrialJoinPage() {
 
     async function joinAsLoggedUser() {
       // Existing account: join the room directly, no ghost user creation.
-      await joinRoom({ code });
-      captureEvent(ANALYTICS_EVENTS.ROOM_JOINED, { roomCode: code, source: 'invite_link' });
+      // room_joined is now emitted server-side; we pass `source` so it keeps
+      // the acquisition-channel dimension only the client knows.
+      await joinRoom({ code, source: 'invite_link' });
       router.replace(`/${locale}/rooms/${code}`);
     }
 
@@ -40,14 +40,13 @@ export default function TrialJoinPage() {
       await startTrial();
       const joinRes = await trialApiFetch('/rooms/join', {
         method: 'POST',
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code, source: 'invite_link_guest' }),
       });
       if (!joinRes.ok) {
         if (joinRes.status === 410) throw new ApiError('expired', 410);
         const body = await joinRes.json().catch(() => ({}));
         throw new Error(body?.message || 'join_failed');
       }
-      captureEvent(ANALYTICS_EVENTS.ROOM_JOINED, { roomCode: code, source: 'invite_link_guest' });
       router.replace(`/${locale}/rooms/${code}`);
     }
 

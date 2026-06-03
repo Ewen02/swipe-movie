@@ -11,7 +11,6 @@ import {
   Button,
 } from "@swipe-movie/ui"
 import { Sparkles, Loader2, ArrowLeft, ArrowRight, Check } from "lucide-react"
-import { captureEvent } from "@/components/providers/PostHogProvider"
 import { StepIndicator } from "./StepIndicator"
 import { StepTypeAndProviders } from "./StepTypeAndProviders"
 import { StepPersonalization } from "./StepPersonalization"
@@ -124,7 +123,8 @@ export function CreateRoomStepper({
       originalLanguage,
     }
     await onSubmit(roomData)
-    captureEvent("room_created", { type, genreId })
+    // room_created is emitted server-side from RoomCrudService.create (the
+    // authoritative, ad-block-proof point), so we no longer track it here.
   }
 
   const renderStep = () => {

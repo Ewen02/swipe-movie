@@ -29,6 +29,8 @@ import { formatHoursLeft, resolveEmailLocale } from '@swipe-movie/email';
 
 import { generateRoomCode } from '../../common/utils/code';
 import { NestEmailService } from '../email/email.service';
+import { AnalyticsService } from '../analytics/analytics.service';
+import { SERVER_ANALYTICS_EVENTS } from '../analytics/analytics.events';
 
 // Rooms live 72h. A 24h life killed shared invite links opened the next day
 // (the friend got a hard 410 GONE), suppressing real joins — the core social
@@ -48,6 +50,7 @@ export class RoomCrudService {
     private subscriptionService: SubscriptionService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     private readonly emailService: NestEmailService,
+    private readonly analytics: AnalyticsService,
   ) {}
 
   /**
@@ -159,7 +162,7 @@ export class RoomCrudService {
       });
     }
 
-    return this.prisma.$transaction(async (tx) => {
+    const room = await this.prisma.$transaction(async (tx) => {
       // Verify user exists, if not throw an error
       const user = await tx.user.findUnique({
         where: { id: userId },
@@ -221,6 +224,15 @@ export class RoomCrudService {
 
       return room as RoomCreateResponseDto;
     });
+
+    // Track after commit so a rolled-back create never produces an event.
+    this.analytics.capture(userId, SERVER_ANALYTICS_EVENTS.ROOM_CREATED, {
+      room_id: room.id,
+      type: room.type,
+      genre_id: room.genreId,
+    });
+
+    return room;
   }
 
   async getById(

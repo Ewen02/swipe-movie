@@ -20,6 +20,7 @@ import { TrialModule } from './modules/trial/trial.module';
 import { DigestModule } from './modules/digest/digest.module';
 import { PushModule } from './modules/push/push.module';
 import { GroupsModule } from './modules/groups/groups.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { HealthController } from './modules/health/health.controller';
 import { HttpsRedirectMiddleware } from './common/middleware/https-redirect.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
@@ -65,6 +66,7 @@ import { PrismaModule } from './infra/prisma.module';
     DigestModule,
     PushModule,
     GroupsModule,
+    AnalyticsModule,
   ],
   controllers: [HealthController],
   providers: [

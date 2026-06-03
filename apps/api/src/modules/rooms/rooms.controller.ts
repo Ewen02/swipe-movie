@@ -66,7 +66,7 @@ export class RoomsController {
   @ApiJoinRoomErrors()
   @Post('join')
   join(@UserId() userId: string, @Body() dto: JoinRoomDto) {
-    return this.service.join(userId, dto.code);
+    return this.service.join(userId, dto.code, dto.source);
   }
 
   @ApiOperation({ summary: 'Leave a room' })

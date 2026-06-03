@@ -10,6 +10,7 @@ import { PrismaService } from '../../infra/prisma.service';
 import { AuthService } from '../auth/auth.service';
 import { generateRoomCode } from '../../common/utils/code';
 import { StartTrialDto } from './dto/start-trial.dto';
+import { AnalyticsService } from '../analytics/analytics.service';
 
 @Injectable()
 export class TrialService {
@@ -18,6 +19,7 @@ export class TrialService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
+    private readonly analytics: AnalyticsService,
   ) {}
 
   async startTrial(
@@ -219,6 +221,14 @@ export class TrialService {
     }
 
     this.logger.log(`Migrated guest ${guestId} data to user ${realUserId}`);
+
+    // Stitch identities in PostHog: any server-side events captured under the
+    // guest user id during the trial (e.g. match_found with is_trial) now
+    // belong to the real account. Without this, the trial→paid funnel is split
+    // across two persons. (Client-side anonymous events are linked separately
+    // when the browser calls posthog.identify(realUserId) post-migration.)
+    this.analytics.alias(realUserId, guestId);
+
     return { alreadyMigrated: false };
   }
 

@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@swipe-movie/ui';
 import { authClient } from '@/lib/auth-client';
 import { captureEvent } from '@/components/providers/PostHogProvider';
+import { ANALYTICS_EVENTS } from '@/lib/analytics/events';
 
 /**
  * Self-contained email auth flow offering both a 6-digit OTP code (default,
@@ -97,7 +98,7 @@ export function EmailAuthForm({
   const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValidEmail || busy) return;
-    track('email_auth_code_requested', { method: 'otp' });
+    track(ANALYTICS_EVENTS.EMAIL_AUTH_CODE_REQUESTED, { method: 'otp' });
     setBusy(true);
     setError(null);
     try {
@@ -120,13 +121,13 @@ export function EmailAuthForm({
     e.preventDefault();
     const clean = code.replace(/\D/g, '');
     if (clean.length !== 6 || busy) return;
-    track('email_auth_code_submitted');
+    track(ANALYTICS_EVENTS.EMAIL_AUTH_CODE_SUBMITTED, { method: 'otp' });
     setBusy(true);
     setError(null);
     try {
       const result = await authClient.signIn.emailOtp({ email, otp: clean });
       if (result?.error) throw new Error(result.error.message || 'otp_verify_failed');
-      track('email_auth_signed_in', { method: 'otp' });
+      track(ANALYTICS_EVENTS.EMAIL_AUTH_SIGNED_IN, { method: 'otp' });
       // Flow complete — drop the persisted step so a later visit starts fresh.
       try {
         window.sessionStorage.removeItem(storageKey);
@@ -149,7 +150,7 @@ export function EmailAuthForm({
   // Step 1b — magic link fallback.
   const handleSendMagicLink = async () => {
     if (!isValidEmail || busy) return;
-    track('email_auth_code_requested', { method: 'magic_link' });
+    track(ANALYTICS_EVENTS.EMAIL_AUTH_CODE_REQUESTED, { method: 'magic_link' });
     setBusy(true);
     setError(null);
     try {

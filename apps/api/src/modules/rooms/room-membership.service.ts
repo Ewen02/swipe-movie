@@ -16,6 +16,8 @@ import { MatchesGateway } from '../matches/matches.gateway';
 import { RoomJoinResponseDto, RoomMembersResponseDto } from './dtos';
 import { RoomCrudService } from './room-crud.service';
 import { PushService } from '../push/push.service';
+import { AnalyticsService } from '../analytics/analytics.service';
+import { SERVER_ANALYTICS_EVENTS } from '../analytics/analytics.events';
 
 @Injectable()
 export class RoomMembershipService {
@@ -29,9 +31,14 @@ export class RoomMembershipService {
     private matchesGateway: MatchesGateway,
     private roomCrudService: RoomCrudService,
     private readonly pushService: PushService,
+    private readonly analytics: AnalyticsService,
   ) {}
 
-  async join(userId: string, code: string): Promise<RoomJoinResponseDto> {
+  async join(
+    userId: string,
+    code: string,
+    source?: string,
+  ): Promise<RoomJoinResponseDto> {
     this.logger.log(`User ${userId} joining room ${code}`);
     const room = await this.prisma.room.findUnique({
       where: { code },
@@ -73,6 +80,17 @@ export class RoomMembershipService {
     });
 
     this.logger.log(`User ${userId} joined room ${room.id}`);
+
+    // Only track a genuinely new membership. The endpoint is idempotent
+    // (upsert), so without this guard a member re-opening the room would
+    // re-fire room_joined — the over-counting the client used to produce.
+    if (!isAlreadyMember) {
+      this.analytics.capture(userId, SERVER_ANALYTICS_EVENTS.ROOM_JOINED, {
+        room_id: room.id,
+        room_code: room.code,
+        source: source ?? 'direct',
+      });
+    }
 
     // Get user info for WebSocket notification
     const user = await this.prisma.user.findUnique({

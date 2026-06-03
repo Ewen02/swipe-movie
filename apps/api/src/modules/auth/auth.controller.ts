@@ -66,6 +66,10 @@ export class AuthController {
       });
       this.logger.log(`User upserted successfully: ${dto.email}`);
 
+      // signup_completed stays client-side: the browser knows trial-vs-direct
+      // and covers the OTP path this OAuth-only endpoint doesn't see. Its
+      // once-per-account localStorage guard already prevents over-counting.
+
       // Send welcome email for new users (fire-and-forget)
       if (isNewUser) {
         this.emailService

@@ -14,18 +14,24 @@ export const ANALYTICS_EVENTS = {
   // --- Acquisition / SEO ---
   SEO_PAGE_VIEW: 'seo_page_view',
   SEO_CTA_CLICKED: 'seo_cta_clicked',
-  USER_SIGNED_UP: 'user_signed_up',
   /**
-   * Fired once when a real account is created, with the path that produced it.
-   * Distinct from USER_SIGNED_UP (which fires at first PostHog identify of any
-   * session and can over-count on a new device for an existing user).
+   * Fired once per account (gated by a localStorage key), with the path that
+   * produced it ('trial' | 'direct'). This is the reliable signup signal; the
+   * old USER_SIGNED_UP was removed because it re-fired on every new device.
    */
   SIGNUP_COMPLETED: 'signup_completed',
+
+  // --- Auth (email) ---
+  EMAIL_AUTH_CODE_REQUESTED: 'email_auth_code_requested',
+  EMAIL_AUTH_CODE_SUBMITTED: 'email_auth_code_submitted',
+  EMAIL_AUTH_SIGNED_IN: 'email_auth_signed_in',
 
   // --- Trial (guest) funnel ---
   TRIAL_STARTED: 'trial_started',
   TRIAL_SWIPE: 'trial_swipe',
-  TRIAL_MATCH: 'trial_match',
+  // TRIAL_MATCH was removed: matches are now emitted server-side as a single
+  // `match_found` carrying an `is_trial` property, so a trial match is just
+  // `match_found { is_trial: true }`.
   TRIAL_LOGIN_WALL_SHOWN: 'trial_login_wall_shown',
   TRIAL_LOGIN_WALL_DISMISSED: 'trial_login_wall_dismissed',
   TRIAL_LOGIN_WALL_SIGNIN_CLICKED: 'trial_login_wall_signin_clicked',
@@ -41,6 +47,10 @@ export const ANALYTICS_EVENTS = {
   ONBOARDING_ABANDONED: 'onboarding_abandoned',
 
   // --- Usage: rooms ---
+  // ROOM_CREATED and ROOM_JOINED are now emitted SERVER-SIDE (RoomCrudService /
+  // RoomMembershipService) — the authoritative, ad-block-proof point. Kept here
+  // as the canonical names; the client no longer captures them. The mirror
+  // lives in apps/api/src/modules/analytics/analytics.events.ts.
   ROOM_CREATED: 'room_created',
   ROOM_JOINED: 'room_joined',
   ROOM_INVITE_SHARED: 'room_invite_shared',
@@ -64,6 +74,9 @@ export const ANALYTICS_EVENTS = {
   DECK_FINISHED: 'deck_finished',
 
   // --- Usage: matches ---
+  // MATCH_FOUND is emitted SERVER-SIDE from MatchesService (the only place that
+  // authoritatively knows a match happened), once per member, with an
+  // `is_trial` property. The client no longer captures it.
   MATCH_FOUND: 'match_found',
   MATCH_OPENED: 'match_opened',
   MATCH_SHARED: 'match_shared',

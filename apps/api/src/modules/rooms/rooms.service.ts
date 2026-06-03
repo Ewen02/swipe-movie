@@ -27,8 +27,12 @@ export class RoomsService {
     return this.roomCrudService.create(userId, dto);
   }
 
-  async join(userId: string, code: string): Promise<RoomJoinResponseDto> {
-    return this.roomMembershipService.join(userId, code);
+  async join(
+    userId: string,
+    code: string,
+    source?: string,
+  ): Promise<RoomJoinResponseDto> {
+    return this.roomMembershipService.join(userId, code, source);
   }
 
   async leave(userId: string, roomId: string) {

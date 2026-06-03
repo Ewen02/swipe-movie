@@ -171,9 +171,10 @@ function RoomPageContent() {
         if (result.matchCreated) {
           if (isTrial) {
             setTrialHasMatch(true);
-            captureEvent('trial_match', { movieId: movieIdStr, roomId: room.id });
           }
-          captureEvent('match_found', { movieId: movieIdStr, roomId: room.id });
+          // match_found (with is_trial) is now emitted server-side from
+          // MatchesService — the only place that authoritatively knows a match
+          // happened — so it isn't double-counted or lost to ad-blockers.
           triggerMatchAnimation(movie);
         }
       } catch (err) {
@@ -293,7 +294,8 @@ function RoomPageContent() {
       setJoiningRoom(true);
       await joinRoom({ code });
       await reloadRoom();
-      captureEvent('room_joined', { roomCode: code });
+      // room_joined is emitted server-side by the join endpoint (source defaults
+      // to 'direct'), so we no longer track it here.
       toast({ title: t('welcomeTitle'), description: t('welcomeDescription') });
     } catch (err) {
       console.error('Failed to join room:', err);

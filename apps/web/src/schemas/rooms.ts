@@ -30,6 +30,9 @@ export type CreateRoomValues = z.infer<typeof createRoomSchema>
 
 export const joinRoomSchema = z.object({
   code: z.string().length(ROOM_CODE_LENGTH, `Le code doit contenir exactement ${ROOM_CODE_LENGTH} caractères`),
+  // Optional acquisition source, forwarded to the server-side room_joined event
+  // (e.g. 'invite_link'). Not used by the join form, only by invite-link flows.
+  source: z.string().max(40).optional(),
 })
 export type JoinRoomValues = z.infer<typeof joinRoomSchema>
 

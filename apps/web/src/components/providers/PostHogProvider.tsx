@@ -100,11 +100,12 @@ export function PostHogProvider() {
           });
 
           if (!alreadyIdentified) {
-            posthog.capture(ANALYTICS_EVENTS.USER_SIGNED_UP);
-            // Distinguish the two acquisition paths: a fresh account created
-            // with trial data still in localStorage came through the /try flow;
-            // otherwise it's a direct signup from the landing/login. This is the
-            // first identify on this device, so it's our best signup proxy.
+            // signup_completed is the reliable signup signal — gated to once per
+            // account by POSTHOG_IDENTIFIED_KEY, and it captures the acquisition
+            // path: a fresh account with trial data still in localStorage came
+            // through /try, otherwise it's a direct signup. (We dropped the old
+            // user_signed_up, which fired on every new device and only
+            // duplicated this without the localStorage guard.)
             posthog.capture(ANALYTICS_EVENTS.SIGNUP_COMPLETED, {
               source: getTrialData() ? 'trial' : 'direct',
             });
