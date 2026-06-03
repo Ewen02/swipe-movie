@@ -446,7 +446,19 @@
       "q5": "¿Mis datos personales están seguros?",
       "a5": "Absolutamente. Solo recopilamos la información estrictamente necesaria (nombre y email vía Google OAuth). Consulta nuestra",
       "privacyLink": "política de privacidad",
-      "a5End": "para más detalles."
+      "a5End": "para más detalles.",
+      "q6": "¿Cómo elegir una película en grupo o en pareja?",
+      "a6": "Con Swipe Movie, cada persona se une a una sala compartida y desliza películas a su ritmo. En cuanto todos dan like a la misma película, hay match: ya sabéis qué ver sin discutir durante horas.",
+      "q7": "¿Qué app sirve para decidir qué ver esta noche con amigos?",
+      "a7": "Swipe Movie es una app colaborativa pensada justo para esto: crea una sala, invita a tus amigos o a tu pareja con un código y deja que el algoritmo encuentre la película que gusta a todos. Es gratis para empezar.",
+      "q8": "¿Cómo funciona el matching de películas?",
+      "a8": "Cada miembro de la sala desliza a la derecha (me gusta) o a la izquierda (paso) sobre las películas. Cuando todos los participantes han dado like a la misma película, Swipe Movie crea un match y te avisa: esa es vuestra película en común.",
+      "q9": "¿Con qué plataformas de streaming funciona Swipe Movie?",
+      "a9": "Puedes filtrar las películas por plataforma de streaming (Netflix, Prime Video, Disney+ y más) para ver solo lo que está disponible en tus suscripciones y saber qué ver esta noche.",
+      "q10": "¿Cómo saber qué ver en Netflix, Prime o Disney+?",
+      "a10": "Filtra el catálogo por plataforma en Swipe Movie, deslizad juntos y la app os propone la película que pone a todos de acuerdo entre los títulos disponibles en vuestros servicios de streaming.",
+      "q11": "¿El catálogo de películas es completo?",
+      "a11": "Swipe Movie usa The Movie Database (TMDb), un amplio catálogo de millones de películas y series que se actualiza regularmente, desde los grandes clásicos hasta los últimos estrenos."
     },
     "cta": {
       "title": "¿No encontraste tu respuesta?",

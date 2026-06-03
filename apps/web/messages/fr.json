@@ -446,7 +446,19 @@
       "q5": "Mes données personnelles sont-elles sécurisées ?",
       "a5": "Absolument. Nous ne collectons que les informations strictement nécessaires (nom et email via Google OAuth). Consultez notre",
       "privacyLink": "politique de confidentialité",
-      "a5End": "pour plus de détails."
+      "a5End": "pour plus de détails.",
+      "q6": "Comment choisir un film à plusieurs ou à deux ?",
+      "a6": "Avec Swipe Movie, chacun rejoint une room partagée puis swipe les films à son rythme. Dès que tout le monde a liké le même film, c'est un match : vous savez quoi regarder sans débattre pendant des heures.",
+      "q7": "Quelle appli pour décider quoi regarder ce soir entre amis ?",
+      "a7": "Swipe Movie est une app collaborative pensée exactement pour ça : créez une room, invitez vos amis ou votre partenaire avec un code, et laissez l'algorithme trouver le film qui plaît à tout le monde. C'est gratuit pour commencer.",
+      "q8": "Comment fonctionne le matching de films ?",
+      "a8": "Chaque membre de la room swipe à droite (j'aime) ou à gauche (je passe) sur des films. Quand tous les participants ont liké le même film, Swipe Movie crée un match et vous le signale : c'est votre film commun.",
+      "q9": "Sur quelles plateformes de streaming Swipe Movie fonctionne-t-il ?",
+      "a9": "Vous pouvez filtrer les films par plateforme de streaming (Netflix, Prime Video, Disney+ et d'autres) pour ne voir que ce qui est disponible sur vos abonnements et savoir quoi regarder ce soir.",
+      "q10": "Comment savoir quoi regarder sur Netflix, Prime ou Disney+ ?",
+      "a10": "Filtrez le catalogue par plateforme dans Swipe Movie, swipez à plusieurs, et l'app vous propose le film qui met tout le monde d'accord parmi les titres disponibles sur vos services de streaming.",
+      "q11": "Le catalogue de films est-il complet ?",
+      "a11": "Swipe Movie s'appuie sur The Movie Database (TMDb), un large catalogue de millions de films et séries régulièrement mis à jour, des grands classiques aux dernières sorties."
     },
     "cta": {
       "title": "Vous n'avez pas trouvé votre réponse ?",

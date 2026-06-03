@@ -46,15 +46,15 @@ type LocaleMeta = {
 
 const metadataByLocale: Record<string, LocaleMeta> = {
   fr: {
-    title: 'Swipe Movie — Trouvez votre prochain film ou série entre amis',
+    title: 'Swipe Movie — Quel film regarder ce soir ? Swipez à plusieurs',
     description:
-      "Swipe Movie est l'app collaborative qui vous aide à choisir le film ou la série parfaite à regarder à plusieurs. Créez une room, swipez ensemble et trouvez instantanément un match qui fait l'unanimité.",
-    ogTitle: 'Swipe Movie — Trouvez votre prochain film ou série entre amis',
+      'Vous ne savez pas quoi regarder ? Swipez vos films comme sur une app de rencontre, à deux ou entre amis, et matchez en quelques secondes sur Netflix, Prime Video et Disney+. Gratuit, sans débat.',
+    ogTitle: 'Swipe Movie — Quel film regarder ce soir ? Swipez à plusieurs',
     ogDescription:
       'Créez une room, swipez à plusieurs et trouvez instantanément le film ou la série parfaite. Matching intelligent, 100% gratuit pour commencer.',
-    twitterTitle: 'Swipe Movie — Trouvez votre prochain film entre amis',
+    twitterTitle: 'Swipe Movie — Quel film regarder ce soir ?',
     twitterDescription:
-      "Swipez, matchez, regardez. L'app collaborative pour choisir un film en groupe en quelques secondes.",
+      "Swipez, matchez, regardez. L'app pour choisir un film à deux ou en groupe en quelques secondes, sans débat.",
     ogLocale: 'fr_FR',
     keywords: [
       'swipe movie',
@@ -76,15 +76,15 @@ const metadataByLocale: Record<string, LocaleMeta> = {
     ],
   },
   en: {
-    title: 'Swipe Movie — Find your next movie or series with friends',
+    title: 'Swipe Movie — What to Watch Tonight? Swipe Movies Together',
     description:
-      'Swipe Movie is the collaborative app that helps you decide what to watch together. Create a room, swipe with friends and instantly find a movie or series everyone agrees on.',
-    ogTitle: 'Swipe Movie — Find your next movie or series with friends',
+      "Can't decide what to watch? Swipe movies like a dating app, with friends or your partner, and match in seconds across Netflix, Prime Video and Disney+. Free, no more debating.",
+    ogTitle: 'Swipe Movie — What to Watch Tonight? Swipe Movies Together',
     ogDescription:
       'Create a room, swipe together and instantly match on the perfect movie or series. Smart matching, free to start.',
-    twitterTitle: 'Swipe Movie — Find your next movie with friends',
+    twitterTitle: 'Swipe Movie — What to watch tonight?',
     twitterDescription:
-      'Swipe, match, watch. The collaborative app to pick a movie with friends in seconds.',
+      'Swipe, match, watch. The app to pick a movie with friends or your partner in seconds — no debating.',
     ogLocale: 'en_US',
     keywords: [
       'swipe movie',
@@ -106,15 +106,15 @@ const metadataByLocale: Record<string, LocaleMeta> = {
     ],
   },
   es: {
-    title: 'Swipe Movie — Encuentra tu próxima película o serie con amigos',
+    title: 'Swipe Movie — ¿Qué película ver esta noche? Desliza en grupo',
     description:
-      'Swipe Movie es la app colaborativa que te ayuda a decidir qué ver juntos. Crea una sala, desliza con tus amigos y encuentra al instante una película o serie con la que todos estén de acuerdo.',
-    ogTitle: 'Swipe Movie — Encuentra tu próxima película o serie con amigos',
+      '¿No sabes qué ver? Desliza películas como en una app de citas, en pareja o con amigos, y haz match en segundos en Netflix, Prime Video y Disney+. Gratis, sin discusiones.',
+    ogTitle: 'Swipe Movie — ¿Qué película ver esta noche? Desliza en grupo',
     ogDescription:
       'Crea una sala, desliza juntos y haz match al instante con la película o serie perfecta. Matching inteligente, gratis para empezar.',
-    twitterTitle: 'Swipe Movie — Encuentra tu próxima película con amigos',
+    twitterTitle: 'Swipe Movie — ¿Qué película ver esta noche?',
     twitterDescription:
-      'Desliza, haz match y mira. La app colaborativa para elegir una película con amigos en segundos.',
+      'Desliza, haz match y mira. La app para elegir una película en pareja o con amigos en segundos, sin discutir.',
     ogLocale: 'es_ES',
     keywords: [
       'swipe movie',
@@ -135,15 +135,15 @@ const metadataByLocale: Record<string, LocaleMeta> = {
     ],
   },
   de: {
-    title: 'Swipe Movie — Finde deinen nächsten Film oder deine nächste Serie mit Freunden',
+    title: 'Swipe Movie — Was heute Abend schauen? Gemeinsam swipen',
     description:
-      'Swipe Movie ist die kollaborative App, die euch hilft zu entscheiden, was ihr zusammen schaut. Erstellt einen Raum, swiped mit Freunden und findet sofort einen Film oder eine Serie, mit der alle einverstanden sind.',
-    ogTitle: 'Swipe Movie — Finde deinen nächsten Film oder deine nächste Serie mit Freunden',
+      'Keine Ahnung, was ihr schauen sollt? Swipt Filme wie in einer Dating-App, zu zweit oder mit Freunden, und matcht in Sekunden auf Netflix, Prime Video und Disney+. Kostenlos, ohne Diskussion.',
+    ogTitle: 'Swipe Movie — Was heute Abend schauen? Gemeinsam swipen',
     ogDescription:
       'Erstellt einen Raum, swiped gemeinsam und matched sofort auf den perfekten Film oder die perfekte Serie. Smartes Matching, kostenlos zum Starten.',
-    twitterTitle: 'Swipe Movie — Finde deinen nächsten Film mit Freunden',
+    twitterTitle: 'Swipe Movie — Was heute Abend schauen?',
     twitterDescription:
-      'Swipen, matchen, schauen. Die kollaborative App, um in Sekunden einen Film mit Freunden zu wählen.',
+      'Swipen, matchen, schauen. Die App, um zu zweit oder mit Freunden in Sekunden einen Film zu wählen — ohne Diskussion.',
     ogLocale: 'de_DE',
     keywords: [
       'swipe movie',
@@ -164,15 +164,15 @@ const metadataByLocale: Record<string, LocaleMeta> = {
     ],
   },
   it: {
-    title: 'Swipe Movie — Trova il tuo prossimo film o serie con gli amici',
+    title: 'Swipe Movie — Cosa guardare stasera? Swippa in gruppo',
     description:
-      "Swipe Movie è l'app collaborativa che ti aiuta a decidere cosa guardare insieme. Crea una room, swippa con i tuoi amici e trova subito un film o una serie su cui tutti sono d'accordo.",
-    ogTitle: 'Swipe Movie — Trova il tuo prossimo film o serie con gli amici',
+      "Non sai cosa guardare? Swippa i film come in un'app di incontri, in coppia o con gli amici, e fai match in pochi secondi su Netflix, Prime Video e Disney+. Gratis, senza discussioni.",
+    ogTitle: 'Swipe Movie — Cosa guardare stasera? Swippa in gruppo',
     ogDescription:
       "Crea una room, swippate insieme e fate match all'istante sul film o sulla serie perfetta. Matching intelligente, gratuito per iniziare.",
-    twitterTitle: 'Swipe Movie — Trova il tuo prossimo film con gli amici',
+    twitterTitle: 'Swipe Movie — Cosa guardare stasera?',
     twitterDescription:
-      "Swippa, matcha, guarda. L'app collaborativa per scegliere un film con gli amici in pochi secondi.",
+      "Swippa, matcha, guarda. L'app per scegliere un film in coppia o con gli amici in pochi secondi, senza discutere.",
     ogLocale: 'it_IT',
     keywords: [
       'swipe movie',

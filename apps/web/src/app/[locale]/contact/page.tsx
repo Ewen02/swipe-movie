@@ -1,25 +1,54 @@
-"use client"
+'use client';
 
-import Link from "next/link"
-import { useTranslations } from "next-intl"
-import { motion } from "framer-motion"
-import { Button } from "@swipe-movie/ui"
-import { Mail, MessageSquare, Github, Sparkles, ArrowRight } from "lucide-react"
-import { Footer } from "@/components/layout/Footer"
-import { PublicHeader } from "@/components/layout/PublicHeader"
+import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { motion } from 'framer-motion';
+import { Button } from '@swipe-movie/ui';
+import { Mail, MessageSquare, Github, ArrowRight } from 'lucide-react';
+import { Footer } from '@/components/layout/Footer';
+import { PublicHeader } from '@/components/layout/PublicHeader';
 
 export default function ContactPage() {
-  const t = useTranslations('contact')
+  const t = useTranslations('contact');
 
+  // `hasPrivacyLink` marks the entry whose answer is followed by an inline
+  // link to the privacy policy (rendered specially below).
   const faqs = [
     { q: t('faq.q1'), a: t('faq.a1') },
     { q: t('faq.q2'), a: t('faq.a2') },
     { q: t('faq.q3'), a: t('faq.a3') },
     { q: t('faq.q4'), a: t('faq.a4') },
-  ]
+    { q: t('faq.q5'), a: t('faq.a5'), hasPrivacyLink: true },
+    { q: t('faq.q6'), a: t('faq.a6') },
+    { q: t('faq.q7'), a: t('faq.a7') },
+    { q: t('faq.q8'), a: t('faq.a8') },
+    { q: t('faq.q9'), a: t('faq.a9') },
+    { q: t('faq.q10'), a: t('faq.a10') },
+    { q: t('faq.q11'), a: t('faq.a11') },
+  ];
+
+  // FAQPage structured data — must mirror exactly what is rendered above so
+  // Google/LLMs can cite the visible Q&A. The privacy entry is flattened to
+  // plain text (answer + link label + trailing sentence).
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.hasPrivacyLink ? `${faq.a} ${t('faq.privacyLink')} ${t('faq.a5End')}` : faq.a,
+      },
+    })),
+  };
 
   return (
     <div className="min-h-screen bg-background overflow-hidden flex flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <PublicHeader />
 
       <div className="fixed top-40 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10" />
@@ -42,9 +71,7 @@ export default function ContactPage() {
                 {t('title')}
               </span>
             </h1>
-            <p className="text-xl text-muted-foreground">
-              {t('description')}
-            </p>
+            <p className="text-xl text-muted-foreground">{t('description')}</p>
           </motion.div>
 
           {/* Contact Cards */}
@@ -63,9 +90,7 @@ export default function ContactPage() {
                     <Mail className="w-7 h-7 text-white" />
                   </div>
                   <h2 className="text-xl font-bold mb-2">{t('email.title')}</h2>
-                  <p className="text-muted-foreground mb-4">
-                    {t('email.description')}
-                  </p>
+                  <p className="text-muted-foreground mb-4">{t('email.description')}</p>
                   <a
                     href="mailto:contact@swipe-movie.com"
                     className="text-primary hover:underline font-medium inline-flex items-center gap-1"
@@ -91,9 +116,7 @@ export default function ContactPage() {
                     <Github className="w-7 h-7 text-white" />
                   </div>
                   <h2 className="text-xl font-bold mb-2">{t('github.title')}</h2>
-                  <p className="text-muted-foreground mb-4">
-                    {t('github.description')}
-                  </p>
+                  <p className="text-muted-foreground mb-4">{t('github.description')}</p>
                   <a
                     href="https://github.com/Ewen02/swipe-movie/issues"
                     target="_blank"
@@ -129,12 +152,12 @@ export default function ContactPage() {
                       <h3 className="font-semibold mb-2">{faq.q}</h3>
                       <p className="text-muted-foreground text-sm">
                         {faq.a}
-                        {i === 4 && (
+                        {faq.hasPrivacyLink && (
                           <>
-                            {" "}
+                            {' '}
                             <Link href="/privacy" className="text-primary hover:underline">
                               {t('faq.privacyLink')}
-                            </Link>{" "}
+                            </Link>{' '}
                             {t('faq.a5End')}
                           </>
                         )}
@@ -158,10 +181,7 @@ export default function ContactPage() {
                 <h2 className="text-3xl font-bold mb-4">{t('cta.title')}</h2>
                 <p className="text-muted-foreground mb-6">{t('cta.description')}</p>
                 <a href="mailto:contact@swipe-movie.com">
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                     <Button size="lg" className="text-lg px-12 py-6">
                       <Mail className="mr-2 h-5 w-5" />
                       {t('cta.button')}
@@ -176,5 +196,5 @@ export default function ContactPage() {
 
       <Footer />
     </div>
-  )
+  );
 }

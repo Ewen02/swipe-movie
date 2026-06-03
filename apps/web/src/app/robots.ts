@@ -21,13 +21,54 @@ export default function robots(): MetadataRoute.Robots {
           '/monitoring',
         ],
       },
+      // AI crawlers are explicitly allowed so Swipe Movie can surface in
+      // ChatGPT, Perplexity, Claude, Gemini & co. They inherit the same
+      // public/protected split as `*` via the catch-all rule above, but we
+      // list them so the intent is unambiguous (and overrides any future
+      // default-deny on AI bots).
       {
-        userAgent: 'GPTBot',
-        disallow: ['/'],
+        userAgent: 'GPTBot', // ChatGPT / OpenAI
+        allow: ['/'],
       },
       {
-        userAgent: 'CCBot',
-        disallow: ['/'],
+        userAgent: 'OAI-SearchBot', // ChatGPT Search
+        allow: ['/'],
+      },
+      {
+        userAgent: 'ChatGPT-User', // ChatGPT browsing on user request
+        allow: ['/'],
+      },
+      {
+        userAgent: 'CCBot', // Common Crawl (feeds many LLMs)
+        allow: ['/'],
+      },
+      {
+        userAgent: 'PerplexityBot', // Perplexity
+        allow: ['/'],
+      },
+      {
+        userAgent: 'Perplexity-User', // Perplexity live fetch
+        allow: ['/'],
+      },
+      {
+        userAgent: 'ClaudeBot', // Anthropic / Claude
+        allow: ['/'],
+      },
+      {
+        userAgent: 'Claude-Web',
+        allow: ['/'],
+      },
+      {
+        userAgent: 'Google-Extended', // Gemini / Vertex AI training
+        allow: ['/'],
+      },
+      {
+        userAgent: 'Applebot-Extended', // Apple Intelligence
+        allow: ['/'],
+      },
+      {
+        userAgent: 'Bingbot', // Bing / Copilot
+        allow: ['/'],
       },
     ],
     // Next.js generateSitemaps() exposes a sitemap index at /sitemap.xml that

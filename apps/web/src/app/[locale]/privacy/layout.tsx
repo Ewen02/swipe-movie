@@ -74,6 +74,10 @@ export async function generateMetadata({
       title: t.ogTitle,
       description: t.ogDescription,
     },
+    robots: {
+      index: false,
+      follow: true,
+    },
   };
 }
 

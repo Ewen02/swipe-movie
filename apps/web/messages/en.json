@@ -446,7 +446,19 @@
       "q5": "Is my personal data secure?",
       "a5": "Absolutely. We only collect strictly necessary information (name and email via Google OAuth). Check out our",
       "privacyLink": "privacy policy",
-      "a5End": "for more details."
+      "a5End": "for more details.",
+      "q6": "How do you pick a movie with a group or as a couple?",
+      "a6": "With Swipe Movie, everyone joins a shared room and swipes through movies at their own pace. As soon as everyone likes the same movie, it's a match: you know what to watch without endless debate.",
+      "q7": "What app helps you decide what to watch tonight with friends?",
+      "a7": "Swipe Movie is a collaborative app built exactly for this: create a room, invite your friends or partner with a code, and let the algorithm find a movie everyone agrees on. It's free to get started.",
+      "q8": "How does movie matching work?",
+      "a8": "Each member of the room swipes right (like) or left (skip) on movies. When all participants have liked the same movie, Swipe Movie creates a match and notifies you: that's your shared pick.",
+      "q9": "Which streaming platforms does Swipe Movie work with?",
+      "a9": "You can filter movies by streaming platform (Netflix, Prime Video, Disney+ and more) so you only see what's available on your subscriptions and know what to watch tonight.",
+      "q10": "How do you find what to watch on Netflix, Prime or Disney+?",
+      "a10": "Filter the catalog by platform in Swipe Movie, swipe together, and the app suggests the movie everyone agrees on among the titles available on your streaming services.",
+      "q11": "Is the movie catalog complete?",
+      "a11": "Swipe Movie is powered by The Movie Database (TMDb), a large catalog of millions of movies and TV shows that's regularly updated, from classics to the latest releases."
     },
     "cta": {
       "title": "Didn't find your answer?",

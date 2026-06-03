@@ -446,7 +446,19 @@
       "q5": "Sind meine persönlichen Daten sicher?",
       "a5": "Absolut. Wir sammeln nur die unbedingt notwendigen Informationen (Name und E-Mail über Google OAuth). Schau dir unsere",
       "privacyLink": "Datenschutzerklärung",
-      "a5End": "für weitere Details an."
+      "a5End": "für weitere Details an.",
+      "q6": "Wie wählt man als Gruppe oder zu zweit einen Film aus?",
+      "a6": "Mit Swipe Movie tritt jeder einem gemeinsamen Raum bei und swipt Filme im eigenen Tempo. Sobald alle denselben Film liken, gibt es ein Match: Ihr wisst, was ihr schauen wollt, ganz ohne stundenlange Diskussion.",
+      "q7": "Welche App hilft, mit Freunden zu entscheiden, was man heute Abend schaut?",
+      "a7": "Swipe Movie ist eine kollaborative App, genau dafür gemacht: Erstelle einen Raum, lade deine Freunde oder deinen Partner mit einem Code ein und lass den Algorithmus den Film finden, der allen gefällt. Der Einstieg ist kostenlos.",
+      "q8": "Wie funktioniert das Film-Matching?",
+      "a8": "Jedes Mitglied im Raum swipt nach rechts (gefällt mir) oder nach links (überspringen). Wenn alle Teilnehmer denselben Film geliked haben, erstellt Swipe Movie ein Match und benachrichtigt euch: das ist euer gemeinsamer Film.",
+      "q9": "Mit welchen Streaming-Plattformen funktioniert Swipe Movie?",
+      "a9": "Du kannst Filme nach Streaming-Plattform filtern (Netflix, Prime Video, Disney+ und mehr), sodass du nur siehst, was in deinen Abos verfügbar ist, und weißt, was du heute Abend schauen kannst.",
+      "q10": "Wie findet man heraus, was man auf Netflix, Prime oder Disney+ schauen soll?",
+      "a10": "Filtere den Katalog in Swipe Movie nach Plattform, swipt gemeinsam, und die App schlägt euch unter den auf euren Streaming-Diensten verfügbaren Titeln den Film vor, der allen gefällt.",
+      "q11": "Ist der Filmkatalog vollständig?",
+      "a11": "Swipe Movie basiert auf The Movie Database (TMDb), einem umfangreichen Katalog mit Millionen von Filmen und Serien, der regelmäßig aktualisiert wird – von Klassikern bis zu den neuesten Releases."
     },
     "cta": {
       "title": "Keine Antwort gefunden?",

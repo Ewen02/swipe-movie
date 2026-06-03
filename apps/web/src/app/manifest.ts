@@ -12,7 +12,10 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: '#ec4899',
     orientation: 'portrait-primary',
     categories: ['entertainment', 'lifestyle', 'social'],
-    lang: 'en',
+    // Default locale is French (the app's primary market). Per-locale manifests
+    // are not supported by Next's static manifest route, so we point at the
+    // default audience rather than leaving a mismatched 'en'.
+    lang: 'fr',
     dir: 'ltr',
     scope: '/',
     icons: [

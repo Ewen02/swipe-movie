@@ -446,7 +446,19 @@
       "q5": "I miei dati personali sono al sicuro?",
       "a5": "Assolutamente. Raccogliamo solo le informazioni strettamente necessarie (nome ed email tramite Google OAuth). Consulta la nostra",
       "privacyLink": "informativa sulla privacy",
-      "a5End": "per maggiori dettagli."
+      "a5End": "per maggiori dettagli.",
+      "q6": "Come scegliere un film in gruppo o in coppia?",
+      "a6": "Con Swipe Movie ognuno entra in una stanza condivisa e swippa i film al proprio ritmo. Appena tutti mettono like allo stesso film, è un match: sapete cosa guardare senza discutere per ore.",
+      "q7": "Quale app usare per decidere cosa guardare stasera con gli amici?",
+      "a7": "Swipe Movie è un'app collaborativa pensata proprio per questo: crea una stanza, invita i tuoi amici o il tuo partner con un codice e lascia che l'algoritmo trovi il film che piace a tutti. È gratis per iniziare.",
+      "q8": "Come funziona il matching dei film?",
+      "a8": "Ogni membro della stanza swippa a destra (mi piace) o a sinistra (passo) sui film. Quando tutti i partecipanti hanno messo like allo stesso film, Swipe Movie crea un match e ti avvisa: è il vostro film in comune.",
+      "q9": "Con quali piattaforme di streaming funziona Swipe Movie?",
+      "a9": "Puoi filtrare i film per piattaforma di streaming (Netflix, Prime Video, Disney+ e altre) per vedere solo ciò che è disponibile sui tuoi abbonamenti e sapere cosa guardare stasera.",
+      "q10": "Come sapere cosa guardare su Netflix, Prime o Disney+?",
+      "a10": "Filtra il catalogo per piattaforma in Swipe Movie, swippate insieme e l'app vi propone il film che mette tutti d'accordo tra i titoli disponibili sui vostri servizi di streaming.",
+      "q11": "Il catalogo di film è completo?",
+      "a11": "Swipe Movie si basa su The Movie Database (TMDb), un ampio catalogo di milioni di film e serie TV aggiornato regolarmente, dai grandi classici alle ultime uscite."
     },
     "cta": {
       "title": "Non hai trovato la tua risposta?",
