@@ -4,10 +4,15 @@ import withSerwistInit from '@serwist/next';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
 
+// Service worker (PWA) temporarily DISABLED. Its navigation cache re-fetched the
+// whole app shell on every deploy, and during a deploy-heavy stretch that drove
+// Vercel Edge Requests / Fast Origin Transfer way over the Hobby quota for very
+// little traffic. Re-enable (flip `disable`) once we actually need offline/PWA
+// and have scoped the runtime cache to exclude dynamic/protected routes.
 const withSerwist = withSerwistInit({
   swSrc: 'src/app/sw.ts',
   swDest: 'public/sw.js',
-  disable: process.env.NODE_ENV === 'development',
+  disable: true,
 });
 
 const nextConfig = {

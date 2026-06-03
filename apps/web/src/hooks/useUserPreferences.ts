@@ -24,10 +24,12 @@ export function useUserPreferences() {
     USER_PREFERENCES_KEY,
     fetchUserPreferences,
     {
-      // Keep data fresh for 5 minutes
-      dedupingInterval: 5 * 60 * 1000,
-      // Revalidate when user focuses the window
-      revalidateOnFocus: true,
+      // Preferences (onboarding status, watch providers) change rarely and are
+      // mutated in-place via update(), so on-focus revalidation just burns Vercel
+      // requests on every tab switch across every protected page. Keep it off.
+      dedupingInterval: 30 * 60 * 1000,
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
     }
   )
 
