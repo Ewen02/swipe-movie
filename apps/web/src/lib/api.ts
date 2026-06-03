@@ -56,13 +56,25 @@ async function resolveAuthHeader(): Promise<AuthHeader> {
   return { kind: 'none' };
 }
 
+/** Default per-request timeout. A slow/cold backend must never hang the UI
+ * forever — without this, a never-resolving fetch leaves loaders spinning
+ * indefinitely (e.g. the onboarding "Saving…" overlay). */
+const DEFAULT_TIMEOUT_MS = 20_000;
+
 export async function apiFetch(input: string, init: RequestInit = {}) {
   const reqHeaders = new Headers(init.headers);
   const auth = await resolveAuthHeader();
   if (auth.kind !== 'none') {
     reqHeaders.set(auth.name, auth.value);
   }
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}${input}`, { ...init, headers: reqHeaders });
+  // Respect a caller-provided signal if present; otherwise apply a default
+  // timeout so the promise always settles.
+  const signal = init.signal ?? AbortSignal.timeout(DEFAULT_TIMEOUT_MS);
+  return fetch(`${process.env.NEXT_PUBLIC_API_URL}${input}`, {
+    ...init,
+    headers: reqHeaders,
+    signal,
+  });
 }
 
 // Helpers REST

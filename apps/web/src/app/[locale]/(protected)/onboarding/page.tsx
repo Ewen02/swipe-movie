@@ -117,10 +117,14 @@ export default function OnboardingPage() {
     try {
       await saveSwipes(swipes);
       await update({ onboardingStep: 3 });
-      setCurrentStep(3);
     } catch (error) {
-      console.error('Failed to save swipes:', error);
+      // Onboarding swipes are preference signals, not critical data. A slow or
+      // failing backend must never trap the user on the "Saving…" spinner —
+      // advance regardless so they reach the app. The save can be retried
+      // implicitly later from their session preferences.
+      console.error('Failed to save onboarding swipes:', error);
     } finally {
+      setCurrentStep(3);
       setIsSaving(false);
     }
   };

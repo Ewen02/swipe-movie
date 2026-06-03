@@ -35,6 +35,9 @@ export function StepSwipe({ selectedProviders, selectedGenres, onComplete, onBac
   const [swipes, setSwipes] = useState<OnboardingSwipe[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [exitingCard, setExitingCard] = useState<SwipeCard | null>(null)
+  // Guard against a double submit: a fast 11th swipe within the 300ms exit
+  // window would otherwise fire onComplete (and the batch POST) twice.
+  const completedRef = useRef(false)
 
   useEffect(() => {
     async function loadData() {
@@ -78,6 +81,7 @@ export function StepSwipe({ selectedProviders, selectedGenres, onComplete, onBac
   }, [selectedProviders, selectedGenres])
 
   const handleSwipe = (movie: MovieBasic, direction: "left" | "right") => {
+    if (completedRef.current) return
     const liked = direction === "right"
     const newSwipe: OnboardingSwipe = {
       tmdbId: movie.id.toString(),
@@ -94,7 +98,8 @@ export function StepSwipe({ selectedProviders, selectedGenres, onComplete, onBac
       setCurrentIndex((prev) => prev + 1)
 
       // Check if we have enough swipes
-      if (newSwipes.length >= REQUIRED_SWIPES) {
+      if (newSwipes.length >= REQUIRED_SWIPES && !completedRef.current) {
+        completedRef.current = true
         onComplete(newSwipes)
       }
     }, 300)
