@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Button } from '@swipe-movie/ui';
@@ -48,11 +48,41 @@ export function EmailAuthForm({
   const t = useTranslations(namespace);
   const router = useRouter();
 
-  const [step, setStep] = useState<Step>('email');
-  const [email, setEmail] = useState('');
+  // Persist the in-flight OTP step + email so that returning to the tab after
+  // reading the code (which can trigger a session refetch / re-render / reload)
+  // doesn't drop the user back to the empty email screen. Scoped per namespace
+  // so the login page and the login wall don't clobber each other.
+  const storageKey = `swipe-otp-flow:${namespace}`;
+  const readPersisted = (): { step: Step; email: string } | null => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const raw = window.sessionStorage.getItem(storageKey);
+      return raw ? (JSON.parse(raw) as { step: Step; email: string }) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const [step, setStep] = useState<Step>(() => readPersisted()?.step ?? 'email');
+  const [email, setEmail] = useState(() => readPersisted()?.email ?? '');
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Keep sessionStorage in sync with the flow. Only persist once a code has
+  // actually been sent (step !== 'email'); otherwise clear it.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      if (step === 'email') {
+        window.sessionStorage.removeItem(storageKey);
+      } else {
+        window.sessionStorage.setItem(storageKey, JSON.stringify({ step, email }));
+      }
+    } catch {
+      // sessionStorage may be unavailable (private mode); ignore.
+    }
+  }, [step, email, storageKey]);
 
   const isValidEmail = email.includes('@') && email.includes('.');
 
@@ -94,6 +124,12 @@ export function EmailAuthForm({
       const result = await authClient.signIn.emailOtp({ email, otp: clean });
       if (result?.error) throw new Error(result.error.message || 'otp_verify_failed');
       track('email_auth_signed_in', { method: 'otp' });
+      // Flow complete — drop the persisted step so a later visit starts fresh.
+      try {
+        window.sessionStorage.removeItem(storageKey);
+      } catch {
+        // ignore
+      }
       if (onSuccess) {
         onSuccess();
       } else {
