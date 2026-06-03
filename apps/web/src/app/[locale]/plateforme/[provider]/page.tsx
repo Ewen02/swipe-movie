@@ -22,6 +22,7 @@ const COPY = {
     cta: 'Lance une room pour choisir ton film',
     empty: 'Aucun film trouvé sur cette plateforme.',
     relatedGenres: 'Explore par genre',
+    sectionFaq: 'Questions fréquentes',
     descTpl: (provider: string, intro: string) =>
       `${intro} Sélection des meilleurs films à regarder sur ${provider}, mise à jour automatiquement.`,
   },
@@ -32,6 +33,7 @@ const COPY = {
     cta: 'Start a room to pick a movie',
     empty: 'No movies found on this platform.',
     relatedGenres: 'Explore by genre',
+    sectionFaq: 'Frequently asked questions',
     descTpl: (provider: string, intro: string) =>
       `${intro} Hand-picked best movies on ${provider}, updated automatically.`,
   },
@@ -42,6 +44,7 @@ const COPY = {
     cta: 'Abre una sala para elegir una película',
     empty: 'No se han encontrado películas en esta plataforma.',
     relatedGenres: 'Explora por género',
+    sectionFaq: 'Preguntas frecuentes',
     descTpl: (provider: string, intro: string) =>
       `${intro} Selección de las mejores películas en ${provider}, actualizada automáticamente.`,
   },
@@ -52,6 +55,7 @@ const COPY = {
     cta: 'Starte einen Raum, um einen Film zu wählen',
     empty: 'Keine Filme auf dieser Plattform gefunden.',
     relatedGenres: 'Nach Genre stöbern',
+    sectionFaq: 'Häufig gestellte Fragen',
     descTpl: (provider: string, intro: string) =>
       `${intro} Handverlesene beste Filme auf ${provider}, automatisch aktualisiert.`,
   },
@@ -62,6 +66,7 @@ const COPY = {
     cta: 'Apri una room per scegliere un film',
     empty: 'Nessun film trovato su questa piattaforma.',
     relatedGenres: 'Esplora per genere',
+    sectionFaq: 'Domande frequenti',
     descTpl: (provider: string, intro: string) =>
       `${intro} Selezione dei migliori film su ${provider}, aggiornata automaticamente.`,
   },
@@ -125,6 +130,8 @@ export default async function PlatformPage({ params }: { params: Promise<Params>
   const t = getCopy(locale);
   const name = p.name[locale as Locale] ?? p.name.fr;
   const intro = p.intro[locale as Locale] ?? p.intro.fr;
+  const sections = p.sections?.[locale as Locale] ?? p.sections?.fr;
+  const faq = p.faq?.[locale as Locale] ?? p.faq?.fr;
 
   // Genre 0 = all genres in the existing API; couple with watchProviders + region
   // to get the platform-wide top.
@@ -167,6 +174,18 @@ export default async function PlatformPage({ params }: { params: Promise<Params>
     ],
   };
 
+  const faqLd = faq
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faq.map((f) => ({
+          '@type': 'Question',
+          name: f.question,
+          acceptedAnswer: { '@type': 'Answer', text: f.answer },
+        })),
+      }
+    : null;
+
   const facets = (
     <section aria-labelledby="related-genres" className="space-y-3">
       <h2
@@ -202,6 +221,12 @@ export default async function PlatformPage({ params }: { params: Promise<Params>
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      {faqLd ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+        />
+      ) : null}
       <SEOPageTracker pageType="plateforme" locale={locale} slug={provider} title={name} provider={provider} />
       <ListingPage
         title={`${t.titlePrefix} ${name}`}
@@ -218,6 +243,32 @@ export default async function PlatformPage({ params }: { params: Promise<Params>
         ctaHref={`/${locale}/try`}
         facets={facets}
       />
+      {(sections && sections.length > 0) || (faq && faq.length > 0) ? (
+        <div className="container mx-auto px-4 pb-12 md:pb-16 space-y-10 max-w-4xl">
+          {sections?.map((s, i) => (
+            <section key={i} className="space-y-3">
+              <h2 className="text-2xl font-semibold">{s.heading}</h2>
+              <p className="text-base text-muted-foreground leading-relaxed">{s.body}</p>
+            </section>
+          ))}
+
+          {faq && faq.length > 0 ? (
+            <section aria-labelledby="faq" className="space-y-4">
+              <h2 id="faq" className="text-2xl font-semibold">
+                {t.sectionFaq}
+              </h2>
+              <dl className="space-y-4">
+                {faq.map((f, i) => (
+                  <div key={i} className="rounded-2xl border border-border/60 bg-card/40 p-5">
+                    <dt className="font-medium mb-2">{f.question}</dt>
+                    <dd className="text-muted-foreground leading-relaxed">{f.answer}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          ) : null}
+        </div>
+      ) : null}
     </>
   );
 }

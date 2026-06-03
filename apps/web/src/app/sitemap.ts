@@ -64,11 +64,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     emit(`/plateforme/${p.slug}`, 'weekly', 0.85, now),
   );
 
-  const comboEntries = listProviders().flatMap((p) =>
-    listGenres().flatMap((g) =>
-      emit(`/plateforme/${p.slug}/${g.slug}`, 'weekly', 0.7, now),
-    ),
-  );
+  // provider×genre combos are intentionally excluded: they carry `noindex`
+  // (see plateforme/[provider]/[genre]/page.tsx) since they hold no unique
+  // content vs the standalone /genre and /plateforme pages. Listing them in
+  // the sitemap would send Google a contradictory "index this" signal.
 
   const contextEntries = listContexts().flatMap((c) =>
     emit(`/contexte/${c.slug}`, 'monthly', 0.8, now),
@@ -89,7 +88,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...staticEntries,
     ...genreEntries,
     ...platformEntries,
-    ...comboEntries,
     ...contextEntries,
     ...movieEntries,
   ];

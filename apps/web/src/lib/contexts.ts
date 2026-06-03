@@ -28,6 +28,10 @@ export type ContextEntry = {
   sections: Record<Locale, Array<{ heading: string; body: string }>>;
   /** FAQ entries — rendered visually and as FAQPage JSON-LD. */
   faq: Record<Locale, Array<{ question: string; answer: string }>>;
+  /** Genre slugs to cross-link to (internal linking / SEO mesh). */
+  relatedGenres: string[];
+  /** Provider slugs to cross-link to. */
+  relatedProviders: string[];
 };
 
 function entry<T extends ContextEntry>(c: T): T {
@@ -39,6 +43,8 @@ export const CONTEXTS: Record<string, ContextEntry> = {
     slug: 'soiree-couple',
     genreIds: [10749, 35, 18],
     minRating: 6.5,
+    relatedGenres: ['romance', 'comedie', 'drame'],
+    relatedProviders: ['netflix', 'prime-video', 'disney-plus'],
     title: {
       fr: 'Films pour une soirée en couple',
       en: "Movies for a couple's movie night",
@@ -225,6 +231,8 @@ export const CONTEXTS: Record<string, ContextEntry> = {
     slug: 'entre-amis',
     genreIds: [35, 28, 53, 27],
     minRating: 6,
+    relatedGenres: ['comedie', 'action', 'horreur', 'thriller'],
+    relatedProviders: ['netflix', 'prime-video'],
     title: {
       fr: 'Films pour une soirée entre amis',
       en: 'Movies for a movie night with friends',
@@ -411,6 +419,8 @@ export const CONTEXTS: Record<string, ContextEntry> = {
     slug: 'en-famille',
     genreIds: [10751, 16, 12],
     minRating: 6.5,
+    relatedGenres: ['famille', 'animation', 'aventure'],
+    relatedProviders: ['disney-plus', 'netflix'],
     title: {
       fr: 'Films à regarder en famille',
       en: 'Movies to watch as a family',
@@ -552,6 +562,8 @@ export const CONTEXTS: Record<string, ContextEntry> = {
     slug: 'soiree-halloween',
     genreIds: [27, 53, 9648],
     minRating: 6,
+    relatedGenres: ['horreur', 'thriller', 'mystere'],
+    relatedProviders: ['netflix', 'max', 'prime-video'],
     title: {
       fr: "Films d'horreur pour Halloween",
       en: 'Horror movies for Halloween',
@@ -693,6 +705,8 @@ export const CONTEXTS: Record<string, ContextEntry> = {
     slug: 'soiree-noel',
     genreIds: [10751, 10749, 35],
     minRating: 6,
+    relatedGenres: ['famille', 'romance', 'comedie'],
+    relatedProviders: ['disney-plus', 'netflix'],
     title: {
       fr: 'Films de Noël à regarder en famille ou en couple',
       en: 'Christmas movies for family or couple nights',
@@ -789,6 +803,8 @@ export const CONTEXTS: Record<string, ContextEntry> = {
     slug: 'premier-rendez-vous',
     genreIds: [10749, 35],
     minRating: 7,
+    relatedGenres: ['romance', 'comedie', 'drame'],
+    relatedProviders: ['netflix', 'prime-video', 'disney-plus'],
     title: {
       fr: 'Films pour un premier rendez-vous',
       en: 'Movies for a first date',
@@ -885,6 +901,8 @@ export const CONTEXTS: Record<string, ContextEntry> = {
     slug: 'long-week-end',
     genreIds: [12, 28, 18, 14],
     minRating: 7,
+    relatedGenres: ['aventure', 'action', 'fantastique', 'science-fiction'],
+    relatedProviders: ['netflix', 'prime-video', 'max'],
     title: {
       fr: 'Films à regarder pendant un long week-end',
       en: 'Movies to watch on a long weekend',
@@ -981,6 +999,8 @@ export const CONTEXTS: Record<string, ContextEntry> = {
     slug: 'ado-entre-amis',
     genreIds: [35, 28, 12, 14],
     minRating: 6.5,
+    relatedGenres: ['comedie', 'action', 'aventure', 'fantastique'],
+    relatedProviders: ['netflix', 'prime-video'],
     title: {
       fr: 'Films pour ados entre amis',
       en: 'Movies for teens with friends',
@@ -1078,6 +1098,8 @@ export const CONTEXTS: Record<string, ContextEntry> = {
     genreIds: [35, 28, 27],
     minRating: 6.5,
     releaseYearMin: 2000,
+    relatedGenres: ['comedie', 'action', 'horreur'],
+    relatedProviders: ['netflix', 'prime-video'],
     title: {
       fr: 'Films de moins de 90 minutes',
       en: 'Movies under 90 minutes',
@@ -1174,6 +1196,8 @@ export const CONTEXTS: Record<string, ContextEntry> = {
     slug: 'feel-good',
     genreIds: [35, 10751, 10749, 16],
     minRating: 7,
+    relatedGenres: ['comedie', 'famille', 'romance', 'animation'],
+    relatedProviders: ['netflix', 'disney-plus', 'prime-video'],
     title: {
       fr: 'Films feel-good pour se remonter le moral',
       en: 'Feel-good movies to lift your mood',
@@ -1270,6 +1294,8 @@ export const CONTEXTS: Record<string, ContextEntry> = {
     slug: 'cinephile',
     genreIds: [18, 36, 99],
     minRating: 7.5,
+    relatedGenres: ['drame', 'histoire', 'documentaire'],
+    relatedProviders: ['max', 'canal-plus', 'apple-tv-plus'],
     title: {
       fr: "Films pour cinéphiles : grands classiques et chefs-d'œuvre",
       en: 'Films for cinephiles: classics and masterpieces',

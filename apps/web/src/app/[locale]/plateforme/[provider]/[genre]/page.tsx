@@ -108,6 +108,11 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
       canonical,
       languages: buildLanguageAlternates(path),
     },
+    // provider×genre combos are useful product filters but hold no unique
+    // editorial content vs the standalone /genre and /plateforme pages.
+    // Keep them out of the index to avoid thin/duplicate-content dilution,
+    // but follow so link equity still flows to the film pages.
+    robots: { index: false, follow: true },
     openGraph: {
       type: 'website',
       url: canonical,

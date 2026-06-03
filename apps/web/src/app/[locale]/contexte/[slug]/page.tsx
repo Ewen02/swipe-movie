@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { locales, type Locale } from '@/i18n';
 import { buildLanguageAlternates, SITE_NAME, SITE_URL } from '@/lib/seo';
 import { CONTEXTS, getContextBySlug } from '@/lib/contexts';
+import { getGenreBySlug, getProviderBySlug } from '@/lib/catalog';
 import { getMoviesForContext } from '@/lib/movies-public';
 import { MovieGrid } from '@/components/movies/public/MovieGrid';
 import { SEOPageTracker } from '@/components/seo/SEOPageTracker';
@@ -22,6 +23,9 @@ const COPY = {
     empty: 'Aucun film trouvé.',
     sectionMovies: 'Notre sélection',
     sectionFaq: 'Questions fréquentes',
+    relatedTitle: 'À voir aussi',
+    relatedGenres: 'Par genre',
+    relatedProviders: 'Par plateforme',
   },
   en: {
     breadcrumbHome: 'Home',
@@ -30,6 +34,9 @@ const COPY = {
     empty: 'No movies found.',
     sectionMovies: 'Our selection',
     sectionFaq: 'Frequently asked questions',
+    relatedTitle: 'See also',
+    relatedGenres: 'By genre',
+    relatedProviders: 'By platform',
   },
   es: {
     breadcrumbHome: 'Inicio',
@@ -38,6 +45,9 @@ const COPY = {
     empty: 'No se han encontrado películas.',
     sectionMovies: 'Nuestra selección',
     sectionFaq: 'Preguntas frecuentes',
+    relatedTitle: 'Ver también',
+    relatedGenres: 'Por género',
+    relatedProviders: 'Por plataforma',
   },
   de: {
     breadcrumbHome: 'Start',
@@ -46,6 +56,9 @@ const COPY = {
     empty: 'Keine Filme gefunden.',
     sectionMovies: 'Unsere Auswahl',
     sectionFaq: 'Häufig gestellte Fragen',
+    relatedTitle: 'Auch sehenswert',
+    relatedGenres: 'Nach Genre',
+    relatedProviders: 'Nach Plattform',
   },
   it: {
     breadcrumbHome: 'Home',
@@ -54,6 +67,9 @@ const COPY = {
     empty: 'Nessun film trovato.',
     sectionMovies: 'La nostra selezione',
     sectionFaq: 'Domande frequenti',
+    relatedTitle: 'Da vedere anche',
+    relatedGenres: 'Per genere',
+    relatedProviders: 'Per piattaforma',
   },
 } as const;
 
@@ -108,6 +124,15 @@ export default async function ContextPage({ params }: { params: Promise<Params> 
   const intro = ctx.intro[locale as Locale] ?? ctx.intro.fr;
   const sections = ctx.sections[locale as Locale] ?? ctx.sections.fr;
   const faq = ctx.faq[locale as Locale] ?? ctx.faq.fr;
+
+  const relatedGenreLinks = ctx.relatedGenres
+    .map((s) => getGenreBySlug(s))
+    .filter((g): g is NonNullable<typeof g> => Boolean(g))
+    .map((g) => ({ slug: g.slug, name: g.name[locale as Locale] ?? g.name.fr }));
+  const relatedProviderLinks = ctx.relatedProviders
+    .map((s) => getProviderBySlug(s))
+    .filter((p): p is NonNullable<typeof p> => Boolean(p))
+    .map((p) => ({ slug: p.slug, name: p.name[locale as Locale] ?? p.name.fr }));
 
   const movies = await getMoviesForContext(ctx.genreIds, locale, {
     minRating: ctx.minRating,
@@ -227,6 +252,52 @@ export default async function ContextPage({ params }: { params: Promise<Params> 
             <p className="text-base text-muted-foreground leading-relaxed">{s.body}</p>
           </section>
         ))}
+
+        {(relatedGenreLinks.length > 0 || relatedProviderLinks.length > 0) && (
+          <section aria-labelledby="related" className="space-y-5">
+            <h2 id="related" className="text-2xl font-semibold">
+              {t.relatedTitle}
+            </h2>
+            {relatedGenreLinks.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                  {t.relatedGenres}
+                </h3>
+                <ul className="flex flex-wrap gap-2">
+                  {relatedGenreLinks.map((g) => (
+                    <li key={g.slug}>
+                      <Link
+                        href={`/${locale}/genre/${g.slug}`}
+                        className="inline-flex items-center rounded-full border border-border/60 bg-card/60 px-3 py-1.5 text-sm hover:border-primary hover:text-primary transition"
+                      >
+                        {g.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {relatedProviderLinks.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                  {t.relatedProviders}
+                </h3>
+                <ul className="flex flex-wrap gap-2">
+                  {relatedProviderLinks.map((p) => (
+                    <li key={p.slug}>
+                      <Link
+                        href={`/${locale}/plateforme/${p.slug}`}
+                        className="inline-flex items-center rounded-full border border-border/60 bg-card/60 px-3 py-1.5 text-sm hover:border-primary hover:text-primary transition"
+                      >
+                        {p.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </section>
+        )}
 
         <section aria-labelledby="faq" className="space-y-4">
           <h2 id="faq" className="text-2xl font-semibold">
