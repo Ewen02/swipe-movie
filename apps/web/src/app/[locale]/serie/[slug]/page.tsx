@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { setRequestLocale } from 'next-intl/server';
 import { locales, type Locale } from '@/i18n';
 import { buildLanguageAlternates, SITE_NAME, SITE_URL } from '@/lib/seo';
 import { parseMovieSlug, buildMovieSlug } from '@/lib/slug';
@@ -7,12 +8,21 @@ import { getPublicMovieDetails, getPublicMovieStats } from '@/lib/movies-public'
 import { MediaPage } from '@/components/movies/public/MediaPage';
 import { SEOPageTracker } from '@/components/seo/SEOPageTracker';
 
-// Render on demand. Underlying API fetches set their own `revalidate` (24h), so
-// responses stay cached without forcing static generation — which conflicts with
-// the request-scoped i18n config read in the locale layout (DYNAMIC_SERVER_USAGE).
-export const dynamic = 'force-dynamic';
+// On-demand ISR (see film/[slug] for rationale): pages render+cache on first
+// request rather than being pre-generated. force-dynamic was only a workaround
+// for the missing setRequestLocale below, which is now called in the component.
+export const revalidate = 86400; // 24h
+export const dynamicParams = true;
 
 type Params = { locale: string; slug: string };
+
+// Series are not in the sitemap (low crawl volume), so nothing is pre-rendered
+// at build — but declaring generateStaticParams puts the route on the ISR path
+// (●) so on-demand renders are cached and served from the CDN, rather than
+// invoking the function on every hit.
+export function generateStaticParams(): Params[] {
+  return [];
+}
 
 const STRINGS = {
   fr: {
@@ -167,6 +177,7 @@ export default async function SeriePage({ params }: { params: Promise<Params> })
   const { locale, slug } = await params;
 
   if (!locales.includes(locale as Locale)) notFound();
+  setRequestLocale(locale);
   const parsed = parseMovieSlug(slug);
   if (!parsed) notFound();
 

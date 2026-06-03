@@ -1,19 +1,44 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { setRequestLocale } from 'next-intl/server';
 import { locales, type Locale } from '@/i18n';
 import { buildLanguageAlternates, SITE_NAME, SITE_URL } from '@/lib/seo';
 import { parseMovieSlug, buildMovieSlug } from '@/lib/slug';
-import { getPublicMovieDetails, getPublicMovieStats } from '@/lib/movies-public';
+import {
+  getPublicMovieDetails,
+  getPublicMovieStats,
+  getPopularMoviesForSitemap,
+} from '@/lib/movies-public';
 import { MediaPage } from '@/components/movies/public/MediaPage';
 import { SEOPageTracker } from '@/components/seo/SEOPageTracker';
 
-// Render on demand. The underlying API fetches set their own `revalidate`
-// (see lib/movies-public.ts), so responses stay cached for 24h without forcing
-// the whole route into static generation — which conflicts with the request-scoped
-// i18n config read in the locale layout and threw DYNAMIC_SERVER_USAGE at runtime.
-export const dynamic = 'force-dynamic';
+// On-demand ISR: the catalog spans thousands of titles, so pages are not
+// pre-generated at build — the first request for a given film renders and
+// caches it, subsequent hits serve from the CDN. The underlying API fetches
+// keep their own revalidate (movie details 24h, stats 30min, see
+// lib/movies-public.ts). force-dynamic was previously needed only because the
+// locale layout read request-scoped i18n config without setRequestLocale,
+// which threw DYNAMIC_SERVER_USAGE; that call below removes the need.
+export const revalidate = 86400; // 24h floor for the rendered shell
+export const dynamicParams = true;
 
 type Params = { locale: string; slug: string };
+
+// Pre-render the popular films (the ones in the sitemap that crawlers actually
+// hit) as static HTML; the long tail is generated on demand and then cached
+// (dynamicParams: true). Keeps crawler traffic on the CDN instead of invoking
+// the function per request. Falls back to no prerendered pages if the API is
+// down at build time.
+export async function generateStaticParams() {
+  try {
+    const popular = await getPopularMoviesForSitemap(200);
+    return popular.flatMap((movie) =>
+      locales.map((locale) => ({ locale, slug: buildMovieSlug(movie.title, movie.id) })),
+    );
+  } catch {
+    return [];
+  }
+}
 
 const STRINGS = {
   fr: {
@@ -171,6 +196,7 @@ export default async function FilmPage({ params }: { params: Promise<Params> }) 
   const { locale, slug } = await params;
 
   if (!locales.includes(locale as Locale)) notFound();
+  setRequestLocale(locale);
   const parsed = parseMovieSlug(slug);
   if (!parsed) notFound();
 
