@@ -11,9 +11,10 @@ import { ShareRoomButton } from "./ShareRoomButton"
 interface RoomsListProps {
   rooms: UserRoomsResponseDto
   onCreateRoom?: () => void
+  onJoinRoom?: () => void
 }
 
-export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
+export function RoomsList({ rooms, onCreateRoom, onJoinRoom }: RoomsListProps) {
   const router = useRouter()
   const t = useTranslations('rooms')
   const locale = useLocale()
@@ -33,21 +34,31 @@ export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
               {t('emptyState.description')}
             </p>
-            {onCreateRoom && (
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              {onCreateRoom && (
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    size="lg"
+                    className="bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg"
+                    onClick={onCreateRoom}
+                  >
+                    <Plus className="w-5 h-5 mr-2" />
+                    {t('create')}
+                  </Button>
+                </motion.div>
+              )}
+              {onJoinRoom && (
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg"
-                  onClick={onCreateRoom}
+                  variant="outline"
+                  className="border-border hover:bg-foreground/5"
+                  onClick={onJoinRoom}
                 >
-                  <Plus className="w-5 h-5 mr-2" />
-                  {t('create')}
+                  <Users className="w-5 h-5 mr-2" />
+                  {t('join')}
                 </Button>
-              </motion.div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -84,8 +95,10 @@ export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
               }
             }}
           >
-            {/* Hover glow */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
+            {/* Hover glow — kept subtle so it doesn't compete with the primary
+                "Accéder" action, which is the only element that should read as
+                a call to action. */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-3xl blur-lg opacity-0 group-hover:opacity-15 transition-opacity duration-500" />
 
             <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden group-hover:border-primary/40 transition-all duration-300">
               {/* Top accent bar */}
@@ -144,18 +157,15 @@ export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
                         <Heart className={`w-3.5 h-3.5 ${(room.matchCount || 0) > 0 ? "fill-pink-400" : ""}`} aria-hidden="true" />
                         <span>{room.matchCount || 0}</span>
                       </div>
-                      <Badge variant="outline" className="font-mono text-[10px] px-1.5 py-0 border-border text-muted-foreground">
-                        {room.code}
-                      </Badge>
                     </div>
                   </div>
                 </div>
 
-                {/* Details row */}
-                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground mb-4 pb-4 border-b border-border">
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-foreground/5 border-border">
-                    {room.type === "movie" ? t('card.movies') : t('card.series')}
-                  </Badge>
+                {/* Details row — type is already conveyed by the colored icon
+                    tile + accent bar, so no redundant "Films/Séries" badge here.
+                    The room code lives here, de-emphasized (it's rarely needed on
+                    the list; the invite flow shares a link, not the code). */}
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mb-4 pb-4 border-b border-border">
                   {room.minRating && room.minRating > 0 && (
                     <div
                       className="flex items-center gap-1"
@@ -168,16 +178,17 @@ export function RoomsList({ rooms, onCreateRoom }: RoomsListProps) {
                   )}
                   {room.genreId && room.genreId > 0 && (
                     <div className="flex items-center gap-1 text-primary">
-                      <Sparkles className="w-3 h-3" />
+                      <Sparkles className="w-3 h-3" aria-hidden="true" />
                       <span>{t('card.filtered')}</span>
                     </div>
                   )}
-                  <span className="text-muted-foreground/70">
+                  <span>
                     {createdDate.toLocaleDateString(locale, {
                       day: "numeric",
                       month: "short",
                     })}
                   </span>
+                  <span className="font-mono text-muted-foreground/50 ml-auto">{room.code}</span>
                 </div>
 
                 {/* Actions — "Accéder" is the primary action (full width); invite

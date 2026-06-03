@@ -250,7 +250,11 @@ function RoomsPageContent() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
           >
-            <RoomsList rooms={{ rooms: paginatedRooms }} onCreateRoom={() => setShowCreateDialog(true)} />
+            <RoomsList
+              rooms={{ rooms: paginatedRooms }}
+              onCreateRoom={() => setShowCreateDialog(true)}
+              onJoinRoom={() => setShowJoinDialog(true)}
+            />
           </motion.div>
         </AnimatePresence>
 
