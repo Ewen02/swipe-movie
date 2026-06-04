@@ -69,8 +69,13 @@ export async function getPublicMovieDetails(
 }
 
 export async function getPublicMovieStats(id: number): Promise<PublicMovieStats | null> {
+  // 24h to match the film/serie page shell. A shorter window (these stats move
+  // faster than TMDb data) would force the whole ISR page to re-write to the
+  // cache on every revalidation — across thousands of titles × 5 locales that
+  // blows up Vercel ISR Write Units. The "On Swipe Movie" widget being up to a
+  // day stale on an SEO page is an acceptable trade.
   return publicFetch<PublicMovieStats>(`/movies/${id}/public-stats`, {
-    revalidate: 1800, // 30 min — swipe activity moves faster than TMDb data
+    revalidate: 86400, // 24h
   });
 }
 
