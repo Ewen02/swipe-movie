@@ -42,10 +42,22 @@ export const ValidationConstraints = {
 // ============================================
 
 export const TMDB_IMAGE_BASE = {
-  /** Poster image base URL */
+  /** Poster image base URL — used for film posters (grid/detail/swipe card). */
   POSTER: 'https://image.tmdb.org/t/p/w500',
   /** Backdrop image base URL */
   BACKDROP: 'https://image.tmdb.org/t/p/w780',
+  /**
+   * Cast/crew profile avatars — displayed at ~80px, so w185 is plenty.
+   * Serving these at w500 (the old POSTER base) wasted ~5x the egress per
+   * avatar for no visible quality gain.
+   */
+  PROFILE: 'https://image.tmdb.org/t/p/w185',
+  /**
+   * Watch-provider logos — displayed at 24-32px, often in clusters of 5-10 per
+   * film/match page. w92 is sufficient; serving them at w500 wasted ~13x the
+   * egress per logo and was a major driver of Vercel Fast Origin Transfer.
+   */
+  LOGO: 'https://image.tmdb.org/t/p/w92',
   /** Fallback image for missing posters */
   FALLBACK: 'https://placehold.co/500x750?text=No+Poster',
   /** No poster placeholder */

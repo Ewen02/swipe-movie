@@ -74,7 +74,7 @@ export class MovieProviderService {
             id: p.provider_id,
             name: normalizedName, // Use normalized name
             logoPath: p.logo_path
-              ? `${TMDB_IMAGE_BASE.POSTER}${p.logo_path}`
+              ? `${TMDB_IMAGE_BASE.LOGO}${p.logo_path}`
               : '',
           });
         }
@@ -162,7 +162,7 @@ export class MovieProviderService {
           id: p.provider_id,
           name: p.provider_name,
           logoPath: p.logo_path
-            ? `${TMDB_IMAGE_BASE.POSTER}${p.logo_path}`
+            ? `${TMDB_IMAGE_BASE.LOGO}${p.logo_path}`
             : '',
           displayPriority: p.display_priority,
         }))

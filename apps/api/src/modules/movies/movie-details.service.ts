@@ -76,7 +76,7 @@ export class MovieDetailsService {
           name: c.name,
           character: c.character,
           profilePath: c.profile_path
-            ? `${TMDB_IMAGE_BASE.POSTER}${c.profile_path}`
+            ? `${TMDB_IMAGE_BASE.PROFILE}${c.profile_path}`
             : null,
         })) ?? [],
       crew:
