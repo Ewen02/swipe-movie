@@ -2,6 +2,11 @@ import { ImageResponse } from 'next/og';
 import { getPublicMovieDetails } from '@/lib/movies-public';
 
 export const runtime = 'nodejs';
+// Cache the generated card for 30d. The match OG (film, poster, year) is
+// immutable once the match exists; Satori rendering on nodejs is CPU-heavy and
+// social bots hit unbounded match IDs, so without this the route re-generates
+// the image per crawl — a driver of Fluid Active CPU.
+export const revalidate = 2592000; // 30d
 export const alt = 'Swipe Movie Match';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
@@ -13,7 +18,11 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 async function getPublicMatch(matchId: string) {
   try {
     const res = await fetch(`${API_URL}/matches/${matchId}/public`, {
-      next: { revalidate: 3600 },
+      // The OG card (film title, poster, year) is effectively immutable once the
+      // match exists, so there's no reason to re-render+re-write this image
+      // hourly. Social bots hit unbounded match IDs — a long window slashes the
+      // ISR Write Units this route generates.
+      next: { revalidate: 2592000 }, // 30d
     });
     if (!res.ok) return null;
     return await res.json();

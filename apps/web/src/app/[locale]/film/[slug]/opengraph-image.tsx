@@ -3,6 +3,11 @@ import { parseMovieSlug } from '@/lib/slug';
 import { getPublicMovieDetails } from '@/lib/movies-public';
 
 export const runtime = 'nodejs';
+// Cache the generated card for 30d. The OG image (title, year, rating) is
+// effectively immutable for a catalog title, but Satori rendering on nodejs is
+// CPU-heavy and every social crawl/share of an unbounded film slug would
+// otherwise re-generate it — a major driver of Fluid Active CPU.
+export const revalidate = 2592000; // 30d
 export const alt = 'Swipe Movie';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';

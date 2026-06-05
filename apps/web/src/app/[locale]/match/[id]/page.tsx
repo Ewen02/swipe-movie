@@ -8,7 +8,11 @@ import { getPublicMovieDetails } from '@/lib/movies-public';
 import { buildMovieSlug } from '@/lib/slug';
 
 export const dynamicParams = true;
-export const revalidate = 3600; // 1 hour
+// 6h: match results barely change after creation, and these are unbounded
+// shareable IDs (one cached page per link). At 1h, crawlers + social preview
+// bots re-writing each ID ~24×/day (×2 with the OG image) was the dominant
+// driver of Vercel ISR Write Units. 6h keeps results reasonably fresh.
+export const revalidate = 21600; // 6 hours
 
 type Params = { locale: string; id: string };
 
@@ -17,7 +21,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 async function getPublicMatch(matchId: string) {
   try {
     const res = await fetch(`${API_URL}/matches/${matchId}/public`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 21600 }, // 6h — aligned with the page shell
     });
     if (!res.ok) return null;
     return await res.json();

@@ -19,7 +19,7 @@ import { SEOPageTracker } from '@/components/seo/SEOPageTracker';
 // lib/movies-public.ts). force-dynamic was previously needed only because the
 // locale layout read request-scoped i18n config without setRequestLocale,
 // which threw DYNAMIC_SERVER_USAGE; that call below removes the need.
-export const revalidate = 86400; // 24h floor for the rendered shell
+export const revalidate = 604800; // 7d floor for the rendered shell
 export const dynamicParams = true;
 
 type Params = { locale: string; slug: string };

@@ -3,6 +3,10 @@ import { parseMovieSlug } from '@/lib/slug';
 import { getPublicMovieDetails } from '@/lib/movies-public';
 
 export const runtime = 'nodejs';
+// Cache the generated card for 30d — see film/[slug]/opengraph-image for the
+// rationale. Unbounded serie slugs × Satori rendering on nodejs would otherwise
+// re-generate this image on every social crawl/share, burning Fluid CPU.
+export const revalidate = 2592000; // 30d
 export const alt = 'Swipe Movie';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';

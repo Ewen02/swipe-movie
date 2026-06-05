@@ -64,18 +64,19 @@ export async function getPublicMovieDetails(
   const { language, region } = resolveTmdbContext(locale);
   const params = new URLSearchParams({ type, language, region });
   return publicFetch<MovieDetails>(`/movies/${id}?${params.toString()}`, {
-    revalidate: 86400, // 24h — TMDb data rarely changes for catalog titles
+    revalidate: 604800, // 7d — TMDb data rarely changes for catalog titles
   });
 }
 
 export async function getPublicMovieStats(id: number): Promise<PublicMovieStats | null> {
-  // 24h to match the film/serie page shell. A shorter window (these stats move
-  // faster than TMDb data) would force the whole ISR page to re-write to the
-  // cache on every revalidation — across thousands of titles × 5 locales that
-  // blows up Vercel ISR Write Units. The "On Swipe Movie" widget being up to a
-  // day stale on an SEO page is an acceptable trade.
+  // 7d to match the film/serie page shell. The effective ISR write cadence of a
+  // page is min(page revalidate, every fetch revalidate) — so a shorter window
+  // here would force the whole page to re-write to the cache on every
+  // revalidation. Across thousands of titles × 5 locales that blows up Vercel
+  // ISR Write Units. The "On Swipe Movie" widget being up to a week stale on an
+  // SEO page is an acceptable trade.
   return publicFetch<PublicMovieStats>(`/movies/${id}/public-stats`, {
-    revalidate: 86400, // 24h
+    revalidate: 604800, // 7d
   });
 }
 
@@ -153,7 +154,7 @@ export async function getMoviesByGenrePublic(
 
   const res = await publicFetch<MovieBasic[]>(
     `/movies/genre/${genreId}?${params.toString()}`,
-    { revalidate: 43200 }, // 12h — listings drift slowly
+    { revalidate: 86400 }, // 24h — listings drift slowly; aligns with page shell
   );
   return res ?? [];
 }

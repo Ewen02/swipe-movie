@@ -10,7 +10,7 @@ import { SEOPageTracker } from '@/components/seo/SEOPageTracker';
 import { buildMovieSlug } from '@/lib/slug';
 
 export const dynamicParams = false;
-export const revalidate = 43200;
+export const revalidate = 86400; // 24h
 
 type Params = { locale: string; provider: string; genre: string };
 

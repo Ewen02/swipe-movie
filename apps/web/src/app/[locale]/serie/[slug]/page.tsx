@@ -11,7 +11,7 @@ import { SEOPageTracker } from '@/components/seo/SEOPageTracker';
 // On-demand ISR (see film/[slug] for rationale): pages render+cache on first
 // request rather than being pre-generated. force-dynamic was only a workaround
 // for the missing setRequestLocale below, which is now called in the component.
-export const revalidate = 86400; // 24h
+export const revalidate = 604800; // 7d
 export const dynamicParams = true;
 
 type Params = { locale: string; slug: string };
