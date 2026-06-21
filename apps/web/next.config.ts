@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { withSentryConfig } from '@sentry/nextjs';
 import createNextIntlPlugin from 'next-intl/plugin';
 import withSerwistInit from '@serwist/next';
@@ -16,6 +17,13 @@ const withSerwist = withSerwistInit({
 });
 
 const nextConfig = {
+  // Self-hosting on Railway: emit a standalone server bundle so the Docker image
+  // ships only the traced runtime deps (not the full monorepo node_modules). Keeps
+  // the container RAM/image small — the lever that keeps us inside the 5$ Railway
+  // plan. `outputFileTracingRoot` points Next at the workspace root so pnpm's
+  // symlinked deps are traced correctly from a monorepo.
+  output: 'standalone' as const,
+  outputFileTracingRoot: path.join(__dirname, '../../'),
   images: {
     // Disable Vercel image optimization — TMDB CDN already serves optimized sizes
     // This eliminates all Vercel image transformations (was 5057/5000 quota)
