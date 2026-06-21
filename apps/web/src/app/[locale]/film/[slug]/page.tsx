@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import { locales, type Locale } from '@/i18n';
 import { buildLanguageAlternates, SITE_NAME, SITE_URL } from '@/lib/seo';
@@ -207,9 +207,23 @@ export default async function FilmPage({ params }: { params: Promise<Params> }) 
 
   if (!movie) notFound();
 
-  // Permanent-canonical-redirect: if the slug portion drifted, rebuild URL on next nav.
-  // We keep server rendering (no redirect) to avoid losing inbound links — Google will pick
-  // the canonical via the metadata above.
+  // Canonical-slug redirect (308). The slug text is cosmetic — only the trailing
+  // id is parsed — so `/film/anything-550` would otherwise render and cache a
+  // *distinct* ISR entry per slug variant. Crawlers (esp. AI bots) walk thousands
+  // of these, each one an ISR write + function invocation + TMDB fetch. Redirecting
+  // every non-canonical slug to the single canonical URL collapses that unbounded
+  // URL space to one cached entry per film, killing the quota blowout while keeping
+  // inbound links alive. The redirect response is itself cached on the CDN.
+  //
+  // The canonical slug uses the *localized* title, so the target is stable per
+  // (locale, id): re-rendering the target recomputes the same slug → no loop.
+  // (generateStaticParams/sitemap use the non-localized popular-list title, so a
+  // non-FR pre-rendered page may 308 once to its localized slug — still bounded to
+  // one cached entry per (locale, id), which is the whole point.)
+  const canonicalSlug = buildMovieSlug(movie.title, movie.id);
+  if (slug !== canonicalSlug) {
+    redirect(`/${locale}/film/${canonicalSlug}`);
+  }
 
   const t = getStrings(locale);
   const director = movie.crew?.find((c) => c.job === 'Director')?.name ?? null;

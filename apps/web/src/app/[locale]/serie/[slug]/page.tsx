@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import { locales, type Locale } from '@/i18n';
 import { buildLanguageAlternates, SITE_NAME, SITE_URL } from '@/lib/seo';
@@ -187,6 +187,15 @@ export default async function SeriePage({ params }: { params: Promise<Params> })
   ]);
 
   if (!movie) notFound();
+
+  // Canonical-slug redirect (308) — see film/[slug]/page.tsx for the full rationale.
+  // The slug text is cosmetic (only the trailing id is parsed), so without this every
+  // slug variant of the same series caches its own ISR entry; crawlers turn that into
+  // a quota blowout. One canonical URL → one cached entry.
+  const canonicalSlug = buildMovieSlug(movie.title, movie.id);
+  if (slug !== canonicalSlug) {
+    redirect(`/${locale}/serie/${canonicalSlug}`);
+  }
 
   const t = getStrings(locale);
   const creator = movie.crew?.find((c) => c.job === 'Director' || c.job === 'Writer')?.name ?? null;

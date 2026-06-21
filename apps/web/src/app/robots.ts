@@ -21,25 +21,15 @@ export default function robots(): MetadataRoute.Robots {
           '/monitoring',
         ],
       },
-      // AI crawlers are explicitly allowed so Swipe Movie can surface in
-      // ChatGPT, Perplexity, Claude, Gemini & co. They inherit the same
-      // public/protected split as `*` via the catch-all rule above, but we
-      // list them so the intent is unambiguous (and overrides any future
-      // default-deny on AI bots).
-      {
-        userAgent: 'GPTBot', // ChatGPT / OpenAI
-        allow: ['/'],
-      },
+      // AI *search* bots that fetch live to answer a user's query are allowed:
+      // they drive real visibility (a citation in ChatGPT/Perplexity/Bing) for a
+      // bounded number of fetches per actual question.
       {
         userAgent: 'OAI-SearchBot', // ChatGPT Search
         allow: ['/'],
       },
       {
         userAgent: 'ChatGPT-User', // ChatGPT browsing on user request
-        allow: ['/'],
-      },
-      {
-        userAgent: 'CCBot', // Common Crawl (feeds many LLMs)
         allow: ['/'],
       },
       {
@@ -51,24 +41,38 @@ export default function robots(): MetadataRoute.Robots {
         allow: ['/'],
       },
       {
-        userAgent: 'ClaudeBot', // Anthropic / Claude
+        userAgent: 'Bingbot', // Bing / Copilot
         allow: ['/'],
+      },
+      // AI *training* crawlers are disallowed. They sweep the entire catalog ×
+      // every locale to build training corpora, which (with on-demand ISR) turns
+      // each pass into thousands of function invocations + ISR writes + TMDB
+      // fetches — the main driver of the Vercel quota blowout — for zero live
+      // visibility in return. Blocking them is the cheap, GEO-safe lever: the
+      // live search bots above still surface us.
+      {
+        userAgent: 'GPTBot', // OpenAI training crawler (not ChatGPT Search)
+        disallow: ['/'],
+      },
+      {
+        userAgent: 'CCBot', // Common Crawl — feeds many LLM training sets
+        disallow: ['/'],
+      },
+      {
+        userAgent: 'ClaudeBot', // Anthropic training crawler
+        disallow: ['/'],
       },
       {
         userAgent: 'Claude-Web',
-        allow: ['/'],
+        disallow: ['/'],
       },
       {
         userAgent: 'Google-Extended', // Gemini / Vertex AI training
-        allow: ['/'],
+        disallow: ['/'],
       },
       {
-        userAgent: 'Applebot-Extended', // Apple Intelligence
-        allow: ['/'],
-      },
-      {
-        userAgent: 'Bingbot', // Bing / Copilot
-        allow: ['/'],
+        userAgent: 'Applebot-Extended', // Apple Intelligence training
+        disallow: ['/'],
       },
     ],
     // Next.js generateSitemaps() exposes a sitemap index at /sitemap.xml that
