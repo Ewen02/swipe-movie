@@ -187,7 +187,11 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
       description,
       images: movie.backdropUrl ? [movie.backdropUrl] : undefined,
     },
-    robots: indexable ? { index: true, follow: true } : { index: false, follow: true },
+    // Long-tail pages are noindex AND nofollow: with follow:true, crawlers walked
+    // the similar-movies graph across the whole TMDb catalog × locales — an
+    // unbounded on-demand ISR surface (the June 2026 Vercel quota blowout).
+    // nofollow stops the walk one hop past the indexable (sitemap) set.
+    robots: indexable ? { index: true, follow: true } : { index: false, follow: false },
   };
 }
 

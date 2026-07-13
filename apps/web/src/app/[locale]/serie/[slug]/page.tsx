@@ -169,7 +169,9 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
       description,
       images: movie.backdropUrl ? [movie.backdropUrl] : undefined,
     },
-    robots: indexable ? { index: true, follow: true } : { index: false, follow: true },
+    // nofollow on long-tail pages bounds the similar-titles crawl graph — see
+    // film/[slug]/page.tsx for the full rationale (June 2026 quota blowout).
+    robots: indexable ? { index: true, follow: true } : { index: false, follow: false },
   };
 }
 
