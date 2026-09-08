@@ -12,16 +12,19 @@
 # existant du dépôt.
 #
 # ═══════════════════════════════════════════════════════════════════════════
-# SECRETS À CRÉER — Settings > Secrets and variables > Actions
+# SECRETS REQUIS — Settings > Secrets and variables > Actions
 # ═══════════════════════════════════════════════════════════════════════════
 #
-#   SSH_HOST         137.74.175.232
+#   SSH_HOST         l'adresse IP du VPS
 #   SSH_USER         ubuntu
 #   SSH_KEY          clé PRIVÉE de déploiement de CE projet, en entier :
 #                      ssh-keygen -t ed25519 -f ~/.ssh/deploy-swipe-movie \
 #                                 -C "deploy-swipe-movie" -N ""
 #                      pbcopy < ~/.ssh/deploy-swipe-movie
-#   SSH_KNOWN_HOSTS  ssh-keyscan -t ed25519 137.74.175.232
+#   SSH_KNOWN_HOSTS  ssh-keyscan -t ed25519 <adresse-du-serveur>
+#                    Coller UNIQUEMENT la ligne commençant par l'adresse.
+#                    ssh-keyscan écrit AUSSI une ligne de commentaire avant,
+#                    inoffensive mais inutile.
 #
 # GITHUB_TOKEN est fourni automatiquement pour POUSSER l'image. Le SERVEUR a
 # besoin, une fois pour toute la machine, d'un PAT en lecture pour la TIRER :
@@ -135,11 +138,28 @@ jobs:
     steps:
       - name: Préparation de la clé de déploiement
         run: |
-          mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          printf '%s\n' "${{ secrets.SSH_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          printf '%s\n' "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
+          mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh"
+          printf '%s\n' "${{ secrets.SSH_KEY }}" > "$HOME/.ssh/deploy_key"
+          chmod 600 "$HOME/.ssh/deploy_key"
+          printf '%s\n' "${{ secrets.SSH_KNOWN_HOSTS }}" > "$HOME/.ssh/known_hosts"
+          chmod 644 "$HOME/.ssh/known_hosts"
+
+          # Vérification explicite de l'empreinte AVANT de tenter la connexion.
+          # Sans elle, un SSH_KNOWN_HOSTS absent, tronqué ou mal collé ne se
+          # manifeste qu'au moment du ssh, sous la forme "Host key verification
+          # failed" — avec le nom d'hôte remplacé par *** dans les logs, puisque
+          # GitHub masque la valeur du secret. Le diagnostic devient alors
+          # impossible depuis l'interface. Ici l'erreur nomme la cause.
+          if ! ssh-keygen -F "${{ secrets.SSH_HOST }}" -f "$HOME/.ssh/known_hosts" > /dev/null; then
+            echo "::error::SSH_KNOWN_HOSTS ne contient aucune empreinte pour SSH_HOST."
+            echo "Le fichier écrit fait $(wc -l < "$HOME/.ssh/known_hosts") ligne(s)."
+            echo "Régénérer la valeur du secret avec :"
+            echo "    ssh-keyscan -t ed25519 <adresse-du-serveur>"
+            echo "et coller UNIQUEMENT la ligne commençant par l'adresse, sans"
+            echo "la ligne de commentaire que ssh-keyscan écrit avant."
+            exit 1
+          fi
+          echo "Empreinte du serveur trouvée dans known_hosts."
 
       - name: Déploiement
         run: |
@@ -147,12 +167,17 @@ jobs:
           # envoie, c'est deploy.sh qui s'exécute. Le texte ci-dessous lui
           # parvient dans SSH_ORIGINAL_COMMAND et y est validé par une regex.
           #
+          # Chemins en $HOME et non en ~ : le tilde n'est pas développé de
+          # façon fiable dans la valeur d'un -o, et un UserKnownHostsFile
+          # pointant sur un fichier inexistant produit exactement la même
+          # erreur qu'une empreinte absente.
+          #
           # On déploie le SHA du commit, pas "latest" : le serveur mémorise ce
           # tag et peut y revenir en cas de rollback.
-          ssh -i ~/.ssh/deploy_key \
+          ssh -i "$HOME/.ssh/deploy_key" \
               -o BatchMode=yes \
               -o StrictHostKeyChecking=yes \
-              -o UserKnownHostsFile=~/.ssh/known_hosts \
+              -o UserKnownHostsFile="$HOME/.ssh/known_hosts" \
               -o ConnectTimeout=15 \
               "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
               "deploy swipe-movie ${{ github.sha }}"
@@ -161,7 +186,7 @@ jobs:
 
       - name: Effacement de la clé
         if: always()
-        run: rm -f ~/.ssh/deploy_key
+        run: rm -f "$HOME/.ssh/deploy_key"
 
       - name: Résumé
         if: always()
