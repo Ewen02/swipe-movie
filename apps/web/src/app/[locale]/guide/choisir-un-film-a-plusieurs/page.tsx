@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import { locales, type Locale } from '@/i18n';
 import { buildLanguageAlternates, SITE_NAME, SITE_URL } from '@/lib/seo';
+import { AUTH_DISABLED } from '@/lib/public-mode';
 import { SEOPageTracker } from '@/components/seo/SEOPageTracker';
 
 export const dynamicParams = false;
@@ -687,12 +688,16 @@ export default async function GuidePage({ params }: { params: Promise<Params> })
               {paragraph}
             </p>
           ))}
-          <Link
-            href={`/${locale}/try`}
-            className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-semibold text-white shadow-lg hover:opacity-90 transition"
-          >
-            {content.cta}
-          </Link>
+          {/* Retiré en mode vitrine : /try est le parcours produit, fermé par
+              le proxy. Voir src/lib/public-mode.ts. */}
+          {!AUTH_DISABLED && (
+            <Link
+              href={`/${locale}/try`}
+              className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-semibold text-white shadow-lg hover:opacity-90 transition"
+            >
+              {content.cta}
+            </Link>
+          )}
         </header>
 
         {content.sections.map((s, i) => (
@@ -725,16 +730,21 @@ export default async function GuidePage({ params }: { params: Promise<Params> })
             {content.linksHeading}
           </h2>
           <ul className="flex flex-wrap gap-2">
-            {content.links.map((l) => (
-              <li key={l.href}>
-                <Link
-                  href={`/${locale}${l.href}`}
-                  className="inline-flex items-center rounded-full border border-border/60 bg-card/60 px-3 py-1.5 text-sm hover:border-primary hover:text-primary transition"
-                >
-                  {l.label}
-                </Link>
-              </li>
-            ))}
+            {/* Filtré au rendu plutôt que dans les cinq tableaux de locales :
+                seul /try est fermé en mode vitrine, les autres liens (/films,
+                /contexte/*) sont servis. */}
+            {content.links
+              .filter((l) => !(AUTH_DISABLED && l.href === '/try'))
+              .map((l) => (
+                <li key={l.href}>
+                  <Link
+                    href={`/${locale}${l.href}`}
+                    className="inline-flex items-center rounded-full border border-border/60 bg-card/60 px-3 py-1.5 text-sm hover:border-primary hover:text-primary transition"
+                  >
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
           </ul>
         </section>
       </article>

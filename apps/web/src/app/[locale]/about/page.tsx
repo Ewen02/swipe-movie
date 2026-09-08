@@ -7,6 +7,7 @@ import { Button } from "@swipe-movie/ui"
 import { Heart, Users, Film, Sparkles, ArrowRight } from "lucide-react"
 import { Footer } from "@/components/layout/Footer"
 import { PublicHeader } from "@/components/layout/PublicHeader"
+import { AUTH_DISABLED } from "@/lib/public-mode"
 
 export default function AboutPage() {
   const t = useTranslations('about')
@@ -151,30 +152,34 @@ export default function AboutPage() {
               </div>
             </motion.div>
 
-            {/* CTA */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
-                <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
-                <div className="p-12 text-center">
-                  <h2 className="text-3xl font-bold mb-4">{t('cta.title')}</h2>
-                  <Link href="/login">
-                    <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <Button size="lg" className="text-lg px-12 py-6">
-                        {t('cta.button')}
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                      </Button>
-                    </motion.div>
-                  </Link>
+            {/* CTA — retiré en mode vitrine : il mène à /login, que le proxy
+                refuse. La carte entière disparaît plutôt que le seul bouton,
+                sinon il resterait un titre d'appel à l'action sans action. */}
+            {!AUTH_DISABLED && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+              >
+                <div className="relative bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-xl border border-border rounded-3xl overflow-hidden">
+                  <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
+                  <div className="p-12 text-center">
+                    <h2 className="text-3xl font-bold mb-4">{t('cta.title')}</h2>
+                    <Link href="/login">
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <Button size="lg" className="text-lg px-12 py-6">
+                          {t('cta.button')}
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </Button>
+                      </motion.div>
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            )}
           </div>
         </div>
       </div>
