@@ -38,12 +38,16 @@ ARG NEXT_PUBLIC_SITE_URL
 ARG NEXT_PUBLIC_GA_ID
 ARG NEXT_PUBLIC_POSTHOG_KEY
 ARG NEXT_PUBLIC_POSTHOG_HOST
+# Closes the auth surface at build time (see src/lib/public-mode.ts). Must also
+# be listed in turbo.json build env, or Turbo strips it and it reads undefined.
+ARG NEXT_PUBLIC_AUTH_DISABLED
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
     NEXT_PUBLIC_AUTH_URL=$NEXT_PUBLIC_AUTH_URL \
     NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL \
     NEXT_PUBLIC_GA_ID=$NEXT_PUBLIC_GA_ID \
     NEXT_PUBLIC_POSTHOG_KEY=$NEXT_PUBLIC_POSTHOG_KEY \
-    NEXT_PUBLIC_POSTHOG_HOST=$NEXT_PUBLIC_POSTHOG_HOST
+    NEXT_PUBLIC_POSTHOG_HOST=$NEXT_PUBLIC_POSTHOG_HOST \
+    NEXT_PUBLIC_AUTH_DISABLED=$NEXT_PUBLIC_AUTH_DISABLED
 
 # Build the workspace deps the web app imports, then the web app itself.
 RUN pnpm --filter @swipe-movie/types build \

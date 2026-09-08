@@ -8,6 +8,7 @@ import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react"
 import { ThemeToggle } from "@/components/layout/ThemeToggle"
 import { LanguageSelector } from "@/components/language-selector"
 import { useSession } from "@/lib/auth-client"
+import { AUTH_DISABLED } from "@/lib/public-mode"
 
 interface PublicHeaderProps {
   /**
@@ -26,8 +27,6 @@ interface PublicHeaderProps {
 
 export function PublicHeader({ variant = "back", isAuthenticated }: PublicHeaderProps) {
   const t = useTranslations()
-  const { data: session } = useSession()
-  const authed = isAuthenticated ?? !!session
 
   return (
     <header className="lp-reveal relative z-50">
@@ -62,23 +61,7 @@ export function PublicHeader({ variant = "back", isAuthenticated }: PublicHeader
 
               {/* CTA Button */}
               {variant === "landing" ? (
-                <Link href={authed ? "/rooms" : "/login"}>
-                  <div className="transition-transform duration-200 ease-out hover:scale-[1.02] active:scale-[0.98]">
-                    <Button
-                      size="default"
-                      className="bg-primary hover:bg-primary/90"
-                    >
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      <span className="hidden sm:inline">
-                        {authed ? t('landing.hero.ctaAuth') : t('landing.hero.cta')}
-                      </span>
-                      <span className="sm:hidden">
-                        {authed ? "Rooms" : "Démarrer"}
-                      </span>
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </div>
-                </Link>
+                <LandingCTA isAuthenticated={isAuthenticated} />
               ) : (
                 <Link href="/">
                   <div className="transition-transform duration-200 ease-out hover:scale-[1.02] active:scale-[0.98]">
@@ -98,5 +81,38 @@ export function PublicHeader({ variant = "back", isAuthenticated }: PublicHeader
         </nav>
       </div>
     </header>
+  )
+}
+
+/**
+ * LandingCTA — the header's "Commencer" / "Mes rooms" button.
+ *
+ * Extracted so useSession() is reached only on the landing variant, and not at
+ * all when authentication is closed: on a vitrine deployment the button would
+ * point at /login, which the proxy refuses.
+ */
+function LandingCTA({ isAuthenticated }: { isAuthenticated?: boolean }) {
+  if (AUTH_DISABLED) return null
+  return <LandingCTAButton isAuthenticated={isAuthenticated} />
+}
+
+function LandingCTAButton({ isAuthenticated }: { isAuthenticated?: boolean }) {
+  const t = useTranslations()
+  const { data: session } = useSession()
+  const authed = isAuthenticated ?? !!session
+
+  return (
+    <Link href={authed ? "/rooms" : "/login"}>
+      <div className="transition-transform duration-200 ease-out hover:scale-[1.02] active:scale-[0.98]">
+        <Button size="default" className="bg-primary hover:bg-primary/90">
+          <Sparkles className="w-4 h-4 mr-2" />
+          <span className="hidden sm:inline">
+            {authed ? t('landing.hero.ctaAuth') : t('landing.hero.cta')}
+          </span>
+          <span className="sm:hidden">{authed ? "Rooms" : "Démarrer"}</span>
+          <ArrowRight className="w-4 h-4 ml-2" />
+        </Button>
+      </div>
+    </Link>
   )
 }

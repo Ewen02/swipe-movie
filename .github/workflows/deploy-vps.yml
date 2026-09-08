@@ -1,0 +1,177 @@
+# ---------------------------------------------------------------------------
+# .github/workflows/deploy-vps.yml — build et déploiement du site vitrine
+#
+# Construit l'image du front, la pousse sur ghcr.io, puis demande au VPS de la
+# tirer. Le serveur ne compile jamais rien (~/infra/CLAUDE.md § 3.5).
+#
+# PÉRIMÈTRE : seule la vitrine est déployée. L'API NestJS n'est pas construite
+# ici — le projet est en veille, il n'y a ni base ni API en production. Les
+# pages qui en dépendent sont fermées par ~/infra/caddy/Caddyfile.
+#
+# Nommé deploy-vps.yml et non deploy.yml pour ne pas écraser un workflow
+# existant du dépôt.
+#
+# ═══════════════════════════════════════════════════════════════════════════
+# SECRETS À CRÉER — Settings > Secrets and variables > Actions
+# ═══════════════════════════════════════════════════════════════════════════
+#
+#   SSH_HOST         137.74.175.232
+#   SSH_USER         ubuntu
+#   SSH_KEY          clé PRIVÉE de déploiement de CE projet, en entier :
+#                      ssh-keygen -t ed25519 -f ~/.ssh/deploy-swipe-movie \
+#                                 -C "deploy-swipe-movie" -N ""
+#                      pbcopy < ~/.ssh/deploy-swipe-movie
+#   SSH_KNOWN_HOSTS  ssh-keyscan -t ed25519 137.74.175.232
+#
+# GITHUB_TOKEN est fourni automatiquement pour POUSSER l'image. Le SERVEUR a
+# besoin, une fois pour toute la machine, d'un PAT en lecture pour la TIRER :
+#      ssh vps 'echo <PAT> | docker login ghcr.io -u Ewen02 --password-stdin'
+# ---------------------------------------------------------------------------
+
+name: Deploy VPS
+
+on:
+  push:
+    branches: [main]
+    # Le déploiement ne concerne que le front et ce qu'il embarque. Un commit
+    # touchant uniquement l'API ou la doc ne redéploie pas la vitrine.
+    paths:
+      - 'apps/web/**'
+      - 'packages/**'
+      - 'deploy/docker-compose.yml'
+      - '.github/workflows/deploy-vps.yml'
+      - 'pnpm-lock.yaml'
+      - 'turbo.json'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build et publication de l'image
+    runs-on: ubuntu-latest
+    concurrency:
+      group: build-vps-${{ github.ref }}
+      cancel-in-progress: true
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.name.outputs.image }}
+
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v4
+
+      # ghcr.io exige un nom entièrement en minuscules, alors que
+      # github.repository conserve la casse du compte ("Ewen02/..."). Le
+      # suffixe /web laisse la place à une image /api le jour où l'application
+      # complète repart (CLAUDE.md § 4 : un monorepo livre plusieurs unités).
+      - name: Nom d'image en minuscules
+        id: name
+        run: echo "image=ghcr.io/${GITHUB_REPOSITORY,,}/web" >> "$GITHUB_OUTPUT"
+
+      - name: Mise en place de Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Authentification sur ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Calcul des tags
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.name.outputs.image }}
+          tags: |
+            type=raw,value=latest
+            type=sha,format=long,prefix=
+
+      - name: Build et push
+        uses: docker/build-push-action@v6
+        with:
+          # Contexte = racine du dépôt : le Dockerfile a besoin de tous les
+          # workspaces pnpm, pas seulement d'apps/web.
+          context: .
+          file: apps/web/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+          # Les NEXT_PUBLIC_* sont INLINÉES dans le bundle client pendant
+          # `next build`. Les injecter à l'exécution serait trop tard : elles
+          # ressortiraient undefined dans le navigateur. Elles doivent donc
+          # passer par des build args — et être déclarées dans turbo.json,
+          # sinon Turbo les filtre et le build les voit undefined malgré tout.
+          build-args: |
+            NEXT_PUBLIC_SITE_URL=https://swipe-movie.com
+            NEXT_PUBLIC_AUTH_URL=https://swipe-movie.com
+            NEXT_PUBLIC_AUTH_DISABLED=true
+            NEXT_PUBLIC_API_URL=http://127.0.0.1:9
+
+          # OBLIGATOIRE. Le runner est en amd64 aujourd'hui, mais rien ne le
+          # garantit : une image arm64 sur un serveur amd64 refuse de démarrer
+          # avec "exec format error".
+          platforms: linux/amd64
+
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+          # Sans cela, buildx publie un index multi-plateforme avec des
+          # manifestes d'attestation : une entrée fantôme "unknown/unknown"
+          # dans GHCR, pour aucun bénéfice sur une image mono-plateforme.
+          provenance: false
+
+  deploy:
+    name: Déploiement sur le VPS
+    needs: build
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-vps-${{ github.ref }}
+      cancel-in-progress: false
+    environment: production
+
+    steps:
+      - name: Préparation de la clé de déploiement
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Déploiement
+        run: |
+          # La clé est contrainte par un command= côté serveur : quoi qu'on
+          # envoie, c'est deploy.sh qui s'exécute. Le texte ci-dessous lui
+          # parvient dans SSH_ORIGINAL_COMMAND et y est validé par une regex.
+          #
+          # On déploie le SHA du commit, pas "latest" : le serveur mémorise ce
+          # tag et peut y revenir en cas de rollback.
+          ssh -i ~/.ssh/deploy_key \
+              -o BatchMode=yes \
+              -o StrictHostKeyChecking=yes \
+              -o UserKnownHostsFile=~/.ssh/known_hosts \
+              -o ConnectTimeout=15 \
+              "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+              "deploy swipe-movie ${{ github.sha }}"
+          # deploy.sh sort en 1 si le conteneur ne devient pas healthy, après
+          # avoir tenté un rollback. ssh propage ce code : pas de faux succès.
+
+      - name: Effacement de la clé
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
+
+      - name: Résumé
+        if: always()
+        run: |
+          {
+            echo "### Déploiement vitrine"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Image | \`${{ needs.build.outputs.image }}\` |"
+            echo "| Tag | \`${{ github.sha }}\` |"
+            echo "| Résultat | ${{ job.status }} |"
+          } >> "$GITHUB_STEP_SUMMARY"

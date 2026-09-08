@@ -1,0 +1,102 @@
+# ---------------------------------------------------------------------------
+# swipe-movie — déploiement du site vitrine sur le VPS mutualisé
+#
+# Emplacement sur le serveur : ~/apps/swipe-movie/docker-compose.yml
+# Convention : ~/infra/CLAUDE.md
+#
+# CE FICHIER N'EST PAS docker/docker-compose.yml DE LA RACINE.
+# Celui-là décrit la pile de DÉVELOPPEMENT : il embarque Postgres et Redis et
+# publie leurs ports. Il reste valable pour tourner en local. Ici :
+#   - le projet est en veille, seule la vitrine est servie ;
+#   - il n'y a NI base NI API — les pages qui en dépendent sont fermées par
+#     ~/infra/caddy/Caddyfile, et l'API NestJS n'est pas déployée du tout ;
+#   - le TLS est terminé par le Caddy du socle, il n'y a pas de service proxy ;
+#   - aucun port n'est publié (~/infra/CLAUDE.md § 3.1).
+#
+# L'authentification est fermée en DEUX endroits, volontairement :
+#   1. à la construction, par NEXT_PUBLIC_AUTH_DISABLED (src/lib/public-mode.ts),
+#      pour que la landing cesse d'afficher des boutons menant nulle part ;
+#   2. dans le Caddyfile, qui refuse /login, /api/auth/* et la zone (protected).
+# Le premier soigne l'apparence, le second est la barrière réelle. Retirer l'un
+# sans l'autre laisse soit un site incohérent, soit une porte ouverte.
+# ---------------------------------------------------------------------------
+
+name: swipe-movie
+
+services:
+  web:
+    # Construite par GitHub Actions, jamais sur le serveur (§ 3.5).
+    # IMAGE_TAG est posé par ~/infra/scripts/deploy.sh — c'est ce qui rend le
+    # rollback possible sur un SHA précis plutôt que sur un "latest" qui bouge.
+    image: ghcr.io/ewen02/swipe-movie/web:${IMAGE_TAG:-latest}
+
+    # Nom fixe : c'est par lui que Caddy joint le conteneur sur le réseau
+    # ("reverse_proxy swipe-movie:3000") et que "docker logs swipe-movie" marche.
+    container_name: swipe-movie
+
+    env_file:
+      - .env
+
+    # --- Durcissement (§ 3.8) ---------------------------------------------
+    # Correspond à l'utilisateur nextjs créé dans apps/web/Dockerfile.
+    # Redondant avec le USER de l'image, et c'est voulu : le compose reste
+    # protecteur même si quelqu'un pousse une image qui tourne en root.
+    user: "1001:1001"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    # Node en PID 1 ne gère pas SIGTERM : sans init, `docker stop` attend dix
+    # secondes puis tue le processus en pleine réponse.
+    init: true
+    # Une fuite ou une bombe de processus ne doit pas emporter l'hôte.
+    pids_limit: 512
+    restart: unless-stopped
+
+    # --- Ressources : profil PERSONNEL (§ 3.3) -----------------------------
+    mem_limit: 512m
+    memswap_limit: 512m   # toujours égal à mem_limit, sinon le swap double la limite
+    cpus: 1.0
+
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+      # Cache ISR et optimisation d'images de Next. Sans ce montage, une page
+      # en revalidation échoue avec EROFS sur un système en lecture seule.
+      #
+      # Le chemin n'est PAS /app/.next/cache comme dans le template générique :
+      # outputFileTracingRoot pointe Next sur la racine du monorepo, donc la
+      # sortie standalone conserve l'arborescence pnpm et le serveur vit sous
+      # apps/web/. Se tromper de chemin ne casse rien au démarrage — l'erreur
+      # n'apparaît qu'à la première revalidation, en production.
+      - /app/apps/web/.next/cache:size=256m,uid=1001,gid=1001,mode=0755
+
+    # --- Santé (§ 3.7) -----------------------------------------------------
+    # Sonde délibérément superficielle : elle répond « ce serveur accepte des
+    # requêtes », rien de plus. Voir src/app/api/health/route.ts.
+    # wget vient de busybox, présent dans node:20-alpine.
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+      # Sonde rapprochée PENDANT le start_period : sans cette ligne la première
+      # a lieu à t+30s et chaque déploiement paie ce plancher. Docker >= 25.
+      start_interval: 5s
+
+    stop_grace_period: 30s
+
+    networks:
+      - web-swipe-movie
+
+# ---------------------------------------------------------------------------
+# Réseau dédié (§ 3.2). "external: true" : créé une fois à la main, et non
+# détruit par un "docker compose down".
+#     docker network create web-swipe-movie
+# S'il n'existe pas, "up -d" échoue clairement au lieu de démarrer un conteneur
+# que Caddy ne pourra jamais joindre.
+# ---------------------------------------------------------------------------
+networks:
+  web-swipe-movie:
+    external: true

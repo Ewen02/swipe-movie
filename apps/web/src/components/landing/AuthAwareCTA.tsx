@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@swipe-movie/ui';
 import { useSession } from '@/lib/auth-client';
+import { AUTH_DISABLED } from '@/lib/public-mode';
 
 interface AuthAwareCTAProps {
   cta: string;
@@ -17,8 +18,18 @@ interface AuthAwareCTAProps {
  * label/href once the client session resolves. SSR renders the unauthenticated
  * variant (matching the prior behaviour where `session` was null during SSR),
  * so the page stays a Server Component and ships almost no JS.
+ *
+ * On a vitrine deployment the CTA is dropped entirely. The guard sits in this
+ * outer wrapper rather than as an early return inside the inner component, so
+ * useSession() is never reached: the hook would otherwise fire a request to
+ * /api/auth/get-session on every landing view, which the proxy refuses.
  */
-export function AuthAwareCTA({ cta, ctaAuth, className = '' }: AuthAwareCTAProps) {
+export function AuthAwareCTA(props: AuthAwareCTAProps) {
+  if (AUTH_DISABLED) return null;
+  return <AuthAwareCTAButton {...props} />;
+}
+
+function AuthAwareCTAButton({ cta, ctaAuth, className = '' }: AuthAwareCTAProps) {
   const { data: session } = useSession();
   const isAuthenticated = !!session;
 
@@ -45,8 +56,21 @@ interface AuthAwareFinalCTAProps {
  * AuthAwareFinalCTA — bottom-of-page variant that also swaps the supporting
  * subtitle copy for authenticated users. SSR renders the unauthenticated
  * variant; the authed copy appears after hydration.
+ *
+ * In vitrine mode the supporting copy is kept and only the button goes: the
+ * closing section still reads as a finished page, instead of a heading left
+ * hanging over empty space.
  */
-export function AuthAwareFinalCTA({
+export function AuthAwareFinalCTA(props: AuthAwareFinalCTAProps) {
+  if (AUTH_DISABLED) {
+    return (
+      <p className="text-lg text-muted-foreground mb-8 leading-relaxed">{props.subtitle}</p>
+    );
+  }
+  return <AuthAwareFinalCTAButton {...props} />;
+}
+
+function AuthAwareFinalCTAButton({
   subtitle,
   subtitleAuth,
   button,
