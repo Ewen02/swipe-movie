@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import { locales, type Locale } from '@/i18n';
 import { buildLanguageAlternates, SITE_NAME, SITE_URL } from '@/lib/seo';
+import { AUTH_DISABLED } from '@/lib/public-mode';
 import { listGenres, listProviders } from '@/lib/catalog';
 import { listContexts } from '@/lib/contexts';
 import { SEOPageTracker } from '@/components/seo/SEOPageTracker';
@@ -166,12 +167,15 @@ export default async function FilmsHubPage({ params }: { params: Promise<Params>
             </span>
           </h1>
           <p className="text-muted-foreground max-w-3xl leading-relaxed">{t.intro}</p>
-          <Link
-            href={`/${locale}/try`}
-            className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-semibold text-white shadow-lg hover:opacity-90 transition"
-          >
-            {t.cta}
-          </Link>
+          {/* Mène au parcours produit (/try), fermé en mode vitrine. */}
+          {!AUTH_DISABLED && (
+            <Link
+              href={`/${locale}/try`}
+              className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-semibold text-white shadow-lg hover:opacity-90 transition"
+            >
+              {t.cta}
+            </Link>
+          )}
         </header>
 
         <section aria-labelledby="contexts-title" className="space-y-4">

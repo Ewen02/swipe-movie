@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import { locales, type Locale } from '@/i18n';
 import { buildLanguageAlternates, SITE_NAME, SITE_URL } from '@/lib/seo';
+import { AUTH_DISABLED } from '@/lib/public-mode';
 import { CONTEXTS, getContextBySlug } from '@/lib/contexts';
 import { getGenreBySlug, getProviderBySlug } from '@/lib/catalog';
 import { getMoviesForContext } from '@/lib/movies-public';
@@ -233,12 +234,15 @@ export default async function ContextPage({ params }: { params: Promise<Params> 
               {paragraph}
             </p>
           ))}
-          <Link
-            href={`/${locale}/try`}
-            className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-semibold text-white shadow-lg hover:opacity-90 transition"
-          >
-            {t.cta}
-          </Link>
+          {/* Mène au parcours produit (/try), fermé en mode vitrine. */}
+          {!AUTH_DISABLED && (
+            <Link
+              href={`/${locale}/try`}
+              className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-semibold text-white shadow-lg hover:opacity-90 transition"
+            >
+              {t.cta}
+            </Link>
+          )}
         </header>
 
         <section aria-labelledby="selection" className="space-y-4">

@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Film, Home, Sparkles } from "lucide-react"
+import { AUTH_DISABLED } from "@/lib/public-mode"
 
 export default function RootNotFound() {
   return (
@@ -47,13 +48,19 @@ export default function RootNotFound() {
                 <Home className="w-5 h-5" />
                 Retour &#224; l&apos;accueil
               </Link>
-              <Link
-                href="/try"
-                className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-border px-6 py-3 text-sm font-semibold text-foreground hover:bg-foreground/5 transition"
-              >
-                <Sparkles className="w-5 h-5" />
-                Essayer gratuitement
-              </Link>
+              {/* Cette page est servie pour TOUTE URL fermée : le proxy y
+                  réécrit les requêtes plutôt que de renvoyer un texte brut.
+                  Son second bouton menait donc lui-même à une page refusée —
+                  un cul-de-sac au bout du cul-de-sac. */}
+              {!AUTH_DISABLED && (
+                <Link
+                  href="/try"
+                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-border px-6 py-3 text-sm font-semibold text-foreground hover:bg-foreground/5 transition"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  Essayer gratuitement
+                </Link>
+              )}
             </div>
           </div>
         </div>

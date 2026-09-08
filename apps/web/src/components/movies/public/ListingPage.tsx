@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { MovieBasic } from '@swipe-movie/types';
+import { AUTH_DISABLED } from '@/lib/public-mode';
 import { MovieGrid } from './MovieGrid';
 
 export type BreadcrumbItem = { label: string; href?: string };
@@ -62,14 +63,19 @@ export function ListingPage({
           </span>
         </h1>
         <p className="text-muted-foreground text-base max-w-3xl leading-relaxed">{intro}</p>
-        <div>
-          <Link
-            href={ctaHref}
-            className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-semibold text-white shadow-lg hover:opacity-90 transition"
-          >
-            {ctaLabel}
-          </Link>
-        </div>
+        {/* Le CTA mène au parcours produit (/try), fermé en mode vitrine.
+            Le masquer ici couvre d'un coup genre, plateforme et la variante
+            plateforme/genre, qui partagent tous ce composant. */}
+        {!AUTH_DISABLED && (
+          <div>
+            <Link
+              href={ctaHref}
+              className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-semibold text-white shadow-lg hover:opacity-90 transition"
+            >
+              {ctaLabel}
+            </Link>
+          </div>
+        )}
       </header>
 
       {facets}
