@@ -2,11 +2,13 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { Heart, Film, Github, Twitter, Cookie } from "lucide-react"
 
 export function Footer() {
   const t = useTranslations()
+  // The studio exists in French at its root and in English under /en.
+  const studioUrl = useLocale() === "fr" ? "https://studio.ewenlq.fr" : "https://studio.ewenlq.fr/en"
 
   const footerLinks = [
     { href: "/about", label: t('nav.about') },
@@ -106,6 +108,12 @@ export function Footer() {
                   </div>
                   <p className="text-xs text-muted-foreground">
                     © 2025 Swipe Movie. {t('footer.rights')}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {t('footer.createdBy')}{" "}
+                    <a href={studioUrl} className="underline underline-offset-4 hover:text-foreground transition-colors">
+                      Ewen Le Quéré
+                    </a>
                   </p>
                 </div>
               </div>
