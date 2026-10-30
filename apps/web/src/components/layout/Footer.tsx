@@ -94,13 +94,19 @@ export function Footer() {
                   {/* Social icons */}
                   <div className="flex items-center justify-center md:justify-end gap-3 mb-4">
                     <a
-                      href="#"
+                      href="https://x.com/ewenlq"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="X"
                       className="w-10 h-10 rounded-xl bg-foreground/5 border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-foreground/10 hover:border-border transition-all duration-200 ease-out hover:scale-110 hover:-translate-y-0.5 active:scale-95"
                     >
                       <Twitter className="w-4 h-4" />
                     </a>
                     <a
-                      href="#"
+                      href="https://github.com/Ewen02"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="GitHub"
                       className="w-10 h-10 rounded-xl bg-foreground/5 border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-foreground/10 hover:border-border transition-all duration-200 ease-out hover:scale-110 hover:-translate-y-0.5 active:scale-95"
                     >
                       <Github className="w-4 h-4" />
